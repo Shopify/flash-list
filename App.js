@@ -17,7 +17,6 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import StickySample from './Sticky';
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -54,8 +53,8 @@ const App: () => Node = () => {
 
   return (
     // eslint-disable-next-line react-native/no-inline-styles
-    <View style={{backgroudColor: 'red', flex: 1}}>
-      <StickySample />
+    <View style={{flex: 1}}>
+      <List />
     </View>
   );
 };
