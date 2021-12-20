@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.kotlin:kotlin-annotations-jvm:1.3.72">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-annotations-jvm/1.3.72/7dba6c57de526588d8080317bda0c14cd88c8055/kotlin-annotations-jvm-1.3.72.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-annotations-jvm/1.3.72/438f0652771f777ff4f99f60ef76bd8df35e6ddd/kotlin-annotations-jvm-1.3.72-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-annotations-jvm/1.3.72/cad7ca46d77d356b4558e646fba1f1500bb0b329/kotlin-annotations-jvm-1.3.72-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

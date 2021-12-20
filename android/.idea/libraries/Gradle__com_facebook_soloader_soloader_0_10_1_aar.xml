@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Gradle: com.facebook.soloader:soloader:0.10.1@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4c346baed8905fc786ccf697aebc99f4/transformed/jetified-soloader-0.10.1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/7dfdba94b6e3996fb471d69fcb08ef3d/transformed/jetified-soloader-0.10.1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8c2f3922628843d186da97f72852ef05/transformed/jetified-soloader-0.10.1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/3af202cf40d542a75744815065bae8f2/transformed/jetified-soloader-0.10.1/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/3af202cf40d542a75744815065bae8f2/transformed/jetified-soloader-0.10.1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/3af202cf40d542a75744815065bae8f2/transformed/jetified-soloader-0.10.1/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.facebook.soloader/soloader/0.10.1/795b5319325f636800b4ddd8de9c8e35d0dc266d/soloader-0.10.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.facebook.soloader/soloader/0.10.1/fadce2562e8f4eccf794a00c02397757fb30a32e/soloader-0.10.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

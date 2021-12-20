@@ -1,0 +1,267 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:1:1-25:12
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:1:1-25:12
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:1:1-25:12
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:1:1-25:12
+MERGED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:1:1-25:12
+MERGED from [com.facebook.flipper:flipper:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/e835ec7a3bb5a6647b580038a607965f/transformed/jetified-flipper-0.99.0/AndroidManifest.xml:8:1-18:12
+MERGED from [com.facebook.flipper:flipper-network-plugin:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/2d1d42b93337e5036fda34758ea6c4a0/transformed/jetified-flipper-network-plugin-0.99.0/AndroidManifest.xml:8:1-15:12
+MERGED from [com.facebook.flipper:flipper-fresco-plugin:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/0675b09582413c9713b949ce6ea8f4e5/transformed/jetified-flipper-fresco-plugin-0.99.0/AndroidManifest.xml:8:1-15:12
+MERGED from [com.facebook.react:react-native:0.66.4] /Users/talhanaqvi/.gradle/caches/transforms-3/6b93dcdc714b72d5776fd8b773c281ab/transformed/jetified-react-native-0.66.4/AndroidManifest.xml:2:1-11:12
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7077ddd24e3c73676dfdf803645cb097/transformed/swiperefreshlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [org.webkit:android-jsc:r250230] /Users/talhanaqvi/.gradle/caches/transforms-3/7090e6876730b9a4f97ae027ab01f296/transformed/jetified-android-jsc-r250230/AndroidManifest.xml:2:1-11:12
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7b58cf6cbd58df5cd07fbca8c2d00c81/transformed/jetified-imagepipeline-okhttp3-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:flipper:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/34e04de00b3c00401e33fdc4592bd364/transformed/jetified-flipper-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:stetho:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/38a91cfd5527d508661f6725c1fdffa7/transformed/jetified-stetho-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:fresco:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/970741b7b4c38815891654b4ab7bd787/transformed/jetified-fresco-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:soloader:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/c4537c2fcef7f5213d8bfa7f28d1a71e/transformed/jetified-soloader-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:drawee:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/4a674e42bca67dc9735fb786c9f591ea/transformed/jetified-drawee-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:nativeimagefilters:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/3822f434f061999dfcaf8e027fa770d5/transformed/jetified-nativeimagefilters-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:memory-type-native:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/f8e01b08da621ebaf414956abe09ad9a/transformed/jetified-memory-type-native-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:memory-type-java:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/657d0460befe7674e1cba2df5113b15f/transformed/jetified-memory-type-java-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:imagepipeline-native:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/c950389e1c40f017f7b4538570642ca9/transformed/jetified-imagepipeline-native-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.soloader:soloader:0.10.1] /Users/talhanaqvi/.gradle/caches/transforms-3/3af202cf40d542a75744815065bae8f2/transformed/jetified-soloader-0.10.1/AndroidManifest.xml:2:1-13:12
+MERGED from [com.facebook.fresco:memory-type-ashmem:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/172b54cd79ab2ecb7d7875f8c614f782/transformed/jetified-memory-type-ashmem-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:imagepipeline:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/056b7c1558a831b90827a797f75ae449/transformed/jetified-imagepipeline-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:nativeimagetranscoder:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/cd57a919509006594a28785441e5a363/transformed/jetified-nativeimagetranscoder-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:imagepipeline-base:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a9f25a200566458fa3ee6650b36c0d33/transformed/jetified-imagepipeline-base-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.appcompat:appcompat:1.3.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7b51a8577e06ce0b124fbf229d722093/transformed/appcompat-1.3.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.sqlite:sqlite-framework:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/6226beaa64f50b4b16015850b444bc3b/transformed/sqlite-framework-2.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.autofill:autofill:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/878750e07ffccd41398b0619d832c966/transformed/jetified-autofill-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [com.facebook.fresco:middleware:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/60945f4d692c51f4c805d876d34e97ee/transformed/jetified-middleware-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:ui-common:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ea7e9e780cc65b3a5625d9ae3849d947/transformed/jetified-ui-common-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.appcompat:appcompat-resources:1.3.0] /Users/talhanaqvi/.gradle/caches/transforms-3/193b7c9ae6feb5971941871f2aeb2b74/transformed/jetified-appcompat-resources-1.3.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a2f62ea63db3608bf5b2b7331737b425/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/bcb9a81c014f5a39f7512052f43014e1/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.fragment:fragment:1.3.4] /Users/talhanaqvi/.gradle/caches/transforms-3/fd6fdf258d8c27b525544ab02403c0d6/transformed/fragment-1.3.4/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.2.3] /Users/talhanaqvi/.gradle/caches/transforms-3/f1c025707661a7af184c3679947d5ede/transformed/jetified-activity-1.2.3/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/2b93762b7aff0ec123c7efb30c3d2616/transformed/drawerlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a72aaac29471ea1cd4fbe6694316076a/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/15bbc1eabcfee5b287300b425d44ba66/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/b0f3509692ae4ba359a6caea7a8cdd93/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.customview:customview:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/4676f99afdafa55efbad974228bd8e12/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core:1.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ba54eb79aa3b862402b45d6eac9d2669/transformed/core-1.5.0/AndroidManifest.xml:17:1-26:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/8b33fb38bea1ab25ab4bca39a7cb5418/transformed/cursoradapter-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/8d8a59961a0a846bb40751ffac07f7ec/transformed/jetified-lifecycle-viewmodel-savedstate-2.3.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.savedstate:savedstate:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/698713d7b3d2a742e7d15078a15a85d3/transformed/jetified-savedstate-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/f8fd2fdbacdb63622327740e091f37f6/transformed/lifecycle-runtime-2.3.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/af4ec455d2d6ebe3517460ef82b60b43/transformed/lifecycle-viewmodel-2.3.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.sqlite:sqlite:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/18e982551724cb8f83afb027ba17b3dc/transformed/sqlite-2.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/talhanaqvi/.gradle/caches/transforms-3/39755de3b433f475693099461d586a68/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/b22d62f4827ca4812bd3b54e0dd5069c/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/93a0f10482620a031724532e10c97a4e/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/4cafcf4c66f5b5d99da6f9f395090c98/transformed/lifecycle-livedata-core-2.3.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.arch.core:core-runtime:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/9d0d3a54ff5b8e95f38a0e2cb5c1260f/transformed/core-runtime-2.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [com.facebook.fresco:fbcore:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/01596c68763711530f3bb05e18c2e697/transformed/jetified-fbcore-2.5.0/AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.annotation:annotation-experimental:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/01847c93f0da50938807aa1cc31447b1/transformed/jetified-annotation-experimental-1.0.0/AndroidManifest.xml:17:1-24:12
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:2:1-13:12
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:2:1-13:12
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:2:1-13:12
+	package
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:2:3-28
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:2:3-28
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:1:1-25:12
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml
+	xmlns:tools
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:1:1-25:12
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:4:5-67
+MERGED from [com.facebook.flipper:flipper:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/e835ec7a3bb5a6647b580038a607965f/transformed/jetified-flipper-0.99.0/AndroidManifest.xml:15:5-67
+MERGED from [com.facebook.flipper:flipper:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/e835ec7a3bb5a6647b580038a607965f/transformed/jetified-flipper-0.99.0/AndroidManifest.xml:15:5-67
+	android:name
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:4:22-64
+application
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:6:5-24:19
+MERGED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:6:5-24:19
+MERGED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:6:5-24:19
+MERGED from [com.facebook.react:react-native:0.66.4] /Users/talhanaqvi/.gradle/caches/transforms-3/6b93dcdc714b72d5776fd8b773c281ab/transformed/jetified-react-native-0.66.4/AndroidManifest.xml:9:5-20
+MERGED from [com.facebook.react:react-native:0.66.4] /Users/talhanaqvi/.gradle/caches/transforms-3/6b93dcdc714b72d5776fd8b773c281ab/transformed/jetified-react-native-0.66.4/AndroidManifest.xml:9:5-20
+MERGED from [com.facebook.soloader:soloader:0.10.1] /Users/talhanaqvi/.gradle/caches/transforms-3/3af202cf40d542a75744815065bae8f2/transformed/jetified-soloader-0.10.1/AndroidManifest.xml:11:5-20
+MERGED from [com.facebook.soloader:soloader:0.10.1] /Users/talhanaqvi/.gradle/caches/transforms-3/3af202cf40d542a75744815065bae8f2/transformed/jetified-soloader-0.10.1/AndroidManifest.xml:11:5-20
+MERGED from [androidx.core:core:1.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ba54eb79aa3b862402b45d6eac9d2669/transformed/core-1.5.0/AndroidManifest.xml:24:5-89
+MERGED from [androidx.core:core:1.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ba54eb79aa3b862402b45d6eac9d2669/transformed/core-1.5.0/AndroidManifest.xml:24:5-89
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/talhanaqvi/.gradle/caches/transforms-3/39755de3b433f475693099461d586a68/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/talhanaqvi/.gradle/caches/transforms-3/39755de3b433f475693099461d586a68/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ba54eb79aa3b862402b45d6eac9d2669/transformed/core-1.5.0/AndroidManifest.xml:24:18-86
+	android:label
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:8:7-39
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:8:7-39
+	tools:ignore
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:10:9-48
+	android:roundIcon
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:10:7-52
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:10:7-52
+	tools:targetApi
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:9:9-29
+	android:icon
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:9:7-41
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:9:7-41
+	android:allowBackup
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:11:7-34
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:11:7-34
+	android:theme
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:12:7-38
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:12:7-38
+	android:usesCleartextTraffic
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:8:9-44
+	android:name
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:7:7-38
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:7:7-38
+activity#com.flatlistpro.MainActivity
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:13:7-23:18
+	android:label
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:15:9-41
+	android:launchMode
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:17:9-40
+	android:windowSoftInputMode
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:18:9-51
+	android:configChanges
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:16:9-86
+	android:name
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:14:9-37
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:19:9-22:25
+action#android.intent.action.MAIN
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:20:13-65
+	android:name
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:20:21-62
+category#android.intent.category.LAUNCHER
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:21:13-73
+	android:name
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml:21:23-70
+uses-sdk
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml
+MERGED from [com.facebook.flipper:flipper:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/e835ec7a3bb5a6647b580038a607965f/transformed/jetified-flipper-0.99.0/AndroidManifest.xml:11:5-13:41
+MERGED from [com.facebook.flipper:flipper:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/e835ec7a3bb5a6647b580038a607965f/transformed/jetified-flipper-0.99.0/AndroidManifest.xml:11:5-13:41
+MERGED from [com.facebook.flipper:flipper-network-plugin:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/2d1d42b93337e5036fda34758ea6c4a0/transformed/jetified-flipper-network-plugin-0.99.0/AndroidManifest.xml:11:5-13:41
+MERGED from [com.facebook.flipper:flipper-network-plugin:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/2d1d42b93337e5036fda34758ea6c4a0/transformed/jetified-flipper-network-plugin-0.99.0/AndroidManifest.xml:11:5-13:41
+MERGED from [com.facebook.flipper:flipper-fresco-plugin:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/0675b09582413c9713b949ce6ea8f4e5/transformed/jetified-flipper-fresco-plugin-0.99.0/AndroidManifest.xml:11:5-13:41
+MERGED from [com.facebook.flipper:flipper-fresco-plugin:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/0675b09582413c9713b949ce6ea8f4e5/transformed/jetified-flipper-fresco-plugin-0.99.0/AndroidManifest.xml:11:5-13:41
+MERGED from [com.facebook.react:react-native:0.66.4] /Users/talhanaqvi/.gradle/caches/transforms-3/6b93dcdc714b72d5776fd8b773c281ab/transformed/jetified-react-native-0.66.4/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.react:react-native:0.66.4] /Users/talhanaqvi/.gradle/caches/transforms-3/6b93dcdc714b72d5776fd8b773c281ab/transformed/jetified-react-native-0.66.4/AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7077ddd24e3c73676dfdf803645cb097/transformed/swiperefreshlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7077ddd24e3c73676dfdf803645cb097/transformed/swiperefreshlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [org.webkit:android-jsc:r250230] /Users/talhanaqvi/.gradle/caches/transforms-3/7090e6876730b9a4f97ae027ab01f296/transformed/jetified-android-jsc-r250230/AndroidManifest.xml:7:5-9:41
+MERGED from [org.webkit:android-jsc:r250230] /Users/talhanaqvi/.gradle/caches/transforms-3/7090e6876730b9a4f97ae027ab01f296/transformed/jetified-android-jsc-r250230/AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7b58cf6cbd58df5cd07fbca8c2d00c81/transformed/jetified-imagepipeline-okhttp3-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7b58cf6cbd58df5cd07fbca8c2d00c81/transformed/jetified-imagepipeline-okhttp3-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:flipper:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/34e04de00b3c00401e33fdc4592bd364/transformed/jetified-flipper-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:flipper:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/34e04de00b3c00401e33fdc4592bd364/transformed/jetified-flipper-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:stetho:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/38a91cfd5527d508661f6725c1fdffa7/transformed/jetified-stetho-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:stetho:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/38a91cfd5527d508661f6725c1fdffa7/transformed/jetified-stetho-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:fresco:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/970741b7b4c38815891654b4ab7bd787/transformed/jetified-fresco-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:fresco:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/970741b7b4c38815891654b4ab7bd787/transformed/jetified-fresco-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:soloader:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/c4537c2fcef7f5213d8bfa7f28d1a71e/transformed/jetified-soloader-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:soloader:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/c4537c2fcef7f5213d8bfa7f28d1a71e/transformed/jetified-soloader-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:drawee:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/4a674e42bca67dc9735fb786c9f591ea/transformed/jetified-drawee-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:drawee:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/4a674e42bca67dc9735fb786c9f591ea/transformed/jetified-drawee-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:nativeimagefilters:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/3822f434f061999dfcaf8e027fa770d5/transformed/jetified-nativeimagefilters-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:nativeimagefilters:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/3822f434f061999dfcaf8e027fa770d5/transformed/jetified-nativeimagefilters-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:memory-type-native:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/f8e01b08da621ebaf414956abe09ad9a/transformed/jetified-memory-type-native-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:memory-type-native:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/f8e01b08da621ebaf414956abe09ad9a/transformed/jetified-memory-type-native-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:memory-type-java:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/657d0460befe7674e1cba2df5113b15f/transformed/jetified-memory-type-java-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:memory-type-java:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/657d0460befe7674e1cba2df5113b15f/transformed/jetified-memory-type-java-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-native:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/c950389e1c40f017f7b4538570642ca9/transformed/jetified-imagepipeline-native-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-native:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/c950389e1c40f017f7b4538570642ca9/transformed/jetified-imagepipeline-native-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.soloader:soloader:0.10.1] /Users/talhanaqvi/.gradle/caches/transforms-3/3af202cf40d542a75744815065bae8f2/transformed/jetified-soloader-0.10.1/AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.soloader:soloader:0.10.1] /Users/talhanaqvi/.gradle/caches/transforms-3/3af202cf40d542a75744815065bae8f2/transformed/jetified-soloader-0.10.1/AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.fresco:memory-type-ashmem:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/172b54cd79ab2ecb7d7875f8c614f782/transformed/jetified-memory-type-ashmem-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:memory-type-ashmem:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/172b54cd79ab2ecb7d7875f8c614f782/transformed/jetified-memory-type-ashmem-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/056b7c1558a831b90827a797f75ae449/transformed/jetified-imagepipeline-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/056b7c1558a831b90827a797f75ae449/transformed/jetified-imagepipeline-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:nativeimagetranscoder:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/cd57a919509006594a28785441e5a363/transformed/jetified-nativeimagetranscoder-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:nativeimagetranscoder:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/cd57a919509006594a28785441e5a363/transformed/jetified-nativeimagetranscoder-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-base:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a9f25a200566458fa3ee6650b36c0d33/transformed/jetified-imagepipeline-base-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-base:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a9f25a200566458fa3ee6650b36c0d33/transformed/jetified-imagepipeline-base-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.appcompat:appcompat:1.3.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7b51a8577e06ce0b124fbf229d722093/transformed/appcompat-1.3.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat:1.3.0] /Users/talhanaqvi/.gradle/caches/transforms-3/7b51a8577e06ce0b124fbf229d722093/transformed/appcompat-1.3.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.sqlite:sqlite-framework:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/6226beaa64f50b4b16015850b444bc3b/transformed/sqlite-framework-2.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.sqlite:sqlite-framework:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/6226beaa64f50b4b16015850b444bc3b/transformed/sqlite-framework-2.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/878750e07ffccd41398b0619d832c966/transformed/jetified-autofill-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/878750e07ffccd41398b0619d832c966/transformed/jetified-autofill-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [com.facebook.fresco:middleware:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/60945f4d692c51f4c805d876d34e97ee/transformed/jetified-middleware-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:middleware:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/60945f4d692c51f4c805d876d34e97ee/transformed/jetified-middleware-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:ui-common:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ea7e9e780cc65b3a5625d9ae3849d947/transformed/jetified-ui-common-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:ui-common:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ea7e9e780cc65b3a5625d9ae3849d947/transformed/jetified-ui-common-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.appcompat:appcompat-resources:1.3.0] /Users/talhanaqvi/.gradle/caches/transforms-3/193b7c9ae6feb5971941871f2aeb2b74/transformed/jetified-appcompat-resources-1.3.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat-resources:1.3.0] /Users/talhanaqvi/.gradle/caches/transforms-3/193b7c9ae6feb5971941871f2aeb2b74/transformed/jetified-appcompat-resources-1.3.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a2f62ea63db3608bf5b2b7331737b425/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a2f62ea63db3608bf5b2b7331737b425/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/bcb9a81c014f5a39f7512052f43014e1/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/bcb9a81c014f5a39f7512052f43014e1/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.fragment:fragment:1.3.4] /Users/talhanaqvi/.gradle/caches/transforms-3/fd6fdf258d8c27b525544ab02403c0d6/transformed/fragment-1.3.4/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.3.4] /Users/talhanaqvi/.gradle/caches/transforms-3/fd6fdf258d8c27b525544ab02403c0d6/transformed/fragment-1.3.4/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.2.3] /Users/talhanaqvi/.gradle/caches/transforms-3/f1c025707661a7af184c3679947d5ede/transformed/jetified-activity-1.2.3/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.2.3] /Users/talhanaqvi/.gradle/caches/transforms-3/f1c025707661a7af184c3679947d5ede/transformed/jetified-activity-1.2.3/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/2b93762b7aff0ec123c7efb30c3d2616/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/2b93762b7aff0ec123c7efb30c3d2616/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a72aaac29471ea1cd4fbe6694316076a/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/a72aaac29471ea1cd4fbe6694316076a/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/15bbc1eabcfee5b287300b425d44ba66/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/15bbc1eabcfee5b287300b425d44ba66/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/b0f3509692ae4ba359a6caea7a8cdd93/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/b0f3509692ae4ba359a6caea7a8cdd93/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/4676f99afdafa55efbad974228bd8e12/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/4676f99afdafa55efbad974228bd8e12/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ba54eb79aa3b862402b45d6eac9d2669/transformed/core-1.5.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core:1.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/ba54eb79aa3b862402b45d6eac9d2669/transformed/core-1.5.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/8b33fb38bea1ab25ab4bca39a7cb5418/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/8b33fb38bea1ab25ab4bca39a7cb5418/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/8d8a59961a0a846bb40751ffac07f7ec/transformed/jetified-lifecycle-viewmodel-savedstate-2.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/8d8a59961a0a846bb40751ffac07f7ec/transformed/jetified-lifecycle-viewmodel-savedstate-2.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.savedstate:savedstate:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/698713d7b3d2a742e7d15078a15a85d3/transformed/jetified-savedstate-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.savedstate:savedstate:1.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/698713d7b3d2a742e7d15078a15a85d3/transformed/jetified-savedstate-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/f8fd2fdbacdb63622327740e091f37f6/transformed/lifecycle-runtime-2.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/f8fd2fdbacdb63622327740e091f37f6/transformed/lifecycle-runtime-2.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/af4ec455d2d6ebe3517460ef82b60b43/transformed/lifecycle-viewmodel-2.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/af4ec455d2d6ebe3517460ef82b60b43/transformed/lifecycle-viewmodel-2.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.sqlite:sqlite:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/18e982551724cb8f83afb027ba17b3dc/transformed/sqlite-2.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.sqlite:sqlite:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/18e982551724cb8f83afb027ba17b3dc/transformed/sqlite-2.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/talhanaqvi/.gradle/caches/transforms-3/39755de3b433f475693099461d586a68/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/talhanaqvi/.gradle/caches/transforms-3/39755de3b433f475693099461d586a68/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/b22d62f4827ca4812bd3b54e0dd5069c/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/b22d62f4827ca4812bd3b54e0dd5069c/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/93a0f10482620a031724532e10c97a4e/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/93a0f10482620a031724532e10c97a4e/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/4cafcf4c66f5b5d99da6f9f395090c98/transformed/lifecycle-livedata-core-2.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.3.1] /Users/talhanaqvi/.gradle/caches/transforms-3/4cafcf4c66f5b5d99da6f9f395090c98/transformed/lifecycle-livedata-core-2.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/9d0d3a54ff5b8e95f38a0e2cb5c1260f/transformed/core-runtime-2.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.1.0] /Users/talhanaqvi/.gradle/caches/transforms-3/9d0d3a54ff5b8e95f38a0e2cb5c1260f/transformed/core-runtime-2.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [com.facebook.fresco:fbcore:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/01596c68763711530f3bb05e18c2e697/transformed/jetified-fbcore-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:fbcore:2.5.0] /Users/talhanaqvi/.gradle/caches/transforms-3/01596c68763711530f3bb05e18c2e697/transformed/jetified-fbcore-2.5.0/AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.annotation:annotation-experimental:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/01847c93f0da50938807aa1cc31447b1/transformed/jetified-annotation-experimental-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.annotation:annotation-experimental:1.0.0] /Users/talhanaqvi/.gradle/caches/transforms-3/01847c93f0da50938807aa1cc31447b1/transformed/jetified-annotation-experimental-1.0.0/AndroidManifest.xml:20:5-22:41
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml
+INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml
+uses-permission#android.permission.SYSTEM_ALERT_WINDOW
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:5:5-77
+	android:name
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:5:22-75
+activity#com.facebook.react.devsupport.DevSettingsActivity
+ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:11:9-86
+	android:name
+		ADDED from /Users/talhanaqvi/src/github.com/Shopify/FlatListPro/android/app/src/debug/AndroidManifest.xml:11:19-83
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from [com.facebook.flipper:flipper:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/e835ec7a3bb5a6647b580038a607965f/transformed/jetified-flipper-0.99.0/AndroidManifest.xml:16:5-76
+	android:name
+		ADDED from [com.facebook.flipper:flipper:0.99.0] /Users/talhanaqvi/.gradle/caches/transforms-3/e835ec7a3bb5a6647b580038a607965f/transformed/jetified-flipper-0.99.0/AndroidManifest.xml:16:22-73
