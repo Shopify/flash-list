@@ -1,0 +1,6 @@
+module Pods_FlatListPro {
+  umbrella header "Pods-FlatListPro-umbrella.h"
+
+  export *
+  module * { export * }
+}

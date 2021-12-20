@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.autofill:autofill:1.1.0@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/878750e07ffccd41398b0619d832c966/transformed/jetified-autofill-1.1.0/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/878750e07ffccd41398b0619d832c966/transformed/jetified-autofill-1.1.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/878750e07ffccd41398b0619d832c966/transformed/jetified-autofill-1.1.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/878750e07ffccd41398b0619d832c966/transformed/jetified-autofill-1.1.0/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.autofill/autofill/1.1.0/78bdbf14bb97d579bf191bc0de7e969027c4375/autofill-1.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
