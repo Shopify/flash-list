@@ -2,33 +2,38 @@ package com.flatlistpro
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.os.Build
+import android.util.Log
 import android.view.View
+import android.view.View.MeasureSpec
+import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import com.facebook.react.views.scroll.ReactScrollView
 import com.facebook.react.views.view.ReactViewGroup
 
 class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     var horizontal: Boolean = false
     var scrollOffset: Int = 0
     var windowSize: Int = 0
+    var renderOffset = 0
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+
+    override fun dispatchDraw(canvas: Canvas?) {
+        var sv: ReactScrollView = parent.parent as ReactScrollView
+        windowSize = sv.height + renderOffset
+        scrollOffset = sv.scrollY
+        fixLayout()
+        super.dispatchDraw(canvas)
+    }
+
+    private fun fixLayout() {
         if (childCount > 1) {
             val positionSortedIndices = Array<Int>(childCount) { it }
             positionSortedIndices.sortWith(getComparator())
             clearGaps(positionSortedIndices)
             //removeOverlaps(positionSortedIndices)
         }
-        super.onLayout(changed, left, top, right, bottom)
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
     }
 
     private fun getComparator(): Comparator<Int> {
@@ -50,6 +55,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
                     currentMax = kotlin.math.max(currentMax, cell.bottom);
                     if (cell.left < neighbour.left) {
                         if (cell.right != neighbour.left) {
+                            //Log.d("Changed Left", neighbour.left.toString() + " " + neighbour.top.toString())
                             neighbour.right = cell.right + neighbour.width
                             neighbour.left = cell.right
                         }
@@ -58,6 +64,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
                             neighbour.top = cell.top
                         }
                     } else {
+                        //Log.d("Changed Top", neighbour.left.toString() + " " + neighbour.top.toString())
                         neighbour.bottom = currentMax + neighbour.height
                         neighbour.top = currentMax
                     }
@@ -106,7 +113,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
 
     private fun isWithinBounds(cell: View): Boolean {
         return if (!horizontal) {
-            (cell.top >= scrollOffset || cell.bottom >= scrollOffset) &&
+            (cell.top >= (scrollOffset - renderOffset) || cell.bottom >= (scrollOffset - renderOffset)) &&
                     (cell.top <= scrollOffset + windowSize || cell.bottom <= scrollOffset + windowSize)
         } else {
             (cell.left >= scrollOffset || cell.right >= scrollOffset) &&

@@ -68,11 +68,11 @@ export default class List extends React.Component {
             dim.height = 80;
             break;
           case ViewTypes.HALF_RIGHT:
-            dim.width = width / 2 - 0.1;
+            dim.width = width / 2 - 1;
             dim.height = 80;
             break;
           case ViewTypes.FULL:
-            dim.width = width;
+            dim.width = width / 2 - 1;
             dim.height = 120;
             break;
           default:
@@ -87,7 +87,7 @@ export default class List extends React.Component {
 
     //Since component should always render once data has changed, make data provider part of the state
     this.state = {
-      dataProvider: dataProvider.cloneWithRows(this._generateArray(300)),
+      dataProvider: dataProvider.cloneWithRows(this._generateArray(3000)),
     };
   }
 
@@ -127,15 +127,16 @@ export default class List extends React.Component {
   }
 
   renderContainer(props, children) {
-    //return <View {...props}>{children}</View>;
-    return (
-      <AutoLayoutView
-        {...props}
-        scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
-        windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}>
-        {children}
-      </AutoLayoutView>
-    );
+    return <View {...props}>{children}</View>;
+    // return (
+    //   <AutoLayoutView
+    //     {...props}
+    //     scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
+    //     windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
+    //     renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(props.renderAheadOffset)}>
+    //     {children}
+    //   </AutoLayoutView>
+    //);
   }
 
   render() {
@@ -156,8 +157,8 @@ const styles = {
   container: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: width,
-    height: 150,
+    width: width / 2,
+    height: 100,
     backgroundColor: '#00a1f1',
   },
   containerGridLeft: {
