@@ -17,6 +17,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import HomeScreen from './RLVSample';
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';

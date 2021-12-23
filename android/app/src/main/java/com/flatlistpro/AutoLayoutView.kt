@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.facebook.react.views.scroll.ReactScrollView
 import com.facebook.react.views.view.ReactViewGroup
@@ -20,9 +21,6 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
 
 
     override fun dispatchDraw(canvas: Canvas?) {
-        var sv: ReactScrollView = parent.parent as ReactScrollView
-        windowSize = sv.height + renderOffset
-        scrollOffset = sv.scrollY
         fixLayout()
         super.dispatchDraw(canvas)
     }
@@ -37,11 +35,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     }
 
     private fun getComparator(): Comparator<Int> {
-        return if (!horizontal) {
-            compareBy<Int> { getChildAt(it).top }.thenBy { getChildAt(it).left }
-        } else {
-            compareBy<Int> { getChildAt(it).left }.thenBy { getChildAt(it).top }
-        }
+        return compareBy<Int> { (getChildAt(it) as CellContainer).index }
     }
 
     private fun clearGaps(sortedItems: Array<Int>) {
@@ -67,6 +61,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
                         //Log.d("Changed Top", neighbour.left.toString() + " " + neighbour.top.toString())
                         neighbour.bottom = currentMax + neighbour.height
                         neighbour.top = currentMax
+
                     }
                 } else {
                     currentMax = kotlin.math.max(currentMax, cell.right);

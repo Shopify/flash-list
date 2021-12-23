@@ -3,9 +3,10 @@
  A scrollable list with different item type
  */
 import React, {Component} from 'react';
-import {View, Text, Dimensions, PixelRatio} from 'react-native';
+import {View, Text, Dimensions, PixelRatio, PushNotificationIOS} from 'react-native';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import AutoLayoutView from './AutoLayoutView';
+import ItemContainer from './CellContainer';
 
 const ViewTypes = {
   FULL: 0,
@@ -64,16 +65,16 @@ export default class List extends React.Component {
       (type, dim) => {
         switch (type) {
           case ViewTypes.HALF_LEFT:
-            dim.width = width / 2;
+            dim.width = width/2-1;
             dim.height = 80;
             break;
           case ViewTypes.HALF_RIGHT:
-            dim.width = width / 2 - 1;
+            dim.width = width/2-1 ;
             dim.height = 80;
             break;
           case ViewTypes.FULL:
-            dim.width = width / 2 - 1;
-            dim.height = 120;
+            dim.width = width/2-1 ;
+            dim.height = 95;
             break;
           default:
             dim.width = 0;
@@ -106,19 +107,19 @@ export default class List extends React.Component {
       case ViewTypes.HALF_LEFT:
         return (
           <CellContainer style={styles.containerGridLeft}>
-            <Text>Data: {data}</Text>
+            <Text>{data}</Text>
           </CellContainer>
         );
       case ViewTypes.HALF_RIGHT:
         return (
           <CellContainer style={styles.containerGridRight}>
-            <Text>Data: {data}</Text>
+            <Text>{data}</Text>
           </CellContainer>
         );
       case ViewTypes.FULL:
         return (
           <CellContainer style={styles.container}>
-            <Text>Data: {data}</Text>
+            <Text>{data}</Text>
           </CellContainer>
         );
       default:
@@ -127,16 +128,19 @@ export default class List extends React.Component {
   }
 
   renderContainer(props, children) {
-    return <View {...props}>{children}</View>;
-    // return (
-    //   <AutoLayoutView
-    //     {...props}
-    //     scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
-    //     windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
-    //     renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(props.renderAheadOffset)}>
-    //     {children}
-    //   </AutoLayoutView>
-    //);
+    //return <View {...props}>{children}</View>;
+    return (
+      <AutoLayoutView
+        {...props}
+        scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
+        windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
+        renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(props.renderAheadOffset)}>
+        {children}
+      </AutoLayoutView>
+    );
+  }
+  renderItemContainer(props, parentProps, children) {
+    return <ItemContainer {...props} index={parentProps.index}>{children}</ItemContainer>
   }
 
   render() {
@@ -147,7 +151,9 @@ export default class List extends React.Component {
         rowRenderer={this._rowRenderer}
         canChangeSize={true}
         isHorizontal={false}
+        initialOffset={2000}
         forceNonDeterministicRendering={true}
+        renderItemContainer={this.renderItemContainer}
         renderContentContainer={this.renderContainer}
       />
     );
@@ -157,21 +163,21 @@ const styles = {
   container: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: width / 2,
+    width: width / 2  ,
     height: 100,
     backgroundColor: '#00a1f1',
   },
   containerGridLeft: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: width / 2,
+    width: width / 2 ,
     height: 100,
     backgroundColor: '#ffbb00',
   },
   containerGridRight: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: width / 2,
+    width: width / 2 ,
     height: 100,
     backgroundColor: '#7cbb00',
   },

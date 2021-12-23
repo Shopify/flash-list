@@ -33,7 +33,7 @@ class AutoLayoutViewManager: ReactViewManager() {
 
     @ReactProp(name = "windowSize")
     fun setWindowSize(view: AutoLayoutView, windowSize: Int) {
-        //view.windowSize = windowSize
+        view.windowSize = windowSize
     }
     @ReactProp(name = "renderAheadOffset")
     fun setRenderAheadOffset(view: AutoLayoutView, renderOffset: Int) {
