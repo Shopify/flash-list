@@ -160,6 +160,7 @@ export default class List extends React.Component {
           extendedState={parentProps.extendedState}
           internalSnapshot={parentProps.internalSnapshot}
           dataHasChanged={parentProps.dataHasChanged}
+          data={parentProps.data}
         >
           {children}
         </WrapperComponent>
