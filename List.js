@@ -139,19 +139,19 @@ export default class List extends React.Component {
   }
 
   renderContainer(props, children) {
-    return <View {...props}>{children}</View>;
-    // return (
-    //   <AutoLayoutView
-    //     {...props}
-    //     scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
-    //     windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
-    //     renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(
-    //       props.renderAheadOffset
-    //     )}
-    //   >
-    //     {children}
-    //   </AutoLayoutView>
-    // );
+    //return <View {...props}>{children}</View>;
+    return (
+      <AutoLayoutView
+        {...props}
+        scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
+        windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
+        renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(
+          props.renderAheadOffset
+        )}
+      >
+        {children}
+      </AutoLayoutView>
+    );
   }
   renderItemContainer(props, parentProps, children) {
     return (
