@@ -156,7 +156,13 @@ export default class List extends React.Component {
   renderItemContainer(props, parentProps, children) {
     return (
       <ItemContainer {...props} index={parentProps.index}>
-        <WrapperComponent {...parentProps}>{children}</WrapperComponent>
+        <WrapperComponent
+          extendedState={parentProps.extendedState}
+          internalSnapshot={parentProps.internalSnapshot}
+          dataHasChanged={parentProps.dataHasChanged}
+        >
+          {children}
+        </WrapperComponent>
       </ItemContainer>
     );
   }
