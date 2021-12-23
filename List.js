@@ -2,11 +2,22 @@
  Use this component inside your React Native Application.
  A scrollable list with different item type
  */
-import React, {Component} from 'react';
-import {View, Text, Dimensions, PixelRatio, PushNotificationIOS} from 'react-native';
-import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
-import AutoLayoutView from './AutoLayoutView';
-import ItemContainer from './CellContainer';
+import React, { Component } from "react";
+import {
+  View,
+  Text,
+  Dimensions,
+  PixelRatio,
+  PushNotificationIOS,
+} from "react-native";
+import {
+  RecyclerListView,
+  DataProvider,
+  LayoutProvider,
+} from "recyclerlistview";
+import AutoLayoutView from "./AutoLayoutView";
+import ItemContainer from "./CellContainer";
+import WrapperComponent from "./WrapperComponent";
 
 const ViewTypes = {
   FULL: 0,
@@ -15,7 +26,7 @@ const ViewTypes = {
 };
 
 let containerCount = 0;
-let {width} = Dimensions.get('window');
+let { width } = Dimensions.get("window");
 
 class CellContainer extends React.Component {
   constructor(args) {
@@ -23,6 +34,7 @@ class CellContainer extends React.Component {
     this._containerId = containerCount++;
   }
   render() {
+    console.log("Cell render" + this._containerId);
     return (
       <View {...this.props}>
         {this.props.children}
@@ -39,7 +51,6 @@ export default class List extends React.Component {
   constructor(args) {
     super(args);
 
-
     //Create the data provider and provide method which takes in two rows of data and return if those two are different or not.
     //THIS IS VERY IMPORTANT, FORGET PERFORMANCE IF THIS IS MESSED UP
     let dataProvider = new DataProvider((r1, r2) => {
@@ -53,7 +64,7 @@ export default class List extends React.Component {
     //You'll need data in most cases, we don't provide it by default to enable things like data virtualization in the future
     //NOTE: For complex lists LayoutProvider will also be complex it would then make sense to move it to a different file
     this._layoutProvider = new LayoutProvider(
-      index => {
+      (index) => {
         if (index % 3 === 0) {
           return ViewTypes.FULL;
         } else if (index % 3 === 1) {
@@ -65,22 +76,22 @@ export default class List extends React.Component {
       (type, dim) => {
         switch (type) {
           case ViewTypes.HALF_LEFT:
-            dim.width = width/2-1;
+            dim.width = width / 2 - 1;
             dim.height = 100;
             break;
           case ViewTypes.HALF_RIGHT:
-            dim.width = width/2-1 ;
+            dim.width = width / 2 - 1;
             dim.height = 100;
             break;
           case ViewTypes.FULL:
-            dim.width = width ;
+            dim.width = width;
             dim.height = 100;
             break;
           default:
             dim.width = 0;
             dim.height = 0;
         }
-      },
+      }
     );
 
     this._rowRenderer = this._rowRenderer.bind(this);
@@ -128,19 +139,26 @@ export default class List extends React.Component {
   }
 
   renderContainer(props, children) {
-    //return <View {...props}>{children}</View>;
-    return (
-      <AutoLayoutView
-        {...props}
-        scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
-        windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
-        renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(props.renderAheadOffset)}>
-        {children}
-      </AutoLayoutView>
-    );
+    return <View {...props}>{children}</View>;
+    // return (
+    //   <AutoLayoutView
+    //     {...props}
+    //     scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
+    //     windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
+    //     renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(
+    //       props.renderAheadOffset
+    //     )}
+    //   >
+    //     {children}
+    //   </AutoLayoutView>
+    // );
   }
   renderItemContainer(props, parentProps, children) {
-    return <ItemContainer {...props} index={parentProps.index}>{children}</ItemContainer>
+    return (
+      <ItemContainer {...props} index={parentProps.index}>
+        <WrapperComponent {...parentProps}>{children}</WrapperComponent>
+      </ItemContainer>
+    );
   }
 
   render() {
@@ -150,8 +168,7 @@ export default class List extends React.Component {
         dataProvider={this.state.dataProvider}
         rowRenderer={this._rowRenderer}
         canChangeSize={true}
-        isHorizontal={true}
-        initialOffset={2000}
+        isHorizontal={false}
         forceNonDeterministicRendering={true}
         renderItemContainer={this.renderItemContainer}
         renderContentContainer={this.renderContainer}
@@ -161,24 +178,24 @@ export default class List extends React.Component {
 }
 const styles = {
   container: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: width  ,
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: width,
     height: 120,
-    backgroundColor: '#00a1f1',
+    backgroundColor: "#00a1f1",
   },
   containerGridLeft: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: width / 2 ,
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: width / 2,
     height: 90,
-    backgroundColor: '#ffbb00',
+    backgroundColor: "#ffbb00",
   },
   containerGridRight: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: width / 2 ,
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: width / 2,
     height: 90,
-    backgroundColor: '#7cbb00',
+    backgroundColor: "#7cbb00",
   },
 };
