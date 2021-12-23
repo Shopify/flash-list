@@ -66,15 +66,15 @@ export default class List extends React.Component {
         switch (type) {
           case ViewTypes.HALF_LEFT:
             dim.width = width/2-1;
-            dim.height = 80;
+            dim.height = 100;
             break;
           case ViewTypes.HALF_RIGHT:
             dim.width = width/2-1 ;
-            dim.height = 80;
+            dim.height = 100;
             break;
           case ViewTypes.FULL:
-            dim.width = width/2-1 ;
-            dim.height = 95;
+            dim.width = width ;
+            dim.height = 100;
             break;
           default:
             dim.width = 0;
@@ -150,7 +150,7 @@ export default class List extends React.Component {
         dataProvider={this.state.dataProvider}
         rowRenderer={this._rowRenderer}
         canChangeSize={true}
-        isHorizontal={false}
+        isHorizontal={true}
         initialOffset={2000}
         forceNonDeterministicRendering={true}
         renderItemContainer={this.renderItemContainer}
@@ -163,22 +163,22 @@ const styles = {
   container: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: width / 2  ,
-    height: 100,
+    width: width  ,
+    height: 120,
     backgroundColor: '#00a1f1',
   },
   containerGridLeft: {
     justifyContent: 'space-around',
     alignItems: 'center',
     width: width / 2 ,
-    height: 100,
+    height: 90,
     backgroundColor: '#ffbb00',
   },
   containerGridRight: {
     justifyContent: 'space-around',
     alignItems: 'center',
     width: width / 2 ,
-    height: 100,
+    height: 90,
     backgroundColor: '#7cbb00',
   },
 };

@@ -49,7 +49,6 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
                     currentMax = kotlin.math.max(currentMax, cell.bottom);
                     if (cell.left < neighbour.left) {
                         if (cell.right != neighbour.left) {
-                            //Log.d("Changed Left", neighbour.left.toString() + " " + neighbour.top.toString())
                             neighbour.right = cell.right + neighbour.width
                             neighbour.left = cell.right
                         }
@@ -58,7 +57,6 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
                             neighbour.top = cell.top
                         }
                     } else {
-                        //Log.d("Changed Top", neighbour.left.toString() + " " + neighbour.top.toString())
                         neighbour.bottom = currentMax + neighbour.height
                         neighbour.top = currentMax
 
@@ -83,46 +81,46 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         }
     }
 
-    private fun removeOverlaps(sortedItems: Array<Int>) {
-        val offset = arrayOf(0, 0)
-        val itemCount = sortedItems.size
-        for (i in 0 until itemCount) {
-            for (j in 0 until itemCount) {
-                if (i == j) {
-                    continue
-                }
-                val cell = getChildAt(i)
-                val neighbour = getChildAt(j)
-                updateIntersection(cell.left, cell.top, cell.width, cell.height, neighbour.left, neighbour.top, offset)
-                val minCorrection = kotlin.math.min(offset[0], offset[1]);
-                if (minCorrection > 0) {
-                    if (offset[0] < offset[1]) {
-                        neighbour.offsetLeftAndRight(minCorrection)
-                    } else {
-                        neighbour.offsetTopAndBottom(minCorrection)
-                    }
-                }
-            }
-        }
-    }
+//    private fun removeOverlaps(sortedItems: Array<Int>) {
+//        val offset = arrayOf(0, 0)
+//        val itemCount = sortedItems.size
+//        for (i in 0 until itemCount) {
+//            for (j in 0 until itemCount) {
+//                if (i == j) {
+//                    continue
+//                }
+//                val cell = getChildAt(i)
+//                val neighbour = getChildAt(j)
+//                updateIntersection(cell.left, cell.top, cell.width, cell.height, neighbour.left, neighbour.top, offset)
+//                val minCorrection = kotlin.math.min(offset[0], offset[1]);
+//                if (minCorrection > 0) {
+//                    if (offset[0] < offset[1]) {
+//                        neighbour.offsetLeftAndRight(minCorrection)
+//                    } else {
+//                        neighbour.offsetTopAndBottom(minCorrection)
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private fun isWithinBounds(cell: View): Boolean {
         return if (!horizontal) {
             (cell.top >= (scrollOffset - renderOffset) || cell.bottom >= (scrollOffset - renderOffset)) &&
                     (cell.top <= scrollOffset + windowSize || cell.bottom <= scrollOffset + windowSize)
         } else {
-            (cell.left >= scrollOffset || cell.right >= scrollOffset) &&
+            (cell.left >= (scrollOffset - renderOffset) || cell.right >= (scrollOffset - renderOffset)) &&
                     (cell.left <= scrollOffset + windowSize || cell.right <= scrollOffset + windowSize)
         }
     }
 
-    private fun updateIntersection(x1: Int, y1: Int, w1: Int, h1: Int, x2: Int, y2: Int, offset: Array<Int>) {
-        if (x2 >= x1 && x2 < x1 + w1 && y2 >= y1 && y2 < y1 + h1) {
-            offset[0] = x1 + w1 - x2
-            offset[1] = y1 + h1 - y2
-        } else {
-            offset[0] = 0
-            offset[1] = 0
-        }
-    }
+//    private fun updateIntersection(x1: Int, y1: Int, w1: Int, h1: Int, x2: Int, y2: Int, offset: Array<Int>) {
+//        if (x2 >= x1 && x2 < x1 + w1 && y2 >= y1 && y2 < y1 + h1) {
+//            offset[0] = x1 + w1 - x2
+//            offset[1] = y1 + h1 - y2
+//        } else {
+//            offset[0] = 0
+//            offset[1] = 0
+//        }
+//    }
 }
