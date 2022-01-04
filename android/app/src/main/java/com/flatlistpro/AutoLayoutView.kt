@@ -27,23 +27,18 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
 
     private fun fixLayout() {
         if (childCount > 1) {
-            val positionSortedIndices = Array<Int>(childCount) { it }
-            positionSortedIndices.sortWith(getComparator())
-            clearGaps(positionSortedIndices)
-            //removeOverlaps(positionSortedIndices)
+            val positionSortedViews = Array(childCount) { getChildAt(it) as CellContainer }
+            positionSortedViews.sortBy { it.index }
+            clearGaps(positionSortedViews)
         }
     }
 
-    private fun getComparator(): Comparator<Int> {
-        return compareBy<Int> { (getChildAt(it) as CellContainer).index }
-    }
-
-    private fun clearGaps(sortedItems: Array<Int>) {
+    private fun clearGaps(sortedItems: Array<CellContainer>) {
         var currentMax = 0
 
         for (i in 0 until sortedItems.size - 1) {
-            val cell = getChildAt(sortedItems[i])
-            val neighbour = getChildAt(sortedItems[i + 1])
+            val cell = sortedItems[i]
+            val neighbour = sortedItems[i + 1]
             if (isWithinBounds(cell)) {
                 if (!horizontal) {
                     currentMax = kotlin.math.max(currentMax, cell.bottom);
@@ -81,29 +76,6 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         }
     }
 
-//    private fun removeOverlaps(sortedItems: Array<Int>) {
-//        val offset = arrayOf(0, 0)
-//        val itemCount = sortedItems.size
-//        for (i in 0 until itemCount) {
-//            for (j in 0 until itemCount) {
-//                if (i == j) {
-//                    continue
-//                }
-//                val cell = getChildAt(i)
-//                val neighbour = getChildAt(j)
-//                updateIntersection(cell.left, cell.top, cell.width, cell.height, neighbour.left, neighbour.top, offset)
-//                val minCorrection = kotlin.math.min(offset[0], offset[1]);
-//                if (minCorrection > 0) {
-//                    if (offset[0] < offset[1]) {
-//                        neighbour.offsetLeftAndRight(minCorrection)
-//                    } else {
-//                        neighbour.offsetTopAndBottom(minCorrection)
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     private fun isWithinBounds(cell: View): Boolean {
         return if (!horizontal) {
             (cell.top >= (scrollOffset - renderOffset) || cell.bottom >= (scrollOffset - renderOffset)) &&
@@ -113,14 +85,4 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
                     (cell.left <= scrollOffset + windowSize || cell.right <= scrollOffset + windowSize)
         }
     }
-
-//    private fun updateIntersection(x1: Int, y1: Int, w1: Int, h1: Int, x2: Int, y2: Int, offset: Array<Int>) {
-//        if (x2 >= x1 && x2 < x1 + w1 && y2 >= y1 && y2 < y1 + h1) {
-//            offset[0] = x1 + w1 - x2
-//            offset[1] = y1 + h1 - y2
-//        } else {
-//            offset[0] = 0
-//            offset[1] = 0
-//        }
-//    }
 }
