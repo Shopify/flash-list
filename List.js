@@ -34,7 +34,6 @@ class CellContainer extends React.Component {
     this._containerId = containerCount++;
   }
   render() {
-    console.log("Cell render" + this._containerId);
     return (
       <View {...this.props}>
         {this.props.children}

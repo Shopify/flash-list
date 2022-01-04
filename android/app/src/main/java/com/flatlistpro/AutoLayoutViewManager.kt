@@ -6,6 +6,8 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.views.view.ReactViewGroup
 import com.facebook.react.views.view.ReactViewManager
 
+/** ViewManager for AutoLayoutView - Container for all RecyclerListView children. Automatically removes all gaps and overlaps for GridLayouts with flexible spans.
+ * Note: This cannot work for masonry layouts i.e, pinterest like layout */
 @ReactModule(name = AutoLayoutViewManager.REACT_CLASS)
 class AutoLayoutViewManager: ReactViewManager() {
 
