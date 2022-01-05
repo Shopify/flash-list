@@ -39,11 +39,11 @@ captures/
 # IntelliJ
 *.iml
 android/.idea/workspace.xml
-android/.idea/tasks.xml
+android/.idea/**
 android/.idea/gradle.xml
 android/.idea/assetWizardSettings.xml
 android/.idea/dictionaries
-android/.idea/libraries
+android/.idea/libraries/
 android/# Android Studio 3 in .gitignore file.
 android/.idea/caches
 android/.idea/modules.xml
@@ -189,3 +189,5 @@ dist
 # TernJS port file
 .tern-port
 
+**/.DS_Store
+.DS_Store

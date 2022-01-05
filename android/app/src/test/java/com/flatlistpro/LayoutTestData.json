@@ -1,0 +1,226 @@
+{
+  "Vertical": [
+    {
+      "input": [
+        {
+          "top": 0,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 90,
+          "width": 100,
+          "height": 100
+        }
+      ],
+      "expectedOutput": []
+    },
+    {
+      "input": [
+        {
+          "top": 0,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 90,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 220,
+          "width": 100,
+          "height": 100
+        }
+      ],
+      "expectedOutput": []
+    },
+    {
+      "input": [
+        {
+          "top": 0,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 90,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 220,
+          "width": 100,
+          "height": 120
+        },
+        {
+          "top": 100,
+          "left": 0,
+          "width": 100,
+          "height": 120
+        },
+        {
+          "top": 100,
+          "left": 100,
+          "width": 100,
+          "height": 120
+        }
+      ],
+      "expectedOutput": []
+    },
+    {
+      "input": [
+        {
+          "top": 0,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 90,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 220,
+          "width": 100,
+          "height": 120
+        },
+        {
+          "top": 150,
+          "left": 0,
+          "width": 100,
+          "height": 120
+        },
+        {
+          "top": 100,
+          "left": 120,
+          "width": 100,
+          "height": 120
+        }
+      ],
+      "expectedOutput": []
+    }
+  ],
+  "horizontal": [
+    {
+      "input": [
+        {
+          "top": 0,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 90,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        }
+      ],
+      "expectedOutput": []
+    },
+    {
+      "input": [
+        {
+          "top": 0,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 90,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 220,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        }
+      ],
+      "expectedOutput": []
+    },
+    {
+      "input": [
+        {
+          "top": 0,
+          "left": 0,
+          "width": 120,
+          "height": 100
+        },
+        {
+          "top": 90,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 220,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 100,
+          "width": 100,
+          "height": 120
+        },
+        {
+          "top": 100,
+          "left": 100,
+          "width": 100,
+          "height": 120
+        }
+      ],
+      "expectedOutput": []
+    },
+    {
+      "input": [
+        {
+          "top": 0,
+          "left": 0,
+          "width": 120,
+          "height": 100
+        },
+        {
+          "top": 90,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 220,
+          "left": 0,
+          "width": 100,
+          "height": 100
+        },
+        {
+          "top": 0,
+          "left": 150,
+          "width": 100,
+          "height": 120
+        },
+        {
+          "top": 100,
+          "left": 120,
+          "width": 100,
+          "height": 120
+        }
+      ],
+      "expectedOutput": []
+    }
+  ]
+}
