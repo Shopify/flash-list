@@ -17,11 +17,11 @@ class CellContainerManager: ReactViewManager() {
     }
 
     override fun createViewInstance(context: ThemedReactContext): ReactViewGroup {
-        return CellContainer(context)
+        return CellContainerImpl(context)
     }
 
     @ReactProp(name = "index")
-    fun setIndex(view: CellContainer, index: Int) {
+    fun setIndex(view: CellContainerImpl, index: Int) {
         view.index = index
     }
 }

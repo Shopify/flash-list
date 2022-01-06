@@ -25,20 +25,20 @@ class AutoLayoutViewManager: ReactViewManager() {
 
     @ReactProp(name = "horizontal")
     fun setHorizontal(view: AutoLayoutView, isHorizontal: Boolean) {
-        view.horizontal = isHorizontal
+        view.alShadow.horizontal = isHorizontal
     }
 
     @ReactProp(name = "scrollOffset")
     fun setScrollOffset(view: AutoLayoutView, scrollOffset: Int) {
-        view.scrollOffset = scrollOffset
+        view.alShadow.scrollOffset = scrollOffset
     }
 
     @ReactProp(name = "windowSize")
     fun setWindowSize(view: AutoLayoutView, windowSize: Int) {
-        view.windowSize = windowSize
+        view.alShadow.windowSize = windowSize
     }
     @ReactProp(name = "renderAheadOffset")
     fun setRenderAheadOffset(view: AutoLayoutView, renderOffset: Int) {
-        view.renderOffset = renderOffset
+        view.alShadow.renderOffset = renderOffset
     }
 }
