@@ -6,7 +6,7 @@ class AutoLayoutShadow {
     var windowSize: Int = 0
     var renderOffset = 0
 
-    /** Checks for overlaps or gaps between adjacent items and then applies a correction.
+    /** Checks for overlaps or gaps between adjacent items and then applies a correction (Only Grid layouts with varying spans)
      * Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on Android side. Not expecting any major perf issue. */
     fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>) {
         var currentMax = 0
