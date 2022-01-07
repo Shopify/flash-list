@@ -138,7 +138,7 @@ export default class List extends React.Component {
   }
 
   renderContainer(props, children) {
-    //return <View {...props}>{children}</View>;
+    // return <View {...props}>{children}</View>;
     return (
       <AutoLayoutView
         {...props}

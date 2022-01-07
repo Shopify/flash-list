@@ -1,3 +1,6 @@
+# OSX
+.DS_Store
+
 # Built application files
 *.apk
 *.aar
@@ -190,4 +193,15 @@ dist
 .tern-port
 
 **/.DS_Store
-.DS_Store
+
+# CocoaPods
+ios/Pods/
+
+# Xcode
+ios/xcuserdata/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/*
+ios/!*.xcodeproj/project.pbxproj
+ios/!*.xcodeproj/xcshareddata/
+ios/!*.xcworkspace/contents.xcworkspacedata
+ios/**/xcshareddata/WorkspaceSettings.xcsettings
