@@ -5,6 +5,7 @@ class AutoLayoutShadow {
     var scrollOffset: Int = 0
     var windowSize: Int = 0
     var renderOffset = 0
+    var visibleBlankPixels = 0
 
     /** Checks for overlaps or gaps between adjacent items and then applies a correction (Only Grid layouts with varying spans)
      * Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on Android side. Not expecting any major perf issue. */
@@ -29,7 +30,6 @@ class AutoLayoutShadow {
                     } else {
                         neighbour.bottom = currentMax + neighbour.height
                         neighbour.top = currentMax
-
                     }
                 } else {
                     currentMax = kotlin.math.max(currentMax, cell.right);
@@ -49,6 +49,7 @@ class AutoLayoutShadow {
                 }
             }
         }
+        visibleBlankPixels = Math.max(0, scrollOffset + windowSize - renderOffset - currentMax)
     }
 
     /** It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between
