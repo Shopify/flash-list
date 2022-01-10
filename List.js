@@ -15,9 +15,7 @@ import {
   DataProvider,
   LayoutProvider,
 } from "recyclerlistview";
-import AutoLayoutView from "./AutoLayoutView";
-import ItemContainer from "./CellContainer";
-import WrapperComponent from "./WrapperComponent";
+import RFlatList from "./RecyclerFlatList";
 
 const ViewTypes = {
   FULL: 0,
@@ -33,10 +31,10 @@ class CellContainer extends React.Component {
     super(args);
     this._containerId = containerCount++;
   }
+
   render() {
     return (
-      <View {...this.props}>
-        {this.props.children}
+      <View style={{ ...this.props.style }}>
         <Text>Cell Id: {this._containerId}</Text>
       </View>
     );
@@ -93,8 +91,8 @@ export default class List extends React.Component {
       }
     );
 
-    this._rowRenderer = this._rowRenderer.bind(this);
-    this.renderContainer = this.renderContainer.bind(this);
+    // this._rowRenderer = this._rowRenderer.bind(this);
+    // this.renderContainer = this.renderContainer.bind(this);
 
     //Since component should always render once data has changed, make data provider part of the state
     this.state = {
@@ -111,77 +109,60 @@ export default class List extends React.Component {
   }
 
   //Given type and data return the view component
-  _rowRenderer(type, data) {
-    //You can return any view here, CellContainer has no special significance
-    switch (type) {
-      case ViewTypes.HALF_LEFT:
-        return (
-          <CellContainer style={styles.containerGridLeft}>
-            <Text>{data}</Text>
-          </CellContainer>
-        );
-      case ViewTypes.HALF_RIGHT:
-        return (
-          <CellContainer style={styles.containerGridRight}>
-            <Text>{data}</Text>
-          </CellContainer>
-        );
-      case ViewTypes.FULL:
-        return (
-          <CellContainer style={styles.container}>
-            <Text>{data}</Text>
-          </CellContainer>
-        );
-      default:
-        return null;
-    }
-  }
-
-  renderContainer(props, children) {
-    // return <View {...props}>{children}</View>;
-    return (
-      <AutoLayoutView
-        {...props}
-        scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
-        windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
-        renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(
-          props.renderAheadOffset
-        )}
-      >
-        {children}
-      </AutoLayoutView>
-    );
-  }
-  renderItemContainer(props, parentProps, children) {
-    return (
-      <ItemContainer {...props} index={parentProps.index}>
-        <WrapperComponent
-          extendedState={parentProps.extendedState}
-          internalSnapshot={parentProps.internalSnapshot}
-          dataHasChanged={parentProps.dataHasChanged}
-          data={parentProps.data}
-        >
-          {children}
-        </WrapperComponent>
-      </ItemContainer>
-    );
-  }
+  // _rowRenderer(type, data) {
+  //   //You can return any view here, CellContainer has no special significance
+  //   switch (type) {
+  //     case ViewTypes.HALF_LEFT:
+  //       return (
+  //         <CellContainer style={styles.containerGridLeft}>
+  //           <Text>{data}</Text>
+  //         </CellContainer>
+  //       );
+  //     case ViewTypes.HALF_RIGHT:
+  //       return (
+  //         <CellContainer style={styles.containerGridRight}>
+  //           <Text>{data}</Text>
+  //         </CellContainer>
+  //       );
+  //     case ViewTypes.FULL:
+  //       return (
+  //         <CellContainer style={styles.container}>
+  //           <Text>{data}</Text>
+  //         </CellContainer>
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // }
 
   render() {
     return (
-      <RecyclerListView
-        layoutProvider={this._layoutProvider}
-        dataProvider={this.state.dataProvider}
-        rowRenderer={this._rowRenderer}
-        canChangeSize={true}
-        isHorizontal={false}
-        forceNonDeterministicRendering={true}
-        renderItemContainer={this.renderItemContainer}
-        renderContentContainer={this.renderContainer}
+      <RFlatList
+        // layoutProvider={this._layoutProvider}
+        keyExtractor={(item) => {
+          return item;
+        }}
+        renderItem={(item) => {
+          if (item % 3 === 0) {
+            return <CellContainer style={styles.container} />;
+          } else if (item % 3 === 1) {
+            return <CellContainer style={styles.containerGridLeft} />;
+          } else {
+            return <CellContainer style={styles.containerGridRight} />;
+          }
+        }}
+        estimatedHeight={100}
+        data={this._generateArray(3000)}
+        // dataProvider={this.state.dataProvider}
+        // rowRenderer={this._rowRenderer}
+        // canChangeSize={true}
+        // isHorizontal={false}
+        // forceNonDeterministicRendering={true}
       />
     );
   }
 }
+
 const styles = {
   container: {
     justifyContent: "space-around",
