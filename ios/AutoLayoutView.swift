@@ -54,32 +54,32 @@ import Foundation
         
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
-            let neighbour = cellContainers[index + 1]
-            // Skip views outside the render window.
+            let nextCellContainer = cellContainers[index + 1]
+            // Skip views outside the `AutoLayoutView` bounds.
             guard bounds.intersects(convert(cellContainer.frame, from: cellContainer)) else { return }
             if !horizontal {
                 currentMax = max(currentMax, cellContainer.frame.maxY)
-                if cellContainer.frame.minX < neighbour.frame.minX {
-                    if cellContainer.frame.maxX != neighbour.frame.minX {
-                        neighbour.frame.origin.x = cellContainer.frame.maxX
+                if cellContainer.frame.minX < nextCellContainer.frame.minX {
+                    if cellContainer.frame.maxX != nextCellContainer.frame.minX {
+                        nextCellContainer.frame.origin.x = cellContainer.frame.maxX
                     }
-                    if cellContainer.frame.minY != neighbour.frame.minY {
-                        neighbour.frame.origin.y = cellContainer.frame.minY
+                    if cellContainer.frame.minY != nextCellContainer.frame.minY {
+                        nextCellContainer.frame.origin.y = cellContainer.frame.minY
                     }
                 } else {
-                    neighbour.frame.origin.y = currentMax
+                    nextCellContainer.frame.origin.y = currentMax
                 }
             } else {
                 currentMax = max(currentMax, cellContainer.frame.maxX)
-                if cellContainer.frame.minY < neighbour.frame.minY {
-                    if cellContainer.frame.maxY != neighbour.frame.minY {
-                        neighbour.frame.origin.y = cellContainer.frame.maxY
+                if cellContainer.frame.minY < nextCellContainer.frame.minY {
+                    if cellContainer.frame.maxY != nextCellContainer.frame.minY {
+                        nextCellContainer.frame.origin.y = cellContainer.frame.maxY
                     }
-                    if cellContainer.frame.minX != neighbour.frame.minX {
-                        neighbour.frame.origin.x = cellContainer.frame.minX
+                    if cellContainer.frame.minX != nextCellContainer.frame.minX {
+                        nextCellContainer.frame.origin.x = cellContainer.frame.minX
                     }
                 } else {
-                    neighbour.frame.origin.x = currentMax
+                    nextCellContainer.frame.origin.x = currentMax
                 }
             }
         }
