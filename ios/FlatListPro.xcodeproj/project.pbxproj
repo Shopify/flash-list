@@ -13,6 +13,12 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		CF2CB21C0967C33127D7B88B /* libPods-FlatListPro-FlatListProTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B04C2F66F880184BF040F9F /* libPods-FlatListPro-FlatListProTests.a */; };
+		F87583A8278845E3005C47F5 /* AutoLayoutViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87583A7278845E3005C47F5 /* AutoLayoutViewManager.swift */; };
+		F87583AA278845F2005C47F5 /* AutoLayoutViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F87583A9278845F2005C47F5 /* AutoLayoutViewManager.m */; };
+		F87583AC278845FB005C47F5 /* AutoLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87583AB278845FB005C47F5 /* AutoLayoutView.swift */; };
+		F87583AE27884841005C47F5 /* CellContainerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87583AD27884841005C47F5 /* CellContainerManager.swift */; };
+		F87583B02788484A005C47F5 /* CellContainerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F87583AF2788484A005C47F5 /* CellContainerManager.m */; };
+		F87583B227884854005C47F5 /* CellContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87583B127884854005C47F5 /* CellContainer.swift */; };
 		FCCDA2E2342C01251F27D887 /* libPods-FlatListPro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2521CDCF1D5FEC26F0DB857 /* libPods-FlatListPro.a */; };
 /* End PBXBuildFile section */
 
@@ -32,11 +38,11 @@
 		00E356F21AD99517003FC87E /* FlatListProTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlatListProTests.m; sourceTree = "<group>"; };
 		0438B6B296E4EEF54B083797 /* Pods-FlatListPro.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro.debug.xcconfig"; path = "Target Support Files/Pods-FlatListPro/Pods-FlatListPro.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* FlatListPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlatListPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = FlatListPro/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = FlatListPro/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = FlatListPro/AppDelegate.h; sourceTree = "<group>"; tabWidth = 4; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = FlatListPro/AppDelegate.m; sourceTree = "<group>"; tabWidth = 4; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = FlatListPro/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FlatListPro/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = FlatListPro/main.m; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = FlatListPro/main.m; sourceTree = "<group>"; tabWidth = 4; };
 		1B04C2F66F880184BF040F9F /* libPods-FlatListPro-FlatListProTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlatListPro-FlatListProTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CA5C008705DA086F5503B75 /* Pods-FlatListPro.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro.release.xcconfig"; path = "Target Support Files/Pods-FlatListPro/Pods-FlatListPro.release.xcconfig"; sourceTree = "<group>"; };
 		73E8A7A477DFECC507CD2193 /* Pods-FlatListPro-FlatListProTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro-FlatListProTests.release.xcconfig"; path = "Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -44,6 +50,13 @@
 		A2521CDCF1D5FEC26F0DB857 /* libPods-FlatListPro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlatListPro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDED37CD971749ADA4A0AC17 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro-FlatListProTests.debug.xcconfig"; path = "Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F87583A427884599005C47F5 /* FlatListPro-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FlatListPro-Bridging-Header.h"; sourceTree = "<group>"; };
+		F87583A7278845E3005C47F5 /* AutoLayoutViewManager.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = AutoLayoutViewManager.swift; sourceTree = "<group>"; tabWidth = 4; };
+		F87583A9278845F2005C47F5 /* AutoLayoutViewManager.m */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLayoutViewManager.m; sourceTree = "<group>"; tabWidth = 4; };
+		F87583AB278845FB005C47F5 /* AutoLayoutView.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = AutoLayoutView.swift; sourceTree = "<group>"; tabWidth = 4; };
+		F87583AD27884841005C47F5 /* CellContainerManager.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = CellContainerManager.swift; sourceTree = "<group>"; tabWidth = 4; };
+		F87583AF2788484A005C47F5 /* CellContainerManager.m */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = CellContainerManager.m; sourceTree = "<group>"; tabWidth = 4; };
+		F87583B127884854005C47F5 /* CellContainer.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = CellContainer.swift; sourceTree = "<group>"; tabWidth = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,10 +101,17 @@
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				F87583AD27884841005C47F5 /* CellContainerManager.swift */,
+				F87583AF2788484A005C47F5 /* CellContainerManager.m */,
+				F87583B127884854005C47F5 /* CellContainer.swift */,
+				F87583A7278845E3005C47F5 /* AutoLayoutViewManager.swift */,
+				F87583A9278845F2005C47F5 /* AutoLayoutViewManager.m */,
+				F87583AB278845FB005C47F5 /* AutoLayoutView.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				F87583A427884599005C47F5 /* FlatListPro-Bridging-Header.h */,
 			);
 			name = FlatListPro;
 			sourceTree = "<group>";
@@ -123,9 +143,9 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				DFD3D653E70B46F7F3684804 /* Pods */,
 			);
-			indentWidth = 2;
+			indentWidth = 4;
 			sourceTree = "<group>";
-			tabWidth = 2;
+			tabWidth = 4;
 			usesTabs = 0;
 		};
 		83CBBA001A601CBA00E9B192 /* Products */ = {
@@ -145,7 +165,6 @@
 				DDED37CD971749ADA4A0AC17 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */,
 				73E8A7A477DFECC507CD2193 /* Pods-FlatListPro-FlatListProTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -208,7 +227,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1310;
 					};
 				};
 			};
@@ -411,8 +430,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F87583A8278845E3005C47F5 /* AutoLayoutViewManager.swift in Sources */,
+				F87583B227884854005C47F5 /* CellContainer.swift in Sources */,
+				F87583AE27884841005C47F5 /* CellContainerManager.swift in Sources */,
+				F87583B02788484A005C47F5 /* CellContainerManager.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				F87583AC278845FB005C47F5 /* AutoLayoutView.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				F87583AA278845F2005C47F5 /* AutoLayoutViewManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,6 +456,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DDED37CD971749ADA4A0AC17 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -458,6 +484,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 73E8A7A477DFECC507CD2193 /* Pods-FlatListPro-FlatListProTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = FlatListProTests/Info.plist;
@@ -498,6 +525,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = FlatListPro;
+				SWIFT_OBJC_BRIDGING_HEADER = "FlatListPro-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -523,6 +551,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = FlatListPro;
+				SWIFT_OBJC_BRIDGING_HEADER = "FlatListPro-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
