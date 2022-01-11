@@ -7,8 +7,8 @@ import Foundation
 */
 @objc class AutoLayoutView: UIView {
     private var horizontal = false
-    private var scrollOffset = 0
-    private var windowSize = 0
+    private var scrollOffset: CGFloat = 0
+    private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
     
     @objc func setHorizontal(_ horizontal: Bool) {
@@ -16,11 +16,11 @@ import Foundation
     }
     
     @objc func setScrollOffset(_ scrollOffset: Int) {
-        self.scrollOffset = scrollOffset
+        self.scrollOffset = CGFloat(scrollOffset)
     }
     
     @objc func setWindowSize(_ windowSize: Int) {
-        self.windowSize = windowSize
+        self.windowSize = CGFloat(windowSize)
     }
     
     @objc func setRenderAheadOffset(_ renderAheadOffset: Int) {
@@ -55,16 +55,7 @@ import Foundation
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
             let nextCellContainer = cellContainers[index + 1]
-            // Skip views outside the window with the bottom (in case of a vertical list) margin of `renderAheadOffset`.
-            guard
-                let window = window,
-                CGRect(
-                    x: window.frame.minX,
-                    y: window.frame.minY,
-                    width: horizontal ? window.frame.width + renderAheadOffset : window.frame.width,
-                    height: horizontal ? window.frame.height : window.frame.height + renderAheadOffset
-                ).intersects(convert(cellContainer.frame, to: window))
-            else { return }
+            guard isWithinBounds(cellContainer) else { return }
             if !horizontal {
                 currentMax = max(currentMax, cellContainer.frame.maxY)
                 if cellContainer.frame.minX < nextCellContainer.frame.minX {
@@ -90,6 +81,19 @@ import Foundation
                     nextCellContainer.frame.origin.x = currentMax
                 }
             }
+        }
+    }
+    
+    /*
+     It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
+    */
+    private func isWithinBounds(_ cellContainer: CellContainer) -> Bool {
+        if !horizontal {
+            return (cellContainer.frame.minY >= (scrollOffset - renderAheadOffset) || cellContainer.frame.maxY >= (scrollOffset - renderAheadOffset)) &&
+            (cellContainer.frame.minY <= scrollOffset + windowSize || cellContainer.frame.maxY <= scrollOffset + windowSize)
+        } else {
+            return (cellContainer.frame.minX >= (scrollOffset - renderAheadOffset) || cellContainer.frame.maxX >= (scrollOffset - renderAheadOffset)) &&
+            (cellContainer.frame.minX <= scrollOffset + windowSize || cellContainer.frame.maxX <= scrollOffset + windowSize)
         }
     }
 }
