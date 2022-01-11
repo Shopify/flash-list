@@ -11,15 +11,15 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		3DC49B12F6F8B541D98AEF4B /* libPods-FlatListPro-FlatListProTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF16FFC07D66EA3092A57BE /* libPods-FlatListPro-FlatListProTests.a */; };
+		4C28D4195347110DD7EFF250 /* libPods-FlatListPro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B5C2CC4776DE30CFFD3D9728 /* libPods-FlatListPro.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		CF2CB21C0967C33127D7B88B /* libPods-FlatListPro-FlatListProTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B04C2F66F880184BF040F9F /* libPods-FlatListPro-FlatListProTests.a */; };
 		F87583A8278845E3005C47F5 /* AutoLayoutViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87583A7278845E3005C47F5 /* AutoLayoutViewManager.swift */; };
 		F87583AA278845F2005C47F5 /* AutoLayoutViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F87583A9278845F2005C47F5 /* AutoLayoutViewManager.m */; };
 		F87583AC278845FB005C47F5 /* AutoLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87583AB278845FB005C47F5 /* AutoLayoutView.swift */; };
 		F87583AE27884841005C47F5 /* CellContainerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87583AD27884841005C47F5 /* CellContainerManager.swift */; };
 		F87583B02788484A005C47F5 /* CellContainerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F87583AF2788484A005C47F5 /* CellContainerManager.m */; };
 		F87583B227884854005C47F5 /* CellContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87583B127884854005C47F5 /* CellContainer.swift */; };
-		FCCDA2E2342C01251F27D887 /* libPods-FlatListPro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2521CDCF1D5FEC26F0DB857 /* libPods-FlatListPro.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,19 +36,19 @@
 		00E356EE1AD99517003FC87E /* FlatListProTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlatListProTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* FlatListProTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlatListProTests.m; sourceTree = "<group>"; };
-		0438B6B296E4EEF54B083797 /* Pods-FlatListPro.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro.debug.xcconfig"; path = "Target Support Files/Pods-FlatListPro/Pods-FlatListPro.debug.xcconfig"; sourceTree = "<group>"; };
+		02B8813AFBAA14CF0C9FF3E5 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro-FlatListProTests.debug.xcconfig"; path = "Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* FlatListPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlatListPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = FlatListPro/AppDelegate.h; sourceTree = "<group>"; tabWidth = 4; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = FlatListPro/AppDelegate.m; sourceTree = "<group>"; tabWidth = 4; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = FlatListPro/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FlatListPro/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = FlatListPro/main.m; sourceTree = "<group>"; tabWidth = 4; };
-		1B04C2F66F880184BF040F9F /* libPods-FlatListPro-FlatListProTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlatListPro-FlatListProTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CA5C008705DA086F5503B75 /* Pods-FlatListPro.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro.release.xcconfig"; path = "Target Support Files/Pods-FlatListPro/Pods-FlatListPro.release.xcconfig"; sourceTree = "<group>"; };
-		73E8A7A477DFECC507CD2193 /* Pods-FlatListPro-FlatListProTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro-FlatListProTests.release.xcconfig"; path = "Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests.release.xcconfig"; sourceTree = "<group>"; };
+		5715F3B3165A79E0A40F6237 /* Pods-FlatListPro.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro.debug.xcconfig"; path = "Target Support Files/Pods-FlatListPro/Pods-FlatListPro.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = FlatListPro/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		A2521CDCF1D5FEC26F0DB857 /* libPods-FlatListPro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlatListPro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DDED37CD971749ADA4A0AC17 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro-FlatListProTests.debug.xcconfig"; path = "Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8AF16FFC07D66EA3092A57BE /* libPods-FlatListPro-FlatListProTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlatListPro-FlatListProTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		906B19594009D131502608CA /* Pods-FlatListPro.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro.release.xcconfig"; path = "Target Support Files/Pods-FlatListPro/Pods-FlatListPro.release.xcconfig"; sourceTree = "<group>"; };
+		B5C2CC4776DE30CFFD3D9728 /* libPods-FlatListPro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlatListPro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C45C41602A661C25739D0F7E /* Pods-FlatListPro-FlatListProTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlatListPro-FlatListProTests.release.xcconfig"; path = "Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F87583A427884599005C47F5 /* FlatListPro-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FlatListPro-Bridging-Header.h"; sourceTree = "<group>"; };
 		F87583A7278845E3005C47F5 /* AutoLayoutViewManager.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = AutoLayoutViewManager.swift; sourceTree = "<group>"; tabWidth = 4; };
@@ -64,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2CB21C0967C33127D7B88B /* libPods-FlatListPro-FlatListProTests.a in Frameworks */,
+				3DC49B12F6F8B541D98AEF4B /* libPods-FlatListPro-FlatListProTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,7 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FCCDA2E2342C01251F27D887 /* libPods-FlatListPro.a in Frameworks */,
+				4C28D4195347110DD7EFF250 /* libPods-FlatListPro.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,8 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				A2521CDCF1D5FEC26F0DB857 /* libPods-FlatListPro.a */,
-				1B04C2F66F880184BF040F9F /* libPods-FlatListPro-FlatListProTests.a */,
+				B5C2CC4776DE30CFFD3D9728 /* libPods-FlatListPro.a */,
+				8AF16FFC07D66EA3092A57BE /* libPods-FlatListPro-FlatListProTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -160,10 +160,10 @@
 		DFD3D653E70B46F7F3684804 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				0438B6B296E4EEF54B083797 /* Pods-FlatListPro.debug.xcconfig */,
-				3CA5C008705DA086F5503B75 /* Pods-FlatListPro.release.xcconfig */,
-				DDED37CD971749ADA4A0AC17 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */,
-				73E8A7A477DFECC507CD2193 /* Pods-FlatListPro-FlatListProTests.release.xcconfig */,
+				5715F3B3165A79E0A40F6237 /* Pods-FlatListPro.debug.xcconfig */,
+				906B19594009D131502608CA /* Pods-FlatListPro.release.xcconfig */,
+				02B8813AFBAA14CF0C9FF3E5 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */,
+				C45C41602A661C25739D0F7E /* Pods-FlatListPro-FlatListProTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -175,12 +175,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "FlatListProTests" */;
 			buildPhases = (
-				2DD37A8A088E6C1D78AE0CD3 /* [CP] Check Pods Manifest.lock */,
+				81F080078C648E4B16B28789 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				3C939028500E331DD93B29C1 /* [CP] Embed Pods Frameworks */,
-				0E5A80A866254A1546E669DA /* [CP] Copy Pods Resources */,
+				4B81D24ABCB69EE27E7759BD /* [CP] Embed Pods Frameworks */,
+				779099618DD85F0E2943907B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -196,14 +196,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "FlatListPro" */;
 			buildPhases = (
-				1E780E079E347CF31856082A /* [CP] Check Pods Manifest.lock */,
+				1AEC62DB56D80A418382B298 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				BE9CBE7BE23D4E67417DE9CB /* [CP] Embed Pods Frameworks */,
-				B4340717E68B78299BE564CB /* [CP] Copy Pods Resources */,
+				4E050ED81535E77A7E1F530F /* [CP] Embed Pods Frameworks */,
+				75BCD66CAC2B8A8182D08901 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -284,24 +284,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		0E5A80A866254A1546E669DA /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		1E780E079E347CF31856082A /* [CP] Check Pods Manifest.lock */ = {
+		1AEC62DB56D80A418382B298 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -323,7 +306,75 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2DD37A8A088E6C1D78AE0CD3 /* [CP] Check Pods Manifest.lock */ = {
+		4B81D24ABCB69EE27E7759BD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4E050ED81535E77A7E1F530F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		75BCD66CAC2B8A8182D08901 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		779099618DD85F0E2943907B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		81F080078C648E4B16B28789 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -343,57 +394,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3C939028500E331DD93B29C1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlatListPro-FlatListProTests/Pods-FlatListPro-FlatListProTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B4340717E68B78299BE564CB /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BE9CBE7BE23D4E67417DE9CB /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlatListPro/Pods-FlatListPro-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -454,7 +454,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DDED37CD971749ADA4A0AC17 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */;
+			baseConfigurationReference = 02B8813AFBAA14CF0C9FF3E5 /* Pods-FlatListPro-FlatListProTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -482,7 +482,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 73E8A7A477DFECC507CD2193 /* Pods-FlatListPro-FlatListProTests.release.xcconfig */;
+			baseConfigurationReference = C45C41602A661C25739D0F7E /* Pods-FlatListPro-FlatListProTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -507,7 +507,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0438B6B296E4EEF54B083797 /* Pods-FlatListPro.debug.xcconfig */;
+			baseConfigurationReference = 5715F3B3165A79E0A40F6237 /* Pods-FlatListPro.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -534,7 +534,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3CA5C008705DA086F5503B75 /* Pods-FlatListPro.release.xcconfig */;
+			baseConfigurationReference = 906B19594009D131502608CA /* Pods-FlatListPro.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
