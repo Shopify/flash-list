@@ -35,7 +35,7 @@ up:
   - custom:
       name: Install cocoapods dependencies
       met?: cd ios && bundle exec pod check --ignore-dev-pods
-      meet: cd ios && bundle exec pod install --repo-update
+      meet: cd ios && bundle exec pod install
 commands:
   run-ios:
     aliases: [ri]
