@@ -2,6 +2,7 @@ package com.flatlistpro
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.DisplayMetrics
 import android.view.View
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
@@ -15,6 +16,15 @@ import com.facebook.react.views.view.ReactViewGroup
 class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     val alShadow = AutoLayoutShadow()
     var enableInstrumentation = false
+
+    private var pixelDensity = 1.0;
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        val dm = DisplayMetrics()
+        display.getRealMetrics(dm)
+        pixelDensity = dm.density.toDouble()
+    }
 
     /** Overriding draw instead of onLayout. RecyclerListView uses absolute positions for each and every item which means that changes in child layouts may not trigger onLayout on this container. The same layout
      * can still cause views to overlap. Therefore, it makes sense to override draw to do correction. */
@@ -42,8 +52,8 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     private fun emitBlankAreaEvent() {
         val event: WritableMap = Arguments.createMap()
         val blanks: WritableMap = Arguments.createMap()
-        blanks.putInt("startOffset", alShadow.blankOffsetAtStartAndEnd[0])
-        blanks.putInt("endOffset", alShadow.blankOffsetAtStartAndEnd[1])
+        blanks.putDouble("startOffset", alShadow.blankOffsetAtStartAndEnd[0] / pixelDensity)
+        blanks.putDouble("endOffset", alShadow.blankOffsetAtStartAndEnd[1] / pixelDensity)
         event.putMap("blanks", blanks)
         val reactContext = context as ReactContext
         reactContext
