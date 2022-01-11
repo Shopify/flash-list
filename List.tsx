@@ -27,7 +27,7 @@ export default class List extends React.Component {
         renderItem={(item) => {
           const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
           return (
-            <View style={{ ...styles.container, backgroundColor }}>
+            <View key={item} style={{ ...styles.container, backgroundColor }}>
               <Text>Cell Id: {item}</Text>
             </View>
           );
