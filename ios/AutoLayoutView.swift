@@ -9,7 +9,7 @@ import Foundation
     private var horizontal = false
     private var scrollOffset = 0
     private var windowSize = 0
-    private var renderAheadOffset = 0
+    private var renderAheadOffset: CGFloat = 0
     
     @objc func setHorizontal(_ horizontal: Bool) {
         self.horizontal = horizontal
@@ -24,7 +24,7 @@ import Foundation
     }
     
     @objc func setRenderAheadOffset(_ renderAheadOffset: Int) {
-        self.renderAheadOffset = renderAheadOffset
+        self.renderAheadOffset = CGFloat(renderAheadOffset)
     }
     
     override func layoutSubviews() {
@@ -55,8 +55,16 @@ import Foundation
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
             let nextCellContainer = cellContainers[index + 1]
-            // Skip views outside the `AutoLayoutView` bounds.
-            guard bounds.intersects(convert(cellContainer.frame, from: cellContainer)) else { return }
+            // Skip views outside the window with the bottom (in case of a vertical list) margin of `renderAheadOffset`.
+            guard
+                let window = window,
+                CGRect(
+                    x: window.frame.minX,
+                    y: window.frame.minY,
+                    width: horizontal ? window.frame.width + renderAheadOffset : window.frame.width,
+                    height: horizontal ? window.frame.height : window.frame.height + renderAheadOffset
+                ).intersects(convert(cellContainer.frame, to: window))
+            else { return }
             if !horizontal {
                 currentMax = max(currentMax, cellContainer.frame.maxY)
                 if cellContainer.frame.minX < nextCellContainer.frame.minX {
