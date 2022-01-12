@@ -5,9 +5,12 @@ class AutoLayoutShadow {
     var scrollOffset: Int = 0
     var windowSize: Int = 0
     var renderOffset = 0
-    var lastMaxBound = 0
-    var lastMinBound = 0
-    var blankOffsetAtStartAndEnd = Array<Int>(2) { 0 }
+
+    var blankOffsetAtStart = 0 // Tracks blank area from the top
+    var blankOffsetAtEnd = 0 // Tracks blank area from the bottom
+
+    private var lastMaxBound = 0 // Tracks where the last pixel is drawn in the visible window
+    private var lastMinBound = 0 // Tracks where first pixel is drawn in the visible window
 
     /** Checks for overlaps or gaps between adjacent items and then applies a correction (Only Grid layouts with varying spans)
      * Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on Android side. Not expecting any major perf issue. */
@@ -57,12 +60,12 @@ class AutoLayoutShadow {
         lastMinBound = minBound
     }
 
-    /** Offset provided by react can be one frame behind the real one, this it's important that this method is called with offset taken directly from
+    /** Offset provided by react can be one frame behind the real one, it's important that this method is called with offset taken directly from
      * scrollview object */
     fun computeBlankFromGivenOffset(actualScrollOffset: Int): Int {
-        blankOffsetAtStartAndEnd[0] = lastMinBound - actualScrollOffset
-        blankOffsetAtStartAndEnd[1] = actualScrollOffset + windowSize - renderOffset - lastMaxBound
-        return kotlin.math.max(blankOffsetAtStartAndEnd[0], blankOffsetAtStartAndEnd[1])
+        blankOffsetAtStart = lastMinBound - actualScrollOffset
+        blankOffsetAtEnd = actualScrollOffset + windowSize - renderOffset - lastMaxBound
+        return kotlin.math.max(blankOffsetAtStart, blankOffsetAtEnd)
     }
 
     /** It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between

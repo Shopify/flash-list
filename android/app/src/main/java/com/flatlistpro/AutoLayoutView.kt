@@ -33,6 +33,9 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         super.dispatchDraw(canvas)
 
         if (enableInstrumentation) {
+            // Since we need to call this method with scrollOffset on the UI thread and not with the one react has we're querying parent's parent
+            // directly which will be a ScrollView. If it isn't reported values will be incorrect but the component will not break.
+            // RecyclerListView is expected not to change the hierarchy of children.
             alShadow.computeBlankFromGivenOffset((parent.parent as View).scrollY)
             emitBlankAreaEvent()
         }
@@ -52,8 +55,8 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     private fun emitBlankAreaEvent() {
         val event: WritableMap = Arguments.createMap()
         val blanks: WritableMap = Arguments.createMap()
-        blanks.putDouble("startOffset", alShadow.blankOffsetAtStartAndEnd[0] / pixelDensity)
-        blanks.putDouble("endOffset", alShadow.blankOffsetAtStartAndEnd[1] / pixelDensity)
+        blanks.putDouble("startOffset", alShadow.blankOffsetAtStart / pixelDensity)
+        blanks.putDouble("endOffset", alShadow.blankOffsetAtEnd / pixelDensity)
         event.putMap("blanks", blanks)
         val reactContext = context as ReactContext
         reactContext
