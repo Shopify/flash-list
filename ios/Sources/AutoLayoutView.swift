@@ -83,7 +83,13 @@ import UIKit
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
             let nextCellContainer = cellContainers[index + 1]
-            guard isWithinBounds(cellContainer) else { return }
+            
+            guard isWithinBounds(cellContainer,
+                                 scrollOffset: scrollOffset,
+                                 renderAheadOffset: renderAheadOffset,
+                                 windowSize: windowSize) else {
+                return
+            }
             
             if horizontal {
                 maxBound = max(maxBound, cellContainer.frame.maxX)
@@ -130,20 +136,15 @@ import UIKit
     /*
      It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
     */
-    private func isWithinBounds(_ cellContainer: CellContainer) -> Bool {
+    internal func isWithinBounds(_ cellContainer: CellContainer, scrollOffset: CGFloat, renderAheadOffset: CGFloat, windowSize: CGFloat) -> Bool {
         let boundsStart = scrollOffset - renderAheadOffset
         let boundsEnd = scrollOffset + windowSize
         let cellFrame = cellContainer.frame
         
-        print("Scroll offset: \(scrollOffset), cellFrame: \(frame)")
-        var isWithinBounds = false
         if horizontal {
-            isWithinBounds = (cellFrame.minX >= boundsStart || cellFrame.maxX >= boundsStart) && (cellFrame.minX <= boundsEnd || cellFrame.maxX <= boundsEnd)
+            return (cellFrame.minX >= boundsStart || cellFrame.maxX >= boundsStart) && (cellFrame.minX <= boundsEnd || cellFrame.maxX <= boundsEnd)
         } else {
-            isWithinBounds = (cellFrame.minY >= boundsStart || cellFrame.maxY >= boundsStart) && (cellFrame.minY <= boundsEnd || cellFrame.maxY <= boundsEnd)
+            return (cellFrame.minY >= boundsStart || cellFrame.maxY >= boundsStart) && (cellFrame.minY <= boundsEnd || cellFrame.maxY <= boundsEnd)
         }
-        
-        print("isWithinBounds: \(isWithinBounds)")
-        return isWithinBounds
     }
 }
