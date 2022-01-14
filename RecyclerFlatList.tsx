@@ -17,20 +17,6 @@ import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent from "./WrapperComponent";
 
-let containerCount = 0;
-
-class CellContainer extends React.Component {
-  private _containerId: number;
-
-  constructor(args) {
-    super(args);
-    this._containerId = containerCount++;
-  }
-  render() {
-    return <View {...this.props}>{this.props.children}</View>;
-  }
-}
-
 export interface RFlatListProps extends ViewProps {
   data: [any];
   estimatedHeight?: number;
