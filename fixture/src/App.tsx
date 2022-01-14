@@ -15,10 +15,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationKeys, RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
+import useOnNativeBlankAreaEvents from "./useOnNativeBlankAreaEvents";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
+  useOnNativeBlankAreaEvents();
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
