@@ -136,14 +136,20 @@ import UIKit
     /*
      It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
     */
-    internal func isWithinBounds(_ cellContainer: CellContainer, scrollOffset: CGFloat, renderAheadOffset: CGFloat, windowSize: CGFloat) -> Bool {
+    internal func isWithinBounds(_ cellContainer: CellContainer,
+                                 scrollOffset: CGFloat,
+                                 renderAheadOffset: CGFloat,
+                                 windowSize: CGFloat,
+                                 isHorizontal: Bool = false) -> Bool {
         let boundsStart = scrollOffset - renderAheadOffset
         let boundsEnd = scrollOffset + windowSize
         let cellFrame = cellContainer.frame
         
-        if horizontal {
+        if isHorizontal {
+            print("Horizontal")
             return (cellFrame.minX >= boundsStart || cellFrame.maxX >= boundsStart) && (cellFrame.minX <= boundsEnd || cellFrame.maxX <= boundsEnd)
         } else {
+            print("Vertical")
             return (cellFrame.minY >= boundsStart || cellFrame.maxY >= boundsStart) && (cellFrame.minY <= boundsEnd || cellFrame.maxY <= boundsEnd)
         }
     }
