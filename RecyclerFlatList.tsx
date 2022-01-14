@@ -54,12 +54,14 @@ class RFlatList extends React.PureComponent<RFlatListProps> {
   private _rowRenderer;
   private dataProvider;
   private data;
+  private keyExtractor;
 
   constructor(props) {
     super(props);
     this.data = this.props.data;
     this.numColumns = this.props.numColumns || 1;
     this.width = Dimensions.get("window").width;
+    this.keyExtractor = this.props.keyExtractor ?? this.defaultKeyExtractor;
 
     if (!this.props.horizontal) {
       this.layoutProvider = this.verticalProvider();
@@ -68,15 +70,23 @@ class RFlatList extends React.PureComponent<RFlatListProps> {
     }
 
     this.dataProvider = new DataProvider((r1, r2) => {
-      if (this.props.keyExtractor) {
-        const keyExtractor = this.props.keyExtractor;
-        return keyExtractor(r1) !== keyExtractor(r2);
-      } else {
-        return r1 !== r2;
-      }
+      // @ts-ignore
+      return this.keyExtractor(r1) !== this.keyExtractor(r2);
     });
     this._rowRenderer = this.rowRenderer.bind(this);
   }
+
+  // Taken from here: https://github.com/facebook/react-native/blob/main/Libraries/Lists/VirtualizeUtils.js#L233
+  defaultKeyExtractor = (item: any, index: number) => {
+    if (typeof item === "object" && item?.key != null) {
+      return item.key;
+    }
+    if (typeof item === "object" && item?.id != null) {
+      return item.id;
+    }
+    return String(index);
+  };
+
   horizontalProvider() {
     return new GridLayoutProvider(
       1,
@@ -140,7 +150,6 @@ class RFlatList extends React.PureComponent<RFlatListProps> {
       if (this.props.inverted === true) {
         Object.assign(style, { transform: [{ scaleY: -1 }] });
       }
-      console.log(style);
 
       return (
         <RecyclerListView
@@ -151,7 +160,7 @@ class RFlatList extends React.PureComponent<RFlatListProps> {
           renderFooter={this.footerComponent(this.props)}
           canChangeSize={true}
           isHorizontal={this.props.horizontal}
-          scrollViewProps={{ style: style }}
+          scrollViewProps={{ style }}
           forceNonDeterministicRendering={true}
           renderItemContainer={this.renderItemContainer}
           renderContentContainer={this.renderContainer}
@@ -175,7 +184,8 @@ class RFlatList extends React.PureComponent<RFlatListProps> {
       </AutoLayoutView>
     );
   }
-  renderItemContainer(props, parentProps, children) {
+
+  renderItemContainer = (props, parentProps, children) => {
     return (
       <ItemContainer {...props} index={parentProps.index}>
         <WrapperComponent
@@ -188,7 +198,7 @@ class RFlatList extends React.PureComponent<RFlatListProps> {
         </WrapperComponent>
       </ItemContainer>
     );
-  }
+  };
 
   rowRenderer(type, data, index) {
     var header;
@@ -219,9 +229,11 @@ class RFlatList extends React.PureComponent<RFlatListProps> {
 
     return (
       <View style={style}>
-        {elements.map((elem) => {
-          return elem;
-        })}
+        <>
+          {elements[0]}
+          {elements[1]}
+          {this.props.ItemSeparatorComponent && elements[2]}
+        </>
       </View>
     );
   }
