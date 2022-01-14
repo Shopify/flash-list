@@ -4,7 +4,7 @@
  */
 import React from "react";
 import { View, Text } from "react-native";
-import RFlatList from "./RecyclerFlatList";
+import RecyclerFlatList from "./RecycleRecyclerFlatList";
 
 /***
  * To test out just copy this component and render in you root component
@@ -20,7 +20,7 @@ export default class List extends React.Component {
 
   render() {
     return (
-      <RFlatList
+      <RecyclerFlatList
         keyExtractor={(item) => {
           return item;
         }}

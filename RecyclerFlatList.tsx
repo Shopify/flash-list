@@ -17,7 +17,7 @@ import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent from "./WrapperComponent";
 
-export interface RFlatListProps extends ViewProps {
+export interface RecyclerFlatListProps extends ViewProps {
   data: [any];
   estimatedHeight?: number;
   renderItem: any;
@@ -33,7 +33,7 @@ export interface RFlatListProps extends ViewProps {
   horizontal: boolean;
 }
 
-class RFlatList extends React.PureComponent<RFlatListProps> {
+class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
   width: number;
   numColumns: number;
   private layoutProvider: LayoutProvider;
@@ -225,4 +225,4 @@ class RFlatList extends React.PureComponent<RFlatListProps> {
   }
 }
 
-export default RFlatList;
+export default RecyclerFlatList;
