@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 
 /*
@@ -10,6 +11,13 @@ import Foundation
     private var scrollOffset: CGFloat = 0
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
+    private var enableInstrumentation = false
+    
+    var blankOffsetTop: CGFloat = 0 // Tracks blank area from the top
+    var blankOffsetBottom: CGFloat = 0 // Tracks blank area from the bottom
+
+    private var lastMaxBound: CGFloat = 0 // Tracks where the last pixel is drawn in the visible window
+    private var lastMinBound: CGFloat = 0 // Tracks where first pixel is drawn in the visible window
     
     @objc func setHorizontal(_ horizontal: Bool) {
         self.horizontal = horizontal
@@ -27,9 +35,28 @@ import Foundation
         self.renderAheadOffset = CGFloat(renderAheadOffset)
     }
     
+    @objc func setEnableInstrumentation(_ enableInstrumentation: Bool) {
+        self.enableInstrumentation = enableInstrumentation
+    }
+    
     override func layoutSubviews() {
         fixLayout()
         super.layoutSubviews()
+        
+        print("Scroll offset JS: \(scrollOffset)")
+        
+        if enableInstrumentation {
+            // bruh
+            if let scrollView = superview?.superview?.superview as? UIScrollView {
+                let scrollY = scrollView.contentOffset.y
+                print("Scroll offset Native: \(scrollY)")
+                
+                let blank = computeBlankFromGivenOffset(scrollY)
+                print("Blank offset: \(blank)")
+                
+                BlankAreaEventEmitter.INSTANCE?.onBlankArea(offset: blank) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
+            }
+        }
     }
     
     /*
@@ -50,26 +77,18 @@ import Foundation
      Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on the iOS side.
     */
     private func clearGaps(for cellContainers: [CellContainer]) {
-        var currentMax: CGFloat = 0
+        var maxBound: CGFloat = 0
+        var minBound: CGFloat = CGFloat(Int.max)
         
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
             let nextCellContainer = cellContainers[index + 1]
             guard isWithinBounds(cellContainer) else { return }
-            if !horizontal {
-                currentMax = max(currentMax, cellContainer.frame.maxY)
-                if cellContainer.frame.minX < nextCellContainer.frame.minX {
-                    if cellContainer.frame.maxX != nextCellContainer.frame.minX {
-                        nextCellContainer.frame.origin.x = cellContainer.frame.maxX
-                    }
-                    if cellContainer.frame.minY != nextCellContainer.frame.minY {
-                        nextCellContainer.frame.origin.y = cellContainer.frame.minY
-                    }
-                } else {
-                    nextCellContainer.frame.origin.y = currentMax
-                }
-            } else {
-                currentMax = max(currentMax, cellContainer.frame.maxX)
+            
+            if horizontal {
+                maxBound = max(maxBound, cellContainer.frame.maxX)
+                minBound = min(minBound, cellContainer.frame.minX)
+                
                 if cellContainer.frame.minY < nextCellContainer.frame.minY {
                     if cellContainer.frame.maxY != nextCellContainer.frame.minY {
                         nextCellContainer.frame.origin.y = cellContainer.frame.maxY
@@ -78,22 +97,53 @@ import Foundation
                         nextCellContainer.frame.origin.x = cellContainer.frame.minX
                     }
                 } else {
-                    nextCellContainer.frame.origin.x = currentMax
+                    nextCellContainer.frame.origin.x = maxBound
+                }
+            } else {
+                maxBound = max(maxBound, cellContainer.frame.maxY)
+                minBound = min(minBound, cellContainer.frame.minY)
+                
+                if cellContainer.frame.minX < nextCellContainer.frame.minX {
+                    if cellContainer.frame.maxX != nextCellContainer.frame.minX {
+                        nextCellContainer.frame.origin.x = cellContainer.frame.maxX
+                    }
+                    if cellContainer.frame.minY != nextCellContainer.frame.minY {
+                        nextCellContainer.frame.origin.y = cellContainer.frame.minY
+                    }
+                } else {
+                    nextCellContainer.frame.origin.y = maxBound
                 }
             }
         }
+        
+        lastMaxBound = maxBound
+        lastMinBound = minBound
+    }
+    
+    func computeBlankFromGivenOffset(_ actualScrollOffset: CGFloat) -> CGFloat {
+        blankOffsetTop = lastMinBound - actualScrollOffset
+        blankOffsetBottom = actualScrollOffset + windowSize - renderAheadOffset - lastMaxBound
+        
+        return max(blankOffsetTop, blankOffsetBottom) // one of the values is negative, we look for the positive one
     }
     
     /*
      It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
     */
     private func isWithinBounds(_ cellContainer: CellContainer) -> Bool {
-        if !horizontal {
-            return (cellContainer.frame.minY >= (scrollOffset - renderAheadOffset) || cellContainer.frame.maxY >= (scrollOffset - renderAheadOffset)) &&
-            (cellContainer.frame.minY <= scrollOffset + windowSize || cellContainer.frame.maxY <= scrollOffset + windowSize)
+        let boundsStart = scrollOffset - renderAheadOffset
+        let boundsEnd = scrollOffset + windowSize
+        let cellFrame = cellContainer.frame
+        
+        print("Scroll offset: \(scrollOffset), cellFrame: \(frame)")
+        var isWithinBounds = false
+        if horizontal {
+            isWithinBounds = (cellFrame.minX >= boundsStart || cellFrame.maxX >= boundsStart) && (cellFrame.minX <= boundsEnd || cellFrame.maxX <= boundsEnd)
         } else {
-            return (cellContainer.frame.minX >= (scrollOffset - renderAheadOffset) || cellContainer.frame.maxX >= (scrollOffset - renderAheadOffset)) &&
-            (cellContainer.frame.minX <= scrollOffset + windowSize || cellContainer.frame.maxX <= scrollOffset + windowSize)
+            isWithinBounds = (cellFrame.minY >= boundsStart || cellFrame.maxY >= boundsStart) && (cellFrame.minY <= boundsEnd || cellFrame.maxY <= boundsEnd)
         }
+        
+        print("isWithinBounds: \(isWithinBounds)")
+        return isWithinBounds
     }
 }
