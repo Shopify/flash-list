@@ -5,6 +5,10 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.views.view.ReactViewGroup
 import com.facebook.react.views.view.ReactViewManager
+import com.facebook.react.common.MapBuilder
+
+
+
 
 /** ViewManager for AutoLayoutView - Container for all RecyclerListView children. Automatically removes all gaps and overlaps for GridLayouts with flexible spans.
  * Note: This cannot work for masonry layouts i.e, pinterest like layout */
@@ -21,6 +25,13 @@ class AutoLayoutViewManager: ReactViewManager() {
 
     override fun createViewInstance(context: ThemedReactContext): ReactViewGroup {
         return AutoLayoutView(context)
+    }
+
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
+        return MapBuilder.builder<String, Any>().put(
+                "instrumentation",
+                MapBuilder.of("registrationName", "onReceiveInstrumentation")
+        ).build()
     }
 
     @ReactProp(name = "horizontal")
@@ -40,5 +51,9 @@ class AutoLayoutViewManager: ReactViewManager() {
     @ReactProp(name = "renderAheadOffset")
     fun setRenderAheadOffset(view: AutoLayoutView, renderOffset: Int) {
         view.alShadow.renderOffset = renderOffset
+    }
+    @ReactProp(name = "enableInstrumentation")
+    fun setEnableInstrumentation(view: AutoLayoutView, enableInstrumentation: Boolean) {
+        view.enableInstrumentation = enableInstrumentation
     }
 }

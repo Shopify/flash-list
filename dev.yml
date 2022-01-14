@@ -1,0 +1,45 @@
+name: flatlistpro
+
+type:
+  - android
+  - ios
+
+up:
+  - ruby: 3.0.3
+  - bundler
+  - node:
+      yarn: true
+      version: v16.13.0
+      packages:
+        - ./
+  - android:
+      emulators:
+        - device: Nexus 9
+          name: React-Native-Tablet
+          android_version: android-29
+          abi: google_apis;x86_64
+        - device: pixel
+          name: React-Native-Phone
+          android_version: android-29
+          abi: google_apis;x86_64
+      packages:
+        - cmdline-tools;latest
+        - emulator
+        - platform-tools
+        - build-tools;29.0.2
+        - platforms;android-29
+        - extras;android;m2repository
+        - extras;google;m2repository
+        - system-images;android-29;google_apis;x86_64
+  - gradle # This task pulls and stores the token locally.
+  - custom:
+      name: Install cocoapods dependencies
+      met?: cd ios && bundle exec pod check --ignore-dev-pods
+      meet: cd ios && bundle exec pod install
+commands:
+  run-ios:
+    aliases: [ri]
+    run: yarn react-native run-ios
+  run-android:
+    aliases: [ra]
+    run: yarn react-native run-android
