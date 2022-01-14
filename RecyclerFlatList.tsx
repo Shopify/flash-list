@@ -49,11 +49,9 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     this.width = Dimensions.get("window").width;
     this.keyExtractor = this.props.keyExtractor ?? this.defaultKeyExtractor;
 
-    if (!this.props.horizontal) {
-      this.layoutProvider = this.verticalProvider();
-    } else {
-      this.layoutProvider = this.horizontalProvider();
-    }
+    this.layoutProvider = this.props.horizontal
+      ? this.horizontalProvider()
+      : this.verticalProvider();
 
     this.dataProvider = new DataProvider((r1, r2) => {
       // @ts-ignore
