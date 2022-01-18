@@ -10,6 +10,13 @@ import { RecyclerFlatList } from "@shopify/recycler-flat-list";
  * To test out just copy this component and render in you root component
  */
 export default class List extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      refreshing: false
+    }
+  }
+
   _generateArray(n) {
     let arr = new Array(n);
     for (let i = 0; i < n; i++) {
@@ -21,6 +28,13 @@ export default class List extends React.Component {
   render() {
     return (
       <RecyclerFlatList
+        refreshing={this.state.refreshing}
+        onRefresh={() => {
+          this.setState({ refreshing: true });
+          setTimeout(() => {
+            this.setState({ refreshing: false });
+          }, 2000);
+        }}
         keyExtractor={(item) => {
           return item;
         }}
