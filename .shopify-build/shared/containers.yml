@@ -1,0 +1,10 @@
+containers:
+  default:
+    docker: circleci/node:14.17.5
+
+  android:
+    docker: gcr.io/shopify-docker-images/apps/production/android-docker:5.1.0
+    docker_pull_timeout: 480
+
+  macos:
+    anka: macos-xcode13

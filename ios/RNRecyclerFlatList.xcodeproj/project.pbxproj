@@ -1,0 +1,3 @@
+// This file is necessary because of the `react-native` CLI autolinking feature that adds a module based on whether this file exists
+// as per [this](https://github.com/react-native-community/cli/issues/1054) issue.
+// To edit a native iOS module, you should use the Xcode project in the `fixture` folder.
