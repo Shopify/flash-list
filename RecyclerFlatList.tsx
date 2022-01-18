@@ -139,6 +139,10 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     };
   }
 
+  forceNonDeterministicRendering() {
+    return this.props.getItemLayout === undefined && this.props.getItemHeight === undefined
+  }
+
   render() {
     if (this.data.length == 0) {
       return this.props.ListEmptyComponent;
@@ -159,7 +163,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
           canChangeSize={true}
           isHorizontal={this.props.horizontal}
           scrollViewProps={{ style }}
-          forceNonDeterministicRendering={true}
+          forceNonDeterministicRendering={this.forceNonDeterministicRendering()}
           renderItemContainer={this.renderItemContainer}
           renderContentContainer={this.renderContainer}
         />
