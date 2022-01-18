@@ -32,7 +32,9 @@ export default class List extends React.Component {
             </View>
           );
         }}
-        getItemLength={(data, index) => 100}
+        getItemLayout={(data, index) => (
+          { length: 100, offset: 0, index: index }
+        )}
         data={this._generateArray(3000)}
       />
     );

@@ -34,10 +34,6 @@ export interface RecyclerFlatListProps extends ViewProps {
     data: Array<any> | null | undefined,
     index: number,
   ) => { length: number; offset: number; index: number }) | undefined;
-  getItemLength?: ((
-    data: Array<any> | null | undefined,
-    index: number,
-  ) => number) | undefined;
 }
 
 class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
@@ -67,7 +63,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     this._rowRenderer = this.rowRenderer.bind(this);
 
     if (this.props.getItemLayout) {
-      console.log("⚠️ WARNING: getItemLayout offset and index are ignored in RecyclerFlatList. The API only contains these attributes to be matching 1:1 FlatList API. This won't affect the layout neither the performance. If you want to get rid of this warning, consider using getItemLength prop instead.");
+      console.log("⚠️ WARNING: getItemLayout offset and index are ignored in RecyclerFlatList. The API only contains these attributes to be matching 1:1 FlatList API. This won't affect the layout neither the performance.");
     }
   }
 
@@ -83,7 +79,6 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
   };
 
   heightForIndex(data, props, index) {
-    if (props.getItemLength) return props.getItemLength(data, index);
     if (props.getItemLayout) return props.getItemLayout(data, index).length;
     return 44;
   }
@@ -138,9 +133,6 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     };
   }
 
-  forceNonDeterministicRendering() {
-    return this.props.getItemLayout === undefined && this.props.getItemLength === undefined
-  }
 
   render() {
     if (this.data.length == 0) {
@@ -162,7 +154,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
           canChangeSize={true}
           isHorizontal={this.props.horizontal}
           scrollViewProps={{ style }}
-          forceNonDeterministicRendering={this.forceNonDeterministicRendering()}
+          forceNonDeterministicRendering={true}
           renderItemContainer={this.renderItemContainer}
           renderContentContainer={this.renderContainer}
         />
