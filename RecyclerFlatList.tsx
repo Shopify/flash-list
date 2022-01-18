@@ -6,7 +6,6 @@ import {
   ViewProps,
   ViewStyle,
   PixelRatio,
-  FlatList,
 } from "react-native";
 import {
   DataProvider,
@@ -230,11 +229,11 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     this.rlvRef = ref
   }
 
-  scrollToEnd(params?: { animated?: boolean | null | undefined }) {
+  public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(params?.animated);
   }
 
-  scrollToIndex(params: {
+  public scrollToIndex(params: {
     animated?: boolean | null | undefined;
     index: number;
     viewOffset?: number | undefined;
@@ -244,11 +243,11 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     this.rlvRef?.scrollToIndex(params.index, params.animated);
   }
 
-  scrollToItem(params: { animated?: boolean | null | undefined; item: any; viewPosition?: number | undefined }) {
+  public scrollToItem(params: { animated?: boolean | null | undefined; item: any; viewPosition?: number | undefined }) {
     this.rlvRef?.scrollToItem(params.item, params.animated);
   }
 
-  scrollToOffset(params: { animated?: boolean | null | undefined; offset: number }) {
+  public scrollToOffset(params: { animated?: boolean | null | undefined; offset: number }) {
     const x = this.props.horizontal ? params.offset : 0;
     const y = this.props.horizontal ? 0 : params.offset;
     this.rlvRef?.scrollToOffset(x, y, params.animated);
