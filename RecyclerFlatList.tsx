@@ -6,12 +6,14 @@ import {
   ViewProps,
   ViewStyle,
   PixelRatio,
+  FlatList,
 } from "react-native";
 import {
   DataProvider,
   GridLayoutProvider,
   LayoutProvider,
   RecyclerListView,
+  RecyclerListViewProps,
 } from "recyclerlistview";
 import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
@@ -41,6 +43,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
   private dataProvider;
   private data;
   private keyExtractor;
+  private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
 
   constructor(props) {
     super(props);
@@ -137,6 +140,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
 
       return (
         <RecyclerListView
+          ref={this.recyclerRef}
           layoutProvider={this.layoutProvider}
           style={style as Object}
           dataProvider={this.dataProvider.cloneWithRows(this.data)}
@@ -220,6 +224,34 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
         </>
       </View>
     );
+  }
+
+  private recyclerRef = (ref: any) => {
+    this.rlvRef = ref
+  }
+
+  scrollToEnd(params?: { animated?: boolean | null | undefined }) {
+    this.rlvRef?.scrollToEnd(params?.animated);
+  }
+
+  scrollToIndex(params: {
+    animated?: boolean | null | undefined;
+    index: number;
+    viewOffset?: number | undefined;
+    viewPosition?: number | undefined;
+  }) {
+    //no support for view offset/position
+    this.rlvRef?.scrollToIndex(params.index, params.animated);
+  }
+
+  scrollToItem(params: { animated?: boolean | null | undefined; item: any; viewPosition?: number | undefined }) {
+    this.rlvRef?.scrollToItem(params.item, params.animated);
+  }
+
+  scrollToOffset(params: { animated?: boolean | null | undefined; offset: number }) {
+    const x = this.props.horizontal ? params.offset : 0;
+    const y = this.props.horizontal ? 0 : params.offset;
+    this.rlvRef?.scrollToOffset(x, y, params.animated);
   }
 }
 
