@@ -19,7 +19,6 @@ import WrapperComponent from "./WrapperComponent";
 
 export interface RecyclerFlatListProps extends ViewProps {
   data: [any];
-  estimatedHeight?: number
   renderItem: any;
   keyExtractor?: (data) => string;
   ItemSeparatorComponent: React.ComponentType<any> | null | undefined;
