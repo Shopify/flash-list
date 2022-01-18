@@ -33,10 +33,12 @@ export interface RecyclerFlatListProps extends ViewProps {
   horizontal: boolean;
 }
 
-class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
-  width: number;
+export interface RecyclerFlatListState {
   numColumns: number;
-  private layoutProvider: LayoutProvider;
+  layoutProvider: LayoutProvider;
+}
+
+class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, RecyclerFlatListState> {
   private _rowRenderer;
   private dataProvider;
   private data;
@@ -45,20 +47,49 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
   constructor(props) {
     super(props);
     this.data = this.props.data;
-    this.numColumns = this.props.numColumns || 1;
-    this.width = Dimensions.get("window").width;
     this.keyExtractor = this.props.keyExtractor ?? this.defaultKeyExtractor;
-
-    this.layoutProvider = this.props.horizontal
-      ? this.horizontalProvider()
-      : this.verticalProvider();
 
     this.dataProvider = new DataProvider((r1, r2) => {
       // @ts-ignore
       return this.keyExtractor(r1) !== this.keyExtractor(r2);
     });
     this._rowRenderer = this.rowRenderer.bind(this);
+
+    this.state = RecyclerFlatList.getInitialState(props);
   }
+
+  //Some of the state variables need to update when props change
+  static getDerivedStateFromProps(nextProps: RecyclerFlatListProps, prevState: RecyclerFlatListState): RecyclerFlatListState {
+    const newState = { ...prevState }
+    if (newState.numColumns !== nextProps.numColumns) {
+      newState.numColumns = nextProps.numColumns > 0 ? nextProps.numColumns : 1;
+      newState.layoutProvider = RecyclerFlatList.getLayoutProvider(newState.numColumns, () => nextProps.estimatedHeight);
+    }
+    return newState;
+  }
+
+  static getInitialState(props: RecyclerFlatListProps): RecyclerFlatListState {
+    const numColumns = props.numColumns > 0 ? props.numColumns : 1;
+    const sizeProvider = () => props.estimatedHeight;
+    return { numColumns, layoutProvider: RecyclerFlatList.getLayoutProvider(numColumns, sizeProvider) };
+  }
+
+  //Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
+  static getLayoutProvider(numColumns: number, sizeProvider: (index) => number) {
+    return new GridLayoutProvider(
+      numColumns,
+      (index) => {
+        return 0;
+      },
+      (index) => {
+        return 1;
+      },
+      (index) => {
+        return sizeProvider(index);
+      }
+    );
+  }
+
 
   // Taken from here: https://github.com/facebook/react-native/blob/main/Libraries/Lists/VirtualizeUtils.js#L233
   defaultKeyExtractor = (item: any, index: number) => {
@@ -71,38 +102,8 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     return String(index);
   };
 
-  horizontalProvider() {
-    return new GridLayoutProvider(
-      1,
-      (index) => {
-        return 0;
-      },
-      (index) => {
-        return 1;
-      },
-      (index) => {
-        return 100;
-      }
-    );
-  }
-  verticalProvider() {
-    return new LayoutProvider(
-      (index) => {
-        return 0;
-      },
-      (type, dim) => {
-        switch (type) {
-          default:
-            dim.width = this.width / this.numColumns;
-            if (this.props.estimatedHeight) {
-              dim.height = this.props.estimatedHeight;
-            } else {
-              dim.height = 44;
-            }
-        }
-      }
-    );
-  }
+
+
 
   parseData(data) {
     return data.map(function (elem) {
@@ -137,7 +138,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
 
       return (
         <RecyclerListView
-          layoutProvider={this.layoutProvider}
+          layoutProvider={this.state.layoutProvider}
           style={style as Object}
           dataProvider={this.dataProvider.cloneWithRows(this.data)}
           rowRenderer={this._rowRenderer}
