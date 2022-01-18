@@ -25,10 +25,10 @@ export default class List extends React.Component {
           return item;
         }}
         renderItem={(item) => {
-          const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
+          const backgroundColor = item.item % 2 === 0 ? "#00a1f1" : "#ffbb00";
           return (
             <View style={{ ...styles.container, backgroundColor }}>
-              <Text>Cell Id: {item}</Text>
+              <Text>Cell Id: {item.item}</Text>
             </View>
           );
         }}

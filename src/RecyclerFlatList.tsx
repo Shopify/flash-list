@@ -32,9 +32,15 @@ export interface RecyclerFlatListProps extends ViewProps {
   ListFooterComponent: React.ComponentType<any> | null | undefined;
   ListFooterComponentStyle?: StyleProp<ViewStyle> | undefined | null;
   horizontal: boolean;
+  onEndReached?: () => void;
+  onEndReachedThreshold?: number | null | undefined;
 }
 
-class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
+export interface RecyclerFlatListState {
+  dataProvider: DataProvider
+}
+
+class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, RecyclerFlatListState> {
   width: number;
   numColumns: number;
   private layoutProvider: LayoutProvider;
@@ -46,7 +52,10 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
 
   constructor(props) {
     super(props);
-    this.data = this.props.data;
+    this.setup();
+  }
+
+  setup() {
     this.numColumns = this.props.numColumns || 1;
     this.width = Dimensions.get("window").width;
     this.keyExtractor = this.props.keyExtractor ?? this.defaultKeyExtractor;
@@ -55,12 +64,25 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
       ? this.horizontalProvider()
       : this.verticalProvider();
 
+    this._rowRenderer = this.rowRenderer.bind(this);
+
+    this.data = this.parseData(this.props.data);
     this.dataProvider = new DataProvider((r1, r2) => {
       // @ts-ignore
       return this.keyExtractor(r1) !== this.keyExtractor(r2);
     });
-    this._rowRenderer = this.rowRenderer.bind(this);
+    this.state = {
+      dataProvider: this.dataProvider.cloneWithRows(this.data)
+    }
   }
+
+  updateDataProvider() {
+    this.data = this.parseData(this.props.data);
+    this.setState({
+      dataProvider: this.dataProvider.cloneWithRows(this.data)
+    })
+  }
+
 
   // Taken from here: https://github.com/facebook/react-native/blob/main/Libraries/Lists/VirtualizeUtils.js#L233
   defaultKeyExtractor = (item: any, index: number) => {
@@ -72,6 +94,11 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     }
     return String(index);
   };
+
+  onEndReached = () => {
+    this.props.onEndReached?.()
+    this.updateDataProvider()
+  }
 
   horizontalProvider() {
     return new GridLayoutProvider(
@@ -142,7 +169,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
           ref={this.recyclerRef}
           layoutProvider={this.layoutProvider}
           style={style as Object}
-          dataProvider={this.dataProvider.cloneWithRows(this.data)}
+          dataProvider={this.state.dataProvider}
           rowRenderer={this._rowRenderer}
           renderFooter={this.footerComponent(this.props)}
           canChangeSize={true}
@@ -151,6 +178,8 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
           forceNonDeterministicRendering={true}
           renderItemContainer={this.renderItemContainer}
           renderContentContainer={this.renderContainer}
+          onEndReached={this.onEndReached}
+          onEndReachedThreshold={this.props.onEndReachedThreshold}
         />
       );
     }
