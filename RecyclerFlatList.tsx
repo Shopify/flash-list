@@ -19,7 +19,7 @@ import WrapperComponent from "./WrapperComponent";
 
 export interface RecyclerFlatListProps extends ViewProps {
   data: [any];
-  estimatedHeight?: number;
+  estimatedHeight?: number
   renderItem: any;
   keyExtractor?: (data) => string;
   ItemSeparatorComponent: React.ComponentType<any> | null | undefined;
@@ -31,6 +31,14 @@ export interface RecyclerFlatListProps extends ViewProps {
   ListFooterComponent: React.ComponentType<any> | null | undefined;
   ListFooterComponentStyle?: StyleProp<ViewStyle> | undefined | null;
   horizontal: boolean;
+  getItemLayout?: ((
+    data: Array<any> | null | undefined,
+    index: number,
+  ) => { length: number; offset: number; index: number }) | undefined;
+  getItemHeight?: ((
+    data: Array<any> | null | undefined,
+    index: number,
+  ) => number) | undefined;
 }
 
 class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
@@ -58,6 +66,10 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
       return this.keyExtractor(r1) !== this.keyExtractor(r2);
     });
     this._rowRenderer = this.rowRenderer.bind(this);
+
+    if (this.props.getItemLayout) {
+      console.log("⚠️ WARNING: getItemLayout offset and index are ignored in RecyclerFlatList. The API only contains these attributes to be matching 1:1 FlatList API. This won't affect the layout neither the performance. If you want to get rid of this warning, consider using getItemHeight prop instead.");
+    }
   }
 
   // Taken from here: https://github.com/facebook/react-native/blob/main/Libraries/Lists/VirtualizeUtils.js#L233
@@ -71,6 +83,12 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     return String(index);
   };
 
+  heightForIndex(data, props, index) {
+    if (props.getItemHeight) return props.getItemHeight(data, index);
+    if (props.getItemLayout) return props.getItemLayout(data, index).length;
+    return 44;
+  }
+
   horizontalProvider() {
     return new GridLayoutProvider(
       1,
@@ -81,7 +99,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
         return 1;
       },
       (index) => {
-        return 100;
+        return this.heightForIndex(this.data, this.props, index);
       }
     );
   }
@@ -90,15 +108,11 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
       (index) => {
         return 0;
       },
-      (type, dim) => {
+      (type, dim, index) => {
         switch (type) {
           default:
             dim.width = this.width / this.numColumns;
-            if (this.props.estimatedHeight) {
-              dim.height = this.props.estimatedHeight;
-            } else {
-              dim.height = 44;
-            }
+            dim.height = this.heightForIndex(this.data, this.props, index);
         }
       }
     );
