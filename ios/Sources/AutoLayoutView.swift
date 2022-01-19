@@ -12,9 +12,6 @@ import UIKit
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
     private var enableInstrumentation = false
-    
-    var blankOffsetTop: CGFloat = 0 // Tracks blank area from the top
-    var blankOffsetBottom: CGFloat = 0 // Tracks blank area from the bottom
 
     private var lastMaxBound: CGFloat = 0 // Tracks where the last pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0 // Tracks where first pixel is drawn in the visible window
@@ -43,18 +40,20 @@ import UIKit
         fixLayout()
         super.layoutSubviews()
         
-        print("Scroll offset JS: \(scrollOffset)")
-        
         if enableInstrumentation {
-            // bruh
+            // Unfortunately, for now, we need to assume that the view's superview's superview is a scroll view
             if let scrollView = superview?.superview?.superview as? UIScrollView {
                 let scrollY = scrollView.contentOffset.y
                 print("Scroll offset Native: \(scrollY)")
                 
-                let blank = computeBlankFromGivenOffset(scrollY)
-                print("Blank offset: \(blank)")
+                let blankOffset = computeBlankFromGivenOffset(scrollY,
+                                                              filledBoundMin: lastMinBound,
+                                                              filledBoundMax: lastMaxBound,
+                                                              renderAheadOffset: renderAheadOffset,
+                                                              windowSize: windowSize)
+                print("Blank offset: \(blankOffset)")
                 
-                BlankAreaEventEmitter.INSTANCE?.onBlankArea(offset: blank) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
+                BlankAreaEventEmitter.INSTANCE?.onBlankArea(offset: blankOffset) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
             }
         }
     }
@@ -82,7 +81,14 @@ import UIKit
         
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
-            let nextCellContainer = cellContainers[index + 1]
+            let cellTop = cellContainer.frame.minY
+            let cellBottom = cellContainer.frame.maxY
+            let cellLeft = cellContainer.frame.minX
+            let cellRight = cellContainer.frame.maxX
+            
+            let nextCell = cellContainers[index + 1]
+            let nextCellTop = nextCell.frame.minY
+            let nextCellLeft = nextCell.frame.minX
             
             guard isWithinBounds(cellContainer,
                                  scrollOffset: scrollOffset,
@@ -92,32 +98,32 @@ import UIKit
             }
             
             if horizontal {
-                maxBound = max(maxBound, cellContainer.frame.maxX)
-                minBound = min(minBound, cellContainer.frame.minX)
+                maxBound = max(maxBound, cellRight)
+                minBound = min(minBound, cellLeft)
                 
-                if cellContainer.frame.minY < nextCellContainer.frame.minY {
-                    if cellContainer.frame.maxY != nextCellContainer.frame.minY {
-                        nextCellContainer.frame.origin.y = cellContainer.frame.maxY
+                if cellTop < nextCellTop {
+                    if cellBottom != nextCellTop {
+                        nextCell.frame.origin.y = cellBottom
                     }
-                    if cellContainer.frame.minX != nextCellContainer.frame.minX {
-                        nextCellContainer.frame.origin.x = cellContainer.frame.minX
+                    if cellLeft != nextCellLeft {
+                        nextCell.frame.origin.x = cellLeft
                     }
                 } else {
-                    nextCellContainer.frame.origin.x = maxBound
+                    nextCell.frame.origin.x = maxBound
                 }
             } else {
-                maxBound = max(maxBound, cellContainer.frame.maxY)
-                minBound = min(minBound, cellContainer.frame.minY)
+                maxBound = max(maxBound, cellBottom)
+                minBound = min(minBound, cellTop)
                 
-                if cellContainer.frame.minX < nextCellContainer.frame.minX {
-                    if cellContainer.frame.maxX != nextCellContainer.frame.minX {
-                        nextCellContainer.frame.origin.x = cellContainer.frame.maxX
+                if cellLeft < nextCellLeft {
+                    if cellRight != nextCellLeft {
+                        nextCell.frame.origin.x = cellRight
                     }
-                    if cellContainer.frame.minY != nextCellContainer.frame.minY {
-                        nextCellContainer.frame.origin.y = cellContainer.frame.minY
+                    if cellTop != nextCellTop {
+                        nextCell.frame.origin.y = cellTop
                     }
                 } else {
-                    nextCellContainer.frame.origin.y = maxBound
+                    nextCell.frame.origin.y = maxBound
                 }
             }
         }
@@ -126,11 +132,16 @@ import UIKit
         lastMinBound = minBound
     }
     
-    func computeBlankFromGivenOffset(_ actualScrollOffset: CGFloat) -> CGFloat {
-        blankOffsetTop = lastMinBound - actualScrollOffset
-        blankOffsetBottom = actualScrollOffset + windowSize - renderAheadOffset - lastMaxBound
+    internal func computeBlankFromGivenOffset(_ actualScrollOffset: CGFloat,
+                                              filledBoundMin: CGFloat,
+                                              filledBoundMax: CGFloat,
+                                              renderAheadOffset: CGFloat,
+                                              windowSize: CGFloat) -> CGFloat {
+        let blankOffsetStart = filledBoundMin - actualScrollOffset
         
-        return max(blankOffsetTop, blankOffsetBottom) // one of the values is negative, we look for the positive one
+        let blankOffsetEnd = actualScrollOffset + windowSize - filledBoundMax
+         
+        return max(blankOffsetStart, blankOffsetEnd) // one of the values is negative, we look for the positive one
     }
     
     /*
@@ -146,10 +157,8 @@ import UIKit
         let cellFrame = cellContainer.frame
         
         if isHorizontal {
-            print("Horizontal")
             return (cellFrame.minX >= boundsStart || cellFrame.maxX >= boundsStart) && (cellFrame.minX <= boundsEnd || cellFrame.maxX <= boundsEnd)
         } else {
-            print("Vertical")
             return (cellFrame.minY >= boundsStart || cellFrame.maxY >= boundsStart) && (cellFrame.minY <= boundsEnd || cellFrame.maxY <= boundsEnd)
         }
     }

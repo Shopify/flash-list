@@ -187,11 +187,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return (
       <AutoLayoutView
         {...props}
-        scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
-        windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
-        renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(
-          props.renderAheadOffset
-        )}
+        scrollOffset={props.scrollOffset}
+        windowSize={props.windowSize}
+        renderAheadOffset={props.renderAheadOffset}
         enableInstrumentation={true}
       >
         {children}
