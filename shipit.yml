@@ -1,0 +1,11 @@
+ci:
+  require:
+    - buildkite/recycler-flat-list
+
+dependencies:
+  override:
+    - yarn install
+
+deploy:
+  pre:
+    - yarn run build

@@ -1,42 +1,58 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'com.android.library'
 
-buildscript {
-    ext {
-        buildToolsVersion = "30.0.2"
-        minSdkVersion = 21
-        compileSdkVersion = 30
-        targetSdkVersion = 30
-        ndkVersion = "21.4.7075529"
-        kotlin_version = "1.4.10"
+apply plugin: 'kotlin-android'
 
+def _ext = rootProject.ext
+
+def _reactNativeVersion = _ext.has('reactNative') ? _ext.reactNative : '+'
+def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 30
+def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '30.0.2'
+def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 21
+def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 30
+def _kotlinVersion = _ext.has('kotlinVersion') ? _ext.kotlinVersion : '1.5.30'
+def _junitVersion = _ext.has('junitVersion') ? _ext.junitVersion : '4.13.2'
+def _mockitoVersion = _ext.has('mockitoVersion') ? _ext.mockitoVersion : '3.2.0'
+def _androidTestRunnerVersion = _ext.has('androidTestRunnerVersion') ? _ext.androidTestRunnerVersion : '1.1.0'
+
+android {
+    compileSdkVersion _compileSdkVersion
+    buildToolsVersion _buildToolsVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-    repositories {
-        google()
-        mavenCentral()
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        debug.java.srcDirs += 'src/debug/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
-    dependencies {
-        classpath("com.android.tools.build:gradle:4.2.2")
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+
+    defaultConfig {
+        minSdkVersion _minSdkVersion
+        targetSdkVersion _targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    testOptions {
+      unitTests.returnDefaultValues = true
     }
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-        mavenLocal()
-        maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url("$rootDir/../node_modules/react-native/android")
-        }
-        maven {
-            // Android JSC is installed from npm
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
-
-        google()
-        maven { url 'https://www.jitpack.io' }
-    }
+dependencies {
+    compileOnly "com.facebook.react:react-native:${_reactNativeVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${_kotlinVersion}"
+    testImplementation "junit:junit:${_junitVersion}"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:${_mockitoVersion}"
+    testImplementation "org.mockito:mockito-inline:${_mockitoVersion}"
+    androidTestImplementation("androidx.test:runner:${_androidTestRunnerVersion}")
+    androidTestImplementation("androidx.test:rules:${_androidTestRunnerVersion}")
 }
