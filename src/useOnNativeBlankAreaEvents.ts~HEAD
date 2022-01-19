@@ -2,16 +2,22 @@ import { useCallback, useEffect } from "react";
 import { NativeEventEmitter, NativeModules, Platform } from "react-native";
 
 export interface BlankAreaEvent {
-  offset: Number;
+  offsetStart: Number;
+  offsetEnd: Number;
+  blankArea: Number;
 }
 
-export const BLANK_AREA_EVENT_NAME =
-  "@shopify/recyclerflatlist/emit-blank-area";
+export const BLANK_AREA_EVENT_NAME = "blankAreaEvent";
 
-const useOnNativeBlankAreaEvents = () => {
-  const onBlankAreaEvent = useCallback(({ offset }: BlankAreaEvent) => {
-    console.log(`Blank area: ${offset}`);
-  }, []);
+const useOnNativeBlankAreaEvents = (
+  callback: (offsetStart: Number, offsetEnd: Number, blankArea: Number) => {}
+) => {
+  const onBlankAreaEvent = useCallback(
+    ({ offsetStart, offsetEnd, blankArea }: BlankAreaEvent) => {
+      callback(offsetStart, offsetEnd, blankArea);
+    },
+    [callback]
+  );
 
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(
