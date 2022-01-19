@@ -139,6 +139,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
 
       return (
         <RecyclerListView
+          ref={this.recyclerRef}
           layoutProvider={this.state.layoutProvider}
           style={style as Object}
           dataProvider={this.dataProvider.cloneWithRows(this.data)}
