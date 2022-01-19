@@ -4,6 +4,9 @@
   "keywords": [
     "react-native"
   ],
+  "publishConfig": {
+    "access": "restricted"
+  },
   "description": "RecyclerFlatList is a more performant FlatList replacement",
   "author": "shopify",
   "license": "MIT",
