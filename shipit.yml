@@ -9,4 +9,5 @@ dependencies:
 deploy:
   pre:
     - yarn run build
-  # TODO: Deploy package on the internal shopify registry
+  override:
+    - yarn run publish
