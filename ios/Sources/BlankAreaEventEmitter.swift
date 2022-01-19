@@ -2,7 +2,7 @@ import Foundation
 
 @objc(BlankAreaEventEmitter)
 class BlankAreaEventEmitter: RCTEventEmitter {
-    private static let blankAreaEventName = "blankAreaEvent"
+    private static let BLANK_AREA_EVENT_NAME = "@shopify/recyclerflatlist/emit-blank-area"
     private var hasListeners = false
     private(set) static var INSTANCE: BlankAreaEventEmitter? = nil
 
@@ -12,22 +12,17 @@ class BlankAreaEventEmitter: RCTEventEmitter {
     }
 
     @objc override func supportedEvents() -> [String]! {
-        return [BlankAreaEventEmitter.blankAreaEventName]
+        return [BlankAreaEventEmitter.BLANK_AREA_EVENT_NAME]
     }
 
-    func onBlankArea(
-        startOffset: CGFloat,
-        endOffset: CGFloat,
-        blankArea: CGFloat,
-        listSize: CGFloat
-    ) {
-        guard hasListeners else { return }
-        sendEvent(withName: BlankAreaEventEmitter.blankAreaEventName, body: [
-            "blankArea": blankArea,
-            "startOffset": startOffset,
-            "endOffset": endOffset,
-            "listSize": listSize,
-        ])
+    func onBlankArea(offset: CGFloat) {
+        if (hasListeners) {
+            sendEvent(withName: BlankAreaEventEmitter.BLANK_AREA_EVENT_NAME, body: [
+//                "startOffset": String(timestamp),
+//                "endOffset": renderPassName,
+                "offset": offset
+            ])
+        }
     }
 
     @objc override static func requiresMainQueueSetup() -> Bool {
