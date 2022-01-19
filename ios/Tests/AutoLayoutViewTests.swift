@@ -1,15 +1,8 @@
-//
-//  AutoLayoutViewTests.swift
-//  FlatListProTests
-//
-//  Created by Elvira Burchik on 14.01.22.
-//
-
 import XCTest
-@testable import FlatListPro
+@testable import RNRecyclerFlatList
 
 class AutoLayoutViewTests: XCTestCase {
-    var autoLayoutView = AutoLayoutView()
+    let autoLayoutView = AutoLayoutView()
     let testCell = CellContainer()
     let cellHeight: CGFloat = 50
     let windowSize: CGFloat = 500
@@ -105,5 +98,7 @@ class AutoLayoutViewTests: XCTestCase {
                                                      windowSize: windowSize,
                                                      isHorizontal: true))
     }
+    
+    func test_
     
 }
