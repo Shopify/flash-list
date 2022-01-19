@@ -5,6 +5,9 @@ module.exports = {
   dependencies: {
     "@shopify/recycler-flat-list": {
       root,
+      platforms: {
+        ios: null
+      }
     },
   },
 };
