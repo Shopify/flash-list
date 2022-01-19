@@ -99,6 +99,4 @@ class AutoLayoutViewTests: XCTestCase {
                                                      isHorizontal: true))
     }
     
-    func test_
-    
 }
