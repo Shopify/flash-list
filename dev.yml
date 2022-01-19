@@ -12,6 +12,7 @@ up:
       version: v16.13.0
       packages:
         - ./
+        - fixture/
   - android:
       emulators:
         - device: Nexus 9
@@ -34,12 +35,12 @@ up:
   - gradle # This task pulls and stores the token locally.
   - custom:
       name: Install cocoapods dependencies
-      met?: cd ios && bundle exec pod check --ignore-dev-pods
-      meet: cd ios && bundle exec pod install
+      met?: cd fixture/ios && bundle exec pod check --ignore-dev-pods
+      meet: cd fixture/ios && bundle exec pod install
 commands:
   run-ios:
     aliases: [ri]
-    run: yarn react-native run-ios
+    run: cd fixture && yarn react-native run-ios
   run-android:
     aliases: [ra]
-    run: yarn react-native run-android
+    run: cd fixture && yarn react-native run-android
