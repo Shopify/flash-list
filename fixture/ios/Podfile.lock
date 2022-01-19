@@ -347,6 +347,8 @@ PODS:
     - React-Core
   - RNRecyclerFlatList/Tests (0.0.1-alpha.2):
     - React-Core
+  - RNRecyclerFlatList/Tests (0.0.1-alpha.1):
+    - React-Core
   - RNScreens (3.10.2):
     - React-Core
     - React-RCTImage
