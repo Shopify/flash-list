@@ -11,6 +11,7 @@ import {
   GridLayoutProvider,
   LayoutProvider,
   RecyclerListView,
+  RecyclerListViewProps,
 } from "recyclerlistview";
 import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
@@ -42,6 +43,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
   private dataProvider;
   private data;
   private keyExtractor;
+  private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
 
   constructor(props) {
     super(props);
@@ -226,6 +228,34 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
         </>
       </View>
     );
+  }
+
+  private recyclerRef = (ref: any) => {
+    this.rlvRef = ref
+  }
+
+  public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
+    this.rlvRef?.scrollToEnd(!!params?.animated);
+  }
+
+  public scrollToIndex(params: {
+    animated?: boolean | null | undefined;
+    index: number;
+    viewOffset?: number | undefined;
+    viewPosition?: number | undefined;
+  }) {
+    //known issue: no support for view offset/position
+    this.rlvRef?.scrollToIndex(params.index, !!params.animated);
+  }
+
+  public scrollToItem(params: { animated?: boolean | null | undefined; item: any; viewPosition?: number | undefined }) {
+    this.rlvRef?.scrollToItem(params.item, !!params.animated);
+  }
+
+  public scrollToOffset(params: { animated?: boolean | null | undefined; offset: number }) {
+    const x = this.props.horizontal ? params.offset : 0;
+    const y = this.props.horizontal ? 0 : params.offset;
+    this.rlvRef?.scrollToOffset(x, y, !!params.animated);
   }
 }
 
