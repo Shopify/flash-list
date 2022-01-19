@@ -236,7 +236,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
   }
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
-    this.rlvRef?.scrollToEnd(params?.animated);
+    this.rlvRef?.scrollToEnd(!!params?.animated);
   }
 
   public scrollToIndex(params: {
@@ -245,18 +245,18 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps> {
     viewOffset?: number | undefined;
     viewPosition?: number | undefined;
   }) {
-    //no support for view offset/position
-    this.rlvRef?.scrollToIndex(params.index, params.animated);
+    //known issue: no support for view offset/position
+    this.rlvRef?.scrollToIndex(params.index, !!params.animated);
   }
 
   public scrollToItem(params: { animated?: boolean | null | undefined; item: any; viewPosition?: number | undefined }) {
-    this.rlvRef?.scrollToItem(params.item, params.animated);
+    this.rlvRef?.scrollToItem(params.item, !!params.animated);
   }
 
   public scrollToOffset(params: { animated?: boolean | null | undefined; offset: number }) {
     const x = this.props.horizontal ? params.offset : 0;
     const y = this.props.horizontal ? 0 : params.offset;
-    this.rlvRef?.scrollToOffset(x, y, params.animated);
+    this.rlvRef?.scrollToOffset(x, y, !!params.animated);
   }
 }
 
