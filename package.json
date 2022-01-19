@@ -19,8 +19,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "build": "tsc -b",
-    "publish": "node --experimental-json-modules bin/publish.mjs"
+    "build": "tsc -b"
   },
   "peerDependencies": {
     "@react-navigation/native": "^6.0.6",
