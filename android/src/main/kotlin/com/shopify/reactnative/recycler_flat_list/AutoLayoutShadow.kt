@@ -14,13 +14,13 @@ class AutoLayoutShadow {
 
     /** Checks for overlaps or gaps between adjacent items and then applies a correction (Only Grid layouts with varying spans)
      * Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on Android side. Not expecting any major perf issue. */
-    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>) {
+    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>, pixelDensity: Double) {
         var maxBound = 0
         var minBound = Int.MAX_VALUE
         for (i in 0 until sortedItems.size - 1) {
             val cell = sortedItems[i]
             val neighbour = sortedItems[i + 1]
-            if (isWithinBounds(cell)) {
+            if (isWithinBounds(cell, pixelDensity)) {
                 if (!horizontal) {
                     maxBound = kotlin.math.max(maxBound, cell.bottom);
                     minBound = kotlin.math.min(minBound, cell.top);
@@ -62,21 +62,28 @@ class AutoLayoutShadow {
 
     /** Offset provided by react can be one frame behind the real one, it's important that this method is called with offset taken directly from
      * scrollview object */
-    fun computeBlankFromGivenOffset(actualScrollOffset: Int): Int {
+    fun computeBlankFromGivenOffset(actualScrollOffset: Int, pixelDensity: Double): Int {
+        val windowSizePixel = windowSize * pixelDensity
+        val renderOffsetPixel = renderOffset * pixelDensity
+
         blankOffsetAtStart = lastMinBound - actualScrollOffset
-        blankOffsetAtEnd = actualScrollOffset + windowSize - renderOffset - lastMaxBound
+        blankOffsetAtEnd = actualScrollOffset + windowSizePixel - renderOffsetPixel - lastMaxBound
         return kotlin.math.max(blankOffsetAtStart, blankOffsetAtEnd)
     }
 
     /** It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between
      * unused items will cause algorithm to fail.*/
-    private fun isWithinBounds(cell: CellContainer): Boolean {
+    private fun isWithinBounds(cell: CellContainer, pixelDensity: Double): Boolean {
+        val scrollOffsetPixel = scrollOffset * pixelDensity
+        val windowSizePixel = windowSize * pixelDensity
+        val renderOffsetPixel = renderOffset * pixelDensity
+
         return if (!horizontal) {
-            (cell.top >= (scrollOffset - renderOffset) || cell.bottom >= (scrollOffset - renderOffset)) &&
-                    (cell.top <= scrollOffset + windowSize || cell.bottom <= scrollOffset + windowSize)
+            (cell.top >= (scrollOffsetPixel - renderOffsetPixel) || cell.bottom >= (scrollOffsetPixel - renderOffsetPixel)) &&
+                    (cell.top <= scrollOffsetPixel + windowSizePixel || cell.bottom <= scrollOffsetPixel + windowSizePixel)
         } else {
-            (cell.left >= (scrollOffset - renderOffset) || cell.right >= (scrollOffset - renderOffset)) &&
-                    (cell.left <= scrollOffset + windowSize || cell.right <= scrollOffset + windowSize)
+            (cell.left >= (scrollOffsetPixel - renderOffsetPixel) || cell.right >= (scrollOffsetPixel - renderOffsetPixel)) &&
+                    (cell.left <= scrollOffsetPixel + windowSizePixel || cell.right <= scrollOffsetPixel + windowSizePixel)
         }
     }
 }
