@@ -78,14 +78,14 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
   //Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
   static getLayoutProvider(numColumns: number, sizeProvider: (index) => number) {
     return new GridLayoutProvider(
-      numColumns,
-      (index) => {
+      numColumns,    //max span or, total columns
+      (index) => {   //type of the item for given index
         return 0;
       },
-      (index) => {
+      (index) => {  //span of the item at given index, item can choose to span more than one column
         return 1;
       },
-      (index) => {
+      (index) => {  //estimated size of the item an given index
         return sizeProvider(index);
       }
     );
