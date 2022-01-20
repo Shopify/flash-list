@@ -6,6 +6,7 @@ import {
   ViewStyle,
   PixelRatio,
   RefreshControl,
+  Platform,
 } from "react-native";
 import {
   DataProvider,
@@ -163,9 +164,21 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
     return (
       <AutoLayoutView
         {...props}
-        scrollOffset={props.scrollOffset}
-        windowSize={props.windowSize}
-        renderAheadOffset={props.renderAheadOffset}
+        scrollOffset={
+          Platform.OS === "ios"
+            ? props.scrollOffset
+            : PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)
+        }
+        windowSize={
+          Platform.OS === "ios"
+            ? props.windowSize
+            : PixelRatio.getPixelSizeForLayoutSize(props.windowSize)
+        }
+        renderAheadOffset={
+          Platform.OS === "ios"
+            ? props.renderAheadOffset
+            : PixelRatio.getPixelSizeForLayoutSize(props.renderAheadOffset)
+        }
         enableInstrumentation={true}
       >
         {children}
