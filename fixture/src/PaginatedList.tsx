@@ -5,7 +5,7 @@
 import { useLinkProps } from "@react-navigation/native";
 import React from "react";
 import { View, Text } from "react-native";
-import RecyclerFlatList from "./RecyclerFlatList";
+import { RecyclerFlatList } from "@shopify/recycler-flat-list";
 
 export interface PaginatedListState {
   elems: [any]

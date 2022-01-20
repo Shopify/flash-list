@@ -33,7 +33,7 @@ export interface RecyclerFlatListProps extends ViewProps {
   ListFooterComponentStyle?: StyleProp<ViewStyle> | undefined | null;
   horizontal: boolean;
   onEndReached?: () => void;
-  onEndReachedThreshold?: number | null | undefined;
+  onEndReachedThreshold?: number | undefined;
 }
 
 export interface RecyclerFlatListState {
