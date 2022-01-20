@@ -37,7 +37,7 @@ export interface RecyclerFlatListProps extends ViewProps {
   onEndReached?: () => void;
   onEndReachedThreshold?: number | undefined;
   onRefresh?: (() => void) | null | undefined;
-  refreshing?: boolean | null | undefined;
+  refreshing?: boolean | undefined;
 }
 
 export interface RecyclerFlatListState {
@@ -59,12 +59,8 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
     this.setup();
   }
 
-<<<<<<< HEAD:src/RecyclerFlatList.tsx
   setup() {
-    const refreshingPrecondition = !(this.props.onRefresh && !(typeof this.props.refreshing === 'boolean'));
-=======
     const refreshingPrecondition = !(this.props.onRefresh && typeof this.props.refreshing !== 'boolean');
->>>>>>> cbbd3f42 (Update RecyclerFlatList.tsx):RecyclerFlatList.tsx
     const message = "Invariant Violation: `refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `\"undefined\"`";
     invariant(refreshingPrecondition, message);
 
@@ -178,7 +174,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
       let scrollViewProps: object = { style };
       if (this.props.onRefresh) {
         const refreshControl = (<RefreshControl
-          refreshing={this.props.refreshing}
+          refreshing={this.props.refreshing as boolean}
           onRefresh={this.props.onRefresh}
         />);
         scrollViewProps = { ...scrollViewProps, refreshControl: refreshControl }
@@ -188,7 +184,7 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
         <RecyclerListView
           ref={this.recyclerRef}
           layoutProvider={this.layoutProvider}
-          style={style}
+          style={style as object}
           dataProvider={this.state.dataProvider}
           rowRenderer={this._rowRenderer}
           renderFooter={this.footerComponent(this.props)}
