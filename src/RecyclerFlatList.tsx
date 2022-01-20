@@ -6,6 +6,7 @@ import {
   ViewProps,
   ViewStyle,
   PixelRatio,
+  RefreshControl,
 } from "react-native";
 import {
   DataProvider,
@@ -17,6 +18,7 @@ import {
 import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent from "./WrapperComponent";
+import invariant from 'invariant'
 
 export interface RecyclerFlatListProps extends ViewProps {
   data: [any];
@@ -34,6 +36,8 @@ export interface RecyclerFlatListProps extends ViewProps {
   horizontal: boolean;
   onEndReached?: () => void;
   onEndReachedThreshold?: number | undefined;
+  onRefresh?: (() => void) | null | undefined;
+  refreshing?: boolean | undefined;
 }
 
 export interface RecyclerFlatListState {
@@ -56,6 +60,10 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
   }
 
   setup() {
+    const refreshingPrecondition = !(this.props.onRefresh && typeof this.props.refreshing !== 'boolean');
+    const message = "Invariant Violation: `refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `\"undefined\"`";
+    invariant(refreshingPrecondition, message);
+
     this.numColumns = this.props.numColumns || 1;
     this.width = Dimensions.get("window").width;
     this.keyExtractor = this.props.keyExtractor ?? this.defaultKeyExtractor;
@@ -158,23 +166,31 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
     if (this.data.length == 0) {
       return this.props.ListEmptyComponent;
     } else {
-      var style = {};
-      Object.assign(style, this.props.style);
+      let style = this.props.style ?? {};
       if (this.props.inverted === true) {
-        Object.assign(style, { transform: [{ scaleY: -1 }] });
+        style = [style, { transform: [{ scaleY: -1 }] }]
+      }
+
+      let scrollViewProps: object = { style };
+      if (this.props.onRefresh) {
+        const refreshControl = (<RefreshControl
+          refreshing={this.props.refreshing as boolean}
+          onRefresh={this.props.onRefresh}
+        />);
+        scrollViewProps = { ...scrollViewProps, refreshControl: refreshControl }
       }
 
       return (
         <RecyclerListView
           ref={this.recyclerRef}
           layoutProvider={this.layoutProvider}
-          style={style as Object}
+          style={style as object}
           dataProvider={this.state.dataProvider}
           rowRenderer={this._rowRenderer}
           renderFooter={this.footerComponent(this.props)}
           canChangeSize={true}
           isHorizontal={this.props.horizontal}
-          scrollViewProps={{ style }}
+          scrollViewProps={scrollViewProps}
           forceNonDeterministicRendering={true}
           renderItemContainer={this.renderItemContainer}
           renderContentContainer={this.renderContainer}
@@ -218,35 +234,29 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
   };
 
   rowRenderer(type, data, index) {
-    var header;
+    let header;
     if (index == 0 && this.props.ListHeaderComponent) {
       if (this.props.ListHeaderComponentStyle) {
         header = (
           <View style={this.props.ListHeaderComponentStyle}>
-            {/* @ts-ignore */}
-            {this.props.ListHeaderComponent()}
+            {this.props.ListHeaderComponent}
           </View>
         );
       } else {
-        // prettier-ignore
-        { /* @ts-ignore */ }
-        header = this.props.ListHeaderComponent();
+        header = this.props.ListHeaderComponent;
       }
     }
 
-    var elem = this.props.renderItem(data);
-    var elements = [header, elem];
+    let elem = this.props.renderItem(data);
+    let elements = [header, elem];
     if (this.props.ItemSeparatorComponent) {
-      // prettier-ignore
-      { /* @ts-ignore */ }
-      elements.push(this.props.ItemSeparatorComponent());
+      elements.push(this.props.ItemSeparatorComponent);
     }
 
-    const style = { flex: 1 };
-
+    let style: StyleProp<ViewStyle> = { flex: 1 };
     if (this.props.inverted === true) {
       elements = elements.reverse();
-      Object.assign(style, { transform: [{ scaleY: -1 }] });
+      style = [style, { transform: [{ scaleY: -1 }] }];
     }
 
     return (
