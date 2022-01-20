@@ -8,7 +8,7 @@ import { View, Text } from "react-native";
 import { RecyclerFlatList } from "@shopify/recycler-flat-list";
 
 export interface PaginatedListState {
-  elems: [any]
+  elems: Array<any>
 }
 /***
  * To test out just copy this component and render in you root component
@@ -47,11 +47,13 @@ export default class PaginatedList extends React.Component<{}, PaginatedListStat
         }}
         estimatedHeight={100}
         onEndReached={() => {
-          const elems = this.state.elems;
+          // Since FlatList is a pure component, data reference should change for a render
+          const elems = [...this.state.elems];
           elems.push(...this._generateArray(elems.length, 20))
           this.setState({ elems: elems })
         }}
-        onEndReachedThreshold={0.5}
+        //known issue: Flatlist uses fraction of visible window while RLV wants pixels. Will fix later
+        onEndReachedThreshold={100}
         data={this.state.elems}
       />
     );

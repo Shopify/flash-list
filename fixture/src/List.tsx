@@ -38,11 +38,11 @@ export default class List extends React.Component {
         keyExtractor={(item) => {
           return item;
         }}
-        renderItem={(item) => {
-          const backgroundColor = item.item % 2 === 0 ? "#00a1f1" : "#ffbb00";
+        renderItem={({ item }) => {
+          const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
           return (
             <View style={{ ...styles.container, backgroundColor }}>
-              <Text>Cell Id: {item.item}</Text>
+              <Text>Cell Id: {item}</Text>
             </View>
           );
         }}
