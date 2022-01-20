@@ -10,6 +10,7 @@ import "react-native-gesture-handler";
 import React from "react";
 import { StyleSheet } from "react-native";
 import List from "./List";
+import PaginatedList from "./PaginatedList";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationKeys, RootStackParamList } from "./constants";
@@ -26,6 +27,7 @@ const App = () => {
           component={ExamplesScreen}
         />
         <Stack.Screen name={NavigationKeys.LIST} component={List} />
+        <Stack.Screen name={NavigationKeys.PAGINATED_LIST} component={PaginatedList} />
       </Stack.Navigator>
     </NavigationContainer>
   );
