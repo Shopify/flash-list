@@ -5,6 +5,7 @@ import {
   ViewProps,
   ViewStyle,
   PixelRatio,
+  RefreshControl,
 } from "react-native";
 import {
   DataProvider,
@@ -16,9 +17,10 @@ import {
 import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent from "./WrapperComponent";
+import invariant from 'invariant'
 
 export interface RecyclerFlatListProps extends ViewProps {
-  data: [any];
+  data: Array<any>;
   estimatedHeight: number;
   renderItem: any;
   keyExtractor?: (data) => string;
@@ -31,32 +33,34 @@ export interface RecyclerFlatListProps extends ViewProps {
   ListFooterComponent: React.ComponentType<any> | null | undefined;
   ListFooterComponentStyle?: StyleProp<ViewStyle> | undefined | null;
   horizontal: boolean;
+  onEndReached?: () => void;
+  onEndReachedThreshold?: number | undefined;
+  onRefresh?: (() => void) | null | undefined;
+  refreshing?: boolean | undefined;
 }
 
 export interface RecyclerFlatListState {
+  dataProvider: DataProvider;
   numColumns: number;
   layoutProvider: LayoutProvider;
+  data: Array<any>;
 }
 
 class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, RecyclerFlatListState> {
   private _rowRenderer;
-  private dataProvider;
-  private data;
-  private keyExtractor;
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
 
   constructor(props) {
     super(props);
-    this.data = this.props.data;
-    this.keyExtractor = this.props.keyExtractor ?? this.defaultKeyExtractor;
+    this.setup();
+    this.state = RecyclerFlatList.getInitialState(props)
+  }
 
-    this.dataProvider = new DataProvider((r1, r2) => {
-      // @ts-ignore
-      return this.keyExtractor(r1) !== this.keyExtractor(r2);
-    });
+  setup() {
+    const refreshingPrecondition = !(this.props.onRefresh && typeof this.props.refreshing !== 'boolean');
+    const message = "Invariant Violation: `refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `\"undefined\"`";
+    invariant(refreshingPrecondition, message);
     this._rowRenderer = this.rowRenderer.bind(this);
-
-    this.state = RecyclerFlatList.getInitialState(props);
   }
 
   //Some of the state variables need to update when props change
@@ -66,13 +70,18 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
       newState.numColumns = nextProps.numColumns > 0 ? nextProps.numColumns : 1;
       newState.layoutProvider = RecyclerFlatList.getLayoutProvider(newState.numColumns, () => nextProps.estimatedHeight);
     }
+    if (nextProps.data !== prevState.data) {
+      newState.data = nextProps.data;
+      newState.dataProvider = newState.dataProvider.cloneWithRows(nextProps.data)
+    }
     return newState;
   }
 
   static getInitialState(props: RecyclerFlatListProps): RecyclerFlatListState {
     const numColumns = props.numColumns > 0 ? props.numColumns : 1;
     const sizeProvider = () => props.estimatedHeight;
-    return { numColumns, layoutProvider: RecyclerFlatList.getLayoutProvider(numColumns, sizeProvider) };
+    const dataProvider = new DataProvider((r1, r2) => { return r1 !== r2 });
+    return { numColumns, layoutProvider: RecyclerFlatList.getLayoutProvider(numColumns, sizeProvider), dataProvider: dataProvider.cloneWithRows(props.data), data: props.data };
   }
 
   //Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
@@ -91,25 +100,8 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
     );
   }
 
-
-  // Taken from here: https://github.com/facebook/react-native/blob/main/Libraries/Lists/VirtualizeUtils.js#L233
-  defaultKeyExtractor = (item: any, index: number) => {
-    if (typeof item === "object" && item?.key != null) {
-      return item.key;
-    }
-    if (typeof item === "object" && item?.id != null) {
-      return item.id;
-    }
-    return String(index);
-  };
-
-
-
-
-  parseData(data) {
-    return data.map(function (elem) {
-      return { item: elem };
-    });
+  onEndReached = () => {
+    this.props.onEndReached?.()
   }
 
   footerComponent(props) {
@@ -128,29 +120,39 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
   }
 
   render() {
-    if (this.data.length == 0) {
+    if (this.state.dataProvider.getSize() == 0) {
       return this.props.ListEmptyComponent;
     } else {
-      var style = {};
-      Object.assign(style, this.props.style);
+      let style = this.props.style ?? {};
       if (this.props.inverted === true) {
-        Object.assign(style, { transform: [{ scaleY: -1 }] });
+        style = [style, { transform: [{ scaleY: -1 }] }]
+      }
+
+      let scrollViewProps: object = { style };
+      if (this.props.onRefresh) {
+        const refreshControl = (<RefreshControl
+          refreshing={this.props.refreshing as boolean}
+          onRefresh={this.props.onRefresh}
+        />);
+        scrollViewProps = { ...scrollViewProps, refreshControl: refreshControl }
       }
 
       return (
         <RecyclerListView
           ref={this.recyclerRef}
           layoutProvider={this.state.layoutProvider}
-          style={style as Object}
-          dataProvider={this.dataProvider.cloneWithRows(this.data)}
+          style={style as object}
+          dataProvider={this.state.dataProvider}
           rowRenderer={this._rowRenderer}
           renderFooter={this.footerComponent(this.props)}
           canChangeSize={true}
           isHorizontal={this.props.horizontal}
-          scrollViewProps={{ style }}
+          scrollViewProps={scrollViewProps}
           forceNonDeterministicRendering={true}
           renderItemContainer={this.renderItemContainer}
           renderContentContainer={this.renderContainer}
+          onEndReached={this.onEndReached}
+          onEndReachedThreshold={this.props.onEndReachedThreshold}
         />
       );
     }
@@ -189,35 +191,29 @@ class RecyclerFlatList extends React.PureComponent<RecyclerFlatListProps, Recycl
   };
 
   rowRenderer(type, data, index) {
-    var header;
+    let header;
     if (index == 0 && this.props.ListHeaderComponent) {
       if (this.props.ListHeaderComponentStyle) {
         header = (
           <View style={this.props.ListHeaderComponentStyle}>
-            {/* @ts-ignore */}
-            {this.props.ListHeaderComponent()}
+            {this.props.ListHeaderComponent}
           </View>
         );
       } else {
-        // prettier-ignore
-        { /* @ts-ignore */ }
-        header = this.props.ListHeaderComponent();
+        header = this.props.ListHeaderComponent;
       }
     }
 
-    var elem = this.props.renderItem(data);
-    var elements = [header, elem];
+    let elem = this.props.renderItem({ item: data });
+    let elements = [header, elem];
     if (this.props.ItemSeparatorComponent) {
-      // prettier-ignore
-      { /* @ts-ignore */ }
-      elements.push(this.props.ItemSeparatorComponent());
+      elements.push(this.props.ItemSeparatorComponent);
     }
 
-    const style = { flex: 1 };
-
+    let style: StyleProp<ViewStyle> = { flex: 1 };
     if (this.props.inverted === true) {
       elements = elements.reverse();
-      Object.assign(style, { transform: [{ scaleY: -1 }] });
+      style = [style, { transform: [{ scaleY: -1 }] }];
     }
 
     return (

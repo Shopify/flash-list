@@ -15,12 +15,16 @@ export const ExamplesScreen = () => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Examples">>();
 
+  const data = [
+    { title: "List", destination: NavigationKeys.LIST },
+    { title: "PaginatedList", destination: NavigationKeys.PAGINATED_LIST }
+  ]
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <FlatList
         keyExtractor={(item) => item.destination}
-        data={[{ title: "List", destination: NavigationKeys.LIST }]}
+        data={data}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.row}
