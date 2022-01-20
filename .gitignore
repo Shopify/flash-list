@@ -209,3 +209,6 @@ fixture/ios/**/xcshareddata/WorkspaceSettings.xcsettings
 # Android
 
 fixture/android/*.hprof
+
+# VSCode
+.vscode/
