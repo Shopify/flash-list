@@ -18,19 +18,22 @@ class AutoLayoutViewTests: XCTestCase {
         XCTAssertTrue(autoLayoutView.isWithinBounds(testCell,
                                                     scrollOffset: 0,
                                                     renderAheadOffset: 0,
-                                                    windowSize: windowSize))
+                                                    windowSize: windowSize,
+                                                    isHorizontal: false))
         
         // Partly visible
         XCTAssertTrue(autoLayoutView.isWithinBounds(testCell,
                                                     scrollOffset: 25,
                                                     renderAheadOffset: 0,
-                                                    windowSize: windowSize))
+                                                    windowSize: windowSize,
+                                                    isHorizontal: false))
         
         // Above visible
         XCTAssertFalse(autoLayoutView.isWithinBounds(testCell,
                                                      scrollOffset: 100,
                                                      renderAheadOffset: 0,
-                                                     windowSize: windowSize))
+                                                     windowSize: windowSize,
+                                                     isHorizontal: false))
     }
     
     func testIsWithinBoundsVerticalListScrollToTop() {
@@ -39,19 +42,22 @@ class AutoLayoutViewTests: XCTestCase {
         XCTAssertTrue(autoLayoutView.isWithinBounds(testCell,
                                                     scrollOffset: 0,
                                                     renderAheadOffset: 0,
-                                                    windowSize: windowSize))
+                                                    windowSize: windowSize,
+                                                    isHorizontal: false))
         
         // Partly visible
         XCTAssertTrue(autoLayoutView.isWithinBounds(testCell,
                                                     scrollOffset: -25,
                                                     renderAheadOffset: 0,
-                                                    windowSize: windowSize))
+                                                    windowSize: windowSize,
+                                                    isHorizontal: false))
         
         // Below visible
         XCTAssertFalse(autoLayoutView.isWithinBounds(testCell,
                                                      scrollOffset: -100,
                                                      renderAheadOffset: 0,
-                                                     windowSize: windowSize))
+                                                     windowSize: windowSize,
+                                                     isHorizontal: false))
     }
     
     func testIsWithinBoundsHorizontalListScrollToLeft() {

@@ -89,7 +89,8 @@ import UIKit
                   cellContainer,
                   scrollOffset: scrollOffset,
                   renderAheadOffset: renderAheadOffset,
-                  windowSize: windowSize
+                  windowSize: windowSize,
+                  isHorizontal: horizontal
              )
              else { return }
             
@@ -128,7 +129,7 @@ import UIKit
         lastMinBound = minBound
     }
     
-    internal func computeBlankFromGivenOffset(_ actualScrollOffset: CGFloat,
+    func computeBlankFromGivenOffset(_ actualScrollOffset: CGFloat,
                                               filledBoundMin: CGFloat,
                                               filledBoundMax: CGFloat,
                                               renderAheadOffset: CGFloat,
@@ -143,11 +144,11 @@ import UIKit
     /*
      It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
     */
-    internal func isWithinBounds(_ cellContainer: CellContainer,
+    func isWithinBounds(_ cellContainer: CellContainer,
                                  scrollOffset: CGFloat,
                                  renderAheadOffset: CGFloat,
                                  windowSize: CGFloat,
-                                 isHorizontal: Bool = false) -> Bool {
+                                 isHorizontal: Bool) -> Bool {
         let boundsStart = scrollOffset - renderAheadOffset
         let boundsEnd = scrollOffset + windowSize
         let cellFrame = cellContainer.frame
