@@ -7,7 +7,7 @@
  */
 
 import "react-native-gesture-handler";
-import React from "react";
+import React, { useEffect } from "react";
 import List from "./List";
 import PaginatedList from "./PaginatedList";
 import { NavigationContainer } from "@react-navigation/native";
@@ -15,6 +15,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationKeys, RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
 import { useOnNativeBlankAreaEvents } from "@shopify/recycler-flat-list";
+import { useReactNativePerformanceFlipperPlugin } from "@shopify/recycler-flat-list";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -22,6 +23,7 @@ const App = () => {
   useOnNativeBlankAreaEvents((offset) => {
     console.log(`Offset: ${offset}`);
   });
+  useReactNativePerformanceFlipperPlugin();
 
   return (
     <NavigationContainer>
