@@ -2,14 +2,18 @@ import XCTest
 @testable import RNRecyclerFlatList
 
 class AutoLayoutViewTests: XCTestCase {
-    let autoLayoutView = AutoLayoutView()
-    let testCell = CellContainer()
+    var autoLayoutView: AutoLayoutView!
+    var testCell: CellContainer!
     let cellHeight: CGFloat = 50
     let windowSize: CGFloat = 500
     
-    func test_IsWithinBoundsVerticalListScrollToBottom() throws {
+    override func setUp() {
+        autoLayoutView = AutoLayoutView()
+        testCell = CellContainer()
+    }
+    
+    func testIsWithinBoundsVerticalListScrollToBottom() {
         testCell.frame = CGRect(x: 0, y: 0, width: cellHeight, height: cellHeight)
-        print(testCell)
         // Top left corner of the screen
         XCTAssertTrue(autoLayoutView.isWithinBounds(testCell,
                                                     scrollOffset: 0,
@@ -29,7 +33,7 @@ class AutoLayoutViewTests: XCTestCase {
                                                      windowSize: windowSize))
     }
     
-    func test_IsWithinBoundsVerticalListScrollToTop() throws {
+    func testIsWithinBoundsVerticalListScrollToTop() {
         testCell.frame = CGRect(x: 0, y: windowSize - cellHeight, width: cellHeight, height: cellHeight)
         // Bottom left corner of the screen
         XCTAssertTrue(autoLayoutView.isWithinBounds(testCell,
@@ -50,7 +54,7 @@ class AutoLayoutViewTests: XCTestCase {
                                                      windowSize: windowSize))
     }
     
-    func test_IsWithinBoundsHorizontalListScrollToLeft() throws {
+    func testIsWithinBoundsHorizontalListScrollToLeft() {
         testCell.frame = CGRect(x: 0, y: 0, width: cellHeight, height: cellHeight)
         // Top left corner of the screen
         XCTAssertTrue(autoLayoutView.isWithinBounds(testCell,
@@ -74,7 +78,7 @@ class AutoLayoutViewTests: XCTestCase {
                                                      isHorizontal: true))
     }
     
-    func test_IsWithinBoundsHorizontalListScrollToRight() throws {
+    func testIsWithinBoundsHorizontalListScrollToRight() {
         testCell.frame = CGRect(x: windowSize - cellHeight, y: 0, width: cellHeight, height: cellHeight)
         // Bottom left corner of the screen
         XCTAssertTrue(autoLayoutView.isWithinBounds(testCell,

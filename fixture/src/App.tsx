@@ -19,7 +19,9 @@ import { useOnNativeBlankAreaEvents } from "@shopify/recycler-flat-list";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
-  useOnNativeBlankAreaEvents();
+  useOnNativeBlankAreaEvents((offset) => {
+    console.log(`Offset: ${offset}`);
+  });
 
   return (
     <NavigationContainer>
@@ -29,7 +31,10 @@ const App = () => {
           component={ExamplesScreen}
         />
         <Stack.Screen name={NavigationKeys.LIST} component={List} />
-        <Stack.Screen name={NavigationKeys.PAGINATED_LIST} component={PaginatedList} />
+        <Stack.Screen
+          name={NavigationKeys.PAGINATED_LIST}
+          component={PaginatedList}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
