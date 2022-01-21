@@ -343,11 +343,9 @@ PODS:
     - React-perflogger (= 0.66.4)
   - RNGestureHandler (2.2.0):
     - React-Core
-  - RNRecyclerFlatList (0.0.1-alpha.2):
+  - RNRecyclerFlatList (0.0.2):
     - React-Core
-  - RNRecyclerFlatList/Tests (0.0.1-alpha.2):
-    - React-Core
-  - RNRecyclerFlatList/Tests (0.0.1-alpha.1):
+  - RNRecyclerFlatList/Tests (0.0.2):
     - React-Core
   - RNScreens (3.10.2):
     - React-Core
@@ -552,7 +550,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
-  RNRecyclerFlatList: d67b084c83c5832ca95a242b914a4c1dcdb0cbe6
+  RNRecyclerFlatList: 17e9dbe35755a5277e8977a2053eafd8803e7094
   RNScreens: d6da2b9e29cf523832c2542f47bf1287318b1868
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
