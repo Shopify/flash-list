@@ -13,8 +13,10 @@ import UIKit
     private var renderAheadOffset: CGFloat = 0
     private var enableInstrumentation = false
     
-    private var lastMaxBound: CGFloat = 0 // Tracks where the last pixel is drawn in the visible window
-    private var lastMinBound: CGFloat = 0 // Tracks where first pixel is drawn in the visible window
+    /// Tracks where the last pixel is drawn in the visible window
+    private var lastMaxBound: CGFloat = 0 
+    /// Tracks where first pixel is drawn in the visible window
+    private var lastMinBound: CGFloat = 0
     
     @objc func setHorizontal(_ horizontal: Bool) {
         self.horizontal = horizontal
@@ -138,7 +140,8 @@ import UIKit
         
         let blankOffsetEnd = actualScrollOffset + windowSize - renderAheadOffset - filledBoundMax
         
-        return max(0, blankOffsetStart, blankOffsetEnd) // one of the values is negative, we look for the positive one
+        // one of the values is negative, we look for the positive one
+        return max(0, blankOffsetStart, blankOffsetEnd)
     }
     
     /*
