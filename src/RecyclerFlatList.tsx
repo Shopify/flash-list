@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   StyleProp,
   View,
@@ -6,18 +6,18 @@ import {
   PixelRatio,
   RefreshControl,
   FlatListProps,
-} from 'react-native';
+} from "react-native";
 import {
   DataProvider,
   GridLayoutProvider,
   LayoutProvider,
   RecyclerListView,
   RecyclerListViewProps,
-} from 'recyclerlistview';
-import AutoLayoutView from './AutoLayoutView';
-import ItemContainer from './CellContainer';
-import WrapperComponent from './WrapperComponent';
-import invariant from 'invariant';
+} from "recyclerlistview";
+import AutoLayoutView from "./AutoLayoutView";
+import ItemContainer from "./CellContainer";
+import WrapperComponent from "./WrapperComponent";
+import invariant from "invariant";
 
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   estimatedHeight: number;
@@ -48,7 +48,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   setup() {
     const refreshingPrecondition = !(
-      this.props.onRefresh && typeof this.props.refreshing !== 'boolean'
+      this.props.onRefresh && typeof this.props.refreshing !== "boolean"
     );
     const message =
       'Invariant Violation: `refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `"undefined"`';
@@ -60,7 +60,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     nextProps: RecyclerFlatListProps<T>,
     prevState: RecyclerFlatListState<T>
   ): RecyclerFlatListState<T> {
-    const newState = {...prevState};
+    const newState = { ...prevState };
     if (newState.numColumns !== nextProps.numColumns) {
       newState.numColumns = nextProps.numColumns || 1;
       newState.layoutProvider = RecyclerFlatList.getLayoutProvider(
@@ -120,7 +120,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   onEndReached = () => {
     //known issue: RLV doesn't report distanceFromEnd
-    this.props.onEndReached?.({distanceFromEnd: 0});
+    this.props.onEndReached?.({ distanceFromEnd: 0 });
   };
 
   footerComponent(props) {
@@ -144,10 +144,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
     } else {
       let style = this.props.style ?? {};
       if (this.props.inverted === true) {
-        style = [style, {transform: [{scaleY: -1}]}];
+        style = [style, { transform: [{ scaleY: -1 }] }];
       }
 
-      let scrollViewProps: object = {style};
+      let scrollViewProps: object = { style };
       if (this.props.onRefresh) {
         const refreshControl = (
           <RefreshControl
@@ -155,7 +155,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
             onRefresh={this.props.onRefresh}
           />
         );
-        scrollViewProps = {...scrollViewProps, refreshControl: refreshControl};
+        scrollViewProps = {
+          ...scrollViewProps,
+          refreshControl: refreshControl,
+        };
       }
 
       return (
@@ -226,16 +229,16 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
 
     //known issue: expected to pass separators which isn't available in RLV
-    let elem = this.props.renderItem?.({item: data, index: index} as any);
+    let elem = this.props.renderItem?.({ item: data, index: index } as any);
     let elements = [header, elem];
     if (this.props.ItemSeparatorComponent) {
       elements.push(this.props.ItemSeparatorComponent);
     }
 
-    let style: StyleProp<ViewStyle> = {flex: 1};
+    let style: StyleProp<ViewStyle> = { flex: 1 };
     if (this.props.inverted === true) {
       elements = elements.reverse();
-      style = [style, {transform: [{scaleY: -1}]}];
+      style = [style, { transform: [{ scaleY: -1 }] }];
     }
 
     return (
@@ -253,7 +256,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef = ref;
   };
 
-  public scrollToEnd(params?: {animated?: boolean | null | undefined}) {
+  public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(!!params?.animated);
   }
 
