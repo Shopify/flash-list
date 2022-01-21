@@ -16,11 +16,8 @@ class BlankAreaEventEmitter: RCTEventEmitter {
     }
 
     func onBlankArea(offset: CGFloat) {
-        if (hasListeners) {
-            sendEvent(withName: BlankAreaEventEmitter.blankAreaEventName, body: [
-                "offset": offset
-            ])
-        }
+        guard hasListeners else { return }
+        sendEvent(withName: BlankAreaEventEmitter.blankAreaEventName, body: ["offset": offset])
     }
 
     @objc override static func requiresMainQueueSetup() -> Bool {
