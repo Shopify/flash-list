@@ -39,23 +39,17 @@ import UIKit
     override func layoutSubviews() {
         fixLayout()
         super.layoutSubviews()
-        
-        if enableInstrumentation {
-            // Unfortunately, for now, we need to assume that the view's superview's superview is a scroll view
-            if let scrollView = superview?.superview?.superview as? UIScrollView {
-                let scrollY = scrollView.contentOffset.y
-                print("Scroll offset Native: \(scrollY)")
-                
-                let blankOffset = computeBlankFromGivenOffset(scrollY,
-                                                              filledBoundMin: lastMinBound,
-                                                              filledBoundMax: lastMaxBound,
-                                                              renderAheadOffset: renderAheadOffset,
-                                                              windowSize: windowSize)
-                print("Blank offset: \(blankOffset)")
-                
-                BlankAreaEventEmitter.INSTANCE?.onBlankArea(offset: blankOffset) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
-            }
-        }
+
+        let scrollView = sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView })
+        guard enableInstrumentation, let scrollView = scrollView as? UIScrollView else { return }
+
+        let blankOffset = computeBlankFromGivenOffset(scrollView.contentOffset.y,
+                                                      filledBoundMin: lastMinBound,
+                                                      filledBoundMax: lastMaxBound,
+                                                      renderAheadOffset: renderAheadOffset,
+                                                      windowSize: windowSize)
+
+        BlankAreaEventEmitter.INSTANCE?.onBlankArea(offset: blankOffset) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
     }
     
     /*
@@ -138,10 +132,10 @@ import UIKit
                                               renderAheadOffset: CGFloat,
                                               windowSize: CGFloat) -> CGFloat {
         let blankOffsetStart = filledBoundMin - actualScrollOffset
-        
-        let blankOffsetEnd = actualScrollOffset + windowSize - filledBoundMax
-         
-        return max(blankOffsetStart, blankOffsetEnd) // one of the values is negative, we look for the positive one
+
+        let blankOffsetEnd = actualScrollOffset + windowSize - renderAheadOffset - filledBoundMax
+
+        return max(0, blankOffsetStart, blankOffsetEnd) // one of the values is negative, we look for the positive one
     }
     
     /*
