@@ -84,12 +84,14 @@ import UIKit
             let nextCellTop = nextCell.frame.minY
             let nextCellLeft = nextCell.frame.minX
             
-            guard isWithinBounds(cellContainer,
-                                 scrollOffset: scrollOffset,
-                                 renderAheadOffset: renderAheadOffset,
-                                 windowSize: windowSize) else {
-                return
-            }
+            guard 
+               isWithinBounds(
+                  cellContainer,
+                  scrollOffset: scrollOffset,
+                  renderAheadOffset: renderAheadOffset,
+                  windowSize: windowSize
+             )
+             else { return }
             
             if horizontal {
                 maxBound = max(maxBound, cellRight)
