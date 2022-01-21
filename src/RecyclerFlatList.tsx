@@ -177,6 +177,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           renderContentContainer={this.renderContainer}
           onEndReached={this.onEndReached}
           onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
+          extendedState={this.props.extraData}
         />
       );
     }
