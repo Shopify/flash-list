@@ -25,5 +25,6 @@
     "editor.formatOnSave": true,
     "[typescriptreact]": {
       "editor.formatOnSave": true
-    }
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
