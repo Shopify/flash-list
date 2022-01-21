@@ -10,6 +10,7 @@ import "react-native-gesture-handler";
 import React from "react";
 import List from "./List";
 import PaginatedList from "./PaginatedList";
+import Twitter from "./Twitter";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationKeys, RootStackParamList } from "./constants";
@@ -35,6 +36,7 @@ const App = () => {
           name={NavigationKeys.PAGINATED_LIST}
           component={PaginatedList}
         />
+        <Stack.Screen name={NavigationKeys.TWITTER} component={Twitter} />
       </Stack.Navigator>
     </NavigationContainer>
   );

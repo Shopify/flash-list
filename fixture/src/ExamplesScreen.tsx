@@ -17,7 +17,8 @@ export const ExamplesScreen = () => {
 
   const data = [
     { title: "List", destination: NavigationKeys.LIST },
-    { title: "PaginatedList", destination: NavigationKeys.PAGINATED_LIST }
+    { title: "PaginatedList", destination: NavigationKeys.PAGINATED_LIST },
+    { title: "Twitter Timeline", destination: NavigationKeys.TWITTER }
   ]
   return (
     <>

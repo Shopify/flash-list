@@ -124,21 +124,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.props.onEndReached?.({ distanceFromEnd: 0 });
   };
 
-  footerComponent(props) {
-    return function () {
-      if (props.ListFooterComponentStyle) {
-        return (
-          <View style={props.ListFooterComponentStyle}>
-            {props.ListFooterComponent()}
-          </View>
-        );
-      } else if (props.ListFooterComponent) {
-        return props.ListFooterComponent();
-      }
-      return <View />;
-    };
-  }
-
   render() {
     if (this.state.dataProvider.getSize() == 0) {
       return this.props.ListEmptyComponent;
@@ -169,7 +154,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           style={style as object}
           dataProvider={this.state.dataProvider}
           rowRenderer={this.rowRenderer}
-          renderFooter={this.footerComponent(this.props)}
+          renderFooter={this.footer}
           canChangeSize={true}
           isHorizontal={!!this.props.horizontal}
           scrollViewProps={scrollViewProps}
@@ -226,25 +211,51 @@ class RecyclerFlatList<T> extends React.PureComponent<
     );
   };
 
-  rowRenderer = (type, data, index) => {
-    let header;
-    if (index == 0 && this.props.ListHeaderComponent) {
-      if (this.props.ListHeaderComponentStyle) {
-        header = (
-          <View style={this.props.ListHeaderComponentStyle}>
-            {this.props.ListHeaderComponent}
-          </View>
-        );
-      } else {
-        header = this.props.ListHeaderComponent;
-      }
-    }
+  separator(index) {
+    const leadingItem = this.props.data?.[index];
+    const trailingItem = this.props.data?.[index + 1];
 
+    const props = {
+      leadingItem,
+      trailingItem,
+      //TODO: Missing sections as we don't have this feature implemented yet. Implement section, leadingSection and trailingSection.
+    };
+    return (
+      this.props.ItemSeparatorComponent != null && (
+        <this.props.ItemSeparatorComponent {...props} />
+      )
+    );
+  }
+  header(index) {
+    if (index != 0) return undefined;
+    const ListHeaderComponent = this.props.ListHeaderComponent;
+    const style = this.props.ListHeaderComponentStyle || {};
+    return React.isValidElement(ListHeaderComponent) ? (
+      <View style={style}>{ListHeaderComponent}</View>
+    ) : (
+      ListHeaderComponent != null && <ListHeaderComponent style={style} />
+    );
+  }
+
+  footer = () => {
+    const ListFooterComponent = this.props.ListFooterComponent;
+    const style = this.props.ListFooterComponentStyle || {};
+    if (React.isValidElement(ListFooterComponent)) {
+      ListFooterComponent.props = { style };
+      return ListFooterComponent;
+    } else if (ListFooterComponent) {
+      return <ListFooterComponent style={style} />;
+    }
+    return <></>;
+  };
+
+  rowRenderer = (type, data, index) => {
     //known issue: expected to pass separators which isn't available in RLV
     let elem = this.props.renderItem?.({ item: data, index: index } as any);
-    let elements = [header, elem];
-    if (this.props.ItemSeparatorComponent) {
-      elements.push(this.props.ItemSeparatorComponent);
+    let elements = [this.header(index), elem];
+
+    if (this.separator != null) {
+      elements.push(this.separator(index));
     }
 
     let style: StyleProp<ViewStyle> = { flex: 1 };
@@ -258,7 +269,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         <>
           {elements[0]}
           {elements[1]}
-          {this.props.ItemSeparatorComponent && elements[2]}
+          {elements[2]}
         </>
       </View>
     );
