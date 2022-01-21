@@ -21,6 +21,9 @@ import invariant from "invariant";
 
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   estimatedHeight: number;
+
+  //Visible height and width of the list. This is not the scroll content size. Optional
+  estimatedListSize?: { height: number; width: number };
 }
 
 export interface RecyclerFlatListState<T> {
@@ -178,6 +181,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           onEndReached={this.onEndReached}
           onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
           extendedState={this.props.extraData}
+          layoutSize={this.props.estimatedListSize}
         />
       );
     }
