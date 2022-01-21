@@ -5,13 +5,15 @@ export interface BlankAreaEvent {
   offset: Number;
 }
 
-export const BLANK_AREA_EVENT_NAME =
-  "@shopify/recyclerflatlist/emit-blank-area";
+export const BLANK_AREA_EVENT_NAME = "instrumentation";
 
-const useOnNativeBlankAreaEvents = () => {
-  const onBlankAreaEvent = useCallback(({ offset }: BlankAreaEvent) => {
-    console.log(`Blank area: ${offset}`);
-  }, []);
+const useOnNativeBlankAreaEvents = (callback: (offset: Number) => {}) => {
+  const onBlankAreaEvent = useCallback(
+    ({ offset }: BlankAreaEvent) => {
+      callback(offset);
+    },
+    [callback]
+  );
 
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(
