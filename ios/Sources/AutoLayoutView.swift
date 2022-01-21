@@ -5,14 +5,14 @@ import UIKit
 /*
  Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.
  Note: This cannot work for masonry layouts i.e, pinterest like layout
-*/
+ */
 @objc class AutoLayoutView: UIView {
     private var horizontal = false
     private var scrollOffset: CGFloat = 0
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
     private var enableInstrumentation = false
-
+    
     private var lastMaxBound: CGFloat = 0 // Tracks where the last pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0 // Tracks where first pixel is drawn in the visible window
     
@@ -39,23 +39,23 @@ import UIKit
     override func layoutSubviews() {
         fixLayout()
         super.layoutSubviews()
-
+        
         let scrollView = sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView })
         guard enableInstrumentation, let scrollView = scrollView as? UIScrollView else { return }
-
+        
         let blankOffset = computeBlankFromGivenOffset(scrollView.contentOffset.y,
                                                       filledBoundMin: lastMinBound,
                                                       filledBoundMax: lastMaxBound,
                                                       renderAheadOffset: renderAheadOffset,
                                                       windowSize: windowSize)
-
+        
         BlankAreaEventEmitter.INSTANCE?.onBlankArea(offset: blankOffset) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
     }
     
     /*
      Sorts views by index and then invokes clearGaps which does the correction.
      Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
-    */
+     */
     private func fixLayout() {
         guard subviews.count > 1 else { return }
         let cellContainers = subviews
@@ -68,7 +68,7 @@ import UIKit
     /*
      Checks for overlaps or gaps between adjacent items and then applies a correction.
      Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on the iOS side.
-    */
+     */
     private func clearGaps(for cellContainers: [CellContainer]) {
         var maxBound: CGFloat = 0
         var minBound: CGFloat = CGFloat(Int.max)
@@ -85,14 +85,14 @@ import UIKit
             let nextCellLeft = nextCell.frame.minX
             
             guard 
-               isWithinBounds(
-                  cellContainer,
-                  scrollOffset: scrollOffset,
-                  renderAheadOffset: renderAheadOffset,
-                  windowSize: windowSize,
-                  isHorizontal: horizontal
-             )
-             else { return }
+                isWithinBounds(
+                    cellContainer,
+                    scrollOffset: scrollOffset,
+                    renderAheadOffset: renderAheadOffset,
+                    windowSize: windowSize,
+                    isHorizontal: horizontal
+                )
+            else { return }
             
             if horizontal {
                 maxBound = max(maxBound, cellRight)
@@ -130,25 +130,25 @@ import UIKit
     }
     
     func computeBlankFromGivenOffset(_ actualScrollOffset: CGFloat,
-                                              filledBoundMin: CGFloat,
-                                              filledBoundMax: CGFloat,
-                                              renderAheadOffset: CGFloat,
-                                              windowSize: CGFloat) -> CGFloat {
+                                     filledBoundMin: CGFloat,
+                                     filledBoundMax: CGFloat,
+                                     renderAheadOffset: CGFloat,
+                                     windowSize: CGFloat) -> CGFloat {
         let blankOffsetStart = filledBoundMin - actualScrollOffset
-
+        
         let blankOffsetEnd = actualScrollOffset + windowSize - renderAheadOffset - filledBoundMax
-
+        
         return max(0, blankOffsetStart, blankOffsetEnd) // one of the values is negative, we look for the positive one
     }
     
     /*
      It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
-    */
+     */
     func isWithinBounds(_ cellContainer: CellContainer,
-                                 scrollOffset: CGFloat,
-                                 renderAheadOffset: CGFloat,
-                                 windowSize: CGFloat,
-                                 isHorizontal: Bool) -> Bool {
+                        scrollOffset: CGFloat,
+                        renderAheadOffset: CGFloat,
+                        windowSize: CGFloat,
+                        isHorizontal: Bool) -> Bool {
         let boundsStart = scrollOffset - renderAheadOffset
         let boundsEnd = scrollOffset + windowSize
         let cellFrame = cellContainer.frame
