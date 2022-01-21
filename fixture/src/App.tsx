@@ -7,7 +7,7 @@
  */
 
 import "react-native-gesture-handler";
-import React from "react";
+import React, { useEffect } from "react";
 import List from "./List";
 import PaginatedList from "./PaginatedList";
 import Twitter from "./Twitter";
