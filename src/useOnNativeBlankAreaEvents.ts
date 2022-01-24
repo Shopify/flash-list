@@ -5,7 +5,7 @@ export interface BlankAreaEvent {
   offset: Number;
 }
 
-export const BLANK_AREA_EVENT_NAME = "instrumentation";
+export const BLANK_AREA_EVENT_NAME = "blankAreaEvent";
 
 const useOnNativeBlankAreaEvents = (callback: (offset: Number) => {}) => {
   const onBlankAreaEvent = useCallback(

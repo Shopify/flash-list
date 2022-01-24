@@ -2,7 +2,7 @@ import Foundation
 
 @objc(BlankAreaEventEmitter)
 class BlankAreaEventEmitter: RCTEventEmitter {
-    private static let blankAreaEventName = "instrumentation"
+    private static let blankAreaEventName = "blankAreaEvent"
     private var hasListeners = false
     private(set) static var INSTANCE: BlankAreaEventEmitter? = nil
 
