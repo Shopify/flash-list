@@ -45,13 +45,21 @@ import UIKit
         let scrollView = sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView })
         guard enableInstrumentation, let scrollView = scrollView as? UIScrollView else { return }
         
-        let blankOffset = computeBlankFromGivenOffset(scrollView.contentOffset.y,
-                                                      filledBoundMin: lastMinBound,
-                                                      filledBoundMax: lastMaxBound,
-                                                      renderAheadOffset: renderAheadOffset,
-                                                      windowSize: windowSize)
+        let (blankOffsetStart, blankOffsetEnd, blankArea) = computeBlankFromGivenOffset(
+            scrollView.contentOffset.y,
+            filledBoundMin: lastMinBound,
+            filledBoundMax: lastMaxBound,
+            renderAheadOffset: renderAheadOffset,
+            windowSize: windowSize
+        )
         
-        BlankAreaEventEmitter.INSTANCE?.onBlankArea(offset: blankOffset) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
+        BlankAreaEventEmitter
+            .INSTANCE?
+            .onBlankArea(
+                startOffset: blankOffsetStart,
+                endOffset: blankOffsetEnd,
+                blankArea: blankArea)
+        ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
     }
     
     /*
@@ -131,17 +139,25 @@ import UIKit
         lastMinBound = minBound
     }
     
-    func computeBlankFromGivenOffset(_ actualScrollOffset: CGFloat,
-                                     filledBoundMin: CGFloat,
-                                     filledBoundMax: CGFloat,
-                                     renderAheadOffset: CGFloat,
-                                     windowSize: CGFloat) -> CGFloat {
+    func computeBlankFromGivenOffset(
+        _ actualScrollOffset: CGFloat,
+        filledBoundMin: CGFloat,
+        filledBoundMax: CGFloat,
+        renderAheadOffset: CGFloat,
+        windowSize: CGFloat
+    ) -> (
+        startOffset: CGFloat,
+        endOffset: CGFloat,
+        blankArea: CGFloat
+    ) {
         let blankOffsetStart = filledBoundMin - actualScrollOffset
         
         let blankOffsetEnd = actualScrollOffset + windowSize - renderAheadOffset - filledBoundMax
         
         // one of the values is negative, we look for the positive one
-        return max(0, blankOffsetStart, blankOffsetEnd)
+        let blankArea = max(0, blankOffsetStart, blankOffsetEnd, windowSize)
+        
+        return (blankOffsetStart, blankOffsetEnd, blankArea)
     }
     
     /*
