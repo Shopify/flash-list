@@ -7,7 +7,7 @@
  */
 
 import "react-native-gesture-handler";
-import React, { useEffect } from "react";
+import React from "react";
 import List from "./List";
 import PaginatedList from "./PaginatedList";
 import { NavigationContainer } from "@react-navigation/native";
