@@ -22,7 +22,9 @@ import invariant from "invariant";
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   estimatedHeight: number;
 
-  //Visible height and width of the list. This is not the scroll content size. Optional
+  /**
+  * Visible height and width of the list. This is not the scroll content size.
+  */
   estimatedListSize?: { height: number; width: number };
 }
 
