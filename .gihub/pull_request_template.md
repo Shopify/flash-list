@@ -15,4 +15,4 @@ Please include a summary of what you want to achieve in this pull request. Remem
 
 ## Screenshots or videos (if needed)
 
-<!-- Show case the working feature to make testing easier. -->
+<!-- Showcase the working feature to make testing easier. -->
