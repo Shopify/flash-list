@@ -2,6 +2,7 @@ export const NavigationKeys = {
   EXAMPLES: "Examples" as const,
   LIST: "List" as const,
   PAGINATED_LIST: "PaginatedList" as const,
+  TWITTER: "Twitter" as const,
 };
 
 type ValueOf<T> = T[keyof T];
