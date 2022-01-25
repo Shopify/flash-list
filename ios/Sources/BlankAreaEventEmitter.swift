@@ -15,12 +15,18 @@ class BlankAreaEventEmitter: RCTEventEmitter {
         return [BlankAreaEventEmitter.blankAreaEventName]
     }
 
-    func onBlankArea(startOffset: CGFloat, endOffset: CGFloat, blankArea: CGFloat) {
+    func onBlankArea(
+        startOffset: CGFloat,
+        endOffset: CGFloat,
+        blankArea: CGFloat,
+        listSize: CGFloat
+    ) {
         guard hasListeners else { return }
         sendEvent(withName: BlankAreaEventEmitter.blankAreaEventName, body: [
             "blankArea": blankArea,
             "startOffset": startOffset,
             "endOffset": endOffset,
+            "listSize": listSize,
         ])
     }
 
