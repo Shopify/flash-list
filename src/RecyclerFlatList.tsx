@@ -218,23 +218,26 @@ class RecyclerFlatList<T> extends React.PureComponent<
     const props = {
       leadingItem,
       trailingItem,
-      //TODO: Missing sections as we don't have this feature implemented yet. Implement section, leadingSection and trailingSection.
+      // TODO: Missing sections as we don't have this feature implemented yet. Implement section, leadingSection and trailingSection.
+      // https://github.com/facebook/react-native/blob/8bd3edec88148d0ab1f225d2119435681fbbba33/Libraries/Lists/VirtualizedSectionList.js#L285-L294
     };
-    return (
-      this.props.ItemSeparatorComponent != null && (
-        <this.props.ItemSeparatorComponent {...props} />
-      )
-    );
+    if (this.props.ItemSeparatorComponent != null) {
+      return <this.props.ItemSeparatorComponent {...props} />;
+    }
+    return undefined;
   }
+
   header(index) {
-    if (index != 0) return undefined;
+    if (index !== 0) return undefined;
     const ListHeaderComponent = this.props.ListHeaderComponent;
     const style = this.props.ListHeaderComponentStyle || {};
-    return React.isValidElement(ListHeaderComponent) ? (
-      <View style={style}>{ListHeaderComponent}</View>
-    ) : (
-      ListHeaderComponent != null && <ListHeaderComponent style={style} />
-    );
+    if (React.isValidElement(ListHeaderComponent)) {
+      ListHeaderComponent.props = { style };
+      return ListHeaderComponent;
+    } else if (ListHeaderComponent != null) {
+      console.log(style);
+      return <ListHeaderComponent style={style} />;
+    }
   }
 
   footer = () => {
@@ -246,7 +249,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     } else if (ListFooterComponent) {
       return <ListFooterComponent style={style} />;
     }
-    return <></>;
+    return null;
   };
 
   rowRenderer = (type, data, index) => {
@@ -254,8 +257,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
     let elem = this.props.renderItem?.({ item: data, index: index } as any);
     let elements = [this.header(index), elem];
 
-    if (this.separator != null) {
-      elements.push(this.separator(index));
+    const separator = this.separator(index);
+    if (separator != null) {
+      elements.push(separator);
     }
 
     let style: StyleProp<ViewStyle> = { flex: 1 };

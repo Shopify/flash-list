@@ -4,7 +4,7 @@ import { RecyclerFlatList } from "@shopify/recycler-flat-list";
 import { tweets } from "./data/tweets.js";
 import TweetCell from "./TweetCell";
 
-const Twitter = (props) => {
+const Twitter = () => {
   return (
     <RecyclerFlatList
       keyExtractor={(item) => {
@@ -14,6 +14,7 @@ const Twitter = (props) => {
         return <TweetCell item={item} />;
       }}
       ListHeaderComponent={Header}
+      ListHeaderCompomentStyle={{ backgroundColor: "#ccc" }}
       ListFooterComponent={Footer}
       estimatedHeight={150}
       ItemSeparatorComponent={Divider}

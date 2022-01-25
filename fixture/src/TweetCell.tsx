@@ -1,23 +1,23 @@
 import React from "react";
 import { StyleSheet, Image, View, Text } from "react-native";
 
-type Author = {
+export interface Author {
   name: string;
   avatar: string;
-  screen_name: string;
-};
+  screenName: string;
+}
 
-type TweetItem = {
+export interface TweetItem {
   author: Author;
-  full_text: string;
-  retweet_count: number;
-  reply_count: number;
-  favorite_count: number;
-};
+  fullText: string;
+  retweetCount: number;
+  replyCount: number;
+  favoriteCount: number;
+}
 
-type Tweet = {
+export interface Tweet {
   item: TweetItem;
-};
+}
 
 const tweetActions = (retweets, comments, likes) => {
   return (
@@ -67,16 +67,12 @@ const TweetCell = (tweet: Tweet) => {
             <Text numberOfLines={1} style={styles.header}>
               {item.author.name}
             </Text>
-            <Text style={styles.gray}>@{item.author.screen_name}</Text>
+            <Text style={styles.gray}>@{item.author.screenName}</Text>
             <Text style={styles.gray}>·</Text>
             <Text style={styles.gray}>2h</Text>
           </View>
-          <Text style={styles.description}>{item.full_text}</Text>
-          {tweetActions(
-            item.retweet_count,
-            item.reply_count,
-            item.favorite_count
-          )}
+          <Text style={styles.description}>{item.fullText}</Text>
+          {tweetActions(item.retweetCount, item.replyCount, item.favoriteCount)}
         </View>
       </View>
     </View>
