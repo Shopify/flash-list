@@ -22,8 +22,16 @@ const useReactNativePerformanceFlipperPlugin = () => {
       const eventEmitter = new NativeEventEmitter(
         Platform.OS === "ios" ? NativeModules.BlankAreaEventEmitter : undefined
       );
-      const onBlankAreaEvent = ({ offset }: { offset: number }) => {
-        connection.send("newBlankData", { offset });
+      const onBlankAreaEvent = ({
+        blankArea,
+        listSize,
+      }: {
+        blankArea: number;
+        listSize: number;
+      }) => {
+        connection.send("newBlankData", {
+          offset: Math.min(blankArea, listSize),
+        });
       };
       const subscription = eventEmitter.addListener(
         BLANK_AREA_EVENT_NAME,

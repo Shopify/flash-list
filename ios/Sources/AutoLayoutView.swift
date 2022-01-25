@@ -58,7 +58,9 @@ import UIKit
             .onBlankArea(
                 startOffset: blankOffsetStart,
                 endOffset: blankOffsetEnd,
-                blankArea: blankArea)
+                blankArea: blankArea,
+                listSize: windowSize
+            )
         ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
     }
 
