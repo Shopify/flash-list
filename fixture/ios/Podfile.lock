@@ -341,7 +341,9 @@ PODS:
     - React-perflogger (= 0.66.4)
   - RNGestureHandler (2.2.0):
     - React-Core
-  - RNRecyclerFlatList (0.0.1-alpha.1):
+  - RNRecyclerFlatList (0.0.1-alpha.2):
+    - React-Core
+  - RNRecyclerFlatList/Tests (0.0.1-alpha.2):
     - React-Core
   - RNScreens (3.10.2):
     - React-Core
@@ -405,7 +407,8 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
-  - RNRecyclerFlatList (from `../..`)
+  - RNRecyclerFlatList (from `../../RNRecyclerFlatList.podspec`)
+  - RNRecyclerFlatList/Tests (from `../../RNRecyclerFlatList.podspec`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -490,7 +493,7 @@ EXTERNAL SOURCES:
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNRecyclerFlatList:
-    :path: "../.."
+    :path: "../../RNRecyclerFlatList.podspec"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -541,11 +544,11 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
-  RNRecyclerFlatList: 828169c2f6a1743477c3ebcc59e561212c795015
+  RNRecyclerFlatList: d67b084c83c5832ca95a242b914a4c1dcdb0cbe6
   RNScreens: d6da2b9e29cf523832c2542f47bf1287318b1868
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: e07db0b75c45b4fe124b647853a2b0e99a722e33
+PODFILE CHECKSUM: 19f8189973cedad1c4e37b51441d72853743d2c4
 
 COCOAPODS: 1.11.2

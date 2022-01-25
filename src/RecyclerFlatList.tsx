@@ -6,6 +6,7 @@ import {
   PixelRatio,
   RefreshControl,
   FlatListProps,
+  Platform,
 } from "react-native";
 import {
   DataProvider,
@@ -187,11 +188,22 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return (
       <AutoLayoutView
         {...props}
-        scrollOffset={PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)}
-        windowSize={PixelRatio.getPixelSizeForLayoutSize(props.windowSize)}
-        renderAheadOffset={PixelRatio.getPixelSizeForLayoutSize(
-          props.renderAheadOffset
-        )}
+        scrollOffset={
+          Platform.OS === "ios"
+            ? props.scrollOffset
+            : PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)
+        }
+        windowSize={
+          Platform.OS === "ios"
+            ? props.windowSize
+            : PixelRatio.getPixelSizeForLayoutSize(props.windowSize)
+        }
+        renderAheadOffset={
+          Platform.OS === "ios"
+            ? props.renderAheadOffset
+            : PixelRatio.getPixelSizeForLayoutSize(props.renderAheadOffset)
+        }
+        enableInstrumentation={true}
       >
         {children}
       </AutoLayoutView>
