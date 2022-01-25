@@ -15,6 +15,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationKeys, RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
 import { useOnNativeBlankAreaEvents } from "@shopify/recycler-flat-list";
+import { useReactNativePerformanceFlipperPlugin } from "@shopify/recycler-flat-list";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -22,6 +23,7 @@ const App = () => {
   useOnNativeBlankAreaEvents((offsetStart, offsetEnd, blankArea) => {
     console.log(`Blank area: ${blankArea}`);
   });
+  useReactNativePerformanceFlipperPlugin();
 
   return (
     <NavigationContainer>
