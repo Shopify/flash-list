@@ -15,7 +15,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationKeys, RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
 import { useOnNativeBlankAreaEvents } from "@shopify/recycler-flat-list";
+<<<<<<< HEAD
 import { useReactNativePerformanceFlipperPlugin } from "@shopify/recycler-flat-list";
+=======
+>>>>>>> origin/main
 
 const Stack = createStackNavigator<RootStackParamList>();
 
