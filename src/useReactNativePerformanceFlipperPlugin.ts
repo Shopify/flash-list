@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { BLANK_AREA_EVENT_NAME } from "./useOnNativeBlankAreaEvents";
 import { NativeEventEmitter, NativeModules, Platform } from "react-native";
 
-function bootstrapPlugin(): Promise<Flipper.FlipperConnection> {
+const bootstrapPlugin = (): Promise<Flipper.FlipperConnection> => {
   return new Promise((resolve) => {
     addPlugin({
       getId: () => "flipper-plugin-react-native-performance",
@@ -14,7 +14,7 @@ function bootstrapPlugin(): Promise<Flipper.FlipperConnection> {
       runInBackground: () => true,
     });
   });
-}
+};
 
 const useReactNativePerformanceFlipperPlugin = () => {
   useEffect(() => {
