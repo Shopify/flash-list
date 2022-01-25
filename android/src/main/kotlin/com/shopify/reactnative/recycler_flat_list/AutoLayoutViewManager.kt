@@ -26,8 +26,8 @@ class AutoLayoutViewManager: ReactViewManager() {
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
         return MapBuilder.builder<String, Any>().put(
-                "instrumentation",
-                MapBuilder.of("registrationName", "onReceiveInstrumentation")
+                Constants.EVENT_BLANK_AREA,
+                MapBuilder.of("registrationName", Constants.EVENT_BLANK_AREA)
         ).build()
     }
 

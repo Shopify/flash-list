@@ -1,16 +1,13 @@
-package com.flatlistpro
+package com.shopify.reactnative.recycler_flat_list
 
-import com.flatlistpro.models.Rect
-import com.flatlistpro.models.TestCollection
-import com.flatlistpro.models.TestDataModel
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import org.junit.jupiter.api.Assertions.*
-
-import org.junit.jupiter.api.Test
+import com.shopify.reactnative.recycler_flat_list.models.Rect
+import com.shopify.reactnative.recycler_flat_list.models.TestDataModel
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 internal class AutoLayoutShadowTest {
-    var gson = Gson()
+    private val gson = Gson()
 
     /**
      * Test against expected output from stored JSON */
@@ -20,7 +17,7 @@ internal class AutoLayoutShadowTest {
         val testModel = getTestModel()
         testModel.vertical.forEachIndexed { index, it ->
             alShadow.clearGapsAndOverlaps(it.input as Array<CellContainer>)
-            assertEquals(gson.toJson(it.input), gson.toJson(it.expectedOutput), "Vertical Index: $index")
+            assertEquals("Index: $index", gson.toJson(it.expectedOutput), gson.toJson(it.input))
         }
     }
 
@@ -33,7 +30,7 @@ internal class AutoLayoutShadowTest {
         val testModel = getTestModel()
         testModel.horizontal.forEachIndexed { index, it ->
             alShadow.clearGapsAndOverlaps(it.input as Array<CellContainer>)
-            assertEquals(gson.toJson(it.input), gson.toJson(it.expectedOutput), "Horizontal Index: $index")
+            assertEquals("Index: $index", gson.toJson(it.expectedOutput), gson.toJson(it.input))
         }
     }
 
@@ -47,7 +44,7 @@ internal class AutoLayoutShadowTest {
         val testModel = getTestModel()
         testModel.window.forEachIndexed { index, it ->
             alShadow.clearGapsAndOverlaps(it.input as Array<CellContainer>)
-            assertEquals(gson.toJson(it.input), gson.toJson(it.expectedOutput), "Window Index: $index")
+            assertEquals("Index: $index", gson.toJson(it.expectedOutput), gson.toJson(it.input))
         }
     }
 
@@ -60,27 +57,27 @@ internal class AutoLayoutShadowTest {
 
         //--------- Vertical -----------
         //Item above visible window
-        arrayOf<CellContainer>( getRect(0,0, 100, 100), getRect(120,0, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 0, 100, 100), getRect(120, 0, 100, 100)).let {
             alShadow.clearGapsAndOverlaps(it)
-            assertEquals(it[1].left, 120)
+            assertEquals(120, it[1].left)
         }
 
         //Item below visible window
-        arrayOf<CellContainer>( getRect(0,0, 100, 100), getRect(120,550, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 0, 100, 100), getRect(120, 550, 100, 100)).let {
             alShadow.clearGapsAndOverlaps(it)
-            assertEquals(it[1].top, 550)
+            assertEquals(550, it[1].top)
         }
 
         //Item within visible window
-        arrayOf<CellContainer>( getRect(0,250, 100, 100), getRect(120,250, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 250, 100, 100), getRect(120, 250, 100, 100)).let {
             alShadow.clearGapsAndOverlaps(it)
-            assertEquals(it[1].left, 100)
+            assertEquals(100, it[1].left)
         }
 
         //At the top edge
-        arrayOf<CellContainer>( getRect(0,200, 100, 100), getRect(120,200, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 200, 100, 100), getRect(120, 200, 100, 100)).let {
             alShadow.clearGapsAndOverlaps(it)
-            assertEquals(it[1].left, 100)
+            assertEquals(100, it[1].left)
         }
 
         //--------- Horizontal -----------
@@ -88,27 +85,27 @@ internal class AutoLayoutShadowTest {
         alShadow.horizontal = true
 
         //Item left of visible window
-        arrayOf<CellContainer>( getRect(0,0, 100, 100), getRect(0,120, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 0, 100, 100), getRect(0, 120, 100, 100)).let {
             alShadow.clearGapsAndOverlaps(it)
-            assertEquals(it[1].top, 120)
+            assertEquals(120, it[1].top)
         }
 
         //Item right of visible window
-        arrayOf<CellContainer>( getRect(0,0, 100, 100), getRect(550,120, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 0, 100, 100), getRect(550, 120, 100, 100)).let {
             alShadow.clearGapsAndOverlaps(it)
-            assertEquals(it[1].top, 120)
+            assertEquals(120, it[1].top)
         }
 
         //Item within visible window
-        arrayOf<CellContainer>( getRect(250,0, 100, 100), getRect(250,120, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(250, 0, 100, 100), getRect(250, 120, 100, 100)).let {
             alShadow.clearGapsAndOverlaps(it)
-            assertEquals(it[1].top, 100)
+            assertEquals(100, it[1].top)
         }
 
         //At the left edge
-        arrayOf<CellContainer>( getRect(200,0, 100, 100), getRect(250,150, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(200, 0, 100, 100), getRect(250, 150, 100, 100)).let {
             alShadow.clearGapsAndOverlaps(it)
-            assertEquals(it[1].top, 100)
+            assertEquals(100, it[1].top)
         }
     }
 
@@ -117,7 +114,7 @@ internal class AutoLayoutShadowTest {
         return gson.fromJson<TestDataModel>(str, TestDataModel::class.java)
     }
 
-    private fun getRect(l:Int, t: Int, r: Int, b:Int): Rect {
+    private fun getRect(l: Int, t: Int, r: Int, b: Int): Rect {
         var rect = Rect(b - t, r - l)
         rect.left = l
         rect.right = r
