@@ -1,3 +1,5 @@
 rootProject.name = 'FlatListPro'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
+include ':recycler_flat_list'
+project(':recycler_flat_list').projectDir = new File(rootProject.projectDir, '../../android')
