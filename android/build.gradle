@@ -53,6 +53,7 @@ dependencies {
     testImplementation "junit:junit:${_junitVersion}"
     testImplementation "org.mockito.kotlin:mockito-kotlin:${_mockitoVersion}"
     testImplementation "org.mockito:mockito-inline:${_mockitoVersion}"
+    testImplementation 'com.google.code.gson:gson:2.8.9'
     androidTestImplementation("androidx.test:runner:${_androidTestRunnerVersion}")
     androidTestImplementation("androidx.test:rules:${_androidTestRunnerVersion}")
 }

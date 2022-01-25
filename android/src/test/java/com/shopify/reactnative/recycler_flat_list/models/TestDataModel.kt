@@ -1,4 +1,5 @@
-package com.flatlistpro.models
+package com.shopify.reactnative.recycler_flat_list.models
+
 
 class TestDataModel {
     lateinit var vertical: Array<TestCollection>
