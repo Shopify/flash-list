@@ -19,8 +19,8 @@ import { useOnNativeBlankAreaEvents } from "@shopify/recycler-flat-list";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
-  useOnNativeBlankAreaEvents((offset) => {
-    console.log(`Offset: ${offset}`);
+  useOnNativeBlankAreaEvents((offsetStart, offsetEnd, blankArea) => {
+    console.log(`Blank area: ${blankArea}`);
   });
 
   return (
