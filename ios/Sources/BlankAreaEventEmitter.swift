@@ -2,7 +2,7 @@ import Foundation
 
 @objc(BlankAreaEventEmitter)
 class BlankAreaEventEmitter: RCTEventEmitter {
-    private static let blankAreaEventName = "instrumentation"
+    private static let blankAreaEventName = "blankAreaEvent"
     private var hasListeners = false
     private(set) static var INSTANCE: BlankAreaEventEmitter? = nil
 
@@ -15,9 +15,13 @@ class BlankAreaEventEmitter: RCTEventEmitter {
         return [BlankAreaEventEmitter.blankAreaEventName]
     }
 
-    func onBlankArea(offset: CGFloat) {
+    func onBlankArea(startOffset: CGFloat, endOffset: CGFloat, blankArea: CGFloat) {
         guard hasListeners else { return }
-        sendEvent(withName: BlankAreaEventEmitter.blankAreaEventName, body: ["offset": offset])
+        sendEvent(withName: BlankAreaEventEmitter.blankAreaEventName, body: [
+            "blankArea": blankArea,
+            "startOffset": startOffset,
+            "endOffset": endOffset,
+        ])
     }
 
     @objc override static func requiresMainQueueSetup() -> Bool {

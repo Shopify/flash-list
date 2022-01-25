@@ -55,7 +55,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     private fun emitBlankAreaEvent() {
         val event: WritableMap = Arguments.createMap()
         val blanks: WritableMap = Arguments.createMap()
-        val BLANK_AREA_EVENT_NAME = "instrumentation"
+        val BLANK_AREA_EVENT_NAME = "blankAreaEvent"
         blanks.putDouble("startOffset", alShadow.blankOffsetAtStart / pixelDensity)
         blanks.putDouble("endOffset", alShadow.blankOffsetAtEnd / pixelDensity)
         event.putMap("blanks", blanks)
