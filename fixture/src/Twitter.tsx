@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   divider: {
     width: "100%",
     height: StyleSheet.hairlineWidth,
-    backgroundColor: "#aaa",
+    backgroundColor: "#DDD",
   },
   header: {
     height: 40,
