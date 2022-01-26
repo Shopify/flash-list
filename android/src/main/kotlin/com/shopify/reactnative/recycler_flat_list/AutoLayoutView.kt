@@ -17,14 +17,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     val alShadow = AutoLayoutShadow()
     var enableInstrumentation = false
 
-    private var pixelDensity = 1.0;
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        val dm = DisplayMetrics()
-        display.getRealMetrics(dm)
-        pixelDensity = dm.density.toDouble()
-    }
+    var pixelDensity = 1.0;
 
     /** Overriding draw instead of onLayout. RecyclerListView uses absolute positions for each and every item which means that changes in child layouts may not trigger onLayout on this container. The same layout
      * can still cause views to overlap. Therefore, it makes sense to override draw to do correction. */
