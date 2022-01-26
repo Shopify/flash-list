@@ -176,7 +176,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   renderContainer(props, children) {
     // return <View {...props}>{children}</View>;
     return (
-      <AutoLayoutView {...props} enableInstrumentation={true}>
+      <AutoLayoutView {...props} enableInstrumentation={false}>
         {children}
       </AutoLayoutView>
     );
