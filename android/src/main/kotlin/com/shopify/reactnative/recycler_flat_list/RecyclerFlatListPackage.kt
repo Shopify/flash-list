@@ -13,7 +13,8 @@ class ReactNativeRecyclerFlatListPackage : ReactPackage {
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
     return listOf(
         AutoLayoutViewManager(),
-        CellContainerManager()
+        CellContainerManager(),
+        BlankAreaViewManager()
     )
   }
 }

@@ -44,7 +44,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         }
     }
 
-    /** TODO: Check migration to Fabric*/
+    /** TODO: Check migration to Fabric */
     private fun emitBlankAreaEvent() {
         val event: WritableMap = Arguments.createMap()
         val blanks: WritableMap = Arguments.createMap()

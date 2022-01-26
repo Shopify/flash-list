@@ -2,16 +2,25 @@ import Foundation
 import UIKit
 import React
 
-
 @objc class BlankAreaView: UIView {
     private var observation: NSKeyValueObservation?
     private var didSet = false
+    private var scrollView: UIScrollView? {
+        subviews.first?.subviews.first as? UIScrollView
+    }
+    private var isHorizontal: Bool {
+        scrollView.map { $0.contentSize.width > $0.frame.width } ?? true
+    }
+    private var listSize: CGFloat {
+        guard let scrollView = scrollView else { return 0 }
+        return isHorizontal ? scrollView.frame.width : scrollView.frame.height
+    }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         guard
             !didSet,
-            let scrollView = subviews.first?.subviews.first as? UIScrollView
+            let scrollView = scrollView
         else { return }
         observation = scrollView.observe(\.contentOffset, changeHandler: { [weak self] scrollView, _ in
             guard let self = self else { return }
@@ -22,7 +31,7 @@ import React
                 startOffset: startOffset,
                 endOffset: endOffset,
                 blankArea: blankArea,
-                listSize: scrollView.frame.height
+                listSize: self.listSize
             ) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
         })
         didSet = true
@@ -32,14 +41,22 @@ import React
         let cells = scrollView.subviews.first(where: { $0 is RCTScrollContentView })?.subviews ?? []
         guard !cells.isEmpty else { return (0, 0, 0) }
 
+        let scrollOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
         guard
-            let firstCell = cells.first(where: { scrollViewContains($0, scrollOffset: scrollView.contentOffset.y) && !$0.subviews.flatMap(\.subviews).isEmpty }),
-            let lastCell = cells.last(where: { scrollViewContains($0, scrollOffset: scrollView.contentOffset.y) && !$0.subviews.flatMap(\.subviews).isEmpty })
+            let firstCell = cells.first(where: { scrollViewContains($0, scrollOffset: scrollOffset) && !$0.subviews.flatMap(\.subviews).isEmpty }),
+            let lastCell = cells.last(where: { scrollViewContains($0, scrollOffset: scrollOffset) && !$0.subviews.flatMap(\.subviews).isEmpty })
         else {
-            return (scrollView.frame.height, scrollView.frame.height, scrollView.frame.height)
+            return (listSize, listSize, listSize)
         }
-        let blankOffsetTop = firstCell.frame.minY - scrollView.contentOffset.y
-        let blankOffsetBottom = scrollView.contentOffset.y + scrollView.frame.height - lastCell.frame.maxY
+        let blankOffsetTop: CGFloat
+        let blankOffsetBottom: CGFloat
+        if isHorizontal {
+            blankOffsetTop = firstCell.frame.minX - scrollOffset
+            blankOffsetBottom = scrollOffset + listSize - lastCell.frame.maxX
+        } else {
+            blankOffsetTop = firstCell.frame.minY - scrollOffset
+            blankOffsetBottom = scrollOffset + listSize - lastCell.frame.maxY
+        }
         let blankArea = max(blankOffsetTop, blankOffsetBottom)
         return (blankOffsetTop, blankOffsetBottom, blankArea)
     }
@@ -48,12 +65,10 @@ import React
         _ cellView: UIView,
         scrollOffset: CGFloat
     ) -> Bool {
-        let scrollView = subviews.first!.subviews.first! as! UIScrollView
         let boundsStart = scrollOffset
-        let boundsEnd = scrollOffset + scrollView.frame.height
+        let boundsEnd = scrollOffset + listSize
         let cellFrame = cellView.frame
 
-        let isHorizontal = scrollView.contentSize.width > scrollView.frame.width
         if isHorizontal {
             return (cellFrame.minX >= boundsStart || cellFrame.maxX >= boundsStart) && (cellFrame.minX <= boundsEnd || cellFrame.maxX <= boundsEnd)
         } else {
