@@ -27,14 +27,14 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         }
 
     private val listSize: Int
-    get() {
-        return if (horizontal) scrollView.width else scrollView.height
-    }
+        get() {
+            return if (horizontal) scrollView.width else scrollView.height
+        }
 
     private val scrollOffset: Int
-    get() {
-        return if (horizontal) scrollView.scrollX else scrollView.scrollY
-    }
+        get() {
+            return if (horizontal) scrollView.scrollX else scrollView.scrollY
+        }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()

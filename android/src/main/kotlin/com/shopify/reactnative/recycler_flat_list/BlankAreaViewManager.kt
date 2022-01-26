@@ -19,11 +19,4 @@ class BlankAreaViewManager: ReactViewManager() {
     override fun createViewInstance(context: ThemedReactContext): ReactViewGroup {
         return BlankAreaView(context)
     }
-
-//    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
-//        return MapBuilder.builder<String, Any>().put(
-//            Constants.EVENT_BLANK_AREA,
-//            MapBuilder.of("registrationName", Constants.EVENT_BLANK_AREA)
-//        ).build()
-//    }
 }
