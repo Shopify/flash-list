@@ -157,7 +157,7 @@ import UIKit
         let blankOffsetEnd = actualScrollOffset + windowSize - renderAheadOffset - filledBoundMax
 
         // one of the values is negative, we look for the positive one
-        let blankArea = max(0, blankOffsetStart, blankOffsetEnd)
+        let blankArea = max(blankOffsetStart, blankOffsetEnd)
 
         return (blankOffsetStart, blankOffsetEnd, blankArea)
     }
