@@ -3,10 +3,8 @@ import {
   StyleProp,
   View,
   ViewStyle,
-  PixelRatio,
   RefreshControl,
   FlatListProps,
-  Platform,
 } from "react-native";
 import {
   DataProvider,
@@ -24,8 +22,8 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   estimatedHeight: number;
 
   /**
-  * Visible height and width of the list. This is not the scroll content size.
-  */
+   * Visible height and width of the list. This is not the scroll content size.
+   */
   estimatedListSize?: { height: number; width: number };
 }
 
@@ -178,25 +176,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   renderContainer(props, children) {
     // return <View {...props}>{children}</View>;
     return (
-      <AutoLayoutView
-        {...props}
-        scrollOffset={
-          Platform.OS === "ios"
-            ? props.scrollOffset
-            : PixelRatio.getPixelSizeForLayoutSize(props.scrollOffset)
-        }
-        windowSize={
-          Platform.OS === "ios"
-            ? props.windowSize
-            : PixelRatio.getPixelSizeForLayoutSize(props.windowSize)
-        }
-        renderAheadOffset={
-          Platform.OS === "ios"
-            ? props.renderAheadOffset
-            : PixelRatio.getPixelSizeForLayoutSize(props.renderAheadOffset)
-        }
-        enableInstrumentation={true}
-      >
+      <AutoLayoutView {...props} enableInstrumentation={true}>
         {children}
       </AutoLayoutView>
     );
