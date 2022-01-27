@@ -1,2 +1,8 @@
 # https://services.shopify.io/next/services/recycler-flat-list
 classification: library
+oncall_url: https://shopify.pagerduty.com/teams/PXUS67F
+audience: internal
+slack_channels:
+  - react-native-foundations
+owners:
+  - Shopify/react-native-foundations
