@@ -11,6 +11,7 @@ import {
   DataProvider,
   GridLayoutProvider,
   LayoutProvider,
+  ProgressiveListView,
   RecyclerListView,
   RecyclerListViewProps,
 } from "recyclerlistview";
@@ -42,9 +43,11 @@ class RecyclerFlatList<T> extends React.PureComponent<
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
   private listFixedDimensionSize = 0;
 
-  static props = {
+  static defaultProps = {
     data: [],
   };
+
+  static readonly RENDER_AHEAD_OFFSET = 250;
 
   constructor(props) {
     super(props);
@@ -153,7 +156,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
       }
 
       return (
-        <RecyclerListView
+        <ProgressiveListView
           ref={this.recyclerRef}
           layoutProvider={this.state.layoutProvider}
           style={style as object}
@@ -170,6 +173,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
           onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
           extendedState={this.props.extraData}
           layoutSize={this.props.estimatedListSize}
+          maxRenderAhead={3 * RecyclerFlatList.RENDER_AHEAD_OFFSET}
+          finalRenderAheadOffset={RecyclerFlatList.RENDER_AHEAD_OFFSET}
+          renderAheadStep={RecyclerFlatList.RENDER_AHEAD_OFFSET}
         />
       );
     }
