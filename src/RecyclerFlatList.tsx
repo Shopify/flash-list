@@ -5,6 +5,7 @@ import {
   ViewStyle,
   RefreshControl,
   FlatListProps,
+  LayoutChangeEvent,
 } from "react-native";
 import {
   DataProvider,
@@ -39,6 +40,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   RecyclerFlatListState<T>
 > {
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
+  private listFixedDimensionSize = 0;
 
   static props = {
     data: [],
@@ -136,7 +138,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         style = [style, { transform: [{ scaleY: -1 }] }];
       }
 
-      let scrollViewProps: object = { style };
+      let scrollViewProps: object = { style, onLayout: this.handleSizeChange };
       if (this.props.onRefresh) {
         const refreshControl = (
           <RefreshControl
@@ -173,8 +175,21 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
   }
 
+  handleSizeChange = (e: LayoutChangeEvent) => {
+    const newSize = this.props.horizontal
+      ? e.nativeEvent.layout.height
+      : e.nativeEvent.layout.width;
+    const oldSize = this.listFixedDimensionSize;
+    this.listFixedDimensionSize = newSize;
+
+    //>0 check is to avoid rerender on mount where it would be redundant
+    if (oldSize > 0 && oldSize !== newSize) {
+      this.rlvRef?.forceRerender();
+    }
+  };
+
   renderContainer(props, children) {
-    // return <View {...props}>{children}</View>;
+    //return <View {...props}>{children}</View>;
     return (
       <AutoLayoutView {...props} enableInstrumentation={false}>
         {children}
