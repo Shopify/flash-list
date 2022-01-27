@@ -15,10 +15,11 @@ import {
   RecyclerListView,
   RecyclerListViewProps,
 } from "recyclerlistview";
+import invariant from "invariant";
+
 import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent from "./WrapperComponent";
-import invariant from "invariant";
 
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   estimatedHeight: number;
@@ -33,7 +34,7 @@ export interface RecyclerFlatListState<T> {
   dataProvider: DataProvider;
   numColumns: number;
   layoutProvider: LayoutProvider;
-  data?: readonly T[] | null;
+  data?: ReadonlyArray<T> | null;
 }
 
 class RecyclerFlatList<T> extends React.PureComponent<
@@ -64,7 +65,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     invariant(refreshingPrecondition, message);
   }
 
-  //Some of the state variables need to update when props change
+  // Some of the state variables need to update when props change
   static getDerivedStateFromProps<T>(
     nextProps: RecyclerFlatListProps<T>,
     prevState: RecyclerFlatListState<T>
@@ -105,30 +106,30 @@ class RecyclerFlatList<T> extends React.PureComponent<
     };
   }
 
-  //Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
+  // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
   static getLayoutProvider(
     numColumns: number,
     sizeProvider: (index) => number
   ) {
     return new GridLayoutProvider(
-      numColumns, //max span or, total columns
+      numColumns, // max span or, total columns
       (index) => {
-        //type of the item for given index
+        // type of the item for given index
         return 0;
       },
       (index) => {
-        //span of the item at given index, item can choose to span more than one column
+        // span of the item at given index, item can choose to span more than one column
         return 1;
       },
       (index) => {
-        //estimated size of the item an given index
+        // estimated size of the item an given index
         return sizeProvider(index);
       }
     );
   }
 
   onEndReached = () => {
-    //known issue: RLV doesn't report distanceFromEnd
+    // known issue: RLV doesn't report distanceFromEnd
     this.props.onEndReached?.({ distanceFromEnd: 0 });
   };
 
@@ -151,7 +152,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         );
         scrollViewProps = {
           ...scrollViewProps,
-          refreshControl: refreshControl,
+          refreshControl,
         };
       }
 
@@ -163,10 +164,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
           dataProvider={this.state.dataProvider}
           rowRenderer={this.rowRenderer}
           renderFooter={this.footer}
-          canChangeSize={true}
-          isHorizontal={!!this.props.horizontal}
+          canChangeSize
+          isHorizontal={Boolean(this.props.horizontal)}
           scrollViewProps={scrollViewProps}
-          forceNonDeterministicRendering={true}
+          forceNonDeterministicRendering
           renderItemContainer={this.renderItemContainer}
           renderContentContainer={this.renderContainer}
           onEndReached={this.onEndReached}
@@ -188,14 +189,14 @@ class RecyclerFlatList<T> extends React.PureComponent<
     const oldSize = this.listFixedDimensionSize;
     this.listFixedDimensionSize = newSize;
 
-    //>0 check is to avoid rerender on mount where it would be redundant
+    // >0 check is to avoid rerender on mount where it would be redundant
     if (oldSize > 0 && oldSize !== newSize) {
       this.rlvRef?.forceRerender();
     }
   };
 
   renderContainer(props, children) {
-    //return <View {...props}>{children}</View>;
+    // return <View {...props}>{children}</View>;
     return (
       <AutoLayoutView {...props} enableInstrumentation={false}>
         {children}
@@ -261,8 +262,8 @@ class RecyclerFlatList<T> extends React.PureComponent<
   };
 
   rowRenderer = (type, data, index) => {
-    //known issue: expected to pass separators which isn't available in RLV
-    let elem = this.props.renderItem?.({ item: data, index: index } as any);
+    // known issue: expected to pass separators which isn't available in RLV
+    const elem = this.props.renderItem?.({ item: data, index } as any);
     let elements = [this.header(index), elem];
 
     const separator = this.separator(index);
@@ -292,7 +293,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   };
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
-    this.rlvRef?.scrollToEnd(!!params?.animated);
+    this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }
 
   public scrollToIndex(params: {
@@ -301,8 +302,8 @@ class RecyclerFlatList<T> extends React.PureComponent<
     viewOffset?: number | undefined;
     viewPosition?: number | undefined;
   }) {
-    //known issue: no support for view offset/position
-    this.rlvRef?.scrollToIndex(params.index, !!params.animated);
+    // known issue: no support for view offset/position
+    this.rlvRef?.scrollToIndex(params.index, Boolean(params.animated));
   }
 
   public scrollToItem(params: {
@@ -310,7 +311,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     item: any;
     viewPosition?: number | undefined;
   }) {
-    this.rlvRef?.scrollToItem(params.item, !!params.animated);
+    this.rlvRef?.scrollToItem(params.item, Boolean(params.animated));
   }
 
   public scrollToOffset(params: {
@@ -319,7 +320,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   }) {
     const x = this.props.horizontal ? params.offset : 0;
     const y = this.props.horizontal ? 0 : params.offset;
-    this.rlvRef?.scrollToOffset(x, y, !!params.animated);
+    this.rlvRef?.scrollToOffset(x, y, Boolean(params.animated));
   }
 }
 

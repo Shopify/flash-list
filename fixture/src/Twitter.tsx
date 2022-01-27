@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { RecyclerFlatList } from "@shopify/recycler-flat-list";
-import { tweets } from "./data/tweets.js";
+
+import { tweets } from "./data/tweets";
 import TweetCell from "./TweetCell";
 
 const Twitter = () => {

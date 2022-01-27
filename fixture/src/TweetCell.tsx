@@ -52,8 +52,8 @@ const tweetActions = (retweets, comments, likes) => {
 };
 
 const avatar = (author: Author) => {
-  const image_url = author.avatar.replace("_normal", "");
-  return <Image style={styles.avatar} source={{ uri: image_url }} />;
+  const imageUrl = author.avatar.replace("_normal", "");
+  return <Image style={styles.avatar} source={{ uri: imageUrl }} />;
 };
 
 const TweetCell = (tweet: Tweet) => {
@@ -90,38 +90,9 @@ const styles = StyleSheet.create({
     height: 18,
     margin: 8,
   },
-  timeline: {
-    backgroundColor: "#FFF",
-  },
-  divider: {
-    width: "100%",
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: "#eee",
-  },
   gray: {
     color: "#777",
     paddingRight: 2,
-  },
-  sectionHeader: {
-    backgroundColor: "#5f27cd",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  sectionHeaderText: {
-    fontWeight: "700",
-    color: "white",
-  },
-  listHeader: {
-    backgroundColor: "#eee",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  listHeaderText: {
-    fontSize: 24,
-    color: "#333",
-    fontWeight: "600",
   },
   shrink: {
     flexShrink: 1,
@@ -156,10 +127,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
   },
 });
 

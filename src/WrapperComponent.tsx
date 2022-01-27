@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 
 export default class WrapperComponent extends React.Component {
@@ -14,6 +13,7 @@ export default class WrapperComponent extends React.Component {
       hasDataChanged || hasExtendedStateChanged || hasInternalSnapshotChanged
     );
   }
+
   render() {
     return this.props.children;
   }

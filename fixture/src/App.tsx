@@ -8,15 +8,18 @@
 
 import "react-native-gesture-handler";
 import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import {
+  useOnNativeBlankAreaEvents,
+  useReactNativePerformanceFlipperPlugin,
+} from "@shopify/recycler-flat-list";
+
 import List from "./List";
 import PaginatedList from "./PaginatedList";
 import Twitter from "./Twitter";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationKeys, RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
-import { useOnNativeBlankAreaEvents } from "@shopify/recycler-flat-list";
-import { useReactNativePerformanceFlipperPlugin } from "@shopify/recycler-flat-list";
 
 const Stack = createStackNavigator<RootStackParamList>();
 

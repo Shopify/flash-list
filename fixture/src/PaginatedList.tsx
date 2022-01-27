@@ -1,4 +1,4 @@
-/***
+/** *
  Use this component inside your React Native Application.
  A scrollable list with different item type
  */
@@ -8,25 +8,23 @@ import { View, Text } from "react-native";
 import { RecyclerFlatList } from "@shopify/recycler-flat-list";
 
 export interface PaginatedListState {
-  elems: Array<any>
+  elems: any[];
 }
-/***
+
+/** *
  * To test out just copy this component and render in you root component
  */
-export default class PaginatedList extends React.Component<{}, PaginatedListState> {
-  constructor(props) {
-    super(props);
-    this.state = this.getInitialState();
+export default class PaginatedList extends React.Component<PaginatedListState> {
+  state: PaginatedListState = this.getInitialState();
+
+  private getInitialState() {
+    return { elems: this._generateArray(0, 20) } as PaginatedListState;
   }
 
-  getInitialState() {
-    return { elems: this._generateArray(0, 20) } as PaginatedListState
-  }
-
-  _generateArray(start, n) {
-    let arr = new Array(n);
-    for (let i = 0; i < n; i++) {
-      arr[i] = start + i;
+  private _generateArray(start, size) {
+    const arr = new Array(size);
+    for (let i = 0; i < size; i++) {
+      arr[size] = start + i;
     }
     return arr;
   }
@@ -49,10 +47,10 @@ export default class PaginatedList extends React.Component<{}, PaginatedListStat
         onEndReached={() => {
           // Since FlatList is a pure component, data reference should change for a render
           const elems = [...this.state.elems];
-          elems.push(...this._generateArray(elems.length, 20))
-          this.setState({ elems: elems })
+          elems.push(...this._generateArray(elems.length, 20));
+          this.setState({ elems });
         }}
-        //known issue: Flatlist uses fraction of visible window while RLV wants pixels. Will fix later
+        // known issue: Flatlist uses fraction of visible window while RLV wants pixels. Will fix later
         onEndReachedThreshold={100}
         data={this.state.elems}
       />
