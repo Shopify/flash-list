@@ -56,7 +56,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.state = RecyclerFlatList.getInitialState(props);
   }
 
-  setup() {
+  private setup() {
     const refreshingPrecondition = !(
       this.props.onRefresh && typeof this.props.refreshing !== "boolean"
     );
@@ -87,7 +87,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return newState;
   }
 
-  static getInitialState<T>(
+  private static getInitialState<T>(
     props: RecyclerFlatListProps<T>
   ): RecyclerFlatListState<T> {
     const numColumns = props.numColumns || 1;
@@ -107,12 +107,13 @@ class RecyclerFlatList<T> extends React.PureComponent<
   }
 
   // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
-  static getLayoutProvider(
+  private static getLayoutProvider(
     numColumns: number,
     sizeProvider: (index) => number
   ) {
     return new GridLayoutProvider(
-      numColumns, // max span or, total columns
+      // max span or, total columns
+      numColumns,
       (index) => {
         // type of the item for given index
         return 0;
@@ -128,13 +129,13 @@ class RecyclerFlatList<T> extends React.PureComponent<
     );
   }
 
-  onEndReached = () => {
+  private onEndReached = () => {
     // known issue: RLV doesn't report distanceFromEnd
     this.props.onEndReached?.({ distanceFromEnd: 0 });
   };
 
   render() {
-    if (this.state.dataProvider.getSize() == 0) {
+    if (this.state.dataProvider.getSize() === 0) {
       return this.props.ListEmptyComponent;
     } else {
       let style = this.props.style ?? {};
@@ -168,8 +169,8 @@ class RecyclerFlatList<T> extends React.PureComponent<
           isHorizontal={Boolean(this.props.horizontal)}
           scrollViewProps={scrollViewProps}
           forceNonDeterministicRendering
-          renderItemContainer={this.renderItemContainer}
-          renderContentContainer={this.renderContainer}
+          renderItemContainer={this.itemContainer}
+          renderContentContainer={this.container}
           onEndReached={this.onEndReached}
           onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
           extendedState={this.props.extraData}
@@ -182,10 +183,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
   }
 
-  handleSizeChange = (e: LayoutChangeEvent) => {
+  private handleSizeChange = (event: LayoutChangeEvent) => {
     const newSize = this.props.horizontal
-      ? e.nativeEvent.layout.height
-      : e.nativeEvent.layout.width;
+      ? event.nativeEvent.layout.height
+      : event.nativeEvent.layout.width;
     const oldSize = this.listFixedDimensionSize;
     this.listFixedDimensionSize = newSize;
 
@@ -195,7 +196,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
   };
 
-  renderContainer(props, children) {
+  private container(props, children) {
     // return <View {...props}>{children}</View>;
     return (
       <AutoLayoutView {...props} enableInstrumentation={false}>
@@ -204,7 +205,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     );
   }
 
-  renderItemContainer = (props, parentProps, children) => {
+  private itemContainer = (props, parentProps, children) => {
     return (
       <ItemContainer {...props} index={parentProps.index}>
         <WrapperComponent
@@ -220,7 +221,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     );
   };
 
-  separator(index) {
+  private separator(index) {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
 
@@ -236,7 +237,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return undefined;
   }
 
-  header(index) {
+  private header(index) {
     if (index !== 0) return undefined;
     const ListHeaderComponent = this.props.ListHeaderComponent;
     const style = this.props.ListHeaderComponentStyle || {};
@@ -249,7 +250,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
   }
 
-  footer = () => {
+  private footer = () => {
     const ListFooterComponent = this.props.ListFooterComponent;
     const style = this.props.ListFooterComponentStyle || {};
     if (React.isValidElement(ListFooterComponent)) {
@@ -261,7 +262,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return null;
   };
 
-  rowRenderer = (type, data, index) => {
+  private rowRenderer = (type, data, index) => {
     // known issue: expected to pass separators which isn't available in RLV
     const elem = this.props.renderItem?.({ item: data, index } as any);
     let elements = [this.header(index), elem];
