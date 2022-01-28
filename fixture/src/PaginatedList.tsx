@@ -24,7 +24,7 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
   private _generateArray(start, size) {
     const arr = new Array(size);
     for (let i = 0; i < size; i++) {
-      arr[size] = start + i;
+      arr[i] = start + i;
     }
     return arr;
   }
@@ -48,7 +48,9 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
           // Since FlatList is a pure component, data reference should change for a render
           const elems = [...this.state.elems];
           elems.push(...this._generateArray(elems.length, 20));
-          this.setState({ elems });
+          this.setState(() => {
+            return { elems };
+          });
         }}
         // known issue: Flatlist uses fraction of visible window while RLV wants pixels. Will fix later
         onEndReachedThreshold={100}

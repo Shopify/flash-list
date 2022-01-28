@@ -1,6 +1,13 @@
 import React from "react";
 
-export default class WrapperComponent extends React.Component {
+export interface WrapperComponentProps {
+  extendedState?: object;
+  internalSnapshot?: object;
+  dataHasChanged: (r1: any, r2: any) => boolean;
+  data: any;
+}
+
+export default class WrapperComponent extends React.Component<WrapperComponentProps> {
   shouldComponentUpdate(newProps) {
     const hasExtendedStateChanged =
       this.props.extendedState !== newProps.extendedState;

@@ -46,13 +46,16 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   static defaultProps = {
     data: [],
+    numColumns: 1,
   };
 
-  static readonly RENDER_AHEAD_OFFSET = 250;
+  private static readonly RENDER_AHEAD_OFFSET = 250;
 
   constructor(props) {
     super(props);
     this.setup();
+
+    // eslint-disable-next-line react/state-in-constructor
     this.state = RecyclerFlatList.getInitialState(props);
   }
 
@@ -209,7 +212,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return (
       <ItemContainer {...props} index={parentProps.index}>
         <WrapperComponent
-          // @ts-ignore
           extendedState={parentProps.extendedState}
           internalSnapshot={parentProps.internalSnapshot}
           dataHasChanged={parentProps.dataHasChanged}
@@ -293,10 +295,12 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef = ref;
   };
 
+  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }
 
+  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToIndex(params: {
     animated?: boolean | null | undefined;
     index: number;
@@ -307,6 +311,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef?.scrollToIndex(params.index, Boolean(params.animated));
   }
 
+  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToItem(params: {
     animated?: boolean | null | undefined;
     item: any;
@@ -315,6 +320,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef?.scrollToItem(params.item, Boolean(params.animated));
   }
 
+  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToOffset(params: {
     animated?: boolean | null | undefined;
     offset: number;
