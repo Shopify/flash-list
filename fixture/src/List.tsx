@@ -1,4 +1,4 @@
-/***
+/** *
  Use this component inside your React Native Application.
  A scrollable list with different item type
  */
@@ -6,20 +6,17 @@ import React from "react";
 import { View, Text } from "react-native";
 import { RecyclerFlatList } from "@shopify/recycler-flat-list";
 
-/***
+/** *
  * To test out just copy this component and render in you root component
  */
 export default class List extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      refreshing: false,
-    };
-  }
+  state = {
+    refreshing: false,
+  };
 
-  _generateArray(n) {
-    let arr = new Array(n);
-    for (let i = 0; i < n; i++) {
+  private _generateArray(size) {
+    const arr = new Array(size);
+    for (let i = 0; i < size; i++) {
       arr[i] = i;
     }
     return arr;

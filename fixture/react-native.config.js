@@ -1,4 +1,5 @@
 const path = require("path");
+
 const root = path.resolve(__dirname, "../");
 
 module.exports = {
@@ -6,8 +7,8 @@ module.exports = {
     "@shopify/recycler-flat-list": {
       root,
       platforms: {
-        ios: null
-      }
+        ios: null,
+      },
     },
   },
 };

@@ -2,15 +2,15 @@ import { useCallback, useEffect } from "react";
 import { NativeEventEmitter, NativeModules, Platform } from "react-native";
 
 export interface BlankAreaEvent {
-  offsetStart: Number;
-  offsetEnd: Number;
-  blankArea: Number;
+  offsetStart: number;
+  offsetEnd: number;
+  blankArea: number;
 }
 
 export const BLANK_AREA_EVENT_NAME = "blankAreaEvent";
 
 const useOnNativeBlankAreaEvents = (
-  callback: (offsetStart: Number, offsetEnd: Number, blankArea: Number) => {}
+  callback: (offsetStart: number, offsetEnd: number, blankArea: number) => void
 ) => {
   const onBlankAreaEvent = useCallback(
     ({ offsetStart, offsetEnd, blankArea }: BlankAreaEvent) => {
