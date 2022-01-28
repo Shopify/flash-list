@@ -28,6 +28,38 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
    * Visible height and width of the list. This is not the scroll content size.
    */
   estimatedListSize?: { height: number; width: number };
+
+  /***
+   * Draw distance for rendering in advance in keeping items ready
+   */
+  renderAheadOffset?: number;
+
+  /**
+   * Allows developers to override type of items. This will improve recycling if you have different types of items in the list
+   * Right type will be used for the right item. Default type is 0
+   * If you don't want to change for an indexes just return undefined.
+   */
+  overrideItemType?: (
+    item: T,
+    index: number,
+    extraData?: any
+  ) => string | number | undefined;
+
+  /**
+   * with numColumns > 1 you can choose to increase span of some of the items. You can also modify estimated height for some items.
+   * Return undefined for no change
+   */
+  overrideItemLayout?: (
+    item: T,
+    index: number,
+    maxColumns: number,
+    extraData?: any
+  ) => { span?: number; size?: number } | undefined;
+
+  /**
+   * For debugging, internal props will be overriden with these values if used
+   */
+  debug?: object;
 }
 
 export interface RecyclerFlatListState<T> {
@@ -47,9 +79,8 @@ class RecyclerFlatList<T> extends React.PureComponent<
   static defaultProps = {
     data: [],
     numColumns: 1,
+    renderAheadOffset: 250,
   };
-
-  private static readonly RENDER_AHEAD_OFFSET = 250;
 
   constructor(props) {
     super(props);
@@ -91,10 +122,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
   }
 
   private static getInitialState<T>(
-    props: RecyclerFlatListProps<T>
+    propProvider: () => RecyclerFlatListProps<T>
   ): RecyclerFlatListState<T> {
+    const props = propProvider();
     const numColumns = props.numColumns || 1;
-    const sizeProvider = () => props.estimatedHeight;
     const dataProvider = new DataProvider((r1, r2) => {
       return r1 !== r2;
     });
@@ -102,7 +133,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
       numColumns,
       layoutProvider: RecyclerFlatList.getLayoutProvider(
         numColumns,
-        sizeProvider
+        propProvider
       ),
       dataProvider: dataProvider.cloneWithRows(props.data as any[]),
       data: props.data,
@@ -110,27 +141,51 @@ class RecyclerFlatList<T> extends React.PureComponent<
   }
 
   // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
-  private static getLayoutProvider(
+  private static getLayoutProvider<T>(
     numColumns: number,
-    sizeProvider: (index) => number
+    propProvider: () => RecyclerFlatListProps<T>
   ) {
     return new GridLayoutProvider(
       // max span or, total columns
       numColumns,
       (index) => {
         // type of the item for given index
-        return 0;
+        const props = propProvider();
+        const type = props.overrideItemType?.(
+          props.data!![index],
+          index,
+          props.extraData
+        );
+        return type || 0;
       },
       (index) => {
         // span of the item at given index, item can choose to span more than one column
-        return 1;
+        const props = propProvider();
+        const layout = props.overrideItemLayout?.(
+          props.data!![index],
+          index,
+          numColumns,
+          props.extraData
+        );
+        return layout?.span || 1;
       },
       (index) => {
         // estimated size of the item an given index
-        return sizeProvider(index);
+        const props = propProvider();
+        const layout = props.overrideItemLayout?.(
+          props.data!![index],
+          index,
+          numColumns,
+          props.extraData
+        );
+        return layout?.size || props.estimatedHeight;
       }
     );
   }
+
+  private getCurrentProps = () => {
+    return this.props;
+  };
 
   private onEndReached = () => {
     // known issue: RLV doesn't report distanceFromEnd
@@ -160,8 +215,11 @@ class RecyclerFlatList<T> extends React.PureComponent<
         };
       }
 
+      const renderAheadOffset = this.props.renderAheadOffset || 250;
+
       return (
         <ProgressiveListView
+          {...this.props}
           ref={this.recyclerRef}
           layoutProvider={this.state.layoutProvider}
           style={style as object}
@@ -178,9 +236,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
           onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
           extendedState={this.props.extraData}
           layoutSize={this.props.estimatedListSize}
-          maxRenderAhead={3 * RecyclerFlatList.RENDER_AHEAD_OFFSET}
-          finalRenderAheadOffset={RecyclerFlatList.RENDER_AHEAD_OFFSET}
-          renderAheadStep={RecyclerFlatList.RENDER_AHEAD_OFFSET}
+          maxRenderAhead={3 * renderAheadOffset}
+          finalRenderAheadOffset={renderAheadOffset}
+          renderAheadStep={renderAheadOffset}
+          {...this.props.debug}
         />
       );
     }
