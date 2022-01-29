@@ -273,14 +273,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   private itemContainer = (props, parentProps, children) => {
     return (
-      <ItemContainer
-        {...props}
-        style={[
-          props.style,
-          { minHeight: props.style.height, height: undefined },
-        ]}
-        index={parentProps.index}
-      >
+      <ItemContainer {...props} index={parentProps.index}>
         <WrapperComponent
           extendedState={parentProps.extendedState}
           internalSnapshot={parentProps.internalSnapshot}
