@@ -43,7 +43,7 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
             </View>
           );
         }}
-        estimatedHeight={100}
+        estimatedItemSize={100}
         onEndReached={() => {
           // Since FlatList is a pure component, data reference should change for a render
           const elems = [...this.state.elems];

@@ -9,8 +9,6 @@ import {
 } from "react-native";
 import {
   DataProvider,
-  GridLayoutProvider,
-  LayoutProvider,
   ProgressiveListView,
   RecyclerListView,
   RecyclerListViewProps,
@@ -20,16 +18,22 @@ import invariant from "invariant";
 import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent from "./WrapperComponent";
+import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
-  estimatedHeight: number;
+  // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
+  /**
+   * Average or median size for elements in the list. Doesn't have to be very accurate but a good estimate can work better.
+   * For vertical lists provide average height and for horizontal average width.
+   */
+  estimatedItemSize: number;
 
   /**
    * Visible height and width of the list. This is not the scroll content size.
    */
   estimatedListSize?: { height: number; width: number };
 
-  /***
+  /**
    * Draw distance for rendering in advance in keeping items ready
    */
   renderAheadOffset?: number;
@@ -38,6 +42,7 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
    * Allows developers to override type of items. This will improve recycling if you have different types of items in the list
    * Right type will be used for the right item. Default type is 0
    * If you don't want to change for an indexes just return undefined.
+   * Performance: This method is called very frequently. Keep it fast.
    */
   overrideItemType?: (
     item: T,
@@ -47,25 +52,27 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
 
   /**
    * with numColumns > 1 you can choose to increase span of some of the items. You can also modify estimated height for some items.
-   * Return undefined for no change
+   * Modify the given layout. Do not return.
+   * Performance: This method is called very frequently. Keep it fast.
    */
   overrideItemLayout?: (
+    layout: { span?: number; size?: number },
     item: T,
     index: number,
     maxColumns: number,
     extraData?: any
-  ) => { span?: number; size?: number } | undefined;
+  ) => void;
 
   /**
    * For debugging, internal props will be overriden with these values if used
    */
-  debug?: object;
+  overrideProps?: object;
 }
 
 export interface RecyclerFlatListState<T> {
   dataProvider: DataProvider;
   numColumns: number;
-  layoutProvider: LayoutProvider;
+  layoutProvider: GridLayoutProviderWithProps<RecyclerFlatListProps<T>>;
   data?: ReadonlyArray<T> | null;
 }
 
@@ -87,7 +94,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.setup();
 
     // eslint-disable-next-line react/state-in-constructor
-    this.state = RecyclerFlatList.getInitialState(props);
+    this.state = RecyclerFlatList.getDerivedStateFromProps(props, undefined);
   }
 
   private setup() {
@@ -102,55 +109,48 @@ class RecyclerFlatList<T> extends React.PureComponent<
   // Some of the state variables need to update when props change
   static getDerivedStateFromProps<T>(
     nextProps: RecyclerFlatListProps<T>,
-    prevState: RecyclerFlatListState<T>
+    prevState: RecyclerFlatListState<T> | undefined
   ): RecyclerFlatListState<T> {
-    const newState = { ...prevState };
-    if (newState.numColumns !== nextProps.numColumns) {
+    const oldState = prevState || RecyclerFlatList.getInitialMutableState();
+    const newState = { ...oldState };
+    if (oldState.numColumns !== nextProps.numColumns) {
       newState.numColumns = nextProps.numColumns || 1;
-      newState.layoutProvider = RecyclerFlatList.getLayoutProvider(
+      newState.layoutProvider = RecyclerFlatList.getLayoutProvider<T>(
         newState.numColumns,
-        () => nextProps.estimatedHeight
+        nextProps
       );
     }
-    if (nextProps.data !== prevState.data) {
+    if (nextProps.data !== oldState.data) {
       newState.data = nextProps.data;
-      newState.dataProvider = newState.dataProvider.cloneWithRows(
+      newState.dataProvider = oldState.dataProvider.cloneWithRows(
         nextProps.data as any[]
       );
     }
+    newState.layoutProvider.updateProps(nextProps);
     return newState;
   }
 
-  private static getInitialState<T>(
-    propProvider: () => RecyclerFlatListProps<T>
-  ): RecyclerFlatListState<T> {
-    const props = propProvider();
-    const numColumns = props.numColumns || 1;
-    const dataProvider = new DataProvider((r1, r2) => {
-      return r1 !== r2;
-    });
+  private static getInitialMutableState<T>(): RecyclerFlatListState<T> {
     return {
-      numColumns,
-      layoutProvider: RecyclerFlatList.getLayoutProvider(
-        numColumns,
-        propProvider
-      ),
-      dataProvider: dataProvider.cloneWithRows(props.data as any[]),
-      data: props.data,
+      data: null,
+      layoutProvider: null!!,
+      dataProvider: new DataProvider((r1, r2) => {
+        return r1 !== r2;
+      }),
+      numColumns: 0,
     };
   }
 
   // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
   private static getLayoutProvider<T>(
     numColumns: number,
-    propProvider: () => RecyclerFlatListProps<T>
+    props: RecyclerFlatListProps<T>
   ) {
-    return new GridLayoutProvider(
+    return new GridLayoutProviderWithProps<RecyclerFlatListProps<T>>(
       // max span or, total columns
       numColumns,
-      (index) => {
+      (index, props) => {
         // type of the item for given index
-        const props = propProvider();
         const type = props.overrideItemType?.(
           props.data!![index],
           index,
@@ -158,34 +158,31 @@ class RecyclerFlatList<T> extends React.PureComponent<
         );
         return type || 0;
       },
-      (index) => {
+      (index, props, mutableLayout) => {
         // span of the item at given index, item can choose to span more than one column
-        const props = propProvider();
-        const layout = props.overrideItemLayout?.(
+        props.overrideItemLayout?.(
+          mutableLayout,
           props.data!![index],
           index,
           numColumns,
           props.extraData
         );
-        return layout?.span || 1;
+        return mutableLayout?.span || 1;
       },
-      (index) => {
+      (index, props, mutableLayout) => {
         // estimated size of the item an given index
-        const props = propProvider();
-        const layout = props.overrideItemLayout?.(
+        props.overrideItemLayout?.(
+          mutableLayout,
           props.data!![index],
           index,
           numColumns,
           props.extraData
         );
-        return layout?.size || props.estimatedHeight;
-      }
+        return mutableLayout?.size || props.estimatedItemSize;
+      },
+      props
     );
   }
-
-  private getCurrentProps = () => {
-    return this.props;
-  };
 
   private onEndReached = () => {
     // known issue: RLV doesn't report distanceFromEnd
@@ -194,7 +191,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   render() {
     if (this.state.dataProvider.getSize() === 0) {
-      return this.props.ListEmptyComponent;
+      return this.props.ListEmptyComponent || null;
     } else {
       let style = this.props.style ?? {};
       if (this.props.inverted === true) {
@@ -323,9 +320,13 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return null;
   };
 
-  private rowRenderer = (type, data, index) => {
+  private rowRenderer = (type, data, index, extraData) => {
     // known issue: expected to pass separators which isn't available in RLV
-    const elem = this.props.renderItem?.({ item: data, index } as any);
+    const elem = this.props.renderItem?.({
+      item: data,
+      index,
+      extraData,
+    } as any);
     let elements = [this.header(index), elem];
 
     const separator = this.separator(index);
