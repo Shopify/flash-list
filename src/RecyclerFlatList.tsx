@@ -104,6 +104,13 @@ class RecyclerFlatList<T> extends React.PureComponent<
     const message =
       'Invariant Violation: `refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `"undefined"`';
     invariant(refreshingPrecondition, message);
+    if (this.props.estimatedListSize) {
+      if (this.props.horizontal) {
+        this.listFixedDimensionSize = this.props.estimatedListSize.height;
+      } else {
+        this.listFixedDimensionSize = this.props.estimatedListSize.width;
+      }
+    }
   }
 
   // Some of the state variables need to update when props change
@@ -266,7 +273,14 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   private itemContainer = (props, parentProps, children) => {
     return (
-      <ItemContainer {...props} index={parentProps.index}>
+      <ItemContainer
+        {...props}
+        style={[
+          props.style,
+          { minHeight: props.style.height, height: undefined },
+        ]}
+        index={parentProps.index}
+      >
         <WrapperComponent
           extendedState={parentProps.extendedState}
           internalSnapshot={parentProps.internalSnapshot}
