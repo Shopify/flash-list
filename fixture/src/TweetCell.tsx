@@ -53,8 +53,8 @@ const tweetActions = (retweets, comments, likes) => {
 };
 
 const avatar = (author: Author) => {
-  const image_url = author.avatar.replace("_normal", "");
-  return <FastImage style={styles.avatar} source={{ uri: image_url }} />;
+  const imageUrl = author.avatar.replace("_normal", "");
+  return <FastImage style={styles.avatar} source={{ uri: imageUrl }} />;
 };
 
 const GrayText = (props) => {
@@ -150,18 +150,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
   actionText: {
     fontSize: 12,
     color: "#444",
-  },
-  ellipsis: {
-    flexWrap: "wrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
   },
 });
 
