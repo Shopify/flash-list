@@ -64,7 +64,7 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   ) => void;
 
   /**
-   * For debugging, internal props will be overriden with these values if used
+   * For debugging and exception use cases, internal props will be overriden with these values if used
    */
   overrideProps?: object;
 }
@@ -205,7 +205,11 @@ class RecyclerFlatList<T> extends React.PureComponent<
         style = [style, { transform: [{ scaleY: -1 }] }];
       }
 
-      let scrollViewProps: object = { style, onLayout: this.handleSizeChange };
+      let scrollViewProps: object = {
+        style,
+        onLayout: this.handleSizeChange,
+        removeClippedSubviews: false,
+      };
       if (this.props.onRefresh) {
         const refreshControl = (
           <RefreshControl
@@ -243,7 +247,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           maxRenderAhead={3 * renderAheadOffset}
           finalRenderAheadOffset={renderAheadOffset}
           renderAheadStep={renderAheadOffset}
-          {...this.props.debug}
+          {...this.props.overrideProps}
         />
       );
     }
@@ -259,6 +263,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
     // >0 check is to avoid rerender on mount where it would be redundant
     if (oldSize > 0 && oldSize !== newSize) {
       this.rlvRef?.forceRerender();
+    }
+    if (this.props.onLayout) {
+      this.props.onLayout(event);
     }
   };
 

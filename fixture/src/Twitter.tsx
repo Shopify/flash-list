@@ -20,7 +20,6 @@ const Twitter = () => {
       estimatedItemSize={150}
       ItemSeparatorComponent={Divider}
       data={tweets}
-      numColumns={2}
     />
   );
 };
