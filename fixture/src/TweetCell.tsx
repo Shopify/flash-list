@@ -53,15 +53,12 @@ const tweetActions = (retweets, comments, likes) => {
 };
 
 const avatar = (author: Author) => {
-  const placeholder_url = author.avatar;
   const image_url = author.avatar.replace("_normal", "");
-  return (
-    <FastImage
-      style={styles.avatar}
-      source={{ uri: image_url }}
-      placeholderSource={{ uri: placeholder_url }}
-    />
-  );
+  return <FastImage style={styles.avatar} source={{ uri: image_url }} />;
+};
+
+const GrayText = (props) => {
+  return <Text style={styles.gray}>{props.children}</Text>;
 };
 
 const TweetCell = (tweet: Tweet) => {
@@ -70,16 +67,16 @@ const TweetCell = (tweet: Tweet) => {
     <View style={styles.singleItem}>
       <View style={styles.row}>
         {avatar(item.author)}
-        <View style={[styles.shrink, styles.grow]}>
+        <View style={{ flexShrink: 1, flexGrow: 1 }}>
           <View style={styles.rowTop}>
             <Text numberOfLines={1} style={styles.header}>
               {item.author.name}
             </Text>
-            <Text style={[styles.gray, styles.shrink]} numberOfLines={1}>
+            <GrayText style={{ flexShrink: 1 }} numberOfLines={1}>
               @{item.author.screenName}
-            </Text>
-            <Text style={styles.gray}>·</Text>
-            <Text style={styles.gray}>2h</Text>
+            </GrayText>
+            <GrayText>·</GrayText>
+            <GrayText>2h</GrayText>
           </View>
           <Text style={styles.description}>{item.fullText}</Text>
           <View style={styles.rowActions}>
@@ -110,12 +107,6 @@ const styles = StyleSheet.create({
     color: "#777",
     fontSize: 13,
     paddingRight: 2,
-  },
-  shrink: {
-    flexShrink: 1,
-  },
-  grow: {
-    flexGrow: 1,
   },
   avatar: {
     height: 44,
