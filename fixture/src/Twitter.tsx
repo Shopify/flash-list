@@ -17,7 +17,7 @@ const Twitter = () => {
       ListHeaderComponent={Header}
       ListHeaderCompomentStyle={{ backgroundColor: "#ccc" }}
       ListFooterComponent={Footer}
-      estimatedHeight={150}
+      estimatedItemSize={150}
       ItemSeparatorComponent={Divider}
       data={tweets}
     />

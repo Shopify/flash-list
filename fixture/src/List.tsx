@@ -43,7 +43,7 @@ export default class List extends React.Component {
             </View>
           );
         }}
-        estimatedHeight={100}
+        estimatedItemSize={100}
         data={this._generateArray(3000)}
       />
     );
