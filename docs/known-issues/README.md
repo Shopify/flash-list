@@ -1,4 +1,4 @@
-# Knowm Issues
+# Known Issues
 
 RFL and FlatList have very different internal. While the API is almost same the behaviour might be different in some cases due to a bug, limitation or missing implementation. In any case, if the issue is already listed here don't create a new one.
 
