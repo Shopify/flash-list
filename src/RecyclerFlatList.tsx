@@ -5,33 +5,75 @@ import {
   ViewStyle,
   RefreshControl,
   FlatListProps,
+  LayoutChangeEvent,
 } from "react-native";
 import {
   DataProvider,
-  GridLayoutProvider,
-  LayoutProvider,
+  ProgressiveListView,
   RecyclerListView,
   RecyclerListViewProps,
 } from "recyclerlistview";
+import invariant from "invariant";
+
 import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent from "./WrapperComponent";
-import invariant from "invariant";
+import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
-  estimatedHeight: number;
+  // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
+  /**
+   * Average or median size for elements in the list. Doesn't have to be very accurate but a good estimate can work better.
+   * For vertical lists provide average height and for horizontal average width.
+   */
+  estimatedItemSize: number;
 
   /**
    * Visible height and width of the list. This is not the scroll content size.
    */
   estimatedListSize?: { height: number; width: number };
+
+  /**
+   * Draw distance for rendering in advance in keeping items ready
+   */
+  renderAheadOffset?: number;
+
+  /**
+   * Allows developers to override type of items. This will improve recycling if you have different types of items in the list
+   * Right type will be used for the right item. Default type is 0
+   * If you don't want to change for an indexes just return undefined.
+   * Performance: This method is called very frequently. Keep it fast.
+   */
+  overrideItemType?: (
+    item: T,
+    index: number,
+    extraData?: any
+  ) => string | number | undefined;
+
+  /**
+   * with numColumns > 1 you can choose to increase span of some of the items. You can also modify estimated height for some items.
+   * Modify the given layout. Do not return.
+   * Performance: This method is called very frequently. Keep it fast.
+   */
+  overrideItemLayout?: (
+    layout: { span?: number; size?: number },
+    item: T,
+    index: number,
+    maxColumns: number,
+    extraData?: any
+  ) => void;
+
+  /**
+   * For debugging and exception use cases, internal props will be overriden with these values if used
+   */
+  overrideProps?: object;
 }
 
 export interface RecyclerFlatListState<T> {
   dataProvider: DataProvider;
   numColumns: number;
-  layoutProvider: LayoutProvider;
-  data?: readonly T[] | null;
+  layoutProvider: GridLayoutProviderWithProps<RecyclerFlatListProps<T>>;
+  data?: ReadonlyArray<T> | null;
 }
 
 class RecyclerFlatList<T> extends React.PureComponent<
@@ -39,104 +81,135 @@ class RecyclerFlatList<T> extends React.PureComponent<
   RecyclerFlatListState<T>
 > {
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
+  private listFixedDimensionSize = 0;
 
-  static props = {
+  static defaultProps = {
     data: [],
+    numColumns: 1,
+    renderAheadOffset: 250,
   };
 
   constructor(props) {
     super(props);
     this.setup();
-    this.state = RecyclerFlatList.getInitialState(props);
+
+    // eslint-disable-next-line react/state-in-constructor
+    this.state = RecyclerFlatList.getDerivedStateFromProps(props, undefined);
   }
 
-  setup() {
+  private setup() {
     const refreshingPrecondition = !(
       this.props.onRefresh && typeof this.props.refreshing !== "boolean"
     );
     const message =
       'Invariant Violation: `refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `"undefined"`';
     invariant(refreshingPrecondition, message);
+    if (this.props.estimatedListSize) {
+      if (this.props.horizontal) {
+        this.listFixedDimensionSize = this.props.estimatedListSize.height;
+      } else {
+        this.listFixedDimensionSize = this.props.estimatedListSize.width;
+      }
+    }
   }
 
-  //Some of the state variables need to update when props change
+  // Some of the state variables need to update when props change
   static getDerivedStateFromProps<T>(
     nextProps: RecyclerFlatListProps<T>,
-    prevState: RecyclerFlatListState<T>
+    prevState: RecyclerFlatListState<T> | undefined
   ): RecyclerFlatListState<T> {
-    const newState = { ...prevState };
-    if (newState.numColumns !== nextProps.numColumns) {
+    const oldState = prevState || RecyclerFlatList.getInitialMutableState();
+    const newState = { ...oldState };
+    if (oldState.numColumns !== nextProps.numColumns) {
       newState.numColumns = nextProps.numColumns || 1;
-      newState.layoutProvider = RecyclerFlatList.getLayoutProvider(
+      newState.layoutProvider = RecyclerFlatList.getLayoutProvider<T>(
         newState.numColumns,
-        () => nextProps.estimatedHeight
+        nextProps
       );
     }
-    if (nextProps.data !== prevState.data) {
+    if (nextProps.data !== oldState.data) {
       newState.data = nextProps.data;
-      newState.dataProvider = newState.dataProvider.cloneWithRows(
+      newState.dataProvider = oldState.dataProvider.cloneWithRows(
         nextProps.data as any[]
       );
     }
+    newState.layoutProvider.updateProps(nextProps);
     return newState;
   }
 
-  static getInitialState<T>(
-    props: RecyclerFlatListProps<T>
-  ): RecyclerFlatListState<T> {
-    const numColumns = props.numColumns || 1;
-    const sizeProvider = () => props.estimatedHeight;
-    const dataProvider = new DataProvider((r1, r2) => {
-      return r1 !== r2;
-    });
+  private static getInitialMutableState<T>(): RecyclerFlatListState<T> {
     return {
-      numColumns,
-      layoutProvider: RecyclerFlatList.getLayoutProvider(
-        numColumns,
-        sizeProvider
-      ),
-      dataProvider: dataProvider.cloneWithRows(props.data as any[]),
-      data: props.data,
+      data: null,
+      layoutProvider: null!!,
+      dataProvider: new DataProvider((r1, r2) => {
+        return r1 !== r2;
+      }),
+      numColumns: 0,
     };
   }
 
-  //Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
-  static getLayoutProvider(
+  // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
+  private static getLayoutProvider<T>(
     numColumns: number,
-    sizeProvider: (index) => number
+    props: RecyclerFlatListProps<T>
   ) {
-    return new GridLayoutProvider(
-      numColumns, //max span or, total columns
-      (index) => {
-        //type of the item for given index
-        return 0;
+    return new GridLayoutProviderWithProps<RecyclerFlatListProps<T>>(
+      // max span or, total columns
+      numColumns,
+      (index, props) => {
+        // type of the item for given index
+        const type = props.overrideItemType?.(
+          props.data!![index],
+          index,
+          props.extraData
+        );
+        return type || 0;
       },
-      (index) => {
-        //span of the item at given index, item can choose to span more than one column
-        return 1;
+      (index, props, mutableLayout) => {
+        // span of the item at given index, item can choose to span more than one column
+        props.overrideItemLayout?.(
+          mutableLayout,
+          props.data!![index],
+          index,
+          numColumns,
+          props.extraData
+        );
+        return mutableLayout?.span || 1;
       },
-      (index) => {
-        //estimated size of the item an given index
-        return sizeProvider(index);
-      }
+      (index, props, mutableLayout) => {
+        // estimated size of the item an given index
+        props.overrideItemLayout?.(
+          mutableLayout,
+          props.data!![index],
+          index,
+          numColumns,
+          props.extraData
+        );
+        return mutableLayout?.size || props.estimatedItemSize;
+      },
+      props
     );
   }
 
-  onEndReached = () => {
-    //known issue: RLV doesn't report distanceFromEnd
+  private onEndReached = () => {
+    // known issue: RLV doesn't report distanceFromEnd
     this.props.onEndReached?.({ distanceFromEnd: 0 });
   };
 
   render() {
-    if (this.state.dataProvider.getSize() == 0) {
-      return this.props.ListEmptyComponent;
+    if (this.state.dataProvider.getSize() === 0) {
+      return this.props.ListEmptyComponent || null;
     } else {
       let style = this.props.style ?? {};
       if (this.props.inverted === true) {
         style = [style, { transform: [{ scaleY: -1 }] }];
       }
 
-      let scrollViewProps: object = { style };
+      let scrollViewProps: object = {
+        style,
+        onLayout: this.handleSizeChange,
+        removeClippedSubviews: false,
+      };
       if (this.props.onRefresh) {
         const refreshControl = (
           <RefreshControl
@@ -146,47 +219,69 @@ class RecyclerFlatList<T> extends React.PureComponent<
         );
         scrollViewProps = {
           ...scrollViewProps,
-          refreshControl: refreshControl,
+          refreshControl,
         };
       }
 
+      const renderAheadOffset = this.props.renderAheadOffset || 250;
+
       return (
-        <RecyclerListView
+        <ProgressiveListView
+          {...this.props}
           ref={this.recyclerRef}
           layoutProvider={this.state.layoutProvider}
           style={style as object}
           dataProvider={this.state.dataProvider}
           rowRenderer={this.rowRenderer}
           renderFooter={this.footer}
-          canChangeSize={true}
-          isHorizontal={!!this.props.horizontal}
+          canChangeSize
+          isHorizontal={Boolean(this.props.horizontal)}
           scrollViewProps={scrollViewProps}
-          forceNonDeterministicRendering={true}
-          renderItemContainer={this.renderItemContainer}
-          renderContentContainer={this.renderContainer}
+          forceNonDeterministicRendering
+          renderItemContainer={this.itemContainer}
+          renderContentContainer={this.container}
           onEndReached={this.onEndReached}
           onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
           extendedState={this.props.extraData}
           layoutSize={this.props.estimatedListSize}
+          maxRenderAhead={3 * renderAheadOffset}
+          finalRenderAheadOffset={renderAheadOffset}
+          renderAheadStep={renderAheadOffset}
+          {...this.props.overrideProps}
         />
       );
     }
   }
 
-  renderContainer(props, children) {
+  private handleSizeChange = (event: LayoutChangeEvent) => {
+    const newSize = this.props.horizontal
+      ? event.nativeEvent.layout.height
+      : event.nativeEvent.layout.width;
+    const oldSize = this.listFixedDimensionSize;
+    this.listFixedDimensionSize = newSize;
+
+    // >0 check is to avoid rerender on mount where it would be redundant
+    if (oldSize > 0 && oldSize !== newSize) {
+      this.rlvRef?.forceRerender();
+    }
+    if (this.props.onLayout) {
+      this.props.onLayout(event);
+    }
+  };
+
+  private container(props, children) {
     // return <View {...props}>{children}</View>;
     return (
-      <AutoLayoutView {...props} enableInstrumentation={true}>
+      <AutoLayoutView {...props} enableInstrumentation={false}>
         {children}
       </AutoLayoutView>
     );
   }
 
-  renderItemContainer = (props, parentProps, children) => {
+  private itemContainer = (props, parentProps, children) => {
     return (
       <ItemContainer {...props} index={parentProps.index}>
         <WrapperComponent
-          // @ts-ignore
           extendedState={parentProps.extendedState}
           internalSnapshot={parentProps.internalSnapshot}
           dataHasChanged={parentProps.dataHasChanged}
@@ -198,7 +293,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     );
   };
 
-  separator(index) {
+  private separator(index) {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
 
@@ -214,7 +309,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return undefined;
   }
 
-  header(index) {
+  private header(index) {
     if (index !== 0) return undefined;
     const ListHeaderComponent = this.props.ListHeaderComponent;
     const style = this.props.ListHeaderComponentStyle || {};
@@ -227,7 +322,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
   }
 
-  footer = () => {
+  private footer = () => {
     const ListFooterComponent = this.props.ListFooterComponent;
     const style = this.props.ListFooterComponentStyle || {};
     if (React.isValidElement(ListFooterComponent)) {
@@ -239,9 +334,13 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return null;
   };
 
-  rowRenderer = (type, data, index) => {
-    //known issue: expected to pass separators which isn't available in RLV
-    let elem = this.props.renderItem?.({ item: data, index: index } as any);
+  private rowRenderer = (type, data, index, extraData) => {
+    // known issue: expected to pass separators which isn't available in RLV
+    const elem = this.props.renderItem?.({
+      item: data,
+      index,
+      extraData,
+    } as any);
     let elements = [this.header(index), elem];
 
     const separator = this.separator(index);
@@ -270,35 +369,39 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef = ref;
   };
 
+  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
-    this.rlvRef?.scrollToEnd(!!params?.animated);
+    this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }
 
+  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToIndex(params: {
     animated?: boolean | null | undefined;
     index: number;
     viewOffset?: number | undefined;
     viewPosition?: number | undefined;
   }) {
-    //known issue: no support for view offset/position
-    this.rlvRef?.scrollToIndex(params.index, !!params.animated);
+    // known issue: no support for view offset/position
+    this.rlvRef?.scrollToIndex(params.index, Boolean(params.animated));
   }
 
+  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToItem(params: {
     animated?: boolean | null | undefined;
     item: any;
     viewPosition?: number | undefined;
   }) {
-    this.rlvRef?.scrollToItem(params.item, !!params.animated);
+    this.rlvRef?.scrollToItem(params.item, Boolean(params.animated));
   }
 
+  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToOffset(params: {
     animated?: boolean | null | undefined;
     offset: number;
   }) {
     const x = this.props.horizontal ? params.offset : 0;
     const y = this.props.horizontal ? 0 : params.offset;
-    this.rlvRef?.scrollToOffset(x, y, !!params.animated);
+    this.rlvRef?.scrollToOffset(x, y, Boolean(params.animated));
   }
 }
 

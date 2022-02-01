@@ -29,7 +29,9 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
             // Since we need to call this method with scrollOffset on the UI thread and not with the one react has we're querying parent's parent
             // directly which will be a ScrollView. If it isn't reported values will be incorrect but the component will not break.
             // RecyclerListView is expected not to change the hierarchy of children.
-            alShadow.computeBlankFromGivenOffset((parent.parent as View).scrollY)
+            alShadow.computeBlankFromGivenOffset((parent.parent as View).let {
+                if (alShadow.horizontal) it.scrollX else it.scrollY
+            })
             emitBlankAreaEvent()
         }
     }

@@ -18,8 +18,8 @@ export const ExamplesScreen = () => {
   const data = [
     { title: "List", destination: NavigationKeys.LIST },
     { title: "PaginatedList", destination: NavigationKeys.PAGINATED_LIST },
-    { title: "Twitter Timeline", destination: NavigationKeys.TWITTER }
-  ]
+    { title: "Twitter Timeline", destination: NavigationKeys.TWITTER },
+  ];
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -52,8 +52,5 @@ const styles = StyleSheet.create({
   },
   rowTitle: {
     fontSize: 18,
-  },
-  arrow: {
-    resizeMode: "center",
   },
 });

@@ -1,6 +1,6 @@
 {
   "name": "@shopify/recycler-flat-list",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": [
     "react-native"
   ],
@@ -18,7 +18,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint .",
+    "lint": "yarn eslint . --ext .ts,.tsx",
+    "lint:fix": "yarn eslint . --ext .ts,.tsx --fix",
     "build": "tsc -b"
   },
   "peerDependencies": {
@@ -52,7 +53,7 @@
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.1",
     "react-test-renderer": "17.0.2",
-    "recyclerlistview": "3.1.0-beta.2",
+    "recyclerlistview": "3.1.0-beta.3",
     "typescript": "^4.1.3"
   },
   "jest": {
@@ -63,5 +64,9 @@
     "ios",
     "dist",
     "RNRecyclerFlatList.podspec"
-  ]
+  ],
+  "dependencies": {
+    "@shopify/eslint-plugin": "^41.0.1",
+    "invariant": "^2.2.4"
+  }
 }

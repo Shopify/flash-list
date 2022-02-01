@@ -7,3 +7,10 @@ steps:
     run:
       - yarn
       - yarn run build
+
+  - label: "Lint Typescript :eslint:"
+    timeout: 20m
+    run:
+      - yarn:
+          workspaces: true
+      - yarn lint
