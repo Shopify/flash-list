@@ -8,7 +8,7 @@ RFL and FlatList have very different internal. While the API is almost the same,
 
 ### 2) recyclerlistview requires a bounded size exception
 
-RFL uses `recyclerlistview` to leverage recycling capability. `recyclerlistview` required deterministic boundaries, this doesn't mean fixed height/width and could just be `flex:1`. It should mount with some height and width. Layout setups like `flex-start` on parent will not work. If you can't do this then a nice workaround to this is to use `estimatedListSize` prop. If your list is fullscreen you can just pass `Dimensions.get("window")`. It's good to pass accurate values.
+RFL uses [recyclerlistview](https://github.com/Flipkart/recyclerlistview) to leverage recycling capability. `recyclerlistview` required deterministic boundaries, this doesn't mean fixed height/width and could just be `flex:1`. It should mount with some height and width. Layout setups like `flex-start` on parent will not work. If you can't do this then a nice workaround to this is to use `estimatedListSize` prop. If your list is fullscreen, you can just pass `Dimensions.get("window")`. It's good to pass accurate values.
 
 Please note most lists do mount this deterministic sizes so please do check if you really need workarounds.
 
