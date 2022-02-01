@@ -18,4 +18,8 @@ Note that [`recyclerlistview`](https://github.com/Flipkart/recyclerlistview) is 
 
 The [fixture](https://github.com/Shopify/recycler-flat-list/tree/main/fixture) is an example app showing how to use the library.
 
+### Known issues
+
+Please check out the document [here](https://github.com/Shopify/recycler-flat-list/docs/known-issues).
+
 <!-- TODO: Add the snapshots -->
