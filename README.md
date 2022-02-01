@@ -20,6 +20,6 @@ The [fixture](https://github.com/Shopify/recycler-flat-list/tree/main/fixture) i
 
 ### Known issues
 
-Please check out the document [here](https://github.com/Shopify/recycler-flat-list/docs/known-issues).
+Please check out the document [here](https://github.com/Shopify/recycler-flat-list/tree/main/docs/known-issues).
 
 <!-- TODO: Add the snapshots -->
