@@ -27,14 +27,19 @@ const useReactNativePerformanceFlipperPlugin = () => {
             : undefined
         );
         const onBlankAreaEvent = ({
-          blankArea,
+          offsetStart,
+          offsetEnd,
           listSize,
         }: {
-          blankArea: number;
+          offsetStart: number;
+          offsetEnd: number;
           listSize: number;
         }) => {
+          const blankArea = Math.max(offsetStart, offsetEnd);
           connection.send("newBlankData", {
-            offset: Math.min(blankArea, listSize),
+            // We do not report negative numbers to be consistent with FlatList measurements where there is no such thing as `renderAheadOffset`
+            // that we currently use in `RecyclerFlatList` to determine last element to consider.
+            offset: Math.max(0, Math.min(blankArea, listSize)),
           });
         };
         const subscription = eventEmitter.addListener(

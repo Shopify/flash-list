@@ -24,7 +24,7 @@ import { ExamplesScreen } from "./ExamplesScreen";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
-  useOnNativeBlankAreaEvents((offsetStart, offsetEnd, blankArea) => {
+  useOnNativeBlankAreaEvents(({ blankArea }) => {
     console.log(`Blank area: ${blankArea}`);
   });
   useReactNativePerformanceFlipperPlugin();

@@ -12,6 +12,6 @@ class AppPackage : ReactPackage {
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-        return Arrays.asList<ViewManager<*, *>>()
+        return Arrays.asList()
     }
 }

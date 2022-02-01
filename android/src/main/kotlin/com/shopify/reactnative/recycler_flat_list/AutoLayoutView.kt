@@ -46,12 +46,12 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         }
     }
 
-    /** TODO: Check migration to Fabric*/
+    /** TODO: Check migration to Fabric */
     private fun emitBlankAreaEvent() {
         val event: WritableMap = Arguments.createMap()
         val blanks: WritableMap = Arguments.createMap()
-        blanks.putDouble("startOffset", alShadow.blankOffsetAtStart / pixelDensity)
-        blanks.putDouble("endOffset", alShadow.blankOffsetAtEnd / pixelDensity)
+        blanks.putDouble("offsetStart", alShadow.blankOffsetAtStart / pixelDensity)
+        blanks.putDouble("offsetEnd", alShadow.blankOffsetAtEnd / pixelDensity)
         event.putMap("blanks", blanks)
         val reactContext = context as ReactContext
         reactContext

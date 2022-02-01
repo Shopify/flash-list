@@ -10,11 +10,12 @@ export interface BlankAreaEvent {
 export const BLANK_AREA_EVENT_NAME = "blankAreaEvent";
 
 const useOnNativeBlankAreaEvents = (
-  callback: (offsetStart: number, offsetEnd: number, blankArea: number) => void
+  callback: (blankAreaEvent: BlankAreaEvent) => void
 ) => {
   const onBlankAreaEvent = useCallback(
-    ({ offsetStart, offsetEnd, blankArea }: BlankAreaEvent) => {
-      callback(offsetStart, offsetEnd, blankArea);
+    ({ offsetStart, offsetEnd }: BlankAreaEvent) => {
+      const blankArea = Math.max(offsetStart, offsetEnd);
+      callback({ offsetStart, offsetEnd, blankArea });
     },
     [callback]
   );
