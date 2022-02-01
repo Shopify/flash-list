@@ -5,7 +5,3 @@ ci:
 dependencies:
   override:
     - yarn install
-
-deploy:
-  pre:
-    - yarn run build

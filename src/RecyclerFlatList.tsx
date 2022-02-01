@@ -317,7 +317,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
       ListHeaderComponent.props = { style };
       return ListHeaderComponent;
     } else if (ListHeaderComponent != null) {
-      console.log(style);
       return <ListHeaderComponent style={style} />;
     }
   }
