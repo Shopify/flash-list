@@ -10,7 +10,7 @@ export interface BlankAreaEvent {
 export const BLANK_AREA_EVENT_NAME = "blankAreaEvent";
 
 const useOnNativeBlankAreaEvents = (
-  callback: (blankAreaEvent: BlankAreaEvent) => {}
+  callback: (blankAreaEvent: BlankAreaEvent) => void
 ) => {
   const onBlankAreaEvent = useCallback(
     ({ offsetStart, offsetEnd }: BlankAreaEvent) => {
