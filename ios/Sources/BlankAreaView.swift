@@ -4,7 +4,6 @@ import React
 
 @objc class BlankAreaView: UIView {
     private var observation: NSKeyValueObservation?
-    private var didSet = false
     private var scrollView: UIScrollView? {
         subviews.first?.subviews.first as? UIScrollView
     }
@@ -19,34 +18,32 @@ import React
     override func layoutSubviews() {
         super.layoutSubviews()
         guard
-            !didSet,
+            observation == nil,
             let scrollView = scrollView
         else { return }
         observation = scrollView.observe(\.contentOffset, changeHandler: { [weak self] scrollView, _ in
             guard let self = self else { return }
 
-            let (startOffset, endOffset, blankArea) = self.computeBlankFromGivenOffset(for: scrollView)
+            let (offsetStart, offsetEnd) = self.computeBlankFromGivenOffset(for: scrollView)
 
-            BlankAreaEventEmitter.INSTANCE?.onBlankArea(
-                startOffset: startOffset,
-                endOffset: endOffset,
-                blankArea: blankArea,
+            BlankAreaEventEmitter.sharedInstance?.onBlankArea(
+                offsetStart: offsetStart,
+                offsetEnd: offsetEnd,
                 listSize: self.listSize
-            ) ?? assertionFailure("BlankAreaEventEmitter.INSTANCE was not initialized")
+            ) ?? assertionFailure("BlankAreaEventEmitter.sharedInstance was not initialized")
         })
-        didSet = true
     }
 
-    func computeBlankFromGivenOffset(for scrollView: UIScrollView) -> (CGFloat, CGFloat, CGFloat) {
+    private func computeBlankFromGivenOffset(for scrollView: UIScrollView) -> (CGFloat, CGFloat) {
         let cells = scrollView.subviews.first(where: { $0 is RCTScrollContentView })?.subviews ?? []
-        guard !cells.isEmpty else { return (0, 0, 0) }
+        guard !cells.isEmpty else { return (0, 0) }
 
         let scrollOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
         guard
             let firstCell = cells.first(where: { scrollViewContains($0, scrollOffset: scrollOffset) && !$0.subviews.flatMap(\.subviews).isEmpty }),
             let lastCell = cells.last(where: { scrollViewContains($0, scrollOffset: scrollOffset) && !$0.subviews.flatMap(\.subviews).isEmpty })
         else {
-            return (listSize, listSize, listSize)
+            return (0, listSize)
         }
         let blankOffsetTop: CGFloat
         let blankOffsetBottom: CGFloat
@@ -57,11 +54,10 @@ import React
             blankOffsetTop = firstCell.frame.minY - scrollOffset
             blankOffsetBottom = scrollOffset + listSize - lastCell.frame.maxY
         }
-        let blankArea = max(blankOffsetTop, blankOffsetBottom)
-        return (blankOffsetTop, blankOffsetBottom, blankArea)
+        return (blankOffsetTop, blankOffsetBottom)
     }
 
-    func scrollViewContains(
+    private func scrollViewContains(
         _ cellView: UIView,
         scrollOffset: CGFloat
     ) -> Bool {

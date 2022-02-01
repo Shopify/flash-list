@@ -1,25 +1,27 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { RecyclerFlatList } from "@shopify/recycler-flat-list";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import { RecyclerFlatList, BlankAreaView } from "@shopify/recycler-flat-list";
 import { tweets } from "./data/tweets.js";
 import TweetCell from "./TweetCell";
 
 const Twitter = () => {
   return (
-    <RecyclerFlatList
-      keyExtractor={(item) => {
-        return item.id;
-      }}
-      renderItem={({ item }) => {
-        return <TweetCell item={item} />;
-      }}
-      ListHeaderComponent={Header}
-      ListHeaderCompomentStyle={{ backgroundColor: "#ccc" }}
-      ListFooterComponent={Footer}
-      estimatedHeight={150}
-      ItemSeparatorComponent={Divider}
-      data={tweets}
-    />
+    <BlankAreaView>
+      <FlatList
+        keyExtractor={(item) => {
+          return item.id;
+        }}
+        renderItem={({ item }) => {
+          return <TweetCell item={item} />;
+        }}
+        ListHeaderComponent={Header}
+        ListHeaderCompomentStyle={{ backgroundColor: "#ccc" }}
+        ListFooterComponent={Footer}
+        estimatedHeight={150}
+        ItemSeparatorComponent={Divider}
+        data={tweets}
+      />
+    </BlankAreaView>
   );
 };
 

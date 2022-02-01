@@ -4,11 +4,11 @@ import Foundation
 class BlankAreaEventEmitter: RCTEventEmitter {
     private static let blankAreaEventName = "blankAreaEvent"
     private var hasListeners = false
-    private(set) static var INSTANCE: BlankAreaEventEmitter? = nil
+    private(set) static var sharedInstance: BlankAreaEventEmitter? = nil
 
     override init() {
         super.init()
-        BlankAreaEventEmitter.INSTANCE = self
+        BlankAreaEventEmitter.sharedInstance = self
     }
 
     @objc override func supportedEvents() -> [String]! {
@@ -16,16 +16,14 @@ class BlankAreaEventEmitter: RCTEventEmitter {
     }
 
     func onBlankArea(
-        startOffset: CGFloat,
-        endOffset: CGFloat,
-        blankArea: CGFloat,
+        offsetStart: CGFloat,
+        offsetEnd: CGFloat,
         listSize: CGFloat
     ) {
         guard hasListeners else { return }
         sendEvent(withName: BlankAreaEventEmitter.blankAreaEventName, body: [
-            "blankArea": blankArea,
-            "startOffset": startOffset,
-            "endOffset": endOffset,
+            "offsetStart": offsetStart,
+            "offsetEnd": offsetEnd,
             "listSize": listSize,
         ])
     }

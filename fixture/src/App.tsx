@@ -21,7 +21,7 @@ import { useReactNativePerformanceFlipperPlugin } from "@shopify/recycler-flat-l
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
-  useOnNativeBlankAreaEvents((offsetStart, offsetEnd, blankArea) => {
+  useOnNativeBlankAreaEvents(({ blankArea }) => {
     console.log(`Blank area: ${blankArea}`);
   });
   useReactNativePerformanceFlipperPlugin();

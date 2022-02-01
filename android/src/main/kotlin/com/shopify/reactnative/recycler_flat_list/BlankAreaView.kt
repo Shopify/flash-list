@@ -3,7 +3,6 @@ package com.shopify.reactnative.recycler_flat_list
 import android.content.Context
 import android.graphics.Canvas
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.Arguments
@@ -46,14 +45,14 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
     override fun dispatchDraw(canvas: Canvas?) {
         super.dispatchDraw(canvas)
 
-        val (blankOffsetTop, blankOffsetBottom, blankArea) = computeBlankFromGivenOffset()
-        emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom, blankArea)
+        val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
+        emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
     }
 
-    fun computeBlankFromGivenOffset(): Triple<Int, Int, Int> {
-        val cells = ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().filter { it != null } .map { it as ViewGroup }
+    fun computeBlankFromGivenOffset(): Pair<Int, Int> {
+        val cells = ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().filterNotNull().map { it as ViewGroup }
         if (cells.isEmpty()) {
-            return Triple(0, 0, 0)
+            return Pair(0, 0)
         }
 
         try {
@@ -61,18 +60,16 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
             val lastCell = cells.last { isWithinBounds(it) && it.getChildren().isNotEmpty() }
             val blankOffsetTop = firstCell.top - scrollOffset
             val blankOffsetBottom = scrollOffset + listSize - lastCell.bottom
-            val blankArea = Math.max(blankOffsetTop, blankOffsetBottom)
-            return Triple(blankOffsetTop, blankOffsetBottom, blankArea)
+            return Pair(blankOffsetTop, blankOffsetBottom)
         } catch (e: NoSuchElementException) {
-            return Triple(listSize, listSize, listSize)
+            return Pair(0, listSize)
         }
     }
 
-    private fun emitBlankAreaEvent(blankOffsetTop: Int, blankOffsetBottom: Int, blankArea: Int) {
+    private fun emitBlankAreaEvent(blankOffsetTop: Int, blankOffsetBottom: Int) {
         val event: WritableMap = Arguments.createMap()
-        event.putDouble("startOffset", blankOffsetTop / pixelDensity)
-        event.putDouble("endOffset", blankOffsetBottom / pixelDensity)
-        event.putDouble("blankArea", blankArea / pixelDensity)
+        event.putDouble("offsetStart", blankOffsetTop / pixelDensity)
+        event.putDouble("offsetEnd", blankOffsetBottom / pixelDensity)
         event.putDouble("listSize", listSize / pixelDensity)
         val reactContext = context as ReactContext
         reactContext
