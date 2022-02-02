@@ -19,6 +19,10 @@ export const ExamplesScreen = () => {
     { title: "List", destination: NavigationKeys.LIST },
     { title: "PaginatedList", destination: NavigationKeys.PAGINATED_LIST },
     { title: "Twitter Timeline", destination: NavigationKeys.TWITTER },
+    {
+      title: "Twitter FlatList Timeline",
+      destination: NavigationKeys.TWITTER_FLAT_LIST,
+    },
   ];
   return (
     <>

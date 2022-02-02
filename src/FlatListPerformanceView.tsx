@@ -1,16 +1,26 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 
+import { PerformanceListsViewContext } from "./PerformanceListsViewContext";
 import { FlatListPerformanceViewNativeComponent } from "./FlatListPerformanceViewNativeComponent";
 
-/**
- * Wrap FlatList with this view to get reports of blank spaces
- */
-const FlatListPerformanceView = ({ children }) => {
+interface RecyclerFlatListPerformanceViewProps {
+  listName: string;
+  children: JSX.Element;
+}
+
+const FlatListPerformanceView = ({
+  children,
+  listName,
+}: RecyclerFlatListPerformanceViewProps) => {
   const time = useRef(Date.now()).current;
+  const performanceController = useContext(PerformanceListsViewContext);
   return (
     <FlatListPerformanceViewNativeComponent
       onInteractive={({ nativeEvent }) => {
-        console.log(`TTI in millis: ${nativeEvent.timestamp - time}`);
+        performanceController.onInteractive(
+          nativeEvent.timestamp - time,
+          listName
+        );
       }}
     >
       {children}

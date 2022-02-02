@@ -10,7 +10,7 @@ import TweetCell from "./TweetCell";
 
 const Twitter = () => {
   return (
-    <RecyclerFlatListPerformanceView>
+    <RecyclerFlatListPerformanceView listName="Twitter">
       <RecyclerFlatList
         keyExtractor={(item) => {
           return item.id;
@@ -29,11 +29,11 @@ const Twitter = () => {
   );
 };
 
-const Divider = () => {
+export const Divider = () => {
   return <View style={styles.divider} />;
 };
 
-const Header = () => {
+export const Header = () => {
   return (
     <View style={styles.header}>
       <Text style={styles.headerTitle}>New tweets available</Text>
@@ -41,7 +41,7 @@ const Header = () => {
   );
 };
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <View style={styles.footer}>
       <Text style={styles.footerTitle}>No more tweets</Text>
