@@ -14,6 +14,8 @@ import React
         guard let scrollView = scrollView else { return 0 }
         return isHorizontal ? scrollView.frame.width : scrollView.frame.height
     }
+    
+    var cells: (UIScrollView) -> [UIView] = { _ in [] }
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -35,7 +37,8 @@ import React
     }
 
     private func computeBlankFromGivenOffset(for scrollView: UIScrollView) -> (CGFloat, CGFloat) {
-        let cells = scrollView.subviews.first(where: { $0 is RCTScrollContentView })?.subviews ?? []
+        let cells = cells(scrollView)
+            .sorted(by: { $1.frame.origin.y > $0.frame.origin.y })
         guard !cells.isEmpty else { return (0, 0) }
 
         let scrollOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y

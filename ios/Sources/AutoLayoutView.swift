@@ -42,7 +42,6 @@ import UIKit
 
         let scrollView = sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView })
         guard enableInstrumentation, let scrollView = scrollView as? UIScrollView else { return }
-
         let (blankOffsetStart, blankOffsetEnd) = computeBlankFromGivenOffset(
             horizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y,
             filledBoundMin: lastMinBound,
