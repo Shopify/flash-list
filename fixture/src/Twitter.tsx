@@ -10,7 +10,11 @@ import TweetCell from "./TweetCell";
 
 const Twitter = () => {
   return (
-    <RecyclerFlatListPerformanceView>
+    <RecyclerFlatListPerformanceView
+      onInteractive={() => {
+        console.log("Became interactive!");
+      }}
+    >
       <RecyclerFlatList
         keyExtractor={(item) => {
           return item.id;

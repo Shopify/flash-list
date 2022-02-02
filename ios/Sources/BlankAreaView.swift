@@ -14,6 +14,10 @@ import React
         guard let scrollView = scrollView else { return 0 }
         return isHorizontal ? scrollView.frame.width : scrollView.frame.height
     }
+    private var hasSentInteractiveEvent = false
+
+    @objc(onInteractive)
+    var onInteractive: RCTBubblingEventBlock?
     
     var cells: (UIScrollView) -> [UIView] = { _ in [] }
 
@@ -27,6 +31,11 @@ import React
             guard let self = self else { return }
 
             let (offsetStart, offsetEnd) = self.computeBlankFromGivenOffset(for: scrollView)
+            
+            if max(offsetStart, offsetEnd) == 0, !self.hasSentInteractiveEvent {
+                self.hasSentInteractiveEvent = true
+                self.onInteractive?([:])
+            }
 
             BlankAreaEventEmitter.sharedInstance?.onBlankArea(
                 offsetStart: offsetStart,
