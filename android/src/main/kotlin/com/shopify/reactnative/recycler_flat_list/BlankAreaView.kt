@@ -41,6 +41,8 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
     private var didLoadCells = false
     private var didSendInteractiveEvent = false
 
+    var onInteractiveCallback: () -> Unit = {}
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         val dm = DisplayMetrics()
@@ -51,11 +53,12 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
                 val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
                 if (!didSendInteractiveEvent && max(blankOffsetBottom, blankOffsetTop) == 0) {
                     didSendInteractiveEvent = true
+                    onInteractiveCallback()
                     Log.d("BlankAreaView", "Send interactive event from native")
-                    val reactContext = context as ReactContext
-                    reactContext
-                            .getJSModule(RCTDeviceEventEmitter::class.java)
-                            .emit("onInteractive", Arguments.createMap())
+//                    val reactContext = context as ReactContext
+//                    reactContext
+//                            .getJSModule(RCTDeviceEventEmitter::class.java)
+//                            .emit("onInteractive", Arguments.createMap())
                 }
                 emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
             }
