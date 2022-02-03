@@ -3,12 +3,14 @@ package com.shopify.reactnative.recycler_flat_list
 import android.content.Context
 import android.graphics.Canvas
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.facebook.react.views.view.ReactViewGroup
+import kotlin.math.max
 
 
 /** Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.

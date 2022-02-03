@@ -10,11 +10,7 @@ import TweetCell from "./TweetCell";
 
 const Twitter = () => {
   return (
-    <RecyclerFlatListPerformanceView
-      onInteractive={() => {
-        console.log("Became interactive!");
-      }}
-    >
+    <RecyclerFlatListPerformanceView>
       <RecyclerFlatList
         keyExtractor={(item) => {
           return item.id;
@@ -22,7 +18,7 @@ const Twitter = () => {
         renderItem={({ item }) => {
           return <TweetCell item={item} />;
         }}
-        ListHeaderComponent={Header}
+        // ListHeaderComponent={Header}
         // ListHeaderCompomentStyle={{ backgroundColor: "#ccc" }}
         ListFooterComponent={Footer}
         estimatedItemSize={50}
@@ -44,6 +40,7 @@ const Header = () => {
     </View>
   );
 };
+
 const Footer = () => {
   return (
     <View style={styles.footer}>

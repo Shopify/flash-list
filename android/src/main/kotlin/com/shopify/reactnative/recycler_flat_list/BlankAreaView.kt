@@ -3,13 +3,17 @@ package com.shopify.reactnative.recycler_flat_list
 import android.content.Context
 import android.graphics.Canvas
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.views.view.ReactViewGroup
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
+import com.facebook.react.uimanager.events.RCTEventEmitter
+import kotlin.math.max
 
 
 class BlankAreaView(context: Context) : ReactViewGroup(context) {
@@ -34,26 +38,42 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         get() {
             return if (horizontal) scrollView.scrollX else scrollView.scrollY
         }
+    private var didLoadCells = false
+    private var didSendInteractiveEvent = false
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         val dm = DisplayMetrics()
         display.getRealMetrics(dm)
         pixelDensity = dm.density.toDouble()
-    }
-
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
-
-        val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
-        emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
+        viewTreeObserver.addOnDrawListener {
+            if (scrollView as View? != null) {
+                val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
+                if (!didSendInteractiveEvent && max(blankOffsetBottom, blankOffsetTop) == 0) {
+                    didSendInteractiveEvent = true
+                    Log.d("BlankAreaView", "Send interactive event from native")
+                    val reactContext = context as ReactContext
+                    reactContext
+                            .getJSModule(RCTDeviceEventEmitter::class.java)
+                            .emit("onInteractive", Arguments.createMap())
+                }
+                emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
+            }
+        }
     }
 
     fun computeBlankFromGivenOffset(): Pair<Int, Int> {
-        val cells = ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().filterNotNull().map { it as ViewGroup }
+//       val cells = ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().filterNotNull().map { it as ViewGroup }
+//        Log.d("BlankAreaView", ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().first().toString())
+        val cells = (((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().first() as ViewGroup)
+                .getChildren().filterNotNull()
+                .map { it as ViewGroup }
+                .toTypedArray()
+        cells.sortBy { it.top }
         if (cells.isEmpty()) {
             return Pair(0, 0)
         }
+        didLoadCells = true
 
         try {
             val firstCell = cells.first { isWithinBounds(it) && it.getChildren().isNotEmpty() }

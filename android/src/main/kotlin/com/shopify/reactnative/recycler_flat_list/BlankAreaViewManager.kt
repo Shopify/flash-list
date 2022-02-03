@@ -1,6 +1,5 @@
 package com.shopify.reactnative.recycler_flat_list
 
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.views.view.ReactViewGroup
