@@ -19,7 +19,7 @@ import kotlin.math.max
 class BlankAreaView(context: Context) : ReactViewGroup(context) {
     private var pixelDensity = 1.0;
 
-    private val scrollView: View
+    val scrollView: View
         get() {
             return getChildAt(0)
         }
@@ -40,6 +40,7 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         }
     private var didLoadCells = false
     private var didSendInteractiveEvent = false
+    var getCells: () -> List<View?> = { emptyList() }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -55,7 +56,7 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
                 return@addOnDrawListener
             }
             val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
-            if (max(blankOffsetBottom, blankOffsetTop) == 0) {
+            if (max(blankOffsetBottom, blankOffsetTop) != 0 || !didLoadCells) {
                 return@addOnDrawListener
             }
             didSendInteractiveEvent = true
@@ -67,9 +68,8 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
     }
 
     fun computeBlankFromGivenOffset(): Pair<Int, Int> {
-//       val cells = ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().filterNotNull().map { it as ViewGroup }
-        val cells = (((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().first() as ViewGroup)
-                .getChildren().filterNotNull()
+        val cells = getCells()
+                .filterNotNull()
                 .map { it as ViewGroup }
                 .toTypedArray()
         cells.sortBy { it.top }
@@ -110,7 +110,7 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         }
     }
 
-    private fun ViewGroup.getChildren(): List<View?> {
+    fun ViewGroup.getChildren(): List<View?> {
         return (0..childCount).map {
             this.getChildAt(it)
         }

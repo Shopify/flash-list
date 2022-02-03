@@ -7,10 +7,10 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.facebook.react.views.view.ReactViewManager
 
-@ReactModule(name = RecyclerFlatListPerformanceViewManager.REACT_CLASS)
-class RecyclerFlatListPerformanceViewManager: ReactViewManager() {
+@ReactModule(name = FlatListPerformanceViewManager.REACT_CLASS)
+class FlatListPerformanceViewManager: ReactViewManager() {
     companion object {
-        const val REACT_CLASS = "RecyclerFlatListPerformanceView"
+        const val REACT_CLASS = "FlatListPerformanceView"
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
@@ -37,7 +37,7 @@ class RecyclerFlatListPerformanceViewManager: ReactViewManager() {
     override fun createViewInstance(context: ThemedReactContext): ReactViewGroup {
         return BlankAreaView(context).apply {
             getCells = {
-                (((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().first() as ViewGroup)
+                ((scrollView as ViewGroup).getChildAt(0) as ViewGroup)
                         .getChildren()
             }
         }

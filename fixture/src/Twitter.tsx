@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import {
   RecyclerFlatList,
   RecyclerFlatListPerformanceView,
+  FlatListPerformanceView,
 } from "@shopify/recycler-flat-list";
 
 import { tweets } from "./data/tweets";
@@ -10,8 +11,8 @@ import TweetCell from "./TweetCell";
 
 const Twitter = () => {
   return (
-    <RecyclerFlatListPerformanceView>
-      <RecyclerFlatList
+    <FlatListPerformanceView>
+      <FlatList
         keyExtractor={(item) => {
           return item.id;
         }}
@@ -25,7 +26,7 @@ const Twitter = () => {
         ItemSeparatorComponent={Divider}
         data={tweets}
       />
-    </RecyclerFlatListPerformanceView>
+    </FlatListPerformanceView>
   );
 };
 
