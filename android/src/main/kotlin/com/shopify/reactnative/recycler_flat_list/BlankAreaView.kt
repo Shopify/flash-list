@@ -41,33 +41,33 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
     private var didLoadCells = false
     private var didSendInteractiveEvent = false
 
-    var onInteractiveCallback: () -> Unit = {}
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         val dm = DisplayMetrics()
         display.getRealMetrics(dm)
         pixelDensity = dm.density.toDouble()
+        viewTreeObserver.addOnScrollChangedListener {
+            val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
+            emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
+        }
         viewTreeObserver.addOnDrawListener {
-            if (scrollView as View? != null) {
-                val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
-                if (!didSendInteractiveEvent && max(blankOffsetBottom, blankOffsetTop) == 0) {
-                    didSendInteractiveEvent = true
-                    onInteractiveCallback()
-                    Log.d("BlankAreaView", "Send interactive event from native")
-//                    val reactContext = context as ReactContext
-//                    reactContext
-//                            .getJSModule(RCTDeviceEventEmitter::class.java)
-//                            .emit("onInteractive", Arguments.createMap())
-                }
-                emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
+            if (didSendInteractiveEvent) {
+                return@addOnDrawListener
             }
+            val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
+            if (max(blankOffsetBottom, blankOffsetTop) == 0) {
+                return@addOnDrawListener
+            }
+            didSendInteractiveEvent = true
+            val reactContext = context as ReactContext
+            reactContext
+                    .getJSModule(RCTEventEmitter::class.java)
+                    .receiveEvent(id, "onInteractive", Arguments.createMap())
         }
     }
 
     fun computeBlankFromGivenOffset(): Pair<Int, Int> {
 //       val cells = ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().filterNotNull().map { it as ViewGroup }
-//        Log.d("BlankAreaView", ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().first().toString())
         val cells = (((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().first() as ViewGroup)
                 .getChildren().filterNotNull()
                 .map { it as ViewGroup }
