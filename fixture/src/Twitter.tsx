@@ -11,22 +11,22 @@ import TweetCell from "./TweetCell";
 
 const Twitter = () => {
   return (
-    <FlatListPerformanceView>
-      <FlatList
+    <RecyclerFlatListPerformanceView>
+      <RecyclerFlatList
         keyExtractor={(item) => {
           return item.id;
         }}
         renderItem={({ item }) => {
           return <TweetCell item={item} />;
         }}
-        // ListHeaderComponent={Header}
-        // ListHeaderCompomentStyle={{ backgroundColor: "#ccc" }}
+        ListHeaderComponent={Header}
+        ListHeaderCompomentStyle={{ backgroundColor: "#ccc" }}
         ListFooterComponent={Footer}
-        estimatedItemSize={50}
+        estimatedItemSize={250}
         ItemSeparatorComponent={Divider}
         data={tweets}
       />
-    </FlatListPerformanceView>
+    </RecyclerFlatListPerformanceView>
   );
 };
 
