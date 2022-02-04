@@ -46,7 +46,7 @@ steps:
       - cd fixture
       - yarn
       - cd ios
-      - cocoapods
+      - bundle exec pod install
       - set -o pipefail && env NSUnbufferedIO=YES xcodebuild clean build -scheme FlatListPro -workspace FlatListPro.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' | tee /tmp/artifacts/ios_build.log
     artifact_paths:
       - /tmp/artifacts
