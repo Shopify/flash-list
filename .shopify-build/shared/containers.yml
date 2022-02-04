@@ -8,3 +8,6 @@ containers:
 
   macos:
     anka: macos-xcode13
+
+  docs_container:
+    docker: gcr.io/shopify-docker-images/apps/production/apidocs-generator-alpine:production
