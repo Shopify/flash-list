@@ -6,6 +6,10 @@ A better list for React Native - more performant, with the same API. Built with 
 
 Check out [the Vault project](https://vault.shopify.io/projects/22845) to learn more about this project.
 
+---
+
+[Documentation 📚](https://react-native-performance.docs.shopify.io/)
+
 ## How to use this repo
 
 ### Adding a package to your project
@@ -17,9 +21,3 @@ Note that [`recyclerlistview`](https://github.com/Flipkart/recyclerlistview) is 
 ### App / Playground
 
 The [fixture](https://github.com/Shopify/recycler-flat-list/tree/main/fixture) is an example app showing how to use the library.
-
-### Known issues
-
-Please check out the document [here](https://github.com/Shopify/recycler-flat-list/tree/main/docs/known-issues).
-
-<!-- TODO: Add the snapshots -->

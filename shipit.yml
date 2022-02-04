@@ -1,6 +1,7 @@
 ci:
   require:
     - buildkite/recycler-flat-list
+    - buildkite/recycler-flat-list-docs
 
 dependencies:
   override:
