@@ -13,3 +13,50 @@ steps:
     run:
       - yarn
       - yarn lint
+
+  - label: "Metro bundling for iOS :metro: :ios:"
+    container: macos
+    timeout: 20m
+    run:
+      - cd fixture
+      - yarn
+      - mkdir -p /tmp/artifacts
+      - yarn react-native bundle --entry-file index.js --platform ios --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
+    artifact_paths:
+      - path: /tmp/artifacts
+        required: true
+
+  - label: "Metro bundling for Android :metro: :android:"
+    container: android
+    timeout: 20m
+    run:
+      - cd fixture
+      - yarn
+      - cd android
+      - ./gradlew bundleDebugJsAndAssets
+    artifact_paths:
+      - path: /tmp/artifacts
+        required: true
+
+  - label: "Build iOS :ios:"
+    container: macos
+    timeout: 30m
+    run:
+      - bundle: ~
+      - cd fixture
+      - yarn
+      - cd ios
+      - cocoapods
+      - set -o pipefail && env NSUnbufferedIO=YES xcodebuild clean build -scheme FlatListPro -workspace FlatListPro.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' | tee /tmp/artifacts/ios_build.log
+    artifact_paths:
+      - /tmp/artifacts
+
+  - label: "Build Android :android:"
+    container: android
+    timeout: 20m
+    run:
+      - bundle: ~
+      - cd fixture
+      - yarn
+      - cd android
+      - ./gradlew assembleDebug
