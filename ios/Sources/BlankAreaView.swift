@@ -3,6 +3,13 @@ import UIKit
 import React
 
 @objc class BlankAreaView: UIView {
+    @objc(onInteractive)
+    var onInteractive: RCTBubblingEventBlock?
+    
+    var cells: (UIScrollView) -> [UIView] = { _ in [] }
+    /// A list can have other elements such as footer that need to be handled specially
+    var shouldCheckRCTView = false
+    
     private var observation: NSKeyValueObservation?
     private var scrollView: UIScrollView? {
         subviews.first?.subviews.first as? UIScrollView
@@ -15,11 +22,6 @@ import React
         return isHorizontal ? scrollView.frame.width : scrollView.frame.height
     }
     private var hasSentInteractiveEvent = false
-
-    @objc(onInteractive)
-    var onInteractive: RCTBubblingEventBlock?
-    
-    var cells: (UIScrollView) -> [UIView] = { _ in [] }
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -50,10 +52,16 @@ import React
             .sorted(by: { $1.frame.origin.y > $0.frame.origin.y })
         guard !cells.isEmpty else { return (0, 0) }
 
-        let scrollOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
+        let rawScrollOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
+        // Ignore reported blank spaces when we scroll above or below the list
+        let scrollOffset = min(
+            max(0, rawScrollOffset),
+            (isHorizontal ? scrollView.contentSize.width : scrollView.contentSize.height) - listSize
+        )
+
         guard
-            let firstCell = cells.first(where: { scrollViewContains($0, scrollOffset: scrollOffset) && !$0.subviews.flatMap(\.subviews).isEmpty }),
-            let lastCell = cells.last(where: { scrollViewContains($0, scrollOffset: scrollOffset) && !$0.subviews.flatMap(\.subviews).isEmpty })
+            let firstCell = cells.first(where: { isRenderedAndVisibleCell($0, scrollOffset: scrollOffset) }),
+            let lastCell = cells.last(where: { isRenderedAndVisibleCell($0, scrollOffset: scrollOffset) })
         else {
             return (0, listSize)
         }
@@ -67,6 +75,16 @@ import React
             blankOffsetBottom = scrollOffset + listSize - lastCell.frame.maxY
         }
         return (blankOffsetTop, blankOffsetBottom)
+    }
+    
+    private func isRenderedAndVisibleCell(_ cell: UIView, scrollOffset: CGFloat) -> Bool {
+        if !scrollViewContains(cell, scrollOffset: scrollOffset) {
+            return false
+        }
+        if shouldCheckRCTView && cell is RCTView {
+            return true
+        }
+        return !cell.subviews.flatMap(\.subviews).isEmpty
     }
 
     private func scrollViewContains(
