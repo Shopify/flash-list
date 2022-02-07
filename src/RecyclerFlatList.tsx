@@ -86,7 +86,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
   static defaultProps = {
     data: [],
     numColumns: 1,
-    renderAheadOffset: 250,
   };
 
   constructor(props) {
