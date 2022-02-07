@@ -34,9 +34,9 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   estimatedListSize?: { height: number; width: number };
 
   /**
-   * Draw distance for rendering in advance in keeping items ready
+   * Draw distance for advanced rendering (in dp/px)
    */
-  renderAheadOffset?: number;
+  drawDistance?: number;
 
   /**
    * Allows developers to override type of items. This will improve recycling if you have different types of items in the list
@@ -223,7 +223,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         };
       }
 
-      const renderAheadOffset = this.props.renderAheadOffset || 250;
+      const drawDistance = this.props.drawDistance || 250;
 
       return (
         <ProgressiveListView
@@ -244,9 +244,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
           onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
           extendedState={this.props.extraData}
           layoutSize={this.props.estimatedListSize}
-          maxRenderAhead={3 * renderAheadOffset}
-          finalRenderAheadOffset={renderAheadOffset}
-          renderAheadStep={renderAheadOffset}
+          maxRenderAhead={3 * drawDistance}
+          finalRenderAheadOffset={drawDistance}
+          renderAheadStep={drawDistance}
           {...this.props.overrideProps}
         />
       );
