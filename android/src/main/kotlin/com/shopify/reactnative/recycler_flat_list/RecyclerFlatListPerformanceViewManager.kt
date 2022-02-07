@@ -1,5 +1,6 @@
 package com.shopify.reactnative.recycler_flat_list
 
+import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -37,8 +38,12 @@ class RecyclerFlatListPerformanceViewManager: ReactViewManager() {
     override fun createViewInstance(context: ThemedReactContext): ReactViewGroup {
         return BlankAreaView(context).apply {
             getCells = {
-                (((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().first() as ViewGroup)
+                if (scrollView == null) {
+                    emptyList()
+                } else {
+                    (((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().first() as ViewGroup)
                         .getChildren()
+                }
             }
         }
     }

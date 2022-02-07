@@ -37,8 +37,12 @@ class FlatListPerformanceViewManager: ReactViewManager() {
     override fun createViewInstance(context: ThemedReactContext): ReactViewGroup {
         return BlankAreaView(context).apply {
             getCells = {
-                ((scrollView as ViewGroup).getChildAt(0) as ViewGroup)
-                        .getChildren()
+                if (scrollView == null) {
+                    emptyList()
+                } else {
+                    ((scrollView as ViewGroup).getChildAt(0) as ViewGroup)
+                            .getChildren()
+                }
             }
         }
     }

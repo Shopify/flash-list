@@ -2,7 +2,6 @@ package com.shopify.reactnative.recycler_flat_list
 
 import android.content.Context
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.Arguments
@@ -17,9 +16,13 @@ import kotlin.math.max
 class BlankAreaView(context: Context) : ReactViewGroup(context) {
     private var pixelDensity = 1.0;
 
-    val scrollView: View
+    val scrollView: View?
         get() {
-            return getChildAt(0)
+            return try {
+                getChildAt(0)
+            } catch (e: NullPointerException) {
+                null
+            }
         }
 
     private val horizontal: Boolean
@@ -29,12 +32,18 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
 
     private val listSize: Int
         get() {
-            return if (horizontal) scrollView.width else scrollView.height
+            if (scrollView == null) {
+                return 0
+            }
+            return if (horizontal) scrollView!!.width else scrollView!!.height
         }
 
     private val scrollOffset: Int
         get() {
-            return if (horizontal) scrollView.scrollX else scrollView.scrollY
+            if (scrollView == null) {
+                return 0
+            }
+            return if (horizontal) scrollView!!.scrollX else scrollView!!.scrollY
         }
     private var didLoadCells = false
     private var didSendInteractiveEvent = false
@@ -46,6 +55,9 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         display.getRealMetrics(dm)
         pixelDensity = dm.density.toDouble()
         viewTreeObserver.addOnScrollChangedListener {
+            if (scrollView == null) {
+                return@addOnScrollChangedListener
+            }
             val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
             emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
         }
@@ -99,6 +111,10 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
     }
 
     private fun isWithinBounds(view: View): Boolean {
+        if (scrollView == null) {
+            return false
+        }
+        val scrollView = scrollView as View
         return if (!horizontal) {
             (view.top >= (scrollView.scrollY - scrollView.height) || view.bottom >= (scrollView.scrollY - scrollView.height)) &&
                     (view.top <= scrollView.scrollY + scrollView.height || view.bottom <= scrollView.scrollY + scrollView.height)
