@@ -1,0 +1,18 @@
+name: recycler-flat-list
+up:
+  - node:
+      version: v16.13.0
+      yarn: 1.22.15
+
+server:
+  desc: Run docusaurus documentation local server
+  run: yarn run start --no-open
+
+build:
+  desc: build and serve the static website
+  run: |
+    yarn run build
+    yarn run serve
+
+open:
+  app: http://localhost:3000

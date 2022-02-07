@@ -1,0 +1,12 @@
+# Please do not remove this file as it is required to populate the `catalog.docs.shopify.io` page
+
+title: RecyclerFlatList
+
+# Modify 'description'
+description: >
+  RecyclerFlatList is a more performant replacement of the FlatList component.
+
+repository:
+  home: https://github.com/Shopify/recycler-flat-list
+  branch: main
+  blob_url: "%home%/blob/%branch%/%path%"

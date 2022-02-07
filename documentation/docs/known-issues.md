@@ -1,3 +1,10 @@
+---
+id: known-issues
+title: Known issues
+slug: /known-issues
+sidebar_position: 1
+---
+
 # Known Issues
 
 RecyclerFlatList and FlatList have very different internal. While the API is almost the same, the behaviour might be different in some cases due to a bug, limitation or missing implementation. In any case, if the issue is already listed here don't create a new one.
@@ -13,6 +20,7 @@ RecyclerFlatList uses [recyclerlistview](https://github.com/Flipkart/recyclerlis
 Please note most lists do mount with deterministic sizes so make sure to check if you really need workarounds.
 
 ### 3) Performance doesn't seem to improve
+
 Please check if you are directly adding `key` prop to yours components or their children. If you directly add keys then it can break recycling and performance will not be as expected. Looks for usage of `key` inside whatever you are rendering (inclucing child components) and remove them. We are looking for feedback on why you might need to add keys (unless there is an iteration).
 
 ### 4) `Animated.event` doesn't work with `onScroll` event
