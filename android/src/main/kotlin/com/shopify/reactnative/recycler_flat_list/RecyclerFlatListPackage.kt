@@ -14,7 +14,6 @@ class ReactNativeRecyclerFlatListPackage : ReactPackage {
     return listOf(
         AutoLayoutViewManager(),
         CellContainerManager(),
-        BlankAreaViewManager(),
         RecyclerFlatListPerformanceViewManager(),
         FlatListPerformanceViewManager()
     )

@@ -2,6 +2,7 @@ package com.shopify.reactnative.recycler_flat_list
 
 import android.content.Context
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.Arguments
@@ -11,6 +12,7 @@ import com.facebook.react.views.view.ReactViewGroup
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import kotlin.math.max
+import kotlin.math.min
 
 
 class BlankAreaView(context: Context) : ReactViewGroup(context) {
@@ -80,23 +82,32 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
     fun computeBlankFromGivenOffset(): Pair<Int, Int> {
         val cells = getCells()
                 .filterNotNull()
-                .map { it as ViewGroup }
                 .toTypedArray()
         cells.sortBy { it.top }
         if (cells.isEmpty()) {
-            return Pair(0, 0)
+            return Pair(0, listSize)
         }
         didLoadCells = true
 
         try {
-            val firstCell = cells.first { isWithinBounds(it) && it.getChildren().isNotEmpty() }
-            val lastCell = cells.last { isWithinBounds(it) && it.getChildren().isNotEmpty() }
+            val firstCell = cells.first { isRenderedAndVisibleCell(it) }
+            val lastCell = cells.last { isRenderedAndVisibleCell(it) }
             val blankOffsetTop = firstCell.top - scrollOffset
-            val blankOffsetBottom = scrollOffset + listSize - lastCell.bottom
+            val blankOffsetBottom = min((firstCell.parent as View).bottom, scrollOffset + listSize) - lastCell.bottom
             return Pair(blankOffsetTop, blankOffsetBottom)
         } catch (e: NoSuchElementException) {
             return Pair(0, listSize)
         }
+    }
+
+    private fun isRenderedAndVisibleCell(cell: View): Boolean {
+        if (!isWithinBounds(cell)) {
+            return false
+        }
+        if (cell !is ViewGroup) {
+            return true
+        }
+        return cell.getChildren().isNotEmpty()
     }
 
     private fun emitBlankAreaEvent(blankOffsetTop: Int, blankOffsetBottom: Int) {
