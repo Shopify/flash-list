@@ -50,10 +50,6 @@ class AutoLayoutViewManager: ReactViewManager() {
     fun setRenderAheadOffset(view: AutoLayoutView, renderOffset: Double) {
         view.alShadow.renderOffset = convertToPixelLayout(renderOffset, view.pixelDensity)
     }
-    @ReactProp(name = "enableInstrumentation")
-    fun setEnableInstrumentation(view: AutoLayoutView, enableInstrumentation: Boolean) {
-        view.enableInstrumentation = enableInstrumentation
-    }
 
     private fun convertToPixelLayout(dp: Double, density: Double): Int {
         return (dp * density).roundToInt()

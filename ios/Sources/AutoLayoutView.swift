@@ -9,7 +9,6 @@ import UIKit
     private var scrollOffset: CGFloat = 0
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
-    private var enableInstrumentation = false
 
     /// Tracks where the last pixel is drawn in the visible window
     private var lastMaxBound: CGFloat = 0
@@ -32,32 +31,9 @@ import UIKit
         self.renderAheadOffset = CGFloat(renderAheadOffset)
     }
 
-    @objc func setEnableInstrumentation(_ enableInstrumentation: Bool) {
-        self.enableInstrumentation = enableInstrumentation
-    }
-
     override func layoutSubviews() {
         fixLayout()
         super.layoutSubviews()
-
-        let scrollView = sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView })
-        guard enableInstrumentation, let scrollView = scrollView as? UIScrollView else { return }
-        let (blankOffsetStart, blankOffsetEnd) = computeBlankFromGivenOffset(
-            horizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y,
-            filledBoundMin: lastMinBound,
-            filledBoundMax: lastMaxBound,
-            renderAheadOffset: renderAheadOffset,
-            windowSize: windowSize
-        )
-
-        BlankAreaEventEmitter
-            .sharedInstance?
-            .onBlankArea(
-                offsetStart: blankOffsetStart,
-                offsetEnd: blankOffsetEnd,
-                listSize: windowSize
-            )
-        ?? assertionFailure("BlankAreaEventEmitter.sharedInstance was not initialized")
     }
 
     /// Sorts views by index and then invokes clearGaps which does the correction.

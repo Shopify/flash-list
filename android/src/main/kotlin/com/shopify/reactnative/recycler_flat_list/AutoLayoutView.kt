@@ -17,7 +17,6 @@ import kotlin.math.max
  * Note: This cannot work for masonry layouts i.e, pinterest like layout */
 class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     val alShadow = AutoLayoutShadow()
-    var enableInstrumentation = false
 
     var pixelDensity = 1.0;
 
@@ -26,16 +25,6 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     override fun dispatchDraw(canvas: Canvas?) {
         fixLayout()
         super.dispatchDraw(canvas)
-
-        if (enableInstrumentation) {
-            // Since we need to call this method with scrollOffset on the UI thread and not with the one react has we're querying parent's parent
-            // directly which will be a ScrollView. If it isn't reported values will be incorrect but the component will not break.
-            // RecyclerListView is expected not to change the hierarchy of children.
-            alShadow.computeBlankFromGivenOffset((parent.parent as View).let {
-                if (alShadow.horizontal) it.scrollX else it.scrollY
-            })
-            emitBlankAreaEvent()
-        }
     }
 
     /** Sorts views by index and then invokes clearGaps which does the correction.
