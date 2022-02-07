@@ -15,8 +15,6 @@ import kotlin.math.min
 
 
 class BlankAreaView(context: Context) : ReactViewGroup(context) {
-    private var pixelDensity = 1.0;
-
     val scrollView: View?
         get() {
             return try {
@@ -25,6 +23,8 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
                 null
             }
         }
+
+    var getCells: () -> List<View?> = { emptyList() }
 
     private val horizontal: Boolean
         get() {
@@ -48,7 +48,7 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         }
     private var didLoadCells = false
     private var didSendInteractiveEvent = false
-    var getCells: () -> List<View?> = { emptyList() }
+    private var pixelDensity = 1.0;
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()

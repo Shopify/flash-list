@@ -23,12 +23,12 @@ class RecyclerFlatListPerformanceViewManager: ReactViewManager() {
 
     override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
         return MapBuilder.builder<String, Any>().put(
-                "onInteractive",
+                Constants.ON_INTERACTIVE,
                 MapBuilder.of(
                         "phasedRegistrationNames",
-                        MapBuilder.of("bubbled", "onInteractive")
+                        MapBuilder.of("bubbled", Constants.ON_INTERACTIVE)
                 )
-        ).build();
+        ).build()
     }
 
     override fun getName(): String {

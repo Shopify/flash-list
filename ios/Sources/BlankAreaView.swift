@@ -5,11 +5,12 @@ import React
 @objc class BlankAreaView: UIView {
     @objc(onInteractive)
     var onInteractive: RCTBubblingEventBlock?
-    
+
+    /// Get cell views from a given scroll view
     var cells: (UIScrollView) -> [UIView] = { _ in [] }
     /// A list can have other elements such as footer that need to be handled specially
     var shouldCheckRCTView = false
-    
+
     private var observation: NSKeyValueObservation?
     private var scrollView: UIScrollView? {
         subviews.first?.subviews.first as? UIScrollView
@@ -33,7 +34,7 @@ import React
             guard let self = self else { return }
 
             let (offsetStart, offsetEnd) = self.computeBlankFromGivenOffset(for: scrollView)
-            
+
             if max(offsetStart, offsetEnd) == 0, !self.hasSentInteractiveEvent {
                 self.hasSentInteractiveEvent = true
                 self.onInteractive?([:])
@@ -76,7 +77,7 @@ import React
         }
         return (blankOffsetTop, blankOffsetBottom)
     }
-    
+
     private func isRenderedAndVisibleCell(_ cell: UIView, scrollOffset: CGFloat) -> Bool {
         if !scrollViewContains(cell, scrollOffset: scrollOffset) {
             return false
