@@ -18,6 +18,7 @@ steps:
     container: macos
     timeout: 20m
     run:
+      - yarn
       - cd fixture
       - yarn
       - mkdir -p /tmp/artifacts
