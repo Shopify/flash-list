@@ -1,4 +1,9 @@
-import { GridLayoutProvider } from "recyclerlistview";
+import {
+  Dimension,
+  GridLayoutProvider,
+  Layout,
+  LayoutManager,
+} from "recyclerlistview";
 
 export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
   private props: T;
@@ -42,6 +47,16 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
 
   public updateProps(props: T) {
     this.props = props;
+  }
+
+  public newLayoutManager(
+    renderWindowSize: Dimension,
+    isHorizontal?: boolean,
+    cachedLayouts?: Layout[]
+  ): LayoutManager {
+    // Cached layouts lead to some visible resizing on orientation change when Grid Layout Provider is used. Ignoring caches.
+    // This won't hurt performance much and is only used while resizing.
+    return super.newLayoutManager(renderWindowSize, isHorizontal);
   }
 
   private getCleanLayoutObj() {
