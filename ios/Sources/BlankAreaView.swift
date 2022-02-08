@@ -37,7 +37,9 @@ import React
 
             if max(offsetStart, offsetEnd) == 0, !self.hasSentInteractiveEvent {
                 self.hasSentInteractiveEvent = true
-                self.onInteractive?([:])
+                self.onInteractive?(
+                    ["timestamp": Date().timeIntervalSince1970 * 1000]
+                )
             }
 
             BlankAreaEventEmitter.sharedInstance?.onBlankArea(

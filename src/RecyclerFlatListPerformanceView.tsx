@@ -5,8 +5,8 @@ const RecyclerFlatListPerformanceView = ({ children }) => {
   const [time] = useState(Date.now());
   return (
     <RecyclerFlatListPerformanceViewNativeComponent
-      onInteractive={() => {
-        console.log(`TTI in millis: ${Date.now() - time}`);
+      onInteractive={({ nativeEvent }) => {
+        console.log(`TTI in millis: ${nativeEvent.timestamp - time}`);
       }}
     >
       {children}

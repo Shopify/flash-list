@@ -5,8 +5,8 @@ const FlatListPerformanceView = ({ children }) => {
   const [time] = useState(Date.now());
   return (
     <FlatListPerformanceViewNativeComponent
-      onInteractive={() => {
-        console.log(`TTI in millis: ${Date.now() - time}`);
+      onInteractive={({ nativeEvent }) => {
+        console.log(`TTI in millis: ${nativeEvent.timestamp - time}`);
       }}
     >
       {children}

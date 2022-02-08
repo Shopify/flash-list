@@ -1,6 +1,12 @@
 import { requireNativeComponent } from "react-native";
 
-type OnInteractiveHandler = () => void;
+interface OnInteractiveEvent {
+  nativeEvent: {
+    timestamp: number;
+  };
+}
+
+type OnInteractiveHandler = (event: OnInteractiveEvent) => void;
 
 interface RecyclerFlatListPerformanceViewProps {
   onInteractive: OnInteractiveHandler;

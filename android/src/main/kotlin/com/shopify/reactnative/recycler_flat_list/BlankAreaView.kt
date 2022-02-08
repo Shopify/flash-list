@@ -10,6 +10,8 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.views.view.ReactViewGroup
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.facebook.react.uimanager.events.RCTEventEmitter
+import java.util.*
+import kotlin.NoSuchElementException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -74,7 +76,13 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
             val reactContext = context as ReactContext
             reactContext
                     .getJSModule(RCTEventEmitter::class.java)
-                    .receiveEvent(id, "onInteractive", Arguments.createMap())
+                    .receiveEvent(
+                            id,
+                            "onInteractive",
+                            Arguments.createMap().apply {
+                                putString("timestamp", Date().time.toString())
+                            }
+                    )
         }
     }
 
