@@ -1,7 +1,9 @@
 package com.shopify.reactnative.recycler_flat_list
 
 import android.content.Context
+import android.graphics.Canvas
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.Arguments
@@ -86,7 +88,7 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         }
     }
 
-    fun computeBlankFromGivenOffset(): Pair<Int, Int> {
+    private fun computeBlankFromGivenOffset(): Pair<Int, Int> {
         val cells = getCells()
                 .filterNotNull()
                 .toTypedArray()
@@ -114,7 +116,7 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         if (cell !is ViewGroup) {
             return true
         }
-        return cell.getChildren().isNotEmpty()
+        return cell.childCount != 0
     }
 
     private fun emitBlankAreaEvent(blankOffsetTop: Int, blankOffsetBottom: Int) {
