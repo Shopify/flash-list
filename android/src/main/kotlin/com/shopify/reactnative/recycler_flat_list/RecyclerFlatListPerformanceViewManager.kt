@@ -39,10 +39,10 @@ class RecyclerFlatListPerformanceViewManager: ReactViewManager() {
         return BlankAreaView(context).apply {
             getCells = {
                 if (scrollView == null) {
-                    emptyList()
+                    emptyArray()
                 } else {
                     val container = ((scrollView as ViewGroup).getChildAt(0) as ViewGroup)
-                    val autoLayoutView = (container.getChildren().first() as ViewGroup)
+                    val autoLayoutView = (container.getChildAt(0) as ViewGroup)
                     autoLayoutView.getChildren() + container.getChildren().filter { it !is AutoLayoutView }
                 }
             }

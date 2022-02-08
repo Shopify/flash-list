@@ -38,7 +38,7 @@ class FlatListPerformanceViewManager: ReactViewManager() {
         return BlankAreaView(context).apply {
             getCells = {
                 if (scrollView == null) {
-                    emptyList()
+                    emptyArray()
                 } else {
                     ((scrollView as ViewGroup).getChildAt(0) as ViewGroup)
                             .getChildren()

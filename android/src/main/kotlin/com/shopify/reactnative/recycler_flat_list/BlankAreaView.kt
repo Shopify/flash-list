@@ -28,7 +28,7 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
             }
         }
 
-    var getCells: () -> List<View?> = { emptyList() }
+    var getCells: () -> Array<View> = { emptyArray() }
 
     private val horizontal: Boolean
         get() {
@@ -90,22 +90,20 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
 
     private fun computeBlankFromGivenOffset(): Pair<Int, Int> {
         val cells = getCells()
-                .filterNotNull()
-                .toTypedArray()
         cells.sortBy { it.top }
         if (cells.isEmpty()) {
             return Pair(0, listSize)
         }
         didLoadCells = true
 
-        try {
+        return try {
             val firstCell = cells.first { isRenderedAndVisibleCell(it) }
             val lastCell = cells.last { isRenderedAndVisibleCell(it) }
             val blankOffsetTop = firstCell.top - scrollOffset
             val blankOffsetBottom = min((firstCell.parent as View).bottom, scrollOffset + listSize) - lastCell.bottom
-            return Pair(blankOffsetTop, blankOffsetBottom)
+            Pair(blankOffsetTop, blankOffsetBottom)
         } catch (e: NoSuchElementException) {
-            return Pair(0, listSize)
+            Pair(0, listSize)
         }
     }
 
@@ -144,9 +142,10 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         }
     }
 
-    fun ViewGroup.getChildren(): List<View?> {
-        return (0..childCount).map {
+    fun ViewGroup.getChildren(): Array<View> {
+        return (0..childCount).mapNotNull {
             this.getChildAt(it)
         }
+        .toTypedArray()
     }
 }
