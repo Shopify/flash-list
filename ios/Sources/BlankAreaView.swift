@@ -81,9 +81,9 @@ import React
     }
 
     private func isRenderedAndVisibleCell(_ cell: UIView, scrollOffset: CGFloat) -> Bool {
-        if !scrollViewContains(cell, scrollOffset: scrollOffset) {
-            return false
-        }
+        guard
+            scrollViewContains(cell, scrollOffset: scrollOffset)
+        else { return false }
         if shouldCheckRCTView && cell is RCTView {
             return true
         }

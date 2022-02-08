@@ -8,15 +8,12 @@ interface OnInteractiveEvent {
 
 type OnInteractiveHandler = (event: OnInteractiveEvent) => void;
 
-interface FlatListPerformanceViewProps {
+interface FlatListPerformanceViewNativeComponentProps {
   onInteractive: OnInteractiveHandler;
 }
 
-/**
- * Wrap FlatList with this view to get reports of blank spaces
- */
-const FlatListPerformanceView =
-  requireNativeComponent<FlatListPerformanceViewProps>(
+const FlatListPerformanceViewNativeComponent =
+  requireNativeComponent<FlatListPerformanceViewNativeComponentProps>(
     "FlatListPerformanceView"
   );
-export { FlatListPerformanceView as FlatListPerformanceViewNativeComponent };
+export { FlatListPerformanceViewNativeComponent };
