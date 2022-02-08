@@ -1,0 +1,26 @@
+{
+  "testRunner": "jest",
+  "runnerConfig": "e2e/config.json",
+  "skipLegacyWorkersInjection": true,
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator",
+      "device": {
+        "type": "iPhone 12 Pro Max"
+      }
+    }
+  },
+  "apps": {
+    "ios.release": {
+      "type": "ios.app",
+      "binaryPath": "fixture/ios/build/Build/Products/Release-iphonesimulator/FlatListPro.app",
+      "build": "xcodebuild -workspace fixture/ios/FlatListPro.xcworkspace -scheme FlatListPro -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet"
+    }
+  },
+  "configurations": {
+    "ios.sim.release": {
+      "device": "simulator",
+      "app": "ios.release"
+    }
+  }
+}
