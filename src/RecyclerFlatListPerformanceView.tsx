@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 
 import { RecyclerFlatListPerformanceViewNativeComponent } from "./RecyclerFlatListPerformanceViewNativeComponent";
 
@@ -6,7 +6,7 @@ import { RecyclerFlatListPerformanceViewNativeComponent } from "./RecyclerFlatLi
  * Wrap RecyclerFlatList with this view to get reports of blank spaces
  */
 const RecyclerFlatListPerformanceView = ({ children }) => {
-  const [time] = useState(Date.now());
+  const time = useRef(Date.now()).current;
   return (
     <RecyclerFlatListPerformanceViewNativeComponent
       onInteractive={({ nativeEvent }) => {
