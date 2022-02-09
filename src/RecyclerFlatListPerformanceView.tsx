@@ -22,6 +22,13 @@ const RecyclerFlatListPerformanceView = ({
           listName
         );
       }}
+      onBlankAreaEvent={({ nativeEvent }) => {
+        performanceController.onBlankAreaEvent(
+          nativeEvent.offsetStart,
+          nativeEvent.offsetEnd,
+          listName
+        );
+      }}
     >
       {children}
     </RecyclerFlatListPerformanceViewNativeComponent>

@@ -6,6 +6,9 @@ import React
     @objc(onInteractive)
     var onInteractive: RCTBubblingEventBlock?
 
+    @objc(onBlankAreaEvent)
+    var onBlankAreaEvent: RCTBubblingEventBlock?
+
     /// Get cell views from a given scroll view
     var cells: (UIScrollView) -> [UIView] = { _ in [] }
     /// A list can have other elements such as footer that need to be handled specially
@@ -42,11 +45,12 @@ import React
                 )
             }
 
-            BlankAreaEventEmitter.sharedInstance?.onBlankArea(
-                offsetStart: offsetStart,
-                offsetEnd: offsetEnd,
-                listSize: self.listSize
-            ) ?? assertionFailure("BlankAreaEventEmitter.sharedInstance was not initialized")
+            self.onBlankAreaEvent?(
+                [
+                    "offsetStart": min(self.listSize, offsetStart),
+                    "offsetEnd": min(self.listSize, offsetEnd),
+                ]
+            )
         })
     }
 

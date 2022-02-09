@@ -22,6 +22,13 @@ const FlatListPerformanceView = ({
           listName
         );
       }}
+      onBlankAreaEvent={({ nativeEvent }) => {
+        performanceController.onBlankAreaEvent(
+          nativeEvent.offsetStart,
+          nativeEvent.offsetEnd,
+          listName
+        );
+      }}
     >
       {children}
     </FlatListPerformanceViewNativeComponent>

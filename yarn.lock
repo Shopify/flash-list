@@ -6741,10 +6741,10 @@ recast@^0.20.3:
     source-map "~0.6.1"
     tslib "^2.0.1"
 
-recyclerlistview@3.1.0-beta.3:
-  version "3.1.0-beta.3"
-  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.1.0-beta.3.tgz#98850e66750a912bc77206a73e497f828c3271ae"
-  integrity sha512-W5k6dwZj/RLs9VhIgWDymDsAwV6XefFk8C5kV/YtOhTwTRNpMEdJFESsSjkDzz+JtBG5MMzxZB8IonwLVndPEA==
+recyclerlistview@3.1.0-beta.4:
+  version "3.1.0-beta.4"
+  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.1.0-beta.4.tgz#b15a59d1a4316499b18d057df7900087c5ed2966"
+  integrity sha512-KysDe3CXZ3K+OFEDecA9DMIp7zGfTzn0mlS4zPOBCQqBXBoRv9cPui8/pXiW4uaJkv93+KZpV+Rm3O9MA0aedw==
   dependencies:
     lodash.debounce "4.0.8"
     prop-types "15.5.8"

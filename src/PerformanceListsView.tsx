@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { Flipper, addPlugin } from "react-native-flipper";
-import { NativeEventEmitter, NativeModules, Platform } from "react-native";
 
 import { PerformanceListsViewContextProvider } from "./PerformanceListsViewContext";
 
 interface PerformanceListsViewProps {
   onInteractive: (TTI: number, listName: string) => void;
+  onBlankAreaEvent: (offsetStart: number, offsetEnd: number) => void;
   children: JSX.Element;
 }
 
@@ -24,6 +24,7 @@ const bootstrapPlugin = (): Promise<Flipper.FlipperConnection> => {
 
 const PerformanceListsView = ({
   onInteractive,
+  onBlankAreaEvent,
   children,
 }: PerformanceListsViewProps) => {
   let connection: Flipper.FlipperConnection | undefined;
@@ -34,32 +35,6 @@ const PerformanceListsView = ({
     .catch((error) => {
       throw error;
     });
-  useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(
-      Platform.OS === "ios" ? NativeModules.BlankAreaEventEmitter : undefined
-    );
-    const onBlankAreaEvent = ({
-      offsetStart,
-      offsetEnd,
-      listSize,
-    }: {
-      offsetStart: number;
-      offsetEnd: number;
-      listSize: number;
-    }) => {
-      const blankArea = Math.max(offsetStart, offsetEnd);
-      connection?.send("newBlankData", {
-        // We do not report negative numbers to be consistent with FlatList measurements where there is no such thing as `renderAheadOffset`
-        // that we currently use in `RecyclerFlatList` to determine last element to consider.
-        offset: Math.max(0, Math.min(blankArea, listSize)),
-      });
-    };
-    const subscription = eventEmitter.addListener(
-      "blankAreaEvent",
-      onBlankAreaEvent
-    );
-    return () => subscription.remove();
-  }, [connection]);
   const onInteractiveCallback = useCallback(
     (TTI: number, listName: string) => {
       onInteractive(TTI, listName);
@@ -70,9 +45,23 @@ const PerformanceListsView = ({
     },
     [connection, onInteractive]
   );
+  const onBlankAreaEventCallback = useCallback(
+    (offsetStart: number, offsetEnd: number, listName: string) => {
+      onBlankAreaEvent(offsetStart, offsetEnd);
+      const blankArea = Math.max(Math.max(offsetStart, offsetEnd), 0);
+      connection?.send("newBlankData", {
+        offset: blankArea,
+        listName,
+      });
+    },
+    [connection, onBlankAreaEvent]
+  );
   return (
     <PerformanceListsViewContextProvider
-      value={{ onInteractive: onInteractiveCallback }}
+      value={{
+        onInteractive: onInteractiveCallback,
+        onBlankAreaEvent: onBlankAreaEventCallback,
+      }}
     >
       {children}
     </PerformanceListsViewContextProvider>
