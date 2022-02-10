@@ -38,13 +38,18 @@ class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
       offsetStart: nativeEvent.offsetStart,
       offsetEnd: nativeEvent.offsetEnd,
     };
-    listeners.forEach((listener) => {
-      listener(blankEventValue);
-    });
+    this.broadcastBlankEvent(blankEventValue);
     if (this.props.onBlankAreaEvent) {
       this.props.onBlankAreaEvent(blankEventValue);
     }
   };
+
+  private broadcastBlankEvent(value: BlankAreaEvent) {
+    const len = listeners.length;
+    for (let i = 0; i < len; i++) {
+      listeners[i](value);
+    }
+  }
 
   render() {
     return (
