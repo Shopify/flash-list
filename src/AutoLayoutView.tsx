@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import AutoLayoutViewNativeComponent, {
   OnBlankAreaEvent,
@@ -10,7 +10,12 @@ const listeners: BlankAreaEventHandler[] = [];
 export const useOnNativeBlankAreaEvents = (
   onBlankAreaEvent: (blankAreaEvent: BlankAreaEvent) => void
 ) => {
-  listeners.push(onBlankAreaEvent);
+  useEffect(() => {
+    listeners.push(onBlankAreaEvent);
+    return () => {
+      listeners.filter((callback) => callback !== onBlankAreaEvent);
+    };
+  }, [onBlankAreaEvent]);
 };
 
 interface BlankAreaEvent {
