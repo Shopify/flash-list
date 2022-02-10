@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import AutoLayoutViewNativeComponent, {
   OnBlankAreaEvent,
 } from "./AutoLayoutViewNativeComponent";
 
-type BlankAreaEventHandler = (blankAreaEvent: BlankAreaEvent) => void;
+export type BlankAreaEventHandler = (blankAreaEvent: BlankAreaEvent) => void;
 const listeners: BlankAreaEventHandler[] = [];
 
 export const useOnNativeBlankAreaEvents = (
@@ -18,38 +18,47 @@ export const useOnNativeBlankAreaEvents = (
   }, [onBlankAreaEvent]);
 };
 
-interface BlankAreaEvent {
+export interface BlankAreaEvent {
   offsetStart: number;
   offsetEnd: number;
   blankArea: number;
 }
 
-const AutoLayoutView = (props) => {
-  const onBlankAreaEventCallback = useCallback(
-    ({ nativeEvent }: OnBlankAreaEvent) => {
-      const blankArea = Math.max(
-        nativeEvent.offsetStart,
-        nativeEvent.offsetEnd
-      );
-      listeners.forEach((listener) => {
-        listener({
-          blankArea,
-          offsetStart: nativeEvent.offsetStart,
-          offsetEnd: nativeEvent.offsetEnd,
-        });
-      });
-    },
-    []
-  );
-  return (
-    <AutoLayoutViewNativeComponent
-      onBlankAreaEvent={onBlankAreaEventCallback}
-      enableInstrumentation={listeners.length !== 0}
-      {...props}
-    >
-      {props.children}
-    </AutoLayoutViewNativeComponent>
-  );
-};
+export interface AutoLayoutViewProps {
+  onBlankAreaEvent: BlankAreaEventHandler;
+}
+
+class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
+  private onBlankAreaEventCallback = ({
+    nativeEvent,
+  }: OnBlankAreaEvent): void => {
+    const blankArea = Math.max(nativeEvent.offsetStart, nativeEvent.offsetEnd);
+    const blankEventValue = {
+      blankArea,
+      offsetStart: nativeEvent.offsetStart,
+      offsetEnd: nativeEvent.offsetEnd,
+    };
+    listeners.forEach((listener) => {
+      listener(blankEventValue);
+    });
+    if (this.props.onBlankAreaEvent) {
+      this.props.onBlankAreaEvent(blankEventValue);
+    }
+  };
+
+  render() {
+    return (
+      <AutoLayoutViewNativeComponent
+        {...this.props}
+        onBlankAreaEvent={this.onBlankAreaEventCallback}
+        enableInstrumentation={
+          listeners.length !== 0 || Boolean(this.props.onBlankAreaEvent)
+        }
+      >
+        {this.props.children}
+      </AutoLayoutViewNativeComponent>
+    );
+  }
+}
 
 export default AutoLayoutView;
