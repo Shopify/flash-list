@@ -22,10 +22,10 @@ class FlatListPerformanceViewManager: ReactViewManager() {
 
     override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
         return MapBuilder.builder<String, Any>().put(
-                Constants.ON_INTERACTIVE,
+                "onInteractive",
                 MapBuilder.of(
                         "phasedRegistrationNames",
-                        MapBuilder.of("bubbled", Constants.ON_INTERACTIVE)
+                        MapBuilder.of("bubbled", "onInteractive")
                 )
         ).build();
     }

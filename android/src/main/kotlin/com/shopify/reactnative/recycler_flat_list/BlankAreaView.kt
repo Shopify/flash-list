@@ -1,9 +1,7 @@
 package com.shopify.reactnative.recycler_flat_list
 
 import android.content.Context
-import android.graphics.Canvas
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.Arguments

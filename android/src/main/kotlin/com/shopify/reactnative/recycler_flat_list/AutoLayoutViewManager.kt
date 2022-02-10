@@ -25,11 +25,14 @@ class AutoLayoutViewManager: ReactViewManager() {
         return AutoLayoutView(context).also { it.pixelDensity = context.resources.displayMetrics.density.toDouble() }
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
+    override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
         return MapBuilder.builder<String, Any>().put(
-                Constants.EVENT_BLANK_AREA,
-                MapBuilder.of("registrationName", Constants.EVENT_BLANK_AREA)
-        ).build()
+                "onBlankAreaEvent",
+                MapBuilder.of(
+                        "phasedRegistrationNames",
+                        MapBuilder.of("bubbled", "onBlankAreaEvent")
+                )
+        ).build();
     }
 
     @ReactProp(name = "horizontal")
@@ -49,6 +52,11 @@ class AutoLayoutViewManager: ReactViewManager() {
     @ReactProp(name = "renderAheadOffset")
     fun setRenderAheadOffset(view: AutoLayoutView, renderOffset: Double) {
         view.alShadow.renderOffset = convertToPixelLayout(renderOffset, view.pixelDensity)
+    }
+
+    @ReactProp(name = "enableInstrumentation")
+    fun setEnableInstrumentation(view: AutoLayoutView, enableInstrumentation: Boolean) {
+        view.enableInstrumentation = enableInstrumentation
     }
 
     private fun convertToPixelLayout(dp: Double, density: Double): Int {

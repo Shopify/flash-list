@@ -15,6 +15,7 @@ import com.facebook.react.views.view.ReactViewGroup
  * Note: This cannot work for masonry layouts i.e, pinterest like layout */
 class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     val alShadow = AutoLayoutShadow()
+    var enableInstrumentation = false
 
     var pixelDensity = 1.0;
 
@@ -23,6 +24,16 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     override fun dispatchDraw(canvas: Canvas?) {
         fixLayout()
         super.dispatchDraw(canvas)
+
+        if (enableInstrumentation) {
+            // Since we need to call this method with scrollOffset on the UI thread and not with the one react has we're querying parent's parent
+            // directly which will be a ScrollView. If it isn't reported values will be incorrect but the component will not break.
+            // RecyclerListView is expected not to change the hierarchy of children.
+            alShadow.computeBlankFromGivenOffset((parent.parent as View).let {
+                if (alShadow.horizontal) it.scrollX else it.scrollY
+            })
+            emitBlankAreaEvent()
+        }
     }
 
     /** Sorts views by index and then invokes clearGaps which does the correction.
@@ -38,12 +49,11 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     /** TODO: Check migration to Fabric */
     private fun emitBlankAreaEvent() {
         val event: WritableMap = Arguments.createMap()
-        val blanks: WritableMap = Arguments.createMap()
-        blanks.putDouble("offsetStart", alShadow.blankOffsetAtStart / pixelDensity)
-        blanks.putDouble("offsetEnd", alShadow.blankOffsetAtEnd / pixelDensity)
-        event.putMap("blanks", blanks)
+        event.putDouble("offsetStart", alShadow.blankOffsetAtStart / pixelDensity)
+        event.putDouble("offsetEnd", alShadow.blankOffsetAtEnd / pixelDensity)
         val reactContext = context as ReactContext
         reactContext
-                .getJSModule(RCTEventEmitter::class.java).receiveEvent(id, Constants.EVENT_BLANK_AREA, event)
+                .getJSModule(RCTEventEmitter::class.java)
+                .receiveEvent(id, "onBlankAreaEvent", event)
     }
 }
