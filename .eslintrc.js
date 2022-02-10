@@ -40,4 +40,7 @@ module.exports = {
     "@typescript-eslint/consistent-indexed-object-style": "off",
   },
   ignorePatterns: ["node_modules", "coverage", "dist", "build", "lib"],
+  env: {
+    jest: true,
+  },
 };
