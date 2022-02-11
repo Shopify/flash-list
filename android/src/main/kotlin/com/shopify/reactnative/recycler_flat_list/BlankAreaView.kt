@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.bridge.WritableMap
 import com.facebook.react.views.view.ReactViewGroup
-import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import java.util.*
 import kotlin.NoSuchElementException
@@ -116,14 +114,17 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
     }
 
     private fun emitBlankAreaEvent(blankOffsetTop: Int, blankOffsetBottom: Int) {
-        val event: WritableMap = Arguments.createMap()
-        event.putDouble("offsetStart", blankOffsetTop / pixelDensity)
-        event.putDouble("offsetEnd", blankOffsetBottom / pixelDensity)
-        event.putDouble("listSize", listSize / pixelDensity)
         val reactContext = context as ReactContext
         reactContext
-            .getJSModule(RCTDeviceEventEmitter::class.java)
-            .emit(Constants.EVENT_BLANK_AREA, event)
+                .getJSModule(RCTEventEmitter::class.java)
+                .receiveEvent(
+                        id,
+                        "onBlankAreaEvent",
+                        Arguments.createMap().apply {
+                            putDouble("offsetStart", Math.min(listSize / pixelDensity, blankOffsetTop / pixelDensity))
+                            putDouble("offsetEnd", Math.min(listSize / pixelDensity, blankOffsetBottom / pixelDensity))
+                        }
+                )
     }
 
     private fun isWithinBounds(view: View): Boolean {

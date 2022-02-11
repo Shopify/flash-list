@@ -14,21 +14,23 @@ class RecyclerFlatListPerformanceViewManager: ReactViewManager() {
         const val REACT_CLASS = "RecyclerFlatListPerformanceView"
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
-        return MapBuilder.builder<String, Any>().put(
-                Constants.EVENT_BLANK_AREA,
-                MapBuilder.of("registrationName", Constants.EVENT_BLANK_AREA)
-        ).build()
-    }
-
     override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
-        return MapBuilder.builder<String, Any>().put(
+        return MapBuilder.builder<String, Any>()
+            .put(
                 "onInteractive",
                 MapBuilder.of(
-                        "phasedRegistrationNames",
-                        MapBuilder.of("bubbled", "onInteractive")
+                    "phasedRegistrationNames",
+                    MapBuilder.of("bubbled", "onInteractive")
                 )
-        ).build()
+            )
+            .put(
+                "onBlankAreaEvent",
+                MapBuilder.of(
+                "phasedRegistrationNames",
+                    MapBuilder.of("bubbled", "onBlankAreaEvent")
+                )
+            )
+            .build()
     }
 
     override fun getName(): String {

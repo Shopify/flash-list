@@ -6,10 +6,19 @@ interface OnInteractiveEvent {
   };
 }
 
+interface OnBlankAreaEvent {
+  nativeEvent: {
+    offsetStart: number;
+    offsetEnd: number;
+  };
+}
+
 type OnInteractiveHandler = (event: OnInteractiveEvent) => void;
+type OnBlankAreaEventHandler = (event: OnBlankAreaEvent) => void;
 
 interface RecyclerFlatListPerformanceViewNativeComponentProps {
   onInteractive: OnInteractiveHandler;
+  onBlankAreaEvent: OnBlankAreaEventHandler;
 }
 
 const RecyclerFlatListPerformanceViewNativeComponent =
