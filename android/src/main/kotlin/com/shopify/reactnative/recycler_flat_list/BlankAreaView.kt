@@ -1,7 +1,6 @@
 package com.shopify.reactnative.recycler_flat_list
 
 import android.content.Context
-import android.graphics.Canvas
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +9,24 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.views.view.ReactViewGroup
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
+import com.facebook.react.uimanager.events.RCTEventEmitter
+import java.util.*
+import kotlin.NoSuchElementException
+import kotlin.math.max
+import kotlin.math.min
 
 
 class BlankAreaView(context: Context) : ReactViewGroup(context) {
-    private var pixelDensity = 1.0;
-
-    private val scrollView: View
+    val scrollView: View?
         get() {
-            return getChildAt(0)
+            return try {
+                getChildAt(0)
+            } catch (e: NullPointerException) {
+                null
+            }
         }
+
+    var getCells: () -> Array<View> = { emptyArray() }
 
     private val horizontal: Boolean
         get() {
@@ -27,43 +35,84 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
 
     private val listSize: Int
         get() {
-            return if (horizontal) scrollView.width else scrollView.height
+            if (scrollView == null) {
+                return 0
+            }
+            return if (horizontal) scrollView!!.width else scrollView!!.height
         }
 
     private val scrollOffset: Int
         get() {
-            return if (horizontal) scrollView.scrollX else scrollView.scrollY
+            if (scrollView == null) {
+                return 0
+            }
+            return if (horizontal) scrollView!!.scrollX else scrollView!!.scrollY
         }
+    private var didLoadCells = false
+    private var didSendInteractiveEvent = false
+    private var pixelDensity = 1.0;
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         val dm = DisplayMetrics()
         display.getRealMetrics(dm)
         pixelDensity = dm.density.toDouble()
-    }
-
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
-
-        val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
-        emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
-    }
-
-    fun computeBlankFromGivenOffset(): Pair<Int, Int> {
-        val cells = ((scrollView as ViewGroup).getChildAt(0) as ViewGroup).getChildren().filterNotNull().map { it as ViewGroup }
-        if (cells.isEmpty()) {
-            return Pair(0, 0)
+        viewTreeObserver.addOnScrollChangedListener {
+            if (scrollView == null) {
+                return@addOnScrollChangedListener
+            }
+            val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
+            emitBlankAreaEvent(blankOffsetTop, blankOffsetBottom)
         }
+        viewTreeObserver.addOnDrawListener {
+            if (didSendInteractiveEvent) {
+                return@addOnDrawListener
+            }
+            val (blankOffsetTop, blankOffsetBottom) = computeBlankFromGivenOffset()
+            if (max(blankOffsetBottom, blankOffsetTop) != 0 || !didLoadCells) {
+                return@addOnDrawListener
+            }
+            didSendInteractiveEvent = true
+            val reactContext = context as ReactContext
+            reactContext
+                    .getJSModule(RCTEventEmitter::class.java)
+                    .receiveEvent(
+                            id,
+                            "onInteractive",
+                            Arguments.createMap().apply {
+                                putString("timestamp", Date().time.toString())
+                            }
+                    )
+        }
+    }
 
-        try {
-            val firstCell = cells.first { isWithinBounds(it) && it.getChildren().isNotEmpty() }
-            val lastCell = cells.last { isWithinBounds(it) && it.getChildren().isNotEmpty() }
-            val blankOffsetTop = firstCell.top - scrollOffset
-            val blankOffsetBottom = scrollOffset + listSize - lastCell.bottom
-            return Pair(blankOffsetTop, blankOffsetBottom)
-        } catch (e: NoSuchElementException) {
+    private fun computeBlankFromGivenOffset(): Pair<Int, Int> {
+        val cells = getCells()
+        cells.sortBy { it.top }
+        if (cells.isEmpty()) {
             return Pair(0, listSize)
         }
+        didLoadCells = true
+
+        return try {
+            val firstCell = cells.first { isRenderedAndVisibleCell(it) }
+            val lastCell = cells.last { isRenderedAndVisibleCell(it) }
+            val blankOffsetTop = firstCell.top - scrollOffset
+            val blankOffsetBottom = min((firstCell.parent as View).bottom, scrollOffset + listSize) - lastCell.bottom
+            Pair(blankOffsetTop, blankOffsetBottom)
+        } catch (e: NoSuchElementException) {
+            Pair(0, listSize)
+        }
+    }
+
+    private fun isRenderedAndVisibleCell(cell: View): Boolean {
+        if (!isWithinBounds(cell)) {
+            return false
+        }
+        if (cell !is ViewGroup) {
+            return true
+        }
+        return cell.childCount != 0
     }
 
     private fun emitBlankAreaEvent(blankOffsetTop: Int, blankOffsetBottom: Int) {
@@ -78,6 +127,10 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
     }
 
     private fun isWithinBounds(view: View): Boolean {
+        if (scrollView == null) {
+            return false
+        }
+        val scrollView = scrollView as View
         return if (!horizontal) {
             (view.top >= (scrollView.scrollY - scrollView.height) || view.bottom >= (scrollView.scrollY - scrollView.height)) &&
                     (view.top <= scrollView.scrollY + scrollView.height || view.bottom <= scrollView.scrollY + scrollView.height)
@@ -87,9 +140,10 @@ class BlankAreaView(context: Context) : ReactViewGroup(context) {
         }
     }
 
-    private fun ViewGroup.getChildren(): List<View?> {
-        return (0..childCount).map {
+    fun ViewGroup.getChildren(): Array<View> {
+        return (0..childCount).mapNotNull {
             this.getChildAt(it)
         }
+        .toTypedArray()
     }
 }

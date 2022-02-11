@@ -2,8 +2,6 @@ import { Flipper, addPlugin } from "react-native-flipper";
 import { useEffect } from "react";
 import { NativeEventEmitter, NativeModules, Platform } from "react-native";
 
-import { BLANK_AREA_EVENT_NAME } from "./useOnNativeBlankAreaEvents";
-
 const bootstrapPlugin = (): Promise<Flipper.FlipperConnection> => {
   return new Promise((resolve) => {
     addPlugin({
@@ -43,7 +41,7 @@ const useReactNativePerformanceFlipperPlugin = () => {
           });
         };
         const subscription = eventEmitter.addListener(
-          BLANK_AREA_EVENT_NAME,
+          "blankAreaEvent",
           onBlankAreaEvent
         );
         return () => subscription.remove();

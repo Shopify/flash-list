@@ -8,5 +8,6 @@ RCT_EXPORT_VIEW_PROPERTY(scrollOffset, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(windowSize, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(renderAheadOffset, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(enableInstrumentation, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(onBlankAreaEvent, RCTBubblingEventBlock)
 
 @end

@@ -5,16 +5,8 @@ import UIKit
 /// Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.
 /// Note: This cannot work for masonry layouts i.e, pinterest like layout
 @objc class AutoLayoutView: UIView {
-    private var horizontal = false
-    private var scrollOffset: CGFloat = 0
-    private var windowSize: CGFloat = 0
-    private var renderAheadOffset: CGFloat = 0
-    private var enableInstrumentation = false
-
-    /// Tracks where the last pixel is drawn in the visible window
-    private var lastMaxBound: CGFloat = 0
-    /// Tracks where first pixel is drawn in the visible window
-    private var lastMinBound: CGFloat = 0
+    @objc(onBlankAreaEvent)
+    var onBlankAreaEvent: RCTBubblingEventBlock?
 
     @objc func setHorizontal(_ horizontal: Bool) {
         self.horizontal = horizontal
@@ -36,6 +28,17 @@ import UIKit
         self.enableInstrumentation = enableInstrumentation
     }
 
+    private var horizontal = false
+    private var scrollOffset: CGFloat = 0
+    private var windowSize: CGFloat = 0
+    private var renderAheadOffset: CGFloat = 0
+    private var enableInstrumentation = false
+
+    /// Tracks where the last pixel is drawn in the visible window
+    private var lastMaxBound: CGFloat = 0
+    /// Tracks where first pixel is drawn in the visible window
+    private var lastMinBound: CGFloat = 0
+
     override func layoutSubviews() {
         fixLayout()
         super.layoutSubviews()
@@ -51,14 +54,12 @@ import UIKit
             windowSize: windowSize
         )
 
-        BlankAreaEventEmitter
-            .sharedInstance?
-            .onBlankArea(
-                offsetStart: blankOffsetStart,
-                offsetEnd: blankOffsetEnd,
-                listSize: windowSize
-            )
-        ?? assertionFailure("BlankAreaEventEmitter.sharedInstance was not initialized")
+        onBlankAreaEvent?(
+            [
+                "offsetStart": blankOffsetStart,
+                "offsetEnd": blankOffsetEnd,
+            ]
+        )
     }
 
     /// Sorts views by index and then invokes clearGaps which does the correction.

@@ -356,9 +356,9 @@ PODS:
     - SDWebImageWebPCoder (~> 0.8.4)
   - RNGestureHandler (2.2.0):
     - React-Core
-  - RNRecyclerFlatList (0.0.2):
+  - RNRecyclerFlatList (0.0.3):
     - React-Core
-  - RNRecyclerFlatList/Tests (0.0.2):
+  - RNRecyclerFlatList/Tests (0.0.3):
     - React-Core
   - RNScreens (3.10.2):
     - React-Core
@@ -577,7 +577,7 @@ SPEC CHECKSUMS:
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
-  RNRecyclerFlatList: 17e9dbe35755a5277e8977a2053eafd8803e7094
+  RNRecyclerFlatList: b860e2a5b9661b31d65ab7faf63b7d90d577435b
   RNScreens: d6da2b9e29cf523832c2542f47bf1287318b1868
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
