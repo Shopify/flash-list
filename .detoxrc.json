@@ -12,7 +12,7 @@
     "emulator": {
       "type": "android.emulator",
       "device": {
-        "avdName": "emulator"
+        "avdName": "React-Native-Phone"
       }
     }
   },
@@ -20,12 +20,12 @@
     "ios.release": {
       "type": "ios.app",
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/FlatListPro.app",
-      "build": "export CODE_SIGNING_REQUIRED=NO && xcodebuild -workspace fixture/ios/FlatListPro.xcworkspace -scheme FlatListPro -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet -destination 'platform=iOS Simulator,name=iPhone 12 Pro Max,OS=latest'"
+      "build": "export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace fixture/ios/FlatListPro.xcworkspace -scheme FlatListPro -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet -destination 'platform=iOS Simulator,name=iPhone 12 Pro Max,OS=latest'"
     },
     "android.release": {
       "type": "android.apk",
-      "binaryPath": "android/app/build/outputs/apk/FlatListPro/release/app-FlatListPro-release.apk",
-      "build": "cd fixture/android && RN_SRC_EXT=e2e.ts RN_E2E=true ./gradlew assembleRelease -DtestBuildType=release"
+      "binaryPath": "fixture/android/app/build/outputs/apk/debug/app-debug.apk",
+      "build": "cd fixture/android && RN_SRC_EXT=e2e.ts RN_E2E=true ./gradlew assembleDebug -DtestBuildType=debug"
     }
   },
   "configurations": {
