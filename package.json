@@ -51,7 +51,8 @@
     "android",
     "ios",
     "dist",
-    "RNRecyclerFlatList.podspec"
+    "RNRecyclerFlatList.podspec",
+    "src"
   ],
   "dependencies": {
     "invariant": "^2.2.4"
