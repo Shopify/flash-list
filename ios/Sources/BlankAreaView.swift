@@ -4,10 +4,10 @@ import React
 
 @objc class BlankAreaView: UIView {
     @objc(onInteractive)
-    var onInteractive: RCTBubblingEventBlock?
+    var onInteractive: RCTDirectEventBlock?
 
     @objc(onBlankAreaEvent)
-    var onBlankAreaEvent: RCTBubblingEventBlock?
+    var onBlankAreaEvent: RCTDirectEventBlock?
 
     /// Get cell views from a given scroll view
     var cells: (UIScrollView) -> [UIView] = { _ in [] }

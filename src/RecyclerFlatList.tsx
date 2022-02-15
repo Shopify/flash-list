@@ -15,7 +15,7 @@ import {
 } from "recyclerlistview";
 import invariant from "invariant";
 
-import AutoLayoutView from "./AutoLayoutView";
+import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent from "./WrapperComponent";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
@@ -67,6 +67,18 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
    * For debugging and exception use cases, internal props will be overriden with these values if used
    */
   overrideProps?: object;
+
+  /**
+   * Computes blank space that is visible to the user during scroll or list load. If list doesn't have enough items to fill the screen even then this will be raised.
+   * Values reported: {
+   *    offsetStart -> visible blank space on top of the screen (while going up). If value is greater than 0 then it's visible to user.
+   *    offsetEnd -> visible blank space at the end of the screen (while going down). If value is greater than 0 then it's visible to user.
+   *    blankArea -> max(offsetStart, offsetEnd) use this directly and look for values > 0
+   * }
+   * Please note that this event isn't synced with onScroll event but works with native onDraw/layoutSubviews. Events with values > 0 are blanks.
+   * This event is raised even when there is no visible blank with negative values for extensibility however, for most use cases check blankArea > 0 and use the value.
+   */
+  onBlankArea: BlankAreaEventHandler;
 }
 
 export interface RecyclerFlatListState<T> {
@@ -268,9 +280,13 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
   };
 
-  private container(props, children) {
-    return <AutoLayoutView {...props}>{children}</AutoLayoutView>;
-  }
+  private container = (props, children) => {
+    return (
+      <AutoLayoutView {...props} onBlankAreaEvent={this.props.onBlankArea}>
+        {children}
+      </AutoLayoutView>
+    );
+  };
 
   private itemContainer = (props, parentProps, children) => {
     return (

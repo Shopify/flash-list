@@ -13,21 +13,17 @@ class FlatListPerformanceViewManager: ReactViewManager() {
         const val REACT_CLASS = "FlatListPerformanceView"
     }
 
-    override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
         return MapBuilder.builder<String, Any>()
                 .put(
                         "onInteractive",
                         MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onInteractive")
-                        )
+                                "registrationName", "onInteractive")
                 )
                 .put(
                         "onBlankAreaEvent",
                         MapBuilder.of(
-                                "phasedRegistrationNames",
-                                MapBuilder.of("bubbled", "onBlankAreaEvent")
-                        )
+                                "registrationName", "onBlankAreaEvent")
                 )
                 .build()
     }
