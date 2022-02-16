@@ -6,7 +6,7 @@ import UIKit
 /// Note: This cannot work for masonry layouts i.e, pinterest like layout
 @objc class AutoLayoutView: UIView {
     @objc(onBlankAreaEvent)
-    var onBlankAreaEvent: RCTBubblingEventBlock?
+    var onBlankAreaEvent: RCTDirectEventBlock?
 
     @objc func setHorizontal(_ horizontal: Bool) {
         self.horizontal = horizontal

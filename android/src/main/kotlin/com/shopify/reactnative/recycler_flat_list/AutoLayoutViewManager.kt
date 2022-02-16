@@ -25,13 +25,11 @@ class AutoLayoutViewManager: ReactViewManager() {
         return AutoLayoutView(context).also { it.pixelDensity = context.resources.displayMetrics.density.toDouble() }
     }
 
-    override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         return MapBuilder.builder<String, Any>().put(
                 "onBlankAreaEvent",
                 MapBuilder.of(
-                        "phasedRegistrationNames",
-                        MapBuilder.of("bubbled", "onBlankAreaEvent")
-                )
+                        "registrationName", "onBlankAreaEvent")
         ).build();
     }
 
@@ -49,6 +47,7 @@ class AutoLayoutViewManager: ReactViewManager() {
     fun setWindowSize(view: AutoLayoutView, windowSize: Double) {
         view.alShadow.windowSize = convertToPixelLayout(windowSize, view.pixelDensity)
     }
+
     @ReactProp(name = "renderAheadOffset")
     fun setRenderAheadOffset(view: AutoLayoutView, renderOffset: Double) {
         view.alShadow.renderOffset = convertToPixelLayout(renderOffset, view.pixelDensity)
