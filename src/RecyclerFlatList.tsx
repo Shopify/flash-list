@@ -258,18 +258,11 @@ class RecyclerFlatList<T> extends React.PureComponent<
           maxRenderAhead={3 * drawDistance}
           finalRenderAheadOffset={drawDistance}
           renderAheadStep={drawDistance}
-          onScroll={this.onScroll}
           {...this.props.overrideProps}
         />
       );
     }
   }
-
-  private onScroll = (scrollEvent) => {
-    if (this.props.onScroll) {
-      this.props.onScroll(scrollEvent);
-    }
-  };
 
   private handleSizeChange = (event: LayoutChangeEvent) => {
     const newSize = this.props.horizontal
