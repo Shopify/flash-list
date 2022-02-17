@@ -258,11 +258,18 @@ class RecyclerFlatList<T> extends React.PureComponent<
           maxRenderAhead={3 * drawDistance}
           finalRenderAheadOffset={drawDistance}
           renderAheadStep={drawDistance}
+          onScroll={this.onScroll}
           {...this.props.overrideProps}
         />
       );
     }
   }
+
+  private onScroll = (scrollEvent) => {
+    if (this.props.onScroll) {
+      this.props.onScroll(scrollEvent);
+    }
+  };
 
   private handleSizeChange = (event: LayoutChangeEvent) => {
     const newSize = this.props.horizontal
@@ -411,6 +418,11 @@ class RecyclerFlatList<T> extends React.PureComponent<
     const x = this.props.horizontal ? params.offset : 0;
     const y = this.props.horizontal ? 0 : params.offset;
     this.rlvRef?.scrollToOffset(x, y, Boolean(params.animated));
+  }
+
+  // eslint-disable-next-line @shopify/react-prefer-private-members
+  public getScrollableNode(): number | null {
+    return this.rlvRef?.getScrollableNode?.() || null;
   }
 }
 
