@@ -1,6 +1,7 @@
 export const NavigationKeys = {
   EXAMPLES: "Examples" as const,
   LIST: "List" as const,
+  REMINDERS: "Reminders" as const,
   PAGINATED_LIST: "PaginatedList" as const,
   TWITTER: "Twitter" as const,
   TWITTER_FLAT_LIST: "TwitterFlatList" as const,

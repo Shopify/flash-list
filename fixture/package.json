@@ -18,6 +18,7 @@
     "react-native-fast-image": "^8.5.11",
     "react-native-flipper": "^0.138.0",
     "react-native-gesture-handler": "^2.3.2",
+    "react-native-reanimated": "^2.4.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.13.1",
     "recyclerlistview": "3.1.0-beta.6",

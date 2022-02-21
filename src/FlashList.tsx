@@ -300,7 +300,12 @@ class FlashList<T> extends React.PureComponent<
 
   render() {
     if (this.state.dataProvider.getSize() === 0) {
-      return this.getValidComponent(this.props.ListEmptyComponent);
+      return (
+        <View style={{ flex: 1 }}>
+          {this.header()}
+          {this.props.ListEmptyComponent || null}
+        </View>
+      );
     }
     this.contentStyle = this.getContentContainerInfo().style;
 

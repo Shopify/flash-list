@@ -18,6 +18,7 @@ import Twitter from "./Twitter";
 import { NavigationKeys, RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
 import TwitterFlatList from "./TwitterFlatList";
+import Reminders from "./Reminders";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -43,6 +44,7 @@ const App = () => {
             component={PaginatedList}
           />
           <Stack.Screen name={NavigationKeys.TWITTER} component={Twitter} />
+          <Stack.Screen name={NavigationKeys.REMINDERS} component={Reminders} />
           <Stack.Screen
             name={NavigationKeys.TWITTER_FLAT_LIST}
             component={TwitterFlatList}

@@ -54,6 +54,7 @@
     "src"
   ],
   "dependencies": {
-    "invariant": "^2.2.4"
+    "invariant": "^2.2.4",
+    "react-native-reanimated": "^2.4.1"
   }
 }
