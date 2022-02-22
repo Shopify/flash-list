@@ -412,6 +412,11 @@ class RecyclerFlatList<T> extends React.PureComponent<
     const y = this.props.horizontal ? 0 : params.offset;
     this.rlvRef?.scrollToOffset(x, y, Boolean(params.animated));
   }
+
+  // eslint-disable-next-line @shopify/react-prefer-private-members
+  public getScrollableNode(): number | null {
+    return this.rlvRef?.getScrollableNode?.() || null;
+  }
 }
 
 export default RecyclerFlatList;

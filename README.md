@@ -14,7 +14,7 @@ Check out [the Vault project](https://vault.shopify.io/projects/22845) to learn 
 
 ### Adding a package to your project
 
-Add the package to your project via `yarn add @shopify/recycler-flat-list recyclerlistview@3.1.0-beta.4`, and run pod install in the `ios` directory.
+Add the package to your project via `yarn add @shopify/recycler-flat-list recyclerlistview@3.1.0-beta.5`, and run pod install in the `ios` directory.
 
 Note that [`recyclerlistview`](https://github.com/Flipkart/recyclerlistview) is a peer dependency of `@shopify/recycler-flat-list`
 
