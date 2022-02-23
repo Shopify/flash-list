@@ -86,8 +86,14 @@ export interface RecyclerFlatListState<T> {
   numColumns: number;
   layoutProvider: GridLayoutProviderWithProps<RecyclerFlatListProps<T>>;
   data?: ReadonlyArray<T> | null;
+  extraData?: ExtraData<unknown>;
 }
 
+interface ExtraData<T> {
+  value?: T;
+}
+
+// eslint-disable-next-line @shopify/react-initialize-state
 class RecyclerFlatList<T> extends React.PureComponent<
   RecyclerFlatListProps<T>,
   RecyclerFlatListState<T>
@@ -103,9 +109,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
   constructor(props) {
     super(props);
     this.setup();
-
-    // eslint-disable-next-line react/state-in-constructor
-    this.state = RecyclerFlatList.getDerivedStateFromProps(props, undefined);
   }
 
   private setup() {
@@ -143,6 +146,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
       newState.dataProvider = oldState.dataProvider.cloneWithRows(
         nextProps.data as any[]
       );
+      newState.extraData = { ...oldState.extraData };
+    }
+    if (nextProps.extraData !== oldState.extraData?.value) {
+      newState.extraData = { value: nextProps.extraData };
     }
     newState.layoutProvider.updateProps(nextProps);
     return newState;
@@ -253,7 +260,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           renderContentContainer={this.container}
           onEndReached={this.onEndReached}
           onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
-          extendedState={this.props.extraData}
+          extendedState={this.state.extraData}
           layoutSize={this.props.estimatedListSize}
           maxRenderAhead={3 * drawDistance}
           finalRenderAheadOffset={drawDistance}
@@ -349,7 +356,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     const elem = this.props.renderItem?.({
       item: data,
       index,
-      extraData,
+      extraData: extraData?.value,
     } as any);
     let elements = [this.header(index), elem];
 
