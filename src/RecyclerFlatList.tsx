@@ -78,7 +78,7 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
    * Please note that this event isn't synced with onScroll event but works with native onDraw/layoutSubviews. Events with values > 0 are blanks.
    * This event is raised even when there is no visible blank with negative values for extensibility however, for most use cases check blankArea > 0 and use the value.
    */
-  onBlankArea: BlankAreaEventHandler;
+  onBlankArea?: BlankAreaEventHandler;
 }
 
 export interface RecyclerFlatListState<T> {
