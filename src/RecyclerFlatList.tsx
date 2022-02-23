@@ -232,6 +232,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         const refreshControl = (
           <RefreshControl
             refreshing={this.props.refreshing as boolean}
+            progressViewOffset={this.props.progressViewOffset}
             onRefresh={this.props.onRefresh}
           />
         );
