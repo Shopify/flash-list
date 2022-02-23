@@ -258,6 +258,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           maxRenderAhead={3 * drawDistance}
           finalRenderAheadOffset={drawDistance}
           renderAheadStep={drawDistance}
+          initialRenderIndex={this.props.initialScrollIndex || undefined}
           {...this.props.overrideProps}
         />
       );
