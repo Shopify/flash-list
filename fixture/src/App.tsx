@@ -10,7 +10,7 @@ import "react-native-gesture-handler";
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { PerformanceListsView } from "@shopify/recycler-flat-list";
+import { ListsProfiler } from "@shopify/react-native-performance-lists-profiler";
 
 import List from "./List";
 import PaginatedList from "./PaginatedList";
@@ -23,11 +23,11 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
   return (
-    <PerformanceListsView
+    <ListsProfiler
       onInteractive={(TTI) => {
         console.log(`TTI in millis: ${TTI}`);
       }}
-      onBlankAreaEvent={(offsetStart, offsetEnd) => {
+      onBlankArea={(offsetStart, offsetEnd) => {
         console.log(`Blank area: ${Math.max(offsetStart, offsetEnd)}`);
       }}
     >
@@ -49,7 +49,7 @@ const App = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </PerformanceListsView>
+    </ListsProfiler>
   );
 };
 

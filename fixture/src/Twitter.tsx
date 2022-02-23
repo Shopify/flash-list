@@ -1,9 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import {
-  RecyclerFlatList,
-  RecyclerFlatListPerformanceView,
-} from "@shopify/recycler-flat-list";
+import { RecyclerFlatList } from "@shopify/recycler-flat-list";
+import { RecyclerFlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import { tweets } from "./data/tweets";
 import TweetCell from "./TweetCell";
