@@ -1,8 +1,6 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import {
-  StyleProp,
   View,
-  ViewStyle,
   RefreshControl,
   FlatListProps,
   LayoutChangeEvent,
@@ -14,7 +12,6 @@ import {
   RecyclerListViewProps,
 } from "recyclerlistview";
 import StickyContainer from "recyclerlistview/sticky";
-
 import invariant from "invariant";
 
 import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
@@ -297,31 +294,33 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   private container = (props, children) => {
     return (
-      <>
-        <PureComponentWrapper
-          contentStyle={this.props.contentContainerStyle}
-          header={this.props.ListHeaderComponent}
-          extraData={this.state.extraData}
-          headerStyle={this.props.ListHeaderComponentStyle}
-          renderer={this.header}
-        />
-        <AutoLayoutView
-          {...props}
-          onBlankAreaEvent={this.props.onBlankArea}
-          onLayout={(e) => {
-            //console.log(e.nativeEvent);
-          }}
-        >
-          {children}
-        </AutoLayoutView>
-        <PureComponentWrapper
-          contentStyle={this.props.contentContainerStyle}
-          header={this.props.ListFooterComponent}
-          extraData={this.state.extraData}
-          headerStyle={this.props.ListFooterComponentStyle}
-          renderer={this.footer}
-        />
-      </>
+      children.length > 0 && (
+        <>
+          <PureComponentWrapper
+            contentStyle={this.props.contentContainerStyle}
+            header={this.props.ListHeaderComponent}
+            extraData={this.state.extraData}
+            headerStyle={this.props.ListHeaderComponentStyle}
+            renderer={this.header}
+          />
+          <AutoLayoutView
+            {...props}
+            onBlankAreaEvent={this.props.onBlankArea}
+            onLayout={(event) => {
+              // console.log(e.nativeEvent);
+            }}
+          >
+            {children}
+          </AutoLayoutView>
+          <PureComponentWrapper
+            contentStyle={this.props.contentContainerStyle}
+            header={this.props.ListFooterComponent}
+            extraData={this.state.extraData}
+            headerStyle={this.props.ListFooterComponentStyle}
+            renderer={this.footer}
+          />
+        </>
+      )
     );
   };
 
@@ -399,13 +398,13 @@ class RecyclerFlatList<T> extends React.PureComponent<
     );
   }
 
-  private rowRenderer = (type, data, index, extraData) => {
+  private rowRenderer = (_, data, index, extraData) => {
     // known issue: expected to pass separators which isn't available in RLV
     return this.props.renderItem?.({
       item: data,
       index,
       extraData: extraData?.value,
-    } as any);
+    } as any) as JSX.Element;
   };
 
   private recyclerRef = (ref: any) => {
