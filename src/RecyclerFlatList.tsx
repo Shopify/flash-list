@@ -13,7 +13,6 @@ import {
   RecyclerListView,
   RecyclerListViewProps,
 } from "recyclerlistview";
-import invariant from "invariant";
 
 import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
