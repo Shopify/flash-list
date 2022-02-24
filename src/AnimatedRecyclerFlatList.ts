@@ -1,8 +1,10 @@
 import { Animated } from "react-native";
 
-import { RecyclerFlatList } from ".";
+import RecyclerFlatList, { RecyclerFlatListProps } from "./RecyclerFlatList";
 
 const AnimatedRecyclerFlatList =
-  Animated.createAnimatedComponent(RecyclerFlatList);
+  Animated.createAnimatedComponent<
+    React.ComponentType<RecyclerFlatListProps<any>>
+  >(RecyclerFlatList);
 
 export default AnimatedRecyclerFlatList;
