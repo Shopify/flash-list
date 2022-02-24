@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Memory efficient scrolling",
+    "description": "Some libraries allocate more items in memory to achieve good performance. FlashList does not recreate items as a user scrolls, making it noticeably more memory efficient.",
+    "video": "img/scroll.webm"
+  },
+  {
+    "title": "Developer friendly",
+    "description": "Using FlatList's API makes FlashList a really easy-to-use component. Simply change the name of your component and you are good to go.",
+    "image": "img/chris-ried-ieic5Tq8YMk-unsplash.jpg"
+  },
+  {
+    "title": "Snappy on all platforms",
+    "description": "Other lists show good-enough performance on iOS, but where they lack performance is on Android devices. FlashList performs well even on low-end Android devices.",
+    "image": "img/sebastian-bednarek-1psdELDctR4-unsplash.jpg"
+  },
+  {
+    "title": " Extra configuration for even better performance.",
+    "description": "Apart from FlatList props, FlashList offers a set of extra props to even tweak the performance even more.",
+    "code": "snippet2.js"
+  },
+  {
+    "title": " Tools to measure performance",
+    "description": "Build a performant list in React Native is difficult. Apart from providing an out-of-the-box performant component, FlashList also has Flipper Plugins to measure things like FPS, blank cells or TTI.",
+    "image": "img/untitled.png"
+  }
+]

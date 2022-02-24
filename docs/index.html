@@ -1,0 +1,173 @@
+---
+appname: FlashList
+---
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{appname}}</title>
+
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <style></style>
+</head>
+
+<body>
+    <div class="content">
+        <div class="header">
+            <h1>⚡️ {{page.appname}}</h1>
+            <h2>Fast & Performant <br> React Native List</h2>
+            <h1>No more blank cells</h1>
+            <p class="claim">
+                Swap from FlatList in seconds. Get instant performance.
+            </p>
+            <!-- Place this tag where you want the button to render. -->
+            <a class="github-button" href="https://github.com/shopify/flash-list"
+                data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
+                data-show-count="true" aria-label="Star shopify/flash-list on GitHub">Star</a>
+            <div class="row eight">
+                <a class="button primary" href="#install">Install {{page.appname}}</a>
+                <a class="button secondary" target="_blank" href="https://flash-list.docs.shopify.io/">Read the docs</a>
+            </div>
+        </div>
+        <div class="section black">
+            {% highlight tsx %} {% include snippet1.js %} {% endhighlight %}
+            <div class="info">
+                <h1>
+                    Same props.<br />2x performance.
+                </h1>
+                <p>
+                    Even if using the same props as FlatList, {{page.appname}} uses the recycling concept under the hood
+                    to be<br>
+                    faster and more efficient.
+                </p>
+                <!-- <br />
+                <div class="row">
+                    <div class="metric">
+                        <h1>~37FPS</h1>
+                        <p>FlatList</p>
+                    </div>
+                    <div class="metric">
+                        <h1>~57FPS</h1>
+                        <p>{{page.appname}}</p>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="section half">
+            <h1>Crazy performance on low-end devices</h1>
+            <div>
+                <h2>FPS in UI Thread</h2>
+                <div class="column full">
+                    <div>
+                        <div class="row graph red center">
+                            <span class="progress bar thirty-seven"></span>
+                            <h2>37 FPS</h2>
+                        </div>
+                        <h3>FlatList</h3>
+                    </div>
+                    <div>
+                        <div class="row graph center">
+                            <span class="progress bar fifty-seven"></span>
+                            <h2>57 FPS</h2>
+                        </div>
+                        <h3>{{page.appname}}</h3>
+                    </div>
+                </div>
+                <br>
+                <h2>FPS in JS Thread</h2>
+                <div class="column full">
+                    <div>
+                        <div class="row graph red center">
+                            <span class="progress bar twelve-five"></span>
+                            <h2>12.5 FPS</h2>
+                        </div>
+                        <h3>FlatList</h3>
+                    </div>
+                    <div>
+                        <div class="row graph center">
+                            <span class="progress bar fifty-four"></span>
+                            <h2>50.4 FPS</h2>
+                        </div>
+                        <h3>{{page.appname}}</h3>
+                    </div>
+                </div>
+                <p class="note">* Average FPS on a 60FPS screen Android Moto G10 device. (Higher is better) </p>
+            </div>
+            <div>
+                <h2>Blanks cells</h2>
+                <div class="column full">
+                    <div>
+                        <div class="row graph red center">
+                            <span class="progress bar hundred-seven"></span>
+                            <h2>107 dp*</h2>
+                        </div>
+                        <h3>FlatList</h3>
+                    </div>
+                    <div>
+                        <div class="row graph center">
+                            <span class="progress bar zero-seventy-five"></span>
+                            <h2>0.75 dp*</h2>
+                        </div>
+                        <h3>{{page.appname}}</h3>
+                    </div>
+                </div>
+                <p class="note">*number of points in screen showing blank cells. (lower is better)</p>
+                <br><br>
+                <h2>Time to interactive</h2>
+                <div class="column full">
+                    <div>
+                        <div class="row graph red center">
+                            <span class="progress bar hundred"></span>
+                            <h2>290ms</h2>
+                        </div>
+                        <h3>FlatList</h3>
+                    </div>
+                    <div>
+                        <div class="row graph center">
+                            <span class="progress bar hundred"></span>
+                            <h2>296ms</h2>
+                        </div>
+                        <h3>{{page.appname}}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% for section in site.data.sections %}
+        {% assign isEven = forloop.index | modulo: 2 | contains: 1 %}
+        {% include section.html title=section.title description=section.description image=section.image
+        video=section.video isEven=isEven code=section.code %}
+        {% endfor %}
+
+        <div class="section casestudy">
+            <div class="info">
+                <h2>See how <span class="shopify">Shopify</span> uses {{page.appname}} to make commerce better for
+                    everyone</h2>
+                <a href="">Read case study</a>
+            </div>
+            <img src="img/commerce-better-for-everyone.png" alt="Shopify makes commerce better for everyone">
+        </div>
+
+        <div class="section fullwidth" id="install">
+            <div class="info">
+                <h1>Install now</h1>
+                <p>Add it to your project now and try it out:</p>
+            </div>
+            {% highlight bash linedivs %}{% include install.sh %}{% endhighlight %}
+        </div>
+    </div>
+    <div id="footer">
+        <img id="shopifylogo" src="img/shopify.png" alt="">
+    </div>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600:100&display=swap" rel="stylesheet" />
+</body>
+
+</html>
