@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PureComponent } from "react";
 import {
   StyleProp,
   View,
@@ -13,11 +13,13 @@ import {
   RecyclerListView,
   RecyclerListViewProps,
 } from "recyclerlistview";
+import StickyContainer from "recyclerlistview/sticky";
+
 import invariant from "invariant";
 
 import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
-import WrapperComponent from "./WrapperComponent";
+import WrapperComponent, { PureComponentWrapper } from "./WrapperComponent";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
@@ -100,6 +102,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
 > {
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
   private listFixedDimensionSize = 0;
+  private transformStyle = { transform: [{ scaleY: -1 }] };
 
   static defaultProps = {
     data: [],
@@ -245,30 +248,33 @@ class RecyclerFlatList<T> extends React.PureComponent<
       const drawDistance = this.props.drawDistance || 250;
 
       return (
-        <ProgressiveListView
-          {...this.props}
-          ref={this.recyclerRef}
-          layoutProvider={this.state.layoutProvider}
-          style={style as object}
-          dataProvider={this.state.dataProvider}
-          rowRenderer={this.rowRenderer}
-          renderFooter={this.footer}
-          canChangeSize
-          isHorizontal={Boolean(this.props.horizontal)}
-          scrollViewProps={scrollViewProps}
-          forceNonDeterministicRendering
-          renderItemContainer={this.itemContainer}
-          renderContentContainer={this.container}
-          onEndReached={this.onEndReached}
-          onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
-          extendedState={this.state.extraData}
-          layoutSize={this.props.estimatedListSize}
-          maxRenderAhead={3 * drawDistance}
-          finalRenderAheadOffset={drawDistance}
-          renderAheadStep={drawDistance}
-          initialRenderIndex={this.props.initialScrollIndex || undefined}
-          {...this.props.overrideProps}
-        />
+        <StickyContainer stickyHeaderIndices={this.props.stickyHeaderIndices}>
+          <ProgressiveListView
+            {...this.props}
+            ref={this.recyclerRef}
+            layoutProvider={this.state.layoutProvider}
+            style={style as object}
+            dataProvider={this.state.dataProvider}
+            rowRenderer={this.rowRenderer}
+            canChangeSize
+            isHorizontal={Boolean(this.props.horizontal)}
+            scrollViewProps={scrollViewProps}
+            forceNonDeterministicRendering
+            renderItemContainer={this.itemContainer}
+            renderContentContainer={this.container}
+            onEndReached={this.onEndReached}
+            onEndReachedThreshold={
+              this.props.onEndReachedThreshold || undefined
+            }
+            extendedState={this.state.extraData}
+            layoutSize={this.props.estimatedListSize}
+            maxRenderAhead={3 * drawDistance}
+            finalRenderAheadOffset={drawDistance}
+            renderAheadStep={drawDistance}
+            initialRenderIndex={this.props.initialScrollIndex || undefined}
+            {...this.props.overrideProps}
+          />
+        </StickyContainer>
       );
     }
   }
@@ -291,96 +297,115 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   private container = (props, children) => {
     return (
-      <AutoLayoutView {...props} onBlankAreaEvent={this.props.onBlankArea}>
-        {children}
-      </AutoLayoutView>
+      <>
+        <PureComponentWrapper
+          contentStyle={this.props.contentContainerStyle}
+          header={this.props.ListHeaderComponent}
+          extraData={this.state.extraData}
+          headerStyle={this.props.ListHeaderComponentStyle}
+          renderer={this.header}
+        />
+        <AutoLayoutView
+          {...props}
+          onBlankAreaEvent={this.props.onBlankArea}
+          onLayout={(e) => {
+            //console.log(e.nativeEvent);
+          }}
+        >
+          {children}
+        </AutoLayoutView>
+        <PureComponentWrapper
+          contentStyle={this.props.contentContainerStyle}
+          header={this.props.ListFooterComponent}
+          extraData={this.state.extraData}
+          headerStyle={this.props.ListFooterComponentStyle}
+          renderer={this.footer}
+        />
+      </>
     );
   };
 
   private itemContainer = (props, parentProps, children) => {
     return (
-      <ItemContainer {...props} index={parentProps.index}>
+      <ItemContainer
+        {...props}
+        style={{
+          ...props.style,
+          flexDirection: this.props.horizontal ? "row" : "column",
+          ...this.getTransform(),
+        }}
+        index={parentProps.index}
+      >
         <WrapperComponent
           extendedState={parentProps.extendedState}
           internalSnapshot={parentProps.internalSnapshot}
           dataHasChanged={parentProps.dataHasChanged}
           data={parentProps.data}
         >
-          {children}
+          <View
+            style={{
+              width: props.width,
+              height: props.height,
+              flexDirection: this.props.horizontal ? "column" : "row",
+            }}
+          >
+            {children}
+          </View>
         </WrapperComponent>
+        {this.separator(parentProps.index)}
       </ItemContainer>
     );
   };
 
-  private separator(index) {
+  private getTransform() {
+    return this.props.inverted && this.transformStyle;
+  }
+
+  private separator = (index) => {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
-
     const props = {
       leadingItem,
       trailingItem,
       // TODO: Missing sections as we don't have this feature implemented yet. Implement section, leadingSection and trailingSection.
       // https://github.com/facebook/react-native/blob/8bd3edec88148d0ab1f225d2119435681fbbba33/Libraries/Lists/VirtualizedSectionList.js#L285-L294
     };
-    if (this.props.ItemSeparatorComponent != null) {
-      return <this.props.ItemSeparatorComponent {...props} />;
-    }
-    return undefined;
-  }
+    const Separator = this.props.ItemSeparatorComponent;
+    return Separator && <Separator {...props} />;
+  };
 
-  private header(index) {
-    if (index !== 0) return undefined;
-    const ListHeaderComponent = this.props.ListHeaderComponent;
-    const style = this.props.ListHeaderComponentStyle || {};
-    if (React.isValidElement(ListHeaderComponent)) {
-      ListHeaderComponent.props = { style };
-      return ListHeaderComponent;
-    } else if (ListHeaderComponent != null) {
-      return <ListHeaderComponent style={style} />;
-    }
-  }
+  private header = () => {
+    return (
+      <View style={[this.props.ListHeaderComponentStyle, this.getTransform()]}>
+        {this.getValidComponent(this.props.ListHeaderComponent)}
+      </View>
+    );
+  };
 
   private footer = () => {
-    const ListFooterComponent = this.props.ListFooterComponent;
-    const style = this.props.ListFooterComponentStyle || {};
-    if (React.isValidElement(ListFooterComponent)) {
-      ListFooterComponent.props = { style };
-      return ListFooterComponent;
-    } else if (ListFooterComponent) {
-      return <ListFooterComponent style={style} />;
-    }
-    return null;
+    return (
+      <View style={[this.props.ListFooterComponentStyle, this.getTransform()]}>
+        {this.getValidComponent(this.props.ListFooterComponent)}
+      </View>
+    );
   };
+
+  private getValidComponent(component) {
+    const PassedComponent = component;
+    return (
+      (React.isValidElement(PassedComponent) && PassedComponent) ||
+      (PassedComponent && <PassedComponent />) ||
+      null
+    );
+  }
 
   private rowRenderer = (type, data, index, extraData) => {
     // known issue: expected to pass separators which isn't available in RLV
-    const elem = this.props.renderItem?.({
+    return this.props.renderItem?.({
       item: data,
       index,
       extraData: extraData?.value,
     } as any);
-    let elements = [this.header(index), elem];
-
-    const separator = this.separator(index);
-    if (separator != null) {
-      elements.push(separator);
-    }
-
-    let style: StyleProp<ViewStyle> = { flex: 1 };
-    if (this.props.inverted === true) {
-      elements = elements.reverse();
-      style = [style, { transform: [{ scaleY: -1 }] }];
-    }
-
-    return (
-      <View style={style}>
-        <>
-          {elements[0]}
-          {elements[1]}
-          {elements[2]}
-        </>
-      </View>
-    );
   };
 
   private recyclerRef = (ref: any) => {
