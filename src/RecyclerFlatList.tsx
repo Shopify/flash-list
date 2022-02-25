@@ -11,13 +11,19 @@ import {
   RecyclerListView,
   RecyclerListViewProps,
 } from "recyclerlistview";
-import StickyContainer from "recyclerlistview/sticky";
+import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 import invariant from "invariant";
 
 import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent, { PureComponentWrapper } from "./WrapperComponent";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
+
+interface StickyProps extends StickyContainerProps {
+  children: any;
+}
+const StickyHeaderContainer =
+  StickyContainer as React.ComponentClass<StickyProps>;
 
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
@@ -214,66 +220,67 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.props.onEndReached?.({ distanceFromEnd: 0 });
   };
 
-  render() {
-    if (this.state.dataProvider.getSize() === 0) {
-      return this.props.ListEmptyComponent || null;
-    } else {
-      let style = this.props.style ?? {};
-      if (this.props.inverted === true) {
-        style = [style, { transform: [{ scaleY: -1 }] }];
-      }
-
-      let scrollViewProps: object = {
-        style,
-        onLayout: this.handleSizeChange,
-        removeClippedSubviews: false,
-      };
-      if (this.props.onRefresh) {
-        const refreshControl = (
-          <RefreshControl
-            refreshing={this.props.refreshing as boolean}
-            progressViewOffset={this.props.progressViewOffset}
-            onRefresh={this.props.onRefresh}
-          />
-        );
-        scrollViewProps = {
-          ...scrollViewProps,
-          refreshControl,
-        };
-      }
-
-      const drawDistance = this.props.drawDistance || 250;
-
+  private getRefreshControl = () => {
+    if (this.props.onRefresh) {
       return (
-        <StickyContainer stickyHeaderIndices={this.props.stickyHeaderIndices}>
-          <ProgressiveListView
-            {...this.props}
-            ref={this.recyclerRef}
-            layoutProvider={this.state.layoutProvider}
-            style={style as object}
-            dataProvider={this.state.dataProvider}
-            rowRenderer={this.rowRenderer}
-            canChangeSize
-            isHorizontal={Boolean(this.props.horizontal)}
-            scrollViewProps={scrollViewProps}
-            forceNonDeterministicRendering
-            renderItemContainer={this.itemContainer}
-            renderContentContainer={this.container}
-            onEndReached={this.onEndReached}
-            onEndReachedThreshold={
-              this.props.onEndReachedThreshold || undefined
-            }
-            extendedState={this.state.extraData}
-            layoutSize={this.props.estimatedListSize}
-            maxRenderAhead={3 * drawDistance}
-            finalRenderAheadOffset={drawDistance}
-            renderAheadStep={drawDistance}
-            initialRenderIndex={this.props.initialScrollIndex || undefined}
-            {...this.props.overrideProps}
-          />
-        </StickyContainer>
+        <RefreshControl
+          refreshing={Boolean(this.props.refreshing)}
+          progressViewOffset={this.props.progressViewOffset}
+          onRefresh={this.props.onRefresh}
+        />
       );
     }
+  };
+
+  render() {
+    if (this.state.dataProvider.getSize() === 0) {
+      return this.getValidComponent(this.props.ListEmptyComponent);
+    }
+
+    const {
+      drawDistance,
+      removeClippedSubviews,
+      stickyHeaderIndices,
+      horizontal,
+      onEndReachedThreshold,
+      estimatedListSize,
+      initialScrollIndex,
+      style,
+      ...restProps
+    } = this.props;
+
+    const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
+
+    return (
+      <StickyHeaderContainer stickyHeaderIndices={stickyHeaderIndices}>
+        <ProgressiveListView
+          {...restProps}
+          ref={this.recyclerRef}
+          layoutProvider={this.state.layoutProvider}
+          style={[style, this.getTransform()]}
+          dataProvider={this.state.dataProvider}
+          rowRenderer={this.rowRenderer}
+          canChangeSize
+          isHorizontal={Boolean(horizontal)}
+          scrollViewProps={{
+            onLayout: this.handleSizeChange,
+            refreshControl: this.getRefreshControl(),
+          }}
+          forceNonDeterministicRendering
+          renderItemContainer={this.itemContainer}
+          renderContentContainer={this.container}
+          onEndReached={this.onEndReached}
+          onEndReachedThreshold={onEndReachedThreshold || undefined}
+          extendedState={this.state.extraData}
+          layoutSize={estimatedListSize}
+          maxRenderAhead={3 * finalDrawDistance}
+          finalRenderAheadOffset={finalDrawDistance}
+          renderAheadStep={finalDrawDistance}
+          initialRenderIndex={initialScrollIndex || undefined}
+          {...this.props.overrideProps}
+        />
+      </StickyHeaderContainer>
+    );
   }
 
   private handleSizeChange = (event: LayoutChangeEvent) => {
