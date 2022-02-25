@@ -331,6 +331,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         style={{
           ...props.style,
           flexDirection: this.props.horizontal ? "row" : "column",
+          alignItems: "stretch",
           ...this.getTransform(),
         }}
         index={parentProps.index}
@@ -343,9 +344,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
         >
           <View
             style={{
-              width: props.width,
-              height: props.height,
-              flexDirection: this.props.horizontal ? "column" : "row",
+              flexDirection:
+                !this.props.horizontal && this.props.numColumns === 1
+                  ? "column"
+                  : "row",
             }}
           >
             {children}
