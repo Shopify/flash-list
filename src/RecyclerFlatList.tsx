@@ -12,12 +12,13 @@ import {
   RecyclerListViewProps,
 } from "recyclerlistview";
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
-import invariant from "invariant";
 
 import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import WrapperComponent, { PureComponentWrapper } from "./WrapperComponent";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
+import CustomError from "./errors/CustomError";
+import ExceptionList from "./errors/ExceptionList";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
@@ -114,22 +115,22 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   constructor(props) {
     super(props);
-    this.setup();
+    this.validateProps();
+    if (props.estimatedListSize) {
+      if (props.horizontal) {
+        this.listFixedDimensionSize = props.estimatedListSize.height;
+      } else {
+        this.listFixedDimensionSize = props.estimatedListSize.width;
+      }
+    }
   }
 
-  private setup() {
-    const refreshingPrecondition = !(
-      this.props.onRefresh && typeof this.props.refreshing !== "boolean"
-    );
-    const message =
-      'Invariant Violation: `refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `"undefined"`';
-    invariant(refreshingPrecondition, message);
-    if (this.props.estimatedListSize) {
-      if (this.props.horizontal) {
-        this.listFixedDimensionSize = this.props.estimatedListSize.height;
-      } else {
-        this.listFixedDimensionSize = this.props.estimatedListSize.width;
-      }
+  private validateProps() {
+    if (this.props.onRefresh && typeof this.props.refreshing !== "boolean") {
+      throw new CustomError(ExceptionList.refreshBooleanMissing);
+    }
+    if (!(this.props.estimatedItemSize > 0)) {
+      throw new CustomError(ExceptionList.estimatedItemSizeMissing);
     }
   }
 
