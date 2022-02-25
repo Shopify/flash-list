@@ -107,6 +107,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
   private listFixedDimensionSize = 0;
   private transformStyle = { transform: [{ scaleY: -1 }] };
+  private distanceFromWindow = 0;
 
   static defaultProps = {
     data: [],
@@ -253,7 +254,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
 
     return (
-      <StickyHeaderContainer stickyHeaderIndices={stickyHeaderIndices}>
+      <StickyHeaderContainer
+        applyWindowCorrection={this.applyWindowCorrection}
+        stickyHeaderIndices={stickyHeaderIndices}
+      >
         <ProgressiveListView
           {...restProps}
           ref={this.recyclerRef}
@@ -309,13 +313,16 @@ class RecyclerFlatList<T> extends React.PureComponent<
             header={this.props.ListHeaderComponent}
             extraData={this.state.extraData}
             headerStyle={this.props.ListHeaderComponentStyle}
+            inverted={this.props.inverted}
             renderer={this.header}
           />
           <AutoLayoutView
             {...props}
             onBlankAreaEvent={this.props.onBlankArea}
             onLayout={(event) => {
-              // console.log(e.nativeEvent);
+              this.distanceFromWindow = this.props.horizontal
+                ? event.nativeEvent.layout.x
+                : event.nativeEvent.layout.y;
             }}
           >
             {children}
@@ -325,6 +332,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
             header={this.props.ListFooterComponent}
             extraData={this.state.extraData}
             headerStyle={this.props.ListFooterComponentStyle}
+            inverted={this.props.inverted}
             renderer={this.footer}
           />
         </>
@@ -407,6 +415,14 @@ class RecyclerFlatList<T> extends React.PureComponent<
       null
     );
   }
+
+  private applyWindowCorrection = (
+    _,
+    __,
+    correctionObject: { windowShift: number }
+  ) => {
+    correctionObject.windowShift = -this.distanceFromWindow;
+  };
 
   private rowRenderer = (_, data, index, extraData) => {
     // known issue: expected to pass separators which isn't available in RLV

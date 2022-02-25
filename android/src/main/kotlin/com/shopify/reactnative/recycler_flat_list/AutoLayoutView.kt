@@ -26,12 +26,23 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         super.dispatchDraw(canvas)
 
         if (enableInstrumentation) {
-            // Since we need to call this method with scrollOffset on the UI thread and not with the one react has we're querying parent's parent
-            // directly which will be a ScrollView. If it isn't reported values will be incorrect but the component will not break.
-            // RecyclerListView is expected not to change the hierarchy of children.
-            alShadow.computeBlankFromGivenOffset((parent.parent as View).let {
+            /** Since we need to call this method with scrollOffset on the UI thread and not with the one react has we're querying parent's parent
+            directly which will be a ScrollView. If it isn't reported values will be incorrect but the component will not break.
+            RecyclerListView is expected not to change the hierarchy of children. */
+
+            val scrollContainerSize = (parent.parent as View).let {
+                if (alShadow.horizontal) it.width else it.height
+            }
+            val scrollOffset = (parent.parent as View).let {
                 if (alShadow.horizontal) it.scrollX else it.scrollY
-            })
+            }
+            val startOffset = if (alShadow.horizontal) left else top
+            val endOffset = if (alShadow.horizontal) right else bottom
+
+            val distanceFromWindowStart = kotlin.math.max(startOffset - scrollOffset, 0)
+            val distanceFromWindowEnd = kotlin.math.max(scrollOffset + scrollContainerSize - endOffset, 0)
+
+            alShadow.computeBlankFromGivenOffset(scrollOffset, distanceFromWindowStart, distanceFromWindowEnd)
             emitBlankAreaEvent()
         }
     }
@@ -42,6 +53,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         if (childCount > 1) {
             val positionSortedViews = Array(childCount) { getChildAt(it) as CellContainer }
             positionSortedViews.sortBy { it.index }
+            alShadow.offsetFromStart = if (alShadow.horizontal) left else top
             alShadow.clearGapsAndOverlaps(positionSortedViews)
         }
     }
