@@ -8,8 +8,18 @@ const ExceptionList: { [key: string]: Exception } = {
   },
   refreshBooleanMissing: {
     message:
-      "`refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `undefined`",
+      "`refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `undefined`.",
     type: "InvariantViolation",
+  },
+  stickyWhileHorizontalNotSupported: {
+    message:
+      "sticky headers are not supported when list is in horizontal mode. Remove `stickyHeaderIndices` prop.",
+    type: "NotSupportedException",
+  },
+  columsWhileHorizontalNotSupported: {
+    message:
+      "numColumns is not supported when list is in horizontal mode. Please remove or set numColumns to 1.",
+    type: "NotSupportedException",
   },
 };
 export default ExceptionList;

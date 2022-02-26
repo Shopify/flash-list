@@ -143,6 +143,15 @@ class RecyclerFlatList<T> extends React.PureComponent<
     if (!(this.props.estimatedItemSize > 0)) {
       throw new CustomError(ExceptionList.estimatedItemSizeMissing);
     }
+    if (
+      Number(this.props.stickyHeaderIndices?.length) > 0 &&
+      this.props.horizontal
+    ) {
+      throw new CustomError(ExceptionList.stickyWhileHorizontalNotSupported);
+    }
+    if (Number(this.props.numColumns) > 1 && this.props.horizontal) {
+      throw new CustomError(ExceptionList.columsWhileHorizontalNotSupported);
+    }
   }
 
   // Some of the state variables need to update when props change
