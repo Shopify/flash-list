@@ -16,6 +16,7 @@ module.exports = {
     "@shopify/jsx-no-hardcoded-content": "off",
     "@shopify/jest/no-vague-titles": "off",
     "@shopify/jsx-no-complex-expressions": "off",
+    "@shopify/react-prefer-private-members": "off",
     "eslint-comments/disable-enable-pair": "off",
     "import/no-cycle": "off",
     "import/no-named-as-default": "off",

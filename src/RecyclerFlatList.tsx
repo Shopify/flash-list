@@ -106,7 +106,6 @@ interface ExtraData<T> {
   value?: T;
 }
 
-// eslint-disable-next-line @shopify/react-initialize-state
 class RecyclerFlatList<T> extends React.PureComponent<
   RecyclerFlatListProps<T>,
   RecyclerFlatListState<T>
@@ -134,6 +133,8 @@ class RecyclerFlatList<T> extends React.PureComponent<
       }
     }
     this.distanceFromWindow = props.estimatedHeaderSize;
+    // eslint-disable-next-line react/state-in-constructor
+    this.state = RecyclerFlatList.getInitialMutableState();
   }
 
   private validateProps() {
@@ -157,25 +158,24 @@ class RecyclerFlatList<T> extends React.PureComponent<
   // Some of the state variables need to update when props change
   static getDerivedStateFromProps<T>(
     nextProps: RecyclerFlatListProps<T>,
-    prevState: RecyclerFlatListState<T> | undefined
+    prevState: RecyclerFlatListState<T>
   ): RecyclerFlatListState<T> {
-    const oldState = prevState || RecyclerFlatList.getInitialMutableState();
-    const newState = { ...oldState };
-    if (oldState.numColumns !== nextProps.numColumns) {
+    const newState = { ...prevState };
+    if (prevState.numColumns !== nextProps.numColumns) {
       newState.numColumns = nextProps.numColumns || 1;
       newState.layoutProvider = RecyclerFlatList.getLayoutProvider<T>(
         newState.numColumns,
         nextProps
       );
     }
-    if (nextProps.data !== oldState.data) {
+    if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
-      newState.dataProvider = oldState.dataProvider.cloneWithRows(
+      newState.dataProvider = prevState.dataProvider.cloneWithRows(
         nextProps.data as any[]
       );
-      newState.extraData = { ...oldState.extraData };
+      newState.extraData = { ...prevState.extraData };
     }
-    if (nextProps.extraData !== oldState.extraData?.value) {
+    if (nextProps.extraData !== prevState.extraData?.value) {
       newState.extraData = { value: nextProps.extraData };
     }
     newState.layoutProvider.updateProps(nextProps);
@@ -282,7 +282,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
           {...restProps}
           ref={this.recyclerRef}
           layoutProvider={this.state.layoutProvider}
-          style={[style, this.getTransform()]}
           dataProvider={this.state.dataProvider}
           rowRenderer={this.rowRenderer}
           canChangeSize
@@ -290,6 +289,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           scrollViewProps={{
             onLayout: this.handleSizeChange,
             refreshControl: this.getRefreshControl(),
+            style: { ...(style as object), ...this.getTransform() },
           }}
           forceNonDeterministicRendering
           renderItemContainer={this.itemContainer}
@@ -395,7 +395,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   };
 
   private getTransform() {
-    return this.props.inverted && this.transformStyle;
+    return (this.props.inverted && this.transformStyle) || undefined;
   }
 
   private separator = (index) => {
@@ -480,13 +480,11 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return state;
   };
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }
 
   // TODO: Improve accuracy with headers
-  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToIndex(params: {
     animated?: boolean | null | undefined;
     index: number;
@@ -497,7 +495,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef?.scrollToIndex(params.index, Boolean(params.animated));
   }
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToItem(params: {
     animated?: boolean | null | undefined;
     item: any;
@@ -506,7 +503,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef?.scrollToItem(params.item, Boolean(params.animated));
   }
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToOffset(params: {
     animated?: boolean | null | undefined;
     offset: number;
@@ -516,7 +512,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef?.scrollToOffset(x, y, Boolean(params.animated));
   }
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
   public getScrollableNode(): number | null {
     return this.rlvRef?.getScrollableNode?.() || null;
   }

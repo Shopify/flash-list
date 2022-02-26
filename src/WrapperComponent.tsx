@@ -36,6 +36,7 @@ export class PureComponentWrapper extends React.PureComponent<PureComponentWrapp
   static defaultProps = {
     enabled: true,
   };
+
   private overrideEnabled: boolean | undefined = undefined;
 
   /** Once set explicitly prop will be ignored. Not using state becasue of performance reasons. */
@@ -45,6 +46,7 @@ export class PureComponentWrapper extends React.PureComponent<PureComponentWrapp
       this.forceUpdate();
     }
   }
+
   render() {
     if (this.overrideEnabled === undefined) {
       return (
