@@ -442,7 +442,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     correctionObject: { windowShift: number }
   ) => {
     correctionObject.windowShift = -this.distanceFromWindow;
-    this.checkStickyState();
+    this.checkAndUpdateStickyState();
   };
 
   private rowRenderer = (_, data, index, extraData) => {
@@ -466,14 +466,14 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return (
       <PureComponentWrapper
         ref={this.stickyContentRef}
-        enabled={this.checkStickyState()}
+        enabled={this.checkAndUpdateStickyState()}
       >
         {this.rowRenderer(_, data, index, extraData)}
       </PureComponentWrapper>
     );
   };
 
-  private checkStickyState = () => {
+  private checkAndUpdateStickyState = () => {
     const currentOffset = this.rlvRef?.getCurrentScrollOffset() || 0;
     const state = currentOffset >= this.distanceFromWindow;
     this.stickyContentContainerRef?.setEnabled(state);
