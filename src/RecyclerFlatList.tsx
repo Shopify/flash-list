@@ -40,6 +40,13 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   estimatedListSize?: { height: number; width: number };
 
   /**
+   * Provide estimated size of the header that is going to be rendered. This can help make initialScrollIndex prop more accurate.
+   * You can also include any padding that might have been added to the start of the list. RecyclerFlatList needs to this to determine
+   * where the first item in the list starts from.
+   */
+  estimatedHeaderSize?: number;
+
+  /**
    * Draw distance for advanced rendering (in dp/px)
    */
   drawDistance?: number;
@@ -105,6 +112,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   RecyclerFlatListState<T>
 > {
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
+  private stickyContentContainerRef?: PureComponentWrapper;
   private listFixedDimensionSize = 0;
   private transformStyle = { transform: [{ scaleY: -1 }] };
   private distanceFromWindow = 0;
@@ -112,6 +120,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   static defaultProps = {
     data: [],
     numColumns: 1,
+    estimatedHeaderSize: 0,
   };
 
   constructor(props) {
@@ -124,6 +133,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         this.listFixedDimensionSize = props.estimatedListSize.width;
       }
     }
+    this.distanceFromWindow = props.estimatedHeaderSize;
   }
 
   private validateProps() {
@@ -255,6 +265,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
     return (
       <StickyHeaderContainer
+        overrideRowRenderer={this.stickyRowRenderer}
         applyWindowCorrection={this.applyWindowCorrection}
         stickyHeaderIndices={stickyHeaderIndices}
       >
@@ -306,37 +317,37 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   private container = (props, children) => {
     return (
-      children.length > 0 && (
-        <>
-          <PureComponentWrapper
-            contentStyle={this.props.contentContainerStyle}
-            header={this.props.ListHeaderComponent}
-            extraData={this.state.extraData}
-            headerStyle={this.props.ListHeaderComponentStyle}
-            inverted={this.props.inverted}
-            renderer={this.header}
-          />
-          <AutoLayoutView
-            {...props}
-            onBlankAreaEvent={this.props.onBlankArea}
-            onLayout={(event) => {
-              this.distanceFromWindow = this.props.horizontal
-                ? event.nativeEvent.layout.x
-                : event.nativeEvent.layout.y;
-            }}
-          >
-            {children}
-          </AutoLayoutView>
-          <PureComponentWrapper
-            contentStyle={this.props.contentContainerStyle}
-            header={this.props.ListFooterComponent}
-            extraData={this.state.extraData}
-            headerStyle={this.props.ListFooterComponentStyle}
-            inverted={this.props.inverted}
-            renderer={this.footer}
-          />
-        </>
-      )
+      <>
+        <PureComponentWrapper
+          enabled={children.length > 0}
+          contentStyle={this.props.contentContainerStyle}
+          header={this.props.ListHeaderComponent}
+          extraData={this.state.extraData}
+          headerStyle={this.props.ListHeaderComponentStyle}
+          inverted={this.props.inverted}
+          renderer={this.header}
+        />
+        <AutoLayoutView
+          {...props}
+          onBlankAreaEvent={this.props.onBlankArea}
+          onLayout={(event) => {
+            this.distanceFromWindow = this.props.horizontal
+              ? event.nativeEvent.layout.x
+              : event.nativeEvent.layout.y;
+          }}
+        >
+          {children}
+        </AutoLayoutView>
+        <PureComponentWrapper
+          enabled={children.length > 0}
+          contentStyle={this.props.contentContainerStyle}
+          header={this.props.ListFooterComponent}
+          extraData={this.state.extraData}
+          headerStyle={this.props.ListFooterComponentStyle}
+          inverted={this.props.inverted}
+          renderer={this.footer}
+        />
+      </>
     );
   };
 
@@ -422,6 +433,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     correctionObject: { windowShift: number }
   ) => {
     correctionObject.windowShift = -this.distanceFromWindow;
+    this.checkStickyState();
   };
 
   private rowRenderer = (_, data, index, extraData) => {
@@ -437,11 +449,34 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef = ref;
   };
 
+  private stickyContentRef = (ref: any) => {
+    this.stickyContentContainerRef = ref;
+  };
+
+  private stickyRowRenderer = (_, data, index, extraData) => {
+    return (
+      <PureComponentWrapper
+        ref={this.stickyContentRef}
+        enabled={this.checkStickyState()}
+      >
+        {this.rowRenderer(_, data, index, extraData)}
+      </PureComponentWrapper>
+    );
+  };
+
+  private checkStickyState = () => {
+    const currentOffset = this.rlvRef?.getCurrentScrollOffset() || 0;
+    const state = currentOffset >= this.distanceFromWindow;
+    this.stickyContentContainerRef?.setEnabled(state);
+    return state;
+  };
+
   // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }
 
+  // TODO: Improve accuracy with headers
   // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToIndex(params: {
     animated?: boolean | null | undefined;

@@ -27,12 +27,37 @@ export default class WrapperComponent extends React.Component<WrapperComponentPr
 }
 
 export interface PureComponentWrapperProps {
-  renderer: () => JSX.Element | null;
+  renderer?: () => JSX.Element | null;
+  enabled?: boolean;
   [other: string]: unknown;
 }
 
 export class PureComponentWrapper extends React.PureComponent<PureComponentWrapperProps> {
+  static defaultProps = {
+    enabled: true,
+  };
+  private overrideEnabled: boolean | undefined = undefined;
+
+  /** Once set explicitly prop will be ignored. Not using state becasue of performance reasons. */
+  public setEnabled(enabled: boolean) {
+    if (enabled !== this.overrideEnabled) {
+      this.overrideEnabled = enabled;
+      this.forceUpdate();
+    }
+  }
   render() {
-    return this.props.renderer();
+    if (this.overrideEnabled === undefined) {
+      return (
+        (this.props.enabled &&
+          (this.props.renderer?.() || this.props.children)) ||
+        null
+      );
+    } else {
+      return (
+        (this.overrideEnabled &&
+          (this.props.renderer?.() || this.props.children)) ||
+        null
+      );
+    }
   }
 }
