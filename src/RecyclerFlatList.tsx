@@ -288,8 +288,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
           isHorizontal={Boolean(horizontal)}
           scrollViewProps={{
             onLayout: this.handleSizeChange,
-            refreshControl: this.getRefreshControl(),
+            refreshControl:
+              this.props.refreshControl || this.getRefreshControl(),
             style: { ...(style as object), ...this.getTransform() },
+            ...this.props.overrideProps,
           }}
           forceNonDeterministicRendering
           renderItemContainer={this.itemContainer}
@@ -302,7 +304,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={initialScrollIndex || undefined}
-          {...this.props.overrideProps}
         />
       </StickyHeaderContainer>
     );
@@ -388,8 +389,8 @@ class RecyclerFlatList<T> extends React.PureComponent<
           >
             {children}
           </View>
+          {this.separator(parentProps.index)}
         </WrapperComponent>
-        {this.separator(parentProps.index)}
       </ItemContainer>
     );
   };
@@ -445,6 +446,15 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.checkAndUpdateStickyState();
   };
 
+  private renderRowWithIndex = (index: number) => {
+    return this.rowRenderer(
+      undefined,
+      this.props.data?.[index],
+      index,
+      this.state.extraData
+    );
+  };
+
   private rowRenderer = (_, data, index, extraData) => {
     // known issue: expected to pass separators which isn't available in RLV
     return this.props.renderItem?.({
@@ -467,9 +477,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
       <PureComponentWrapper
         ref={this.stickyContentRef}
         enabled={this.checkAndUpdateStickyState()}
-      >
-        {this.rowRenderer(_, data, index, extraData)}
-      </PureComponentWrapper>
+        arg={index}
+        renderer={this.renderRowWithIndex}
+      />
     );
   };
 

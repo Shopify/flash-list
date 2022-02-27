@@ -27,7 +27,10 @@ export default class WrapperComponent extends React.Component<WrapperComponentPr
 }
 
 export interface PureComponentWrapperProps {
-  renderer?: () => JSX.Element | null;
+  renderer: (arg: unknown) => JSX.Element | null;
+  /** Renderer is called with this argument.
+   * Don't change this value everytime or else component will always rerender. Prefer primitives. */
+  arg?: unknown;
   enabled?: boolean;
   [other: string]: unknown;
 }
@@ -50,15 +53,11 @@ export class PureComponentWrapper extends React.PureComponent<PureComponentWrapp
   render() {
     if (this.overrideEnabled === undefined) {
       return (
-        (this.props.enabled &&
-          (this.props.renderer?.() || this.props.children)) ||
-        null
+        (this.props.enabled && this.props.renderer(this.props.arg)) || null
       );
     } else {
       return (
-        (this.overrideEnabled &&
-          (this.props.renderer?.() || this.props.children)) ||
-        null
+        (this.overrideEnabled && this.props.renderer(this.props.arg)) || null
       );
     }
   }
