@@ -446,7 +446,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.checkAndUpdateStickyState();
   };
 
-  private renderRowWithIndex = (index: number) => {
+  private rowRendererWithIndex = (index: number) => {
     return this.rowRenderer(
       undefined,
       this.props.data?.[index],
@@ -478,7 +478,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         ref={this.stickyContentRef}
         enabled={this.checkAndUpdateStickyState()}
         arg={index}
-        renderer={this.renderRowWithIndex}
+        renderer={this.rowRendererWithIndex}
       />
     );
   };

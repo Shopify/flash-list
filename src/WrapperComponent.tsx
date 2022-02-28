@@ -28,6 +28,7 @@ export default class WrapperComponent extends React.Component<WrapperComponentPr
 
 export interface PureComponentWrapperProps {
   renderer: (arg: unknown) => JSX.Element | null;
+
   /** Renderer is called with this argument.
    * Don't change this value everytime or else component will always rerender. Prefer primitives. */
   arg?: unknown;
