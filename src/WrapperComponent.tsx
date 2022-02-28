@@ -35,6 +35,9 @@ export interface PureComponentWrapperProps {
   [other: string]: unknown;
 }
 
+/**
+ * Pure component wrapper that can be used to prevent renders of the `renderer` method passed to the component. Any change in props will lead to `renderer` getting called.
+ */
 export class PureComponentWrapper extends React.PureComponent<PureComponentWrapperProps> {
   static defaultProps = {
     enabled: true,
