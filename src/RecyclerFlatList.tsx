@@ -151,7 +151,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
       throw new CustomError(ExceptionList.stickyWhileHorizontalNotSupported);
     }
     if (Number(this.props.numColumns) > 1 && this.props.horizontal) {
-      throw new CustomError(ExceptionList.columsWhileHorizontalNotSupported);
+      throw new CustomError(ExceptionList.columnsWhileHorizontalNotSupported);
     }
   }
 

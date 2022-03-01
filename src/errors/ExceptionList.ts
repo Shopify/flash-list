@@ -1,6 +1,4 @@
-import { Exception } from "./CustomError";
-
-const ExceptionList: { [key: string]: Exception } = {
+const ExceptionList = {
   estimatedItemSizeMissing: {
     message:
       "`estimatedItemSize` is a required prop in RecyclerFlatList. Please provide a value that is greater than 0.",
@@ -16,7 +14,7 @@ const ExceptionList: { [key: string]: Exception } = {
       "sticky headers are not supported when list is in horizontal mode. Remove `stickyHeaderIndices` prop.",
     type: "NotSupportedException",
   },
-  columsWhileHorizontalNotSupported: {
+  columnsWhileHorizontalNotSupported: {
     message:
       "numColumns is not supported when list is in horizontal mode. Please remove or set numColumns to 1.",
     type: "NotSupportedException",
