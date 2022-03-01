@@ -41,7 +41,7 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
 
   /**
    * Provide estimated size of the header that is going to be rendered. This can help make initialScrollIndex prop more accurate.
-   * You can also include any padding that might have been added to the start of the list. RecyclerFlatList needs to this to determine
+   * You can also include any padding that might have been added to the start of the list. RecyclerFlatList needs this to determine
    * where the first item in the list starts from.
    */
   estimatedHeaderSize?: number;
