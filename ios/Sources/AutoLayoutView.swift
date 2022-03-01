@@ -48,8 +48,8 @@ import UIKit
         
         let scrollContainerSize = horizontal ? scrollView.frame.width : scrollView.frame.height
         let currentScrollOffset = horizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
-        let startOffset = horizontal ? self.frame.minX : self.frame.minY
-        let endOffset = horizontal ? self.frame.maxX : self.frame.maxY
+        let startOffset = horizontal ? frame.minX : frame.minY
+        let endOffset = horizontal ? frame.maxX : frame.maxY
         let distanceFromWindowStart = max(startOffset - currentScrollOffset, 0)
         let distanceFromWindowEnd = max(currentScrollOffset + scrollContainerSize - endOffset, 0)
         
@@ -88,7 +88,7 @@ import UIKit
         var maxBound: CGFloat = 0
         var minBound: CGFloat = CGFloat(Int.max)
         var maxBoundNextCell: CGFloat = 0
-        let correctedScrollOffset = scrollOffset - (horizontal ? self.frame.minX : self.frame.minY)
+        let correctedScrollOffset = scrollOffset - (horizontal ? frame.minX : frame.minY)
         
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
