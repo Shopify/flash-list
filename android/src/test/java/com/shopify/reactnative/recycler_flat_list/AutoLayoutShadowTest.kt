@@ -109,6 +109,19 @@ internal class AutoLayoutShadowTest {
         }
     }
 
+    @Test
+    fun checkBlankForLastItem() {
+        val alShadow = getAutolayoutShadow(0)
+        val testModel = getTestModel()
+        testModel.vertical.forEachIndexed { index, it ->
+            alShadow.clearGapsAndOverlaps(it.input as Array<CellContainer>)
+            it.expectedOutput.map { value -> value.bottom }.maxOrNull()?.let { max ->
+                alShadow.computeBlankFromGivenOffset(0, 0, 0)
+                assertEquals("Index: $index", alShadow.windowSize - max, alShadow.blankOffsetAtEnd)
+            }
+        }
+    }
+
     private fun getTestModel(): TestDataModel {
         var str = this.javaClass.classLoader.getResource("LayoutTestData.json").readText()
         return gson.fromJson<TestDataModel>(str, TestDataModel::class.java)

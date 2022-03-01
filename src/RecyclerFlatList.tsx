@@ -40,11 +40,12 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   estimatedListSize?: { height: number; width: number };
 
   /**
-   * Provide estimated size of the header that is going to be rendered. This can help make initialScrollIndex prop more accurate.
-   * You can also include any padding that might have been added to the start of the list. RecyclerFlatList needs this to determine
-   * where the first item in the list starts from.
+   * Specifies how far the first item is drawn from start of the list window or, offset of the first item of the list (not the header).
+   * Needed if you're using initialScrollIndex prop. Before the initial draw the list cannot figure out the size of header or, any special margin/padding that might have been applied
+   * using header styles etc.
+   * If this isn't provided initialScrollIndex might not scroll to the provided index.
    */
-  estimatedHeaderSize?: number;
+  estimatedFirstItemOffset?: number;
 
   /**
    * Draw distance for advanced rendering (in dp/px)
@@ -119,10 +120,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
   static defaultProps = {
     data: [],
     numColumns: 1,
-    estimatedHeaderSize: 0,
   };
 
-  constructor(props) {
+  constructor(props: RecyclerFlatListProps<T>) {
     super(props);
     this.validateProps();
     if (props.estimatedListSize) {
@@ -132,7 +132,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         this.listFixedDimensionSize = props.estimatedListSize.width;
       }
     }
-    this.distanceFromWindow = props.estimatedHeaderSize;
+    this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
     // eslint-disable-next-line react/state-in-constructor
     this.state = RecyclerFlatList.getInitialMutableState();
   }
