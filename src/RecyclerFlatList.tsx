@@ -442,7 +442,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         style: {
           paddingLeft: paddingLeft || paddingHorizontal || padding || 0,
           paddingRight: paddingRight || paddingHorizontal || padding || 0,
-          backgroundColor: backgroundColor,
+          backgroundColor,
         },
         unsupportedKeys,
       };
@@ -451,7 +451,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         style: {
           paddingTop: paddingTop || paddingVertical || padding || 0,
           paddingBottom: paddingBottom || paddingVertical || padding || 0,
-          backgroundColor: backgroundColor,
+          backgroundColor,
         },
         unsupportedKeys,
       };
