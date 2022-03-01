@@ -46,7 +46,7 @@ export class PureComponentWrapper extends React.PureComponent<PureComponentWrapp
 
   private overrideEnabled: boolean | undefined = undefined;
 
-  /** Once set explicitly prop will be ignored. Not using state becasue of performance reasons. */
+  /** Once set explicitly, prop will be ignored. Not using state because of performance reasons. */
   public setEnabled(enabled: boolean) {
     if (enabled !== this.overrideEnabled) {
       this.overrideEnabled = enabled;
