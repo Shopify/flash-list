@@ -6,6 +6,7 @@ import {
   LayoutChangeEvent,
   ViewStyle,
   ColorValue,
+  Dimensions,
 } from "react-native";
 import {
   DataProvider,
@@ -292,6 +293,12 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
 
+    // TODO: Wait for #104 (https://github.com/Shopify/recycler-flat-list/issues/104) to be fixed and remove this. Temp workaround
+    const endDetectionThreshold =
+      (horizontal
+        ? Dimensions.get("window").width
+        : Dimensions.get("window").height) * (onEndReachedThreshold || 0);
+
     return (
       <StickyHeaderContainer
         overrideRowRenderer={this.stickyRowRenderer}
@@ -320,7 +327,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           renderItemContainer={this.itemContainer}
           renderContentContainer={this.container}
           onEndReached={this.onEndReached}
-          onEndReachedThreshold={onEndReachedThreshold || undefined}
+          onEndReachedThreshold={endDetectionThreshold || undefined}
           extendedState={this.state.extraData}
           layoutSize={estimatedListSize}
           maxRenderAhead={3 * finalDrawDistance}
