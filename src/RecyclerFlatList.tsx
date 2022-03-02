@@ -117,6 +117,9 @@ interface ContentStyle {
   paddingLeft?: string | number;
   paddingRight?: string | number;
   paddingBottom?: string | number;
+  padding?: string | number;
+  paddingVertical?: string | number;
+  paddingHorizontal?: string | number;
 }
 
 class RecyclerFlatList<T> extends React.PureComponent<
@@ -169,8 +172,12 @@ class RecyclerFlatList<T> extends React.PureComponent<
     if (this.props.style) {
       console.warn(WarningList.styleUnsupported);
     }
-    if (this.getContentContainerInfo().unsupportedKeys) {
+    const contentStyleInfo = this.getContentContainerInfo();
+    if (contentStyleInfo.unsupportedKeys) {
       console.warn(WarningList.styleContentContainerUnsupported);
+    }
+    if (contentStyleInfo.paddingIgnored) {
+      console.warn(WarningList.styleUnsupportedPaddingType);
     }
   }
 
@@ -445,6 +452,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     } = (this.props.contentContainerStyle || {}) as ViewStyle;
     const unsupportedKeys = Object.keys(rest).length > 0;
     if (this.props.horizontal) {
+      const paddingIgnored = paddingVertical || paddingTop || paddingBottom;
       return {
         style: {
           paddingLeft: paddingLeft || paddingHorizontal || padding || 0,
@@ -452,8 +460,10 @@ class RecyclerFlatList<T> extends React.PureComponent<
           backgroundColor,
         },
         unsupportedKeys,
+        paddingIgnored,
       };
     } else {
+      const paddingIgnored = paddingHorizontal || paddingLeft || paddingRight;
       return {
         style: {
           paddingTop: paddingTop || paddingVertical || padding || 0,
@@ -461,6 +471,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
           backgroundColor,
         },
         unsupportedKeys,
+        paddingIgnored,
       };
     }
   }
