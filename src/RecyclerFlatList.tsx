@@ -452,7 +452,8 @@ class RecyclerFlatList<T> extends React.PureComponent<
     } = (this.props.contentContainerStyle || {}) as ViewStyle;
     const unsupportedKeys = Object.keys(rest).length > 0;
     if (this.props.horizontal) {
-      const paddingIgnored = paddingVertical || paddingTop || paddingBottom;
+      const paddingIgnored =
+        padding || paddingVertical || paddingTop || paddingBottom;
       return {
         style: {
           paddingLeft: paddingLeft || paddingHorizontal || padding || 0,
@@ -463,7 +464,8 @@ class RecyclerFlatList<T> extends React.PureComponent<
         paddingIgnored,
       };
     } else {
-      const paddingIgnored = paddingHorizontal || paddingLeft || paddingRight;
+      const paddingIgnored =
+        padding || paddingHorizontal || paddingLeft || paddingRight;
       return {
         style: {
           paddingTop: paddingTop || paddingVertical || padding || 0,
