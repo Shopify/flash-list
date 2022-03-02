@@ -4,6 +4,9 @@ import {
   RefreshControl,
   FlatListProps,
   LayoutChangeEvent,
+  ViewStyle,
+  ColorValue,
+  Dimensions,
 } from "react-native";
 import {
   DataProvider,
@@ -19,6 +22,7 @@ import WrapperComponent, { PureComponentWrapper } from "./WrapperComponent";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
+import WarningList from "./errors/Warnings";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
@@ -93,6 +97,8 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
    * This event is raised even when there is no visible blank with negative values for extensibility however, for most use cases check blankArea > 0 and use the value.
    */
   onBlankArea?: BlankAreaEventHandler;
+
+  contentContainerStyle?: ContentStyle;
 }
 
 export interface RecyclerFlatListState<T> {
@@ -107,6 +113,17 @@ interface ExtraData<T> {
   value?: T;
 }
 
+export interface ContentStyle {
+  backgroundColor?: ColorValue;
+  paddingTop?: string | number;
+  paddingLeft?: string | number;
+  paddingRight?: string | number;
+  paddingBottom?: string | number;
+  padding?: string | number;
+  paddingVertical?: string | number;
+  paddingHorizontal?: string | number;
+}
+
 class RecyclerFlatList<T> extends React.PureComponent<
   RecyclerFlatListProps<T>,
   RecyclerFlatListState<T>
@@ -116,6 +133,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
   private listFixedDimensionSize = 0;
   private transformStyle = { transform: [{ scaleY: -1 }] };
   private distanceFromWindow = 0;
+  private contentStyle: ContentStyle = {};
 
   static defaultProps = {
     data: [],
@@ -152,6 +170,16 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
     if (Number(this.props.numColumns) > 1 && this.props.horizontal) {
       throw new CustomError(ExceptionList.columnsWhileHorizontalNotSupported);
+    }
+    if (this.props.style) {
+      console.warn(WarningList.styleUnsupported);
+    }
+    const contentStyleInfo = this.getContentContainerInfo();
+    if (contentStyleInfo.unsupportedKeys) {
+      console.warn(WarningList.styleContentContainerUnsupported);
+    }
+    if (contentStyleInfo.paddingIgnored) {
+      console.warn(WarningList.styleUnsupportedPaddingType);
     }
   }
 
@@ -257,6 +285,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     if (this.state.dataProvider.getSize() === 0) {
       return this.getValidComponent(this.props.ListEmptyComponent);
     }
+    this.contentStyle = this.getContentContainerInfo().style;
 
     const {
       drawDistance,
@@ -267,10 +296,17 @@ class RecyclerFlatList<T> extends React.PureComponent<
       estimatedListSize,
       initialScrollIndex,
       style,
+      contentContainerStyle,
       ...restProps
     } = this.props;
 
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
+
+    // TODO: Wait for #104 (https://github.com/Shopify/recycler-flat-list/issues/104) to be fixed and remove this. Temp workaround
+    const endDetectionThreshold =
+      (horizontal
+        ? Dimensions.get("window").width
+        : Dimensions.get("window").height) * (onEndReachedThreshold || 0);
 
     return (
       <StickyHeaderContainer
@@ -290,14 +326,17 @@ class RecyclerFlatList<T> extends React.PureComponent<
             onLayout: this.handleSizeChange,
             refreshControl:
               this.props.refreshControl || this.getRefreshControl(),
-            style: { ...(style as object), ...this.getTransform() },
+            style: { ...this.getTransform() },
+            contentContainerStyle: {
+              backgroundColor: this.contentStyle.backgroundColor,
+            },
             ...this.props.overrideProps,
           }}
           forceNonDeterministicRendering
           renderItemContainer={this.itemContainer}
           renderContentContainer={this.container}
           onEndReached={this.onEndReached}
-          onEndReachedThreshold={onEndReachedThreshold || undefined}
+          onEndReachedThreshold={endDetectionThreshold || undefined}
           extendedState={this.state.extraData}
           layoutSize={estimatedListSize}
           maxRenderAhead={3 * finalDrawDistance}
@@ -331,6 +370,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         <PureComponentWrapper
           enabled={children.length > 0}
           contentStyle={this.props.contentContainerStyle}
+          horizontal={this.props.horizontal}
           header={this.props.ListHeaderComponent}
           extraData={this.state.extraData}
           headerStyle={this.props.ListHeaderComponentStyle}
@@ -351,6 +391,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
         <PureComponentWrapper
           enabled={children.length > 0}
           contentStyle={this.props.contentContainerStyle}
+          horizontal={this.props.horizontal}
           header={this.props.ListFooterComponent}
           extraData={this.state.extraData}
           headerStyle={this.props.ListFooterComponentStyle}
@@ -399,6 +440,46 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return (this.props.inverted && this.transformStyle) || undefined;
   }
 
+  private getContentContainerInfo() {
+    const {
+      paddingTop,
+      paddingRight,
+      paddingBottom,
+      paddingLeft,
+      padding,
+      paddingVertical,
+      paddingHorizontal,
+      backgroundColor,
+      ...rest
+    } = (this.props.contentContainerStyle || {}) as ViewStyle;
+    const unsupportedKeys = Object.keys(rest).length > 0;
+    if (this.props.horizontal) {
+      const paddingIgnored =
+        padding || paddingVertical || paddingTop || paddingBottom;
+      return {
+        style: {
+          paddingLeft: paddingLeft || paddingHorizontal || padding || 0,
+          paddingRight: paddingRight || paddingHorizontal || padding || 0,
+          backgroundColor,
+        },
+        unsupportedKeys,
+        paddingIgnored,
+      };
+    } else {
+      const paddingIgnored =
+        padding || paddingHorizontal || paddingLeft || paddingRight;
+      return {
+        style: {
+          paddingTop: paddingTop || paddingVertical || padding || 0,
+          paddingBottom: paddingBottom || paddingVertical || padding || 0,
+          backgroundColor,
+        },
+        unsupportedKeys,
+        paddingIgnored,
+      };
+    }
+  }
+
   private separator = (index) => {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
@@ -414,17 +495,38 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   private header = () => {
     return (
-      <View style={[this.props.ListHeaderComponentStyle, this.getTransform()]}>
-        {this.getValidComponent(this.props.ListHeaderComponent)}
-      </View>
+      <>
+        <View
+          style={{
+            paddingTop: this.contentStyle.paddingTop,
+            paddingLeft: this.contentStyle.paddingLeft,
+          }}
+        />
+
+        <View
+          style={[this.props.ListHeaderComponentStyle, this.getTransform()]}
+        >
+          {this.getValidComponent(this.props.ListHeaderComponent)}
+        </View>
+      </>
     );
   };
 
   private footer = () => {
     return (
-      <View style={[this.props.ListFooterComponentStyle, this.getTransform()]}>
-        {this.getValidComponent(this.props.ListFooterComponent)}
-      </View>
+      <>
+        <View
+          style={[this.props.ListFooterComponentStyle, this.getTransform()]}
+        >
+          {this.getValidComponent(this.props.ListFooterComponent)}
+        </View>
+        <View
+          style={{
+            paddingBottom: this.contentStyle.paddingBottom,
+            paddingRight: this.contentStyle.paddingRight,
+          }}
+        />
+      </>
     );
   };
 
