@@ -97,6 +97,8 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
    * This event is raised even when there is no visible blank with negative values for extensibility however, for most use cases check blankArea > 0 and use the value.
    */
   onBlankArea?: BlankAreaEventHandler;
+
+  contentContainerStyle?: ContentStyle;
 }
 
 export interface RecyclerFlatListState<T> {
@@ -111,7 +113,7 @@ interface ExtraData<T> {
   value?: T;
 }
 
-interface ContentStyle {
+export interface ContentStyle {
   backgroundColor?: ColorValue;
   paddingTop?: string | number;
   paddingLeft?: string | number;

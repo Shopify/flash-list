@@ -1,6 +1,7 @@
 export {
   default as RecyclerFlatList,
   RecyclerFlatListProps,
+  ContentStyle,
 } from "./RecyclerFlatList";
 export { default as AnimatedRecyclerFlatList } from "./AnimatedRecyclerFlatList";
 export {
