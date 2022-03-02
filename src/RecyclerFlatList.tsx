@@ -1,8 +1,6 @@
 import React from "react";
 import {
-  StyleProp,
   View,
-  ViewStyle,
   RefreshControl,
   FlatListProps,
   LayoutChangeEvent,
@@ -13,13 +11,20 @@ import {
   RecyclerListView,
   RecyclerListViewProps,
 } from "recyclerlistview";
+import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
 import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
-import WrapperComponent from "./WrapperComponent";
+import WrapperComponent, { PureComponentWrapper } from "./WrapperComponent";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
+
+interface StickyProps extends StickyContainerProps {
+  children: any;
+}
+const StickyHeaderContainer =
+  StickyContainer as React.ComponentClass<StickyProps>;
 
 export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
@@ -33,6 +38,14 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
    * Visible height and width of the list. This is not the scroll content size.
    */
   estimatedListSize?: { height: number; width: number };
+
+  /**
+   * Specifies how far the first item is drawn from start of the list window or, offset of the first item of the list (not the header).
+   * Needed if you're using initialScrollIndex prop. Before the initial draw the list cannot figure out the size of header or, any special margin/padding that might have been applied
+   * using header styles etc.
+   * If this isn't provided initialScrollIndex might not scroll to the provided index.
+   */
+  estimatedFirstItemOffset?: number;
 
   /**
    * Draw distance for advanced rendering (in dp/px)
@@ -94,20 +107,22 @@ interface ExtraData<T> {
   value?: T;
 }
 
-// eslint-disable-next-line @shopify/react-initialize-state
 class RecyclerFlatList<T> extends React.PureComponent<
   RecyclerFlatListProps<T>,
   RecyclerFlatListState<T>
 > {
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
+  private stickyContentContainerRef?: PureComponentWrapper;
   private listFixedDimensionSize = 0;
+  private transformStyle = { transform: [{ scaleY: -1 }] };
+  private distanceFromWindow = 0;
 
   static defaultProps = {
     data: [],
     numColumns: 1,
   };
 
-  constructor(props) {
+  constructor(props: RecyclerFlatListProps<T>) {
     super(props);
     this.validateProps();
     if (props.estimatedListSize) {
@@ -117,6 +132,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
         this.listFixedDimensionSize = props.estimatedListSize.width;
       }
     }
+    this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
+    // eslint-disable-next-line react/state-in-constructor
+    this.state = RecyclerFlatList.getInitialMutableState();
   }
 
   private validateProps() {
@@ -126,30 +144,38 @@ class RecyclerFlatList<T> extends React.PureComponent<
     if (!(this.props.estimatedItemSize > 0)) {
       throw new CustomError(ExceptionList.estimatedItemSizeMissing);
     }
+    if (
+      Number(this.props.stickyHeaderIndices?.length) > 0 &&
+      this.props.horizontal
+    ) {
+      throw new CustomError(ExceptionList.stickyWhileHorizontalNotSupported);
+    }
+    if (Number(this.props.numColumns) > 1 && this.props.horizontal) {
+      throw new CustomError(ExceptionList.columnsWhileHorizontalNotSupported);
+    }
   }
 
   // Some of the state variables need to update when props change
   static getDerivedStateFromProps<T>(
     nextProps: RecyclerFlatListProps<T>,
-    prevState: RecyclerFlatListState<T> | undefined
+    prevState: RecyclerFlatListState<T>
   ): RecyclerFlatListState<T> {
-    const oldState = prevState || RecyclerFlatList.getInitialMutableState();
-    const newState = { ...oldState };
-    if (oldState.numColumns !== nextProps.numColumns) {
+    const newState = { ...prevState };
+    if (prevState.numColumns !== nextProps.numColumns) {
       newState.numColumns = nextProps.numColumns || 1;
       newState.layoutProvider = RecyclerFlatList.getLayoutProvider<T>(
         newState.numColumns,
         nextProps
       );
     }
-    if (nextProps.data !== oldState.data) {
+    if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
-      newState.dataProvider = oldState.dataProvider.cloneWithRows(
+      newState.dataProvider = prevState.dataProvider.cloneWithRows(
         nextProps.data as any[]
       );
-      newState.extraData = { ...oldState.extraData };
+      newState.extraData = { ...prevState.extraData };
     }
-    if (nextProps.extraData !== oldState.extraData?.value) {
+    if (nextProps.extraData !== prevState.extraData?.value) {
       newState.extraData = { value: nextProps.extraData };
     }
     newState.layoutProvider.updateProps(nextProps);
@@ -215,63 +241,72 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.props.onEndReached?.({ distanceFromEnd: 0 });
   };
 
+  private getRefreshControl = () => {
+    if (this.props.onRefresh) {
+      return (
+        <RefreshControl
+          refreshing={Boolean(this.props.refreshing)}
+          progressViewOffset={this.props.progressViewOffset}
+          onRefresh={this.props.onRefresh}
+        />
+      );
+    }
+  };
+
   render() {
     if (this.state.dataProvider.getSize() === 0) {
-      return this.props.ListEmptyComponent || null;
-    } else {
-      let style = this.props.style ?? {};
-      if (this.props.inverted === true) {
-        style = [style, { transform: [{ scaleY: -1 }] }];
-      }
+      return this.getValidComponent(this.props.ListEmptyComponent);
+    }
 
-      let scrollViewProps: object = {
-        style,
-        onLayout: this.handleSizeChange,
-        removeClippedSubviews: false,
-      };
-      if (this.props.onRefresh) {
-        const refreshControl = (
-          <RefreshControl
-            refreshing={this.props.refreshing as boolean}
-            progressViewOffset={this.props.progressViewOffset}
-            onRefresh={this.props.onRefresh}
-          />
-        );
-        scrollViewProps = {
-          ...scrollViewProps,
-          refreshControl,
-        };
-      }
+    const {
+      drawDistance,
+      removeClippedSubviews,
+      stickyHeaderIndices,
+      horizontal,
+      onEndReachedThreshold,
+      estimatedListSize,
+      initialScrollIndex,
+      style,
+      ...restProps
+    } = this.props;
 
-      const drawDistance = this.props.drawDistance || 250;
+    const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
 
-      return (
+    return (
+      <StickyHeaderContainer
+        overrideRowRenderer={this.stickyRowRenderer}
+        applyWindowCorrection={this.applyWindowCorrection}
+        stickyHeaderIndices={stickyHeaderIndices}
+      >
         <ProgressiveListView
-          {...this.props}
+          {...restProps}
           ref={this.recyclerRef}
           layoutProvider={this.state.layoutProvider}
-          style={style as object}
           dataProvider={this.state.dataProvider}
           rowRenderer={this.rowRenderer}
-          renderFooter={this.footer}
           canChangeSize
-          isHorizontal={Boolean(this.props.horizontal)}
-          scrollViewProps={scrollViewProps}
+          isHorizontal={Boolean(horizontal)}
+          scrollViewProps={{
+            onLayout: this.handleSizeChange,
+            refreshControl:
+              this.props.refreshControl || this.getRefreshControl(),
+            style: { ...(style as object), ...this.getTransform() },
+            ...this.props.overrideProps,
+          }}
           forceNonDeterministicRendering
           renderItemContainer={this.itemContainer}
           renderContentContainer={this.container}
           onEndReached={this.onEndReached}
-          onEndReachedThreshold={this.props.onEndReachedThreshold || undefined}
+          onEndReachedThreshold={onEndReachedThreshold || undefined}
           extendedState={this.state.extraData}
-          layoutSize={this.props.estimatedListSize}
-          maxRenderAhead={3 * drawDistance}
-          finalRenderAheadOffset={drawDistance}
-          renderAheadStep={drawDistance}
-          initialRenderIndex={this.props.initialScrollIndex || undefined}
-          {...this.props.overrideProps}
+          layoutSize={estimatedListSize}
+          maxRenderAhead={3 * finalDrawDistance}
+          finalRenderAheadOffset={finalDrawDistance}
+          renderAheadStep={finalDrawDistance}
+          initialRenderIndex={initialScrollIndex || undefined}
         />
-      );
-    }
+      </StickyHeaderContainer>
+    );
   }
 
   private handleSizeChange = (event: LayoutChangeEvent) => {
@@ -292,108 +327,174 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   private container = (props, children) => {
     return (
-      <AutoLayoutView {...props} onBlankAreaEvent={this.props.onBlankArea}>
-        {children}
-      </AutoLayoutView>
+      <>
+        <PureComponentWrapper
+          enabled={children.length > 0}
+          contentStyle={this.props.contentContainerStyle}
+          header={this.props.ListHeaderComponent}
+          extraData={this.state.extraData}
+          headerStyle={this.props.ListHeaderComponentStyle}
+          inverted={this.props.inverted}
+          renderer={this.header}
+        />
+        <AutoLayoutView
+          {...props}
+          onBlankAreaEvent={this.props.onBlankArea}
+          onLayout={(event) => {
+            this.distanceFromWindow = this.props.horizontal
+              ? event.nativeEvent.layout.x
+              : event.nativeEvent.layout.y;
+          }}
+        >
+          {children}
+        </AutoLayoutView>
+        <PureComponentWrapper
+          enabled={children.length > 0}
+          contentStyle={this.props.contentContainerStyle}
+          header={this.props.ListFooterComponent}
+          extraData={this.state.extraData}
+          headerStyle={this.props.ListFooterComponentStyle}
+          inverted={this.props.inverted}
+          renderer={this.footer}
+        />
+      </>
     );
   };
 
   private itemContainer = (props, parentProps, children) => {
     return (
-      <ItemContainer {...props} index={parentProps.index}>
+      <ItemContainer
+        {...props}
+        style={{
+          ...props.style,
+          flexDirection: this.props.horizontal ? "row" : "column",
+          alignItems: "stretch",
+          ...this.getTransform(),
+        }}
+        index={parentProps.index}
+      >
         <WrapperComponent
           extendedState={parentProps.extendedState}
           internalSnapshot={parentProps.internalSnapshot}
           dataHasChanged={parentProps.dataHasChanged}
           data={parentProps.data}
         >
-          {children}
+          <View
+            style={{
+              flexDirection:
+                !this.props.horizontal && this.props.numColumns === 1
+                  ? "column"
+                  : "row",
+            }}
+          >
+            {children}
+          </View>
+          {this.separator(parentProps.index)}
         </WrapperComponent>
       </ItemContainer>
     );
   };
 
-  private separator(index) {
+  private getTransform() {
+    return (this.props.inverted && this.transformStyle) || undefined;
+  }
+
+  private separator = (index) => {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
-
     const props = {
       leadingItem,
       trailingItem,
       // TODO: Missing sections as we don't have this feature implemented yet. Implement section, leadingSection and trailingSection.
       // https://github.com/facebook/react-native/blob/8bd3edec88148d0ab1f225d2119435681fbbba33/Libraries/Lists/VirtualizedSectionList.js#L285-L294
     };
-    if (this.props.ItemSeparatorComponent != null) {
-      return <this.props.ItemSeparatorComponent {...props} />;
-    }
-    return undefined;
-  }
-
-  private header(index) {
-    if (index !== 0) return undefined;
-    const ListHeaderComponent = this.props.ListHeaderComponent;
-    const style = this.props.ListHeaderComponentStyle || {};
-    if (React.isValidElement(ListHeaderComponent)) {
-      ListHeaderComponent.props = { style };
-      return ListHeaderComponent;
-    } else if (ListHeaderComponent != null) {
-      return <ListHeaderComponent style={style} />;
-    }
-  }
-
-  private footer = () => {
-    const ListFooterComponent = this.props.ListFooterComponent;
-    const style = this.props.ListFooterComponentStyle || {};
-    if (React.isValidElement(ListFooterComponent)) {
-      ListFooterComponent.props = { style };
-      return ListFooterComponent;
-    } else if (ListFooterComponent) {
-      return <ListFooterComponent style={style} />;
-    }
-    return null;
+    const Separator = this.props.ItemSeparatorComponent;
+    return Separator && <Separator {...props} />;
   };
 
-  private rowRenderer = (type, data, index, extraData) => {
+  private header = () => {
+    return (
+      <View style={[this.props.ListHeaderComponentStyle, this.getTransform()]}>
+        {this.getValidComponent(this.props.ListHeaderComponent)}
+      </View>
+    );
+  };
+
+  private footer = () => {
+    return (
+      <View style={[this.props.ListFooterComponentStyle, this.getTransform()]}>
+        {this.getValidComponent(this.props.ListFooterComponent)}
+      </View>
+    );
+  };
+
+  private getValidComponent(component) {
+    const PassedComponent = component;
+    return (
+      (React.isValidElement(PassedComponent) && PassedComponent) ||
+      (PassedComponent && <PassedComponent />) ||
+      null
+    );
+  }
+
+  private applyWindowCorrection = (
+    _,
+    __,
+    correctionObject: { windowShift: number }
+  ) => {
+    correctionObject.windowShift = -this.distanceFromWindow;
+    this.checkAndUpdateStickyState();
+  };
+
+  private rowRendererWithIndex = (index: number) => {
+    return this.rowRenderer(
+      undefined,
+      this.props.data?.[index],
+      index,
+      this.state.extraData
+    );
+  };
+
+  private rowRenderer = (_, data, index, extraData) => {
     // known issue: expected to pass separators which isn't available in RLV
-    const elem = this.props.renderItem?.({
+    return this.props.renderItem?.({
       item: data,
       index,
       extraData: extraData?.value,
-    } as any);
-    let elements = [this.header(index), elem];
-
-    const separator = this.separator(index);
-    if (separator != null) {
-      elements.push(separator);
-    }
-
-    let style: StyleProp<ViewStyle> = { flex: 1 };
-    if (this.props.inverted === true) {
-      elements = elements.reverse();
-      style = [style, { transform: [{ scaleY: -1 }] }];
-    }
-
-    return (
-      <View style={style}>
-        <>
-          {elements[0]}
-          {elements[1]}
-          {elements[2]}
-        </>
-      </View>
-    );
+    } as any) as JSX.Element;
   };
 
   private recyclerRef = (ref: any) => {
     this.rlvRef = ref;
   };
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
+  private stickyContentRef = (ref: any) => {
+    this.stickyContentContainerRef = ref;
+  };
+
+  private stickyRowRenderer = (_, data, index, extraData) => {
+    return (
+      <PureComponentWrapper
+        ref={this.stickyContentRef}
+        enabled={this.checkAndUpdateStickyState()}
+        arg={index}
+        renderer={this.rowRendererWithIndex}
+      />
+    );
+  };
+
+  private checkAndUpdateStickyState = () => {
+    const currentOffset = this.rlvRef?.getCurrentScrollOffset() || 0;
+    const state = currentOffset >= this.distanceFromWindow;
+    this.stickyContentContainerRef?.setEnabled(state);
+    return state;
+  };
+
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
+  // TODO: Improve accuracy with headers
   public scrollToIndex(params: {
     animated?: boolean | null | undefined;
     index: number;
@@ -404,7 +505,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef?.scrollToIndex(params.index, Boolean(params.animated));
   }
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToItem(params: {
     animated?: boolean | null | undefined;
     item: any;
@@ -413,7 +513,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef?.scrollToItem(params.item, Boolean(params.animated));
   }
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
   public scrollToOffset(params: {
     animated?: boolean | null | undefined;
     offset: number;
@@ -423,7 +522,6 @@ class RecyclerFlatList<T> extends React.PureComponent<
     this.rlvRef?.scrollToOffset(x, y, Boolean(params.animated));
   }
 
-  // eslint-disable-next-line @shopify/react-prefer-private-members
   public getScrollableNode(): number | null {
     return this.rlvRef?.getScrollableNode?.() || null;
   }

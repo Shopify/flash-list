@@ -1,6 +1,4 @@
-import { Exception } from "./CustomError";
-
-const ExceptionList: { [key: string]: Exception } = {
+const ExceptionList = {
   estimatedItemSizeMissing: {
     message:
       "`estimatedItemSize` is a required prop in RecyclerFlatList. Please provide a value that is greater than 0.",
@@ -8,8 +6,18 @@ const ExceptionList: { [key: string]: Exception } = {
   },
   refreshBooleanMissing: {
     message:
-      "`refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `undefined`",
+      "`refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `undefined`.",
     type: "InvariantViolation",
+  },
+  stickyWhileHorizontalNotSupported: {
+    message:
+      "sticky headers are not supported when list is in horizontal mode. Remove `stickyHeaderIndices` prop.",
+    type: "NotSupportedException",
+  },
+  columnsWhileHorizontalNotSupported: {
+    message:
+      "numColumns is not supported when list is in horizontal mode. Please remove or set numColumns to 1.",
+    type: "NotSupportedException",
   },
 };
 export default ExceptionList;
