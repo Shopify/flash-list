@@ -169,7 +169,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     if (this.props.style) {
       console.warn(WarningList.styleUnsupported);
     }
-    if (this.getContentContainerStyle().unsupportedKeys) {
+    if (this.getContentContainerInfo().unsupportedKeys) {
       console.warn(WarningList.styleContentContainerUnsupported);
     }
   }
@@ -276,7 +276,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     if (this.state.dataProvider.getSize() === 0) {
       return this.getValidComponent(this.props.ListEmptyComponent);
     }
-    this.contentStyle = this.getContentContainerStyle().style;
+    this.contentStyle = this.getContentContainerInfo().style;
 
     const {
       drawDistance,
@@ -431,7 +431,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return (this.props.inverted && this.transformStyle) || undefined;
   }
 
-  private getContentContainerStyle() {
+  private getContentContainerInfo() {
     const {
       paddingTop,
       paddingRight,
