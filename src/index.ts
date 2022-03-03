@@ -9,3 +9,10 @@ export {
   BlankAreaEventHandler,
   BlankAreaEvent,
 } from "./AutoLayoutView";
+export {
+  useBenchmark,
+  useDataMultiplier,
+  BenchmarkParams,
+  BenchmarkResult,
+} from "./benchmark/useBenchmark";
+export { JSFpsMonitor, JSFPSResult } from "./benchmark/JSFpsMonitor";

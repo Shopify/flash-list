@@ -597,6 +597,12 @@ class FlashList<T> extends React.PureComponent<
     return state;
   };
 
+  public getRecyclerListView():
+    | RecyclerListView<RecyclerListViewProps, any>
+    | undefined {
+    return this.rlvRef;
+  }
+
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }
