@@ -18,6 +18,7 @@ export interface BenchmarkResult {
   interrupted?: boolean;
   suggestions: string[];
   blankArea?: BlankAreaBenchmarkResult;
+  formattedString?: string;
 }
 
 export interface BlankAreaBenchmarkResult {
@@ -52,11 +53,11 @@ export function useBenchmark(
       const jsProfilerResponse = jsFpsMonitor.stopAndGetData();
       if (jsProfilerResponse.averageFps < 35) {
         suggestions.push(
-          `Your average JS FPS is low. This can indicate that your compoenents are doing too much work. Try to optimize your components and reduce re-renders if any`
+          `Your average JS FPS is low. This can indicate that your components are doing too much work. Try to optimize your components and reduce re-renders if any`
         );
       }
       computeSuggestions(ref, suggestions);
-      callback({
+      const result: BenchmarkResult = {
         js: jsProfilerResponse,
         blankArea:
           blankAreaResult.maxBlankArea >= 0
@@ -73,7 +74,11 @@ export function useBenchmark(
             : undefined,
         suggestions,
         interrupted: cancellable.isCancelled(),
-      });
+      };
+      if (!cancellable.isCancelled()) {
+        result.formattedString = getFormattedString(result);
+      }
+      callback(result);
     }, params.startAfterMs || 3000);
     return () => {
       clearTimeout(cancelTimeout);
@@ -112,8 +117,6 @@ async function runScrollBenchmark(
       const toX = rlvContentSize.width - rlvSize.width;
       const toY = rlvContentSize.height - rlvSize.height;
 
-      const speedMultiplier = 50 * scrollSpeedMultiplier;
-
       const scrollNow = (x, y) => {
         ref.current?.scrollToOffset({
           offset: horizontal ? x : y,
@@ -127,7 +130,7 @@ async function runScrollBenchmark(
         fromY,
         toX,
         toY,
-        speedMultiplier,
+        scrollSpeedMultiplier,
         cancellable
       );
       await autoScroll(
@@ -136,7 +139,7 @@ async function runScrollBenchmark(
         toY,
         fromX,
         fromY,
-        speedMultiplier,
+        scrollSpeedMultiplier,
         cancellable
       );
     }
@@ -184,4 +187,14 @@ function computeSuggestions(
       }
     }
   }
+}
+function getFormattedString(res: BenchmarkResult) {
+  return (
+    `Results:\n\n` +
+    `JS FPS: Avg: ${res.js?.averageFps} | Min: ${res.js?.minFps} | Max: ${res.js?.maxFps}\n\n` +
+    `Blank Area: Max: ${res.blankArea?.maxBlankArea} Cumulative: ${res.blankArea?.cumulativeBlankArea}\n\n` +
+    `Suggestions:\n\n${res.suggestions
+      .map((value, index) => `${index + 1}. ${value}`)
+      .join("\n")}`
+  );
 }
