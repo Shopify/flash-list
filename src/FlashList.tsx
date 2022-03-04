@@ -641,9 +641,11 @@ class FlashList<T> extends React.PureComponent<
   public getScrollableNode(): number | null {
     return this.rlvRef?.getScrollableNode?.() || null;
   }
+
   public forceDisableOnEndReachedCallback() {
     this.onEndReachedDisabled = true;
   }
+
   public getFirstItemOffset() {
     return this.distanceFromWindow;
   }
