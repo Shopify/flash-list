@@ -16,3 +16,4 @@ export {
   BenchmarkResult,
 } from "./benchmark/useBenchmark";
 export { JSFpsMonitor, JSFPSResult } from "./benchmark/JSFpsMonitor";
+export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
