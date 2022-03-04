@@ -10,7 +10,6 @@ import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
 export interface BenchmarkParams {
   startAfterMs?: number;
   speedMultiplier?: number;
-  endOffset?: number;
 }
 
 export interface BenchmarkResult {
