@@ -1,3 +1,5 @@
+import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
+
 export class JSFpsMonitor {
   private startTime = 0;
   private frameCount = 0;
@@ -50,9 +52,9 @@ export class JSFpsMonitor {
   public stopAndGetData(): JSFPSResult {
     cancelAnimationFrame(this.clearAnimationNum);
     return {
-      minFps: this.minFps,
-      maxFps: this.maxFps,
-      averageFps: this.averageFps,
+      minFps: roundToDecimalPlaces(this.minFps, 1),
+      maxFps: roundToDecimalPlaces(this.maxFps, 1),
+      averageFps: roundToDecimalPlaces(this.averageFps, 1),
     };
   }
 }

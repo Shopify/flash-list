@@ -5,6 +5,7 @@ import RecyclerFlatList from "../RecyclerFlatList";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFpsMonitor, JSFPSResult } from "./JSFpsMonitor";
+import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
 
 export interface BenchmarkParams {
   startAfterMs?: number;
@@ -58,7 +59,18 @@ export function useBenchmark(
       callback({
         js: jsProfilerResponse,
         blankArea:
-          blankAreaResult.maxBlankArea >= 0 ? blankAreaResult : undefined,
+          blankAreaResult.maxBlankArea >= 0
+            ? {
+                maxBlankArea: roundToDecimalPlaces(
+                  blankAreaResult.maxBlankArea,
+                  0
+                ),
+                cumulativeBlankArea: roundToDecimalPlaces(
+                  blankAreaResult.cumulativeBlankArea,
+                  0
+                ),
+              }
+            : undefined,
         suggestions,
         interrupted: cancellable.isCancelled(),
       });
@@ -137,12 +149,17 @@ function computeSuggestions(
   if (ref.current) {
     if (ref.current.props.data!!.length < 200) {
       suggestions.push(
-        `Data count is low. Try to increase it to a large number (e.g, 200) using the "useDataMultiplier" hook.`
+        `Data count is low. Try to increase it to a large number (e.g, 200) using the 'useDataMultiplier' hook.`
       );
     }
     // TODO: Fix private property access
-    const distanceFromWindow = (ref.current as any).distanceFromWindow;
-    if (ref.current.props.estimatedFirstItemOffset !== distanceFromWindow) {
+    const distanceFromWindow = roundToDecimalPlaces(
+      (ref.current as any).distanceFromWindow,
+      0
+    );
+    if (
+      (ref.current.props.estimatedFirstItemOffset || 0) !== distanceFromWindow
+    ) {
       suggestions.push(
         `estimatedFirstItemOffset can be set to ${distanceFromWindow}`
       );
@@ -158,7 +175,10 @@ function computeSuggestions(
             : rlv.getLayout?.(index)?.height || 0
         );
       const sortedSizes = sizeArray.sort();
-      const median = sortedSizes[Math.floor(sortedSizes.length / 2)];
+      const median = roundToDecimalPlaces(
+        sortedSizes[Math.floor(sortedSizes.length / 2)],
+        0
+      );
       if (Math.abs(median - ref.current.props.estimatedItemSize) > 5) {
         suggestions.push(`estimatedItemSize can be set to ${median}`);
       }
