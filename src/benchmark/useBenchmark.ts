@@ -46,6 +46,9 @@ export function useBenchmark(
   useEffect(() => {
     const cancellable = new Cancellable();
     const suggestions: string[] = [];
+    if (ref.current) {
+      ref.current.forceDisableOnEndReachedCallback();
+    }
     const cancelTimeout = setTimeout(async () => {
       const jsFpsMonitor = new JSFpsMonitor();
       jsFpsMonitor.startTracking();
@@ -155,9 +158,8 @@ function computeSuggestions(
         `Data count is low. Try to increase it to a large number (e.g, 200) using the 'useDataMultiplier' hook.`
       );
     }
-    // TODO: Fix private property access
     const distanceFromWindow = roundToDecimalPlaces(
-      (ref.current as any).distanceFromWindow,
+      ref.current.getFirstItemOffset(),
       0
     );
     if (

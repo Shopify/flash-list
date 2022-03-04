@@ -134,6 +134,7 @@ class FlashList<T> extends React.PureComponent<
   private transformStyle = { transform: [{ scaleY: -1 }] };
   private distanceFromWindow = 0;
   private contentStyle: ContentStyle = {};
+  private onEndReachedDisabled = false;
 
   static defaultProps = {
     data: [],
@@ -267,8 +268,10 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private onEndReached = () => {
-    // known issue: RLV doesn't report distanceFromEnd
-    this.props.onEndReached?.({ distanceFromEnd: 0 });
+    if (!this.onEndReachedDisabled) {
+      // known issue: RLV doesn't report distanceFromEnd
+      this.props.onEndReached?.({ distanceFromEnd: 0 });
+    }
   };
 
   private getRefreshControl = () => {
@@ -637,6 +640,12 @@ class FlashList<T> extends React.PureComponent<
 
   public getScrollableNode(): number | null {
     return this.rlvRef?.getScrollableNode?.() || null;
+  }
+  public forceDisableOnEndReachedCallback() {
+    this.onEndReachedDisabled = true;
+  }
+  public getFirstItemOffset() {
+    return this.distanceFromWindow;
   }
 }
 
