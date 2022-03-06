@@ -27,7 +27,7 @@ export interface BlankAreaBenchmarkResult {
 
 export function useBenchmark(
   ref: React.MutableRefObject<RecyclerFlatList<any>>,
-  callback: (profilerResponse: any) => void,
+  callback: (profilerResponse: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
   const blankAreaResult = {
@@ -46,6 +46,9 @@ export function useBenchmark(
     const cancellable = new Cancellable();
     const suggestions: string[] = [];
     if (ref.current) {
+      if (!(Number(ref.current.props.data?.length) > 0)) {
+        throw new Error("Data is empty, cannot run benchmark");
+      }
       ref.current.forceDisableOnEndReachedCallback();
     }
     const cancelTimeout = setTimeout(async () => {
@@ -100,6 +103,24 @@ export function useDataMultiplier<T>(data: T[], count): T[] {
     arr[i] = isObject ? { ...data[i % len] } : data[i % len];
   }
   return arr;
+}
+export function getFormattedString(res: BenchmarkResult) {
+  return (
+    `Results:\n\n` +
+    `JS FPS: Avg: ${res.js?.averageFps} | Min: ${res.js?.minFps} | Max: ${res.js?.maxFps}\n\n` +
+    `${
+      res.blankArea
+        ? `Blank Area: Max: ${res.blankArea?.maxBlankArea} Cumulative: ${res.blankArea?.cumulativeBlankArea}\n\n`
+        : ``
+    }` +
+    `${
+      res.suggestions.length > 0
+        ? `Suggestions:\n\n${res.suggestions
+            .map((value, index) => `${index + 1}. ${value}`)
+            .join("\n")}`
+        : ``
+    }`
+  );
 }
 
 async function runScrollBenchmark(
@@ -188,14 +209,4 @@ function computeSuggestions(
       }
     }
   }
-}
-function getFormattedString(res: BenchmarkResult) {
-  return (
-    `Results:\n\n` +
-    `JS FPS: Avg: ${res.js?.averageFps} | Min: ${res.js?.minFps} | Max: ${res.js?.maxFps}\n\n` +
-    `Blank Area: Max: ${res.blankArea?.maxBlankArea} Cumulative: ${res.blankArea?.cumulativeBlankArea}\n\n` +
-    `Suggestions:\n\n${res.suggestions
-      .map((value, index) => `${index + 1}. ${value}`)
-      .join("\n")}`
-  );
 }
