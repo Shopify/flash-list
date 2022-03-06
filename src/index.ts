@@ -14,6 +14,11 @@ export {
   useDataMultiplier,
   BenchmarkParams,
   BenchmarkResult,
+  BlankAreaBenchmarkResult,
 } from "./benchmark/useBenchmark";
+export {
+  useFlatListBenchmark,
+  FlatListBenchmarkParams,
+} from "./benchmark/useFlatListBenchmark";
 export { JSFpsMonitor, JSFPSResult } from "./benchmark/JSFpsMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
