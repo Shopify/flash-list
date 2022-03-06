@@ -9,7 +9,7 @@ export function autoScroll(
 ): Promise<boolean> {
   return new Promise((resolve) => {
     scrollable(fromX, fromY, false);
-    const incrementPerMs = 4 * speedMultiplier;
+    const incrementPerMs = 7 * speedMultiplier;
     const directionMultiplerX = toX > fromX ? 1 : -1;
     const directionMultiplerY = toY > fromY ? 1 : -1;
     const comparatorX = toX > fromX ? Math.min : Math.max;
