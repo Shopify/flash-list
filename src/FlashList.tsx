@@ -423,7 +423,7 @@ class FlashList<T> extends React.PureComponent<
           <View
             style={{
               flexDirection:
-                !this.props.horizontal && this.props.numColumns === 1
+                this.props.horizontal || this.props.numColumns === 1
                   ? "column"
                   : "row",
             }}
@@ -483,6 +483,9 @@ class FlashList<T> extends React.PureComponent<
   private separator = (index) => {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
+    if (trailingItem === undefined) {
+      return null;
+    }
     const props = {
       leadingItem,
       trailingItem,
