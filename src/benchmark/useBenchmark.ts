@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { BlankAreaEvent } from "../AutoLayoutView";
-import RecyclerFlatList from "../RecyclerFlatList";
+import FlashList from "../FlashList";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFpsMonitor, JSFPSResult } from "./JSFpsMonitor";
@@ -26,7 +26,7 @@ export interface BlankAreaBenchmarkResult {
 }
 
 export function useBenchmark(
-  ref: React.MutableRefObject<RecyclerFlatList<any>>,
+  ref: React.MutableRefObject<FlashList<any>>,
   callback: (profilerResponse: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
@@ -124,7 +124,7 @@ export function getFormattedString(res: BenchmarkResult) {
 }
 
 async function runScrollBenchmark(
-  ref: React.MutableRefObject<RecyclerFlatList<any>>,
+  ref: React.MutableRefObject<FlashList<any>>,
   cancellable: Cancellable,
   scrollSpeedMultiplier: number
 ): Promise<void> {
@@ -169,7 +169,7 @@ async function runScrollBenchmark(
   }
 }
 function computeSuggestions(
-  ref: React.MutableRefObject<RecyclerFlatList<any>>,
+  ref: React.MutableRefObject<FlashList<any>>,
   suggestions: string[]
 ) {
   if (ref.current) {
