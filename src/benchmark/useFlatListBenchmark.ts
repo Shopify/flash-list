@@ -15,6 +15,11 @@ export interface FlatListBenchmarkParams extends BenchmarkParams {
   targetOffset: number;
 }
 
+/**
+ * Runs the benchmark on FlatList and calls the callback method with the result.
+ * Target offset is mandatory in params.
+ * It's recommended to remove pagination while running the benchmark. Removing the onEndReached callback is the easiest way to do that.
+ */
 export function useFlatListBenchmark(
   ref: React.MutableRefObject<FlatList<any>>,
   callback: (profilerResponse: BenchmarkResult) => void,
@@ -46,7 +51,7 @@ export function useFlatListBenchmark(
         result.formattedString = getFormattedString(result);
       }
       callback(result);
-    }, params.startAfterMs || 3000);
+    }, params.startDelayInMs || 3000);
     return () => {
       clearTimeout(cancelTimeout);
       cancellable.cancel();

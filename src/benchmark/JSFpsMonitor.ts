@@ -1,5 +1,9 @@
 import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
 
+/**
+ * Can be used to monitor JS thread performance
+ * Use startTracking() and stopAndGetData() to start and stop tracking
+ */
 export class JSFpsMonitor {
   private startTime = 0;
   private frameCount = 0;

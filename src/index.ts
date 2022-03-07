@@ -11,11 +11,11 @@ export {
 } from "./AutoLayoutView";
 export {
   useBenchmark,
-  useDataMultiplier,
   BenchmarkParams,
   BenchmarkResult,
   BlankAreaBenchmarkResult,
 } from "./benchmark/useBenchmark";
+export { useDataMultiplier } from "./benchmark/useDataMultiplier";
 export {
   useFlatListBenchmark,
   FlatListBenchmarkParams,

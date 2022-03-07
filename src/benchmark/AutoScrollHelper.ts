@@ -1,3 +1,14 @@
+/**
+ * This method can be used to trigger scroll events that can be forwarded to an element. Anything that implements scrollable can leverage this.
+ * @param scrollable The scrollable element
+ * @param fromX The x offset to start from
+ * @param fromY The y offset to start from
+ * @param toX the x offset to end scroll at
+ * @param toY the y offset to end scroll at
+ * @param speedMultiplier  the speed multiplier to use
+ * @param cancellable can be used to cancel the scroll
+ * @returns
+ */
 export function autoScroll(
   scrollable: (x: number, y: number, animated: boolean) => void,
   fromX: number,

@@ -8,7 +8,9 @@ import { JSFpsMonitor, JSFPSResult } from "./JSFpsMonitor";
 import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
 
 export interface BenchmarkParams {
-  startAfterMs?: number;
+  startDelayInMs?: number;
+
+  // Can be used to increase or decrease speed of scrolling
   speedMultiplier?: number;
 }
 
@@ -24,6 +26,12 @@ export interface BlankAreaBenchmarkResult {
   maxBlankArea: number;
   cumulativeBlankArea: number;
 }
+
+/**
+ * Runs the benchmark on FlashList.
+ * Response object has a formatted string that can be printed to the console or, shown as an alert.
+ * Result is posted to the callback method passed to the hook.
+ */
 
 export function useBenchmark(
   ref: React.MutableRefObject<FlashList<any>>,
@@ -84,7 +92,7 @@ export function useBenchmark(
         result.formattedString = getFormattedString(result);
       }
       callback(result);
-    }, params.startAfterMs || 3000);
+    }, params.startDelayInMs || 3000);
     return () => {
       clearTimeout(cancelTimeout);
       cancellable.cancel();
@@ -92,18 +100,7 @@ export function useBenchmark(
   });
   return [blankAreaTracker];
 }
-export function useDataMultiplier<T>(data: T[], count): T[] {
-  const len = data.length;
-  const arr = new Array<T>(count);
-  let isObject = false;
-  if (typeof data[0] === "object") {
-    isObject = true;
-  }
-  for (let i = 0; i < count; i++) {
-    arr[i] = isObject ? { ...data[i % len] } : data[i % len];
-  }
-  return arr;
-}
+
 export function getFormattedString(res: BenchmarkResult) {
   return (
     `Results:\n\n` +
