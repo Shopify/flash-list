@@ -1,14 +1,14 @@
 module.exports = {
-  title: "RecyclerFlatList",
+  title: "FlashList",
   tagline:
-    "RecyclerFlatList is a more performant replacement of the FlatList component.",
-  url: "https://recycler-flat-list.docs.shopify.io",
+    "FlashList is a more performant replacement of the FlatList component.",
+  url: "https://flash-list.docs.shopify.io",
   baseUrl: "/",
   onBrokenLinks: "error",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
   organizationName: "Shopify",
-  projectName: "recycler-flat-list",
+  projectName: "flash-list",
   themeConfig: {
     colorMode: {
       respectPrefersColorScheme: true,
@@ -17,10 +17,10 @@ module.exports = {
       additionalLanguages: ["ruby", "sql"],
     },
     navbar: {
-      title: "RecyclerFlatList",
+      title: "FlashList",
       items: [
         {
-          href: "https://github.com/shopify/recycler-flat-list",
+          href: "https://github.com/shopify/flash-list",
           label: "GitHub",
           position: "right",
         },
@@ -43,7 +43,7 @@ module.exports = {
           items: [
             {
               label: "GitHub",
-              href: "https://github.com/shopify/recycler-flat-list",
+              href: "https://github.com/shopify/flash-list",
             },
           ],
         },
@@ -73,7 +73,7 @@ module.exports = {
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
-            "https://github.com/shopify/recycler-flat-list/edit/main/docusaurus/",
+            "https://github.com/shopify/flash-list/edit/main/docusaurus/",
         },
         blog: false,
         pages: false,

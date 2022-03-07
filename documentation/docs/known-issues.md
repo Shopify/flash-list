@@ -7,15 +7,15 @@ sidebar_position: 1
 
 # Known Issues
 
-RecyclerFlatList and FlatList have very different internal. While the API is almost the same, the behaviour might be different in some cases due to a bug, limitation or missing implementation. In any case, if the issue is already listed here don't create a new one.
+FlashList and FlatList have very different internal. While the API is almost the same, the behaviour might be different in some cases due to a bug, limitation or missing implementation. In any case, if the issue is already listed here don't create a new one.
 
 ### 1) List is not loading
 
-`estimatedItemSize` is a required prop in RecyclerFlatList. Due to project setup sometimes typescript may not prompt you about this. This will be improved in the future with correct exceptions being thrown at the right places. As of now, this is the first thing you should check. Please note that you should provide average height for vertical lists and width for horizontal ones.
+`estimatedItemSize` is a required prop in FlashList. Due to project setup sometimes typescript may not prompt you about this. This will be improved in the future with correct exceptions being thrown at the right places. As of now, this is the first thing you should check. Please note that you should provide average height for vertical lists and width for horizontal ones.
 
 ### 2) recyclerlistview requires a bounded size exception
 
-RecyclerFlatList uses [recyclerlistview](https://github.com/Flipkart/recyclerlistview) to leverage recycling capability. `recyclerlistview` requires deterministic boundaries, this doesn't mean fixed height/width and could just be `flex:1`. It should mount with some height and width. Layout setups like `flex-start` on parent will not work. If you can't do this then a nice workaround is to use `estimatedListSize` prop. If your list is fullscreen, you can just pass `Dimensions.get("window")`. It's good to pass accurate values.
+FlashList uses [recyclerlistview](https://github.com/Flipkart/recyclerlistview) to leverage recycling capability. `recyclerlistview` requires deterministic boundaries, this doesn't mean fixed height/width and could just be `flex:1`. It should mount with some height and width. Layout setups like `flex-start` on parent will not work. If you can't do this then a nice workaround is to use `estimatedListSize` prop. If your list is fullscreen, you can just pass `Dimensions.get("window")`. It's good to pass accurate values.
 
 Please note most lists do mount with deterministic sizes so make sure to check if you really need workarounds.
 

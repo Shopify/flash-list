@@ -13,7 +13,7 @@ steps:
 
   # Publish the Website on the microsites ".docs.shopify.io" domain
   # Only executes on the main branch, after PRs get merged
-  # https://buildkite.com/shopify/recycler-flat-list-docs
+  # https://buildkite.com/shopify/flash-list-docs
   - label: Publish Documentation Website
     branches: "main"
     container: docs_container
@@ -21,4 +21,4 @@ steps:
     git:
       history: shallow
     run:
-      - cd /projects/api-node && ./assemble --type=docs --microsite-root=/documentation --override-subdomain=recycler-flat-list
+      - cd /projects/api-node && ./assemble --type=docs --microsite-root=/documentation --override-subdomain=flash-list

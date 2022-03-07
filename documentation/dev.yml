@@ -1,4 +1,4 @@
-name: recycler-flat-list
+name: flash-list
 up:
   - node:
       version: v16.13.0

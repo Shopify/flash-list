@@ -356,11 +356,11 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
+  - RNFlashList (0.1.0):
+    - React-Core
+  - RNFlashList/Tests (0.1.0):
+    - React-Core
   - RNGestureHandler (2.2.0):
-    - React-Core
-  - RNRecyclerFlatList (0.0.6):
-    - React-Core
-  - RNRecyclerFlatList/Tests (0.0.6):
     - React-Core
   - RNScreens (3.10.2):
     - React-Core
@@ -432,9 +432,9 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "ReactNativePerformanceListsProfiler (from `../node_modules/@shopify/react-native-performance-lists-profiler`)"
   - RNFastImage (from `../node_modules/react-native-fast-image`)
+  - RNFlashList (from `../../RNFlashList.podspec`)
+  - RNFlashList/Tests (from `../../RNFlashList.podspec`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
-  - RNRecyclerFlatList (from `../../RNRecyclerFlatList.podspec`)
-  - RNRecyclerFlatList/Tests (from `../../RNRecyclerFlatList.podspec`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -525,10 +525,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@shopify/react-native-performance-lists-profiler"
   RNFastImage:
     :path: "../node_modules/react-native-fast-image"
+  RNFlashList:
+    :path: "../../RNFlashList.podspec"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
-  RNRecyclerFlatList:
-    :path: "../../RNRecyclerFlatList.podspec"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -582,14 +582,14 @@ SPEC CHECKSUMS:
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   ReactNativePerformanceListsProfiler: 68334bc2a688cdd6762dcf0a71fe9f84abdfa0c9
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
+  RNFlashList: 7060ac139635ea64b9af68243c3671a870e7f7bd
   RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
-  RNRecyclerFlatList: 47bb21eaf6a9fd15b4c4460c7f9a84e1a9d9a3bf
   RNScreens: d6da2b9e29cf523832c2542f47bf1287318b1868
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 19f8189973cedad1c4e37b51441d72853743d2c4
+PODFILE CHECKSUM: 56d78678894f84b79771e7bd698f2432511b9e41
 
 COCOAPODS: 1.11.2

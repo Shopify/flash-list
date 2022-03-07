@@ -12,7 +12,7 @@ target 'FlatListPro' do
     :hermes_enabled => false
   )
 
-  pod "RNRecyclerFlatList", path: "../../RNRecyclerFlatList.podspec", testspecs: ['Tests'], inhibit_warnings: false
+  pod "RNFlashList", path: "../../RNFlashList.podspec", testspecs: ['Tests'], inhibit_warnings: false
 
   # Enables Flipper.
   #

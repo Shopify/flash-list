@@ -1,5 +1,5 @@
 {
-  "name": "@shopify/recycler-flat-list",
+  "name": "@shopify/flash-list",
   "version": "0.1.0",
   "keywords": [
     "react-native"
@@ -7,10 +7,10 @@
   "publishConfig": {
     "access": "restricted"
   },
-  "description": "RecyclerFlatList is a more performant FlatList replacement",
+  "description": "FlashList is a more performant FlatList replacement",
   "author": "shopify",
   "license": "MIT",
-  "homepage": "https://github.com/shopify/recycler-flat-list#readme",
+  "homepage": "https://github.com/shopify/flash-list#readme",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
@@ -50,7 +50,7 @@
     "android",
     "ios",
     "dist",
-    "RNRecyclerFlatList.podspec",
+    "RNFlashList.podspec",
     "src"
   ],
   "dependencies": {

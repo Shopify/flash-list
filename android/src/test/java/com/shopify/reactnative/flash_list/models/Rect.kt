@@ -1,6 +1,6 @@
-package com.shopify.reactnative.recycler_flat_list.models
+package com.shopify.reactnative.flash_list.models
 
-import com.shopify.reactnative.recycler_flat_list.CellContainer
+import com.shopify.reactnative.flash_list.CellContainer
 
 class Rect (h: Int? = 0, w: Int? = 0): CellContainer {
     private var left = 0
