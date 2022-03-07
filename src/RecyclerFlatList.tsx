@@ -6,7 +6,6 @@ import {
   LayoutChangeEvent,
   ViewStyle,
   ColorValue,
-  Dimensions,
 } from "react-native";
 import {
   DataProvider,
@@ -309,7 +308,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
      * In order to 100% adopt FlatList'a API, RecyclerFlatList converts percentage to pixels used by ProgressiveListView
      */
     const endDetectionThreshold = onEndReachedThreshold
-      ? screenSizeRatioToPixels(onEndReachedThreshold, !!horizontal)
+      ? screenSizeRatioToPixels(onEndReachedThreshold, Boolean(horizontal))
       : onEndReachedThreshold;
 
     return (
