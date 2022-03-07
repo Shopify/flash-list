@@ -23,6 +23,7 @@ import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
+import { screenSizeRatioToPixels } from "./ScreenRatioHelper";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
@@ -302,11 +303,14 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
 
-    // TODO: Wait for #104 (https://github.com/Shopify/recycler-flat-list/issues/104) to be fixed and remove this. Temp workaround
-    const endDetectionThreshold =
-      (horizontal
-        ? Dimensions.get("window").width
-        : Dimensions.get("window").height) * (onEndReachedThreshold || 0);
+    /**
+     * RecyclerListView uses number of pixels for onEndReachedThreshold (ex: 100px).
+     * FlatList uses percentage of screen (ex: 0.2).
+     * In order to 100% adopt FlatList'a API, RecyclerFlatList converts percentage to pixels used by ProgressiveListView
+     */
+    const endDetectionThreshold = onEndReachedThreshold
+      ? screenSizeRatioToPixels(onEndReachedThreshold, !!horizontal)
+      : onEndReachedThreshold;
 
     return (
       <StickyHeaderContainer
