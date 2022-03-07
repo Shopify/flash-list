@@ -171,7 +171,7 @@ class FlashList<T> extends React.PureComponent<
     if (Number(this.props.numColumns) > 1 && this.props.horizontal) {
       throw new CustomError(ExceptionList.columnsWhileHorizontalNotSupported);
     }
-    if (this.props.style) {
+    if (Object.keys(this.props.style || {}).length > 0) {
       console.warn(WarningList.styleUnsupported);
     }
     const contentStyleInfo = this.getContentContainerInfo();
