@@ -1,11 +1,11 @@
-package com.shopify.reactnative.recycler_flat_list
+package com.shopify.reactnative.flash_list
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
 
-class ReactNativeRecyclerFlatListPackage : ReactPackage {
+class ReactNativeFlashListPackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
     return listOf()
   }

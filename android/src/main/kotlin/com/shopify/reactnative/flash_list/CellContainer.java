@@ -1,4 +1,4 @@
-package com.shopify.reactnative.recycler_flat_list;
+package com.shopify.reactnative.flash_list;
 
 public interface CellContainer {
     void setIndex(int value);

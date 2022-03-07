@@ -1,5 +1,5 @@
 import XCTest
-@testable import RNRecyclerFlatList
+@testable import RNFlashList
 
 class AutoLayoutViewTests: XCTestCase {
     var autoLayoutView: AutoLayoutView!

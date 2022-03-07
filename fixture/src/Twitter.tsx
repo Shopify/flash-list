@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { RecyclerFlatList } from "@shopify/recycler-flat-list";
+import { FlashList } from "@shopify/flash-list";
 import { RecyclerFlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import { tweets } from "./data/tweets";
@@ -9,7 +9,7 @@ import TweetCell from "./TweetCell";
 const Twitter = () => {
   return (
     <RecyclerFlatListPerformanceView listName="Twitter">
-      <RecyclerFlatList
+      <FlashList
         keyExtractor={(item) => {
           return item.id;
         }}

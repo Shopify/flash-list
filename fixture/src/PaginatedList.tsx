@@ -5,7 +5,7 @@
 import { useLinkProps } from "@react-navigation/native";
 import React from "react";
 import { View, Text } from "react-native";
-import { RecyclerFlatList } from "@shopify/recycler-flat-list";
+import { FlashList } from "@shopify/flash-list";
 
 export interface PaginatedListState {
   elems: any[];
@@ -31,7 +31,7 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
 
   render() {
     return (
-      <RecyclerFlatList
+      <FlashList
         keyExtractor={(item) => {
           return item;
         }}

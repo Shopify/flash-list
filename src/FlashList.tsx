@@ -30,7 +30,7 @@ interface StickyProps extends StickyContainerProps {
 const StickyHeaderContainer =
   StickyContainer as React.ComponentClass<StickyProps>;
 
-export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
+export interface FlashListProps<T> extends FlatListProps<T> {
   // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
   /**
    * Average or median size for elements in the list. Doesn't have to be very accurate but a good estimate can work better.
@@ -101,10 +101,10 @@ export interface RecyclerFlatListProps<T> extends FlatListProps<T> {
   contentContainerStyle?: ContentStyle;
 }
 
-export interface RecyclerFlatListState<T> {
+export interface FlashListState<T> {
   dataProvider: DataProvider;
   numColumns: number;
-  layoutProvider: GridLayoutProviderWithProps<RecyclerFlatListProps<T>>;
+  layoutProvider: GridLayoutProviderWithProps<FlashListProps<T>>;
   data?: ReadonlyArray<T> | null;
   extraData?: ExtraData<unknown>;
 }
@@ -124,9 +124,9 @@ export interface ContentStyle {
   paddingHorizontal?: string | number;
 }
 
-class RecyclerFlatList<T> extends React.PureComponent<
-  RecyclerFlatListProps<T>,
-  RecyclerFlatListState<T>
+class FlashList<T> extends React.PureComponent<
+  FlashListProps<T>,
+  FlashListState<T>
 > {
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
   private stickyContentContainerRef?: PureComponentWrapper;
@@ -140,7 +140,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     numColumns: 1,
   };
 
-  constructor(props: RecyclerFlatListProps<T>) {
+  constructor(props: FlashListProps<T>) {
     super(props);
     this.validateProps();
     if (props.estimatedListSize) {
@@ -152,7 +152,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     }
     this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
     // eslint-disable-next-line react/state-in-constructor
-    this.state = RecyclerFlatList.getInitialMutableState();
+    this.state = FlashList.getInitialMutableState();
   }
 
   private validateProps() {
@@ -185,13 +185,13 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
   // Some of the state variables need to update when props change
   static getDerivedStateFromProps<T>(
-    nextProps: RecyclerFlatListProps<T>,
-    prevState: RecyclerFlatListState<T>
-  ): RecyclerFlatListState<T> {
+    nextProps: FlashListProps<T>,
+    prevState: FlashListState<T>
+  ): FlashListState<T> {
     const newState = { ...prevState };
     if (prevState.numColumns !== nextProps.numColumns) {
       newState.numColumns = nextProps.numColumns || 1;
-      newState.layoutProvider = RecyclerFlatList.getLayoutProvider<T>(
+      newState.layoutProvider = FlashList.getLayoutProvider<T>(
         newState.numColumns,
         nextProps
       );
@@ -210,7 +210,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
     return newState;
   }
 
-  private static getInitialMutableState<T>(): RecyclerFlatListState<T> {
+  private static getInitialMutableState<T>(): FlashListState<T> {
     return {
       data: null,
       layoutProvider: null!!,
@@ -224,9 +224,9 @@ class RecyclerFlatList<T> extends React.PureComponent<
   // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
   private static getLayoutProvider<T>(
     numColumns: number,
-    props: RecyclerFlatListProps<T>
+    props: FlashListProps<T>
   ) {
-    return new GridLayoutProviderWithProps<RecyclerFlatListProps<T>>(
+    return new GridLayoutProviderWithProps<FlashListProps<T>>(
       // max span or, total columns
       numColumns,
       (index, props) => {
@@ -302,7 +302,7 @@ class RecyclerFlatList<T> extends React.PureComponent<
 
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
 
-    // TODO: Wait for #104 (https://github.com/Shopify/recycler-flat-list/issues/104) to be fixed and remove this. Temp workaround
+    // TODO: Wait for #104 (https://github.com/Shopify/flash-list/issues/104) to be fixed and remove this. Temp workaround
     const endDetectionThreshold =
       (horizontal
         ? Dimensions.get("window").width
@@ -629,4 +629,4 @@ class RecyclerFlatList<T> extends React.PureComponent<
   }
 }
 
-export default RecyclerFlatList;
+export default FlashList;

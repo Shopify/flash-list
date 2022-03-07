@@ -4,7 +4,7 @@
  */
 import React from "react";
 import { View, Text } from "react-native";
-import { RecyclerFlatList } from "@shopify/recycler-flat-list";
+import { FlashList } from "@shopify/flash-list";
 
 /** *
  * To test out just copy this component and render in you root component
@@ -24,7 +24,7 @@ export default class List extends React.Component {
 
   render() {
     return (
-      <RecyclerFlatList
+      <FlashList
         refreshing={this.state.refreshing}
         onRefresh={() => {
           this.setState({ refreshing: true });

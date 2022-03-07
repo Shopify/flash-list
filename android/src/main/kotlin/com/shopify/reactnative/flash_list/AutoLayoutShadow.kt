@@ -1,4 +1,4 @@
-package com.shopify.reactnative.recycler_flat_list
+package com.shopify.reactnative.flash_list
 
 class AutoLayoutShadow {
     var horizontal: Boolean = false

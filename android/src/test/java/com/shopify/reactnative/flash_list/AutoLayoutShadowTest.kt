@@ -1,8 +1,8 @@
-package com.shopify.reactnative.recycler_flat_list
+package com.shopify.reactnative.flash_list
 
 import com.google.gson.Gson
-import com.shopify.reactnative.recycler_flat_list.models.Rect
-import com.shopify.reactnative.recycler_flat_list.models.TestDataModel
+import com.shopify.reactnative.flash_list.models.Rect
+import com.shopify.reactnative.flash_list.models.TestDataModel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

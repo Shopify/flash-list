@@ -1,9 +1,9 @@
 export {
-  default as RecyclerFlatList,
-  RecyclerFlatListProps,
+  default as FlashList,
+  FlashListProps,
   ContentStyle,
-} from "./RecyclerFlatList";
-export { default as AnimatedRecyclerFlatList } from "./AnimatedRecyclerFlatList";
+} from "./FlashList";
+export { default as AnimatedFlashList } from "./AnimatedFlashList";
 export {
   useOnNativeBlankAreaEvents,
   BlankAreaEventHandler,
