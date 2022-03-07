@@ -1,4 +1,3 @@
-// import { useWindowDimensions } from "react-native";
 import { PixelRatio, Dimensions } from "react-native";
 
 export const screenSizeRatioToPixels = (
