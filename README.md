@@ -8,7 +8,7 @@ Check out [the Vault project](https://vault.shopify.io/projects/22845) to learn 
 
 ---
 
-[Documentation 📚](https://react-native-performance.docs.shopify.io/)
+[Documentation 📚](https://flash-list.docs.shopify.io/)
 
 ## How to use this repo
 
