@@ -38,11 +38,9 @@ const MyList = () => {
 
 Most of the props from `FlatList` are available in `FlashList`, too. The behavior and usage of those props should be the same. You can read more about the props available in both `FlatList` and `FlashList` [here](https://reactnative.dev/docs/flatlist).
 
-The following props from `FlatList` are currently not available:
+The following props from `FlatList` are currently not implemented:
 
-- [`initialNumToRender`](https://reactnative.dev/docs/flatlist#initialnumtorender)
 - [`columnWrapperStyle`](https://reactnative.dev/docs/flatlist#columnwrapperstyle)
-- [`getItemLayout`](https://reactnative.dev/docs/flatlist#getItemLayout)
 - [`viewabilityConfig`](https://reactnative.dev/docs/flatlist#viewabilityconfig)
 - [`onViewableItemsChanged`](https://reactnative.dev/docs/flatlist#onviewableitemschanged)
 - [`viewabilityConfigCallbackPairs`](https://reactnative.dev/docs/flatlist#viewabilityconfigcallbackpairs)
@@ -50,6 +48,13 @@ The following props from `FlatList` are currently not available:
 - [`getNativeScrollRef()`​](https://reactnative.dev/docs/flatlist#getnativescrollref)
 - [`getScrollResponder()`](https://reactnative.dev/docs/flatlist#getscrollresponder)
 - [`recordInteraction()`](https://reactnative.dev/docs/flatlist#recordinteraction)
+
+There are also `FlatList` props that would bring no value if ported to `FlashList` due to the differences in their underlying implementation:
+
+- [`initialNumToRender`](https://reactnative.dev/docs/flatlist#initialnumtorender)
+- [`getItemLayout`](https://reactnative.dev/docs/flatlist#getItemLayout)
+
+We don't plan to implement these props.
 
 # FlashList props
 
