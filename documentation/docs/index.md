@@ -1,6 +1,6 @@
 ---
 id: introduction
-title: Introduction
+title: Introduction 📚
 slug: /
 sidebar_position: 0
 ---
@@ -17,12 +17,16 @@ Check out [the Vault project](https://vault.shopify.io/projects/22845) to learn 
 
 ### Adding a package to your project
 
-Add the package to your project via `yarn add @shopify/flash-list recyclerlistview@3.1.0-beta.5`, and run pod install in the `ios` directory.
+Add the package to your project via `yarn add @shopify/flash-list recyclerlistview@3.1.0-beta.5` and run `pod install` in the `ios` directory.
 
-Note that [`recyclerlistview`](https://github.com/Flipkart/recyclerlistview) is a peer dependency of `@shopify/flash-list`
+:::note
+[`recyclerlistview`](https://github.com/Flipkart/recyclerlistview) is a peer dependency of `@shopify/flash-list`.
+:::
+
+### Usage
+
+Read more about the usage of `FlashList` [here](/usage)
 
 ### App / Playground
 
 The [fixture](https://github.com/Shopify/flash-list/tree/main/fixture) is an example app showing how to use the library.
-
-<!-- TODO: Add the snapshots -->
