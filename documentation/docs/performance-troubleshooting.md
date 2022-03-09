@@ -11,11 +11,11 @@ sidebar_position: 2
 Before assessing whether list's performance is subpar, make sure you are in release mode. On Android, you can disable JS dev mode inside the developer menu, whereas you need to run the release configuration on iOS.
 :::
 
-For profiling the list's overall performance, you can use variety of tools and metrics.
+The following metrics can be used for profiling the list's overall performance:
 
-For blank spaces, you can use the built-in [`onBlankArea`](/usage#onBlankArea) event. You can also use this event for tracking this metric in production. Alternatively, you can use [react-native-performance-lists-profiler](https://react-native-performance.docs.shopify.io/guides/react-native-performance-lists-profiler) package which also comes with a Flipper plugin. Apart from blank spaces, you can use the package to track TTI (time-to-interactive) of the list. This is a great option for local profiling - however, we do not recommend using it currently in production.
-
-For FPS, you can either use the built-in performance monitor or we recommend [this](https://github.com/bamlab/react-native-performance) opensource plugin. Using native profilers in Xcode and Android Studio is a yet-another option.
+- **blank area - a size of a visible blank area on scroll.** Use the built-in [`onBlankArea`](/usage#onBlankArea) event to get it reported. You can also use this event for tracking this metric in production. Alternatively, you can use [react-native-performance-lists-profiler](https://react-native-performance.docs.shopify.io/guides/react-native-performance-lists-profiler) package which also comes with a Flipper plugin.
+- **TTI - time-to-interactive of the list.** Comes along with blank area as part of [react-native-performance-lists-profiler](https://react-native-performance.docs.shopify.io/guides/react-native-performance-lists-profiler) package. This is a great option for local profiling - however, we do not recommend using it currently in production.
+- **FPS - frames per second.** For FPS, you can either use the built-in performance monitor or we recommend [this](https://github.com/bamlab/react-native-performance) opensource plugin. Using native profilers in Xcode and Android Studio is a yet-another option.
 
 ## How to improve performance
 
