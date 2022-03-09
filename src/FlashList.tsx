@@ -171,7 +171,9 @@ class FlashList<T> extends React.PureComponent<
     if (Number(this.props.numColumns) > 1 && this.props.horizontal) {
       throw new CustomError(ExceptionList.columnsWhileHorizontalNotSupported);
     }
-    if (this.props.style) {
+
+    // `createAnimatedComponent` always passes a blank style object. To avoid warning while using AnimatedFlashList we've modified the check
+    if (Object.keys(this.props.style || {}).length > 0) {
       console.warn(WarningList.styleUnsupported);
     }
     const contentStyleInfo = this.getContentContainerInfo();
@@ -423,7 +425,7 @@ class FlashList<T> extends React.PureComponent<
           <View
             style={{
               flexDirection:
-                !this.props.horizontal && this.props.numColumns === 1
+                this.props.horizontal || this.props.numColumns === 1
                   ? "column"
                   : "row",
             }}
@@ -483,6 +485,9 @@ class FlashList<T> extends React.PureComponent<
   private separator = (index) => {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
+    if (trailingItem === undefined) {
+      return null;
+    }
     const props = {
       leadingItem,
       trailingItem,
