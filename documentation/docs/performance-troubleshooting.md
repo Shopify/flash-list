@@ -7,7 +7,9 @@ sidebar_position: 2
 
 ## Profiling
 
+:::note
 Before assessing whether list's performance is subpar, make sure you are in release mode. On Android, you can disable JS dev mode inside the developer menu, whereas you need to run the release configuration on iOS.
+:::
 
 For profiling the list's overall performance, you can use variety of tools and metrics.
 
