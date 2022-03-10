@@ -19,10 +19,10 @@ steps:
     timeout: 20m
     run:
       - yarn
+      - yarn run build
       - cd fixture
       - yarn
       - mkdir -p /tmp/artifacts
-      - yarn run build
       - yarn react-native bundle --entry-file index.js --platform ios --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
     artifact_paths:
       - path: /tmp/artifacts
