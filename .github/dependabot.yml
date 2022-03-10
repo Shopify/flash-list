@@ -28,3 +28,16 @@ updates:
       interval: weekly
     open-pull-requests-limit: 100
     registries: "*"
+  - package-ecosystem: bundler
+    directory: "/fixture"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 100
+    insecure-external-code-execution: allow
+    registries: "*"
+  - package-ecosystem: npm
+    directory: "/fixture"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 100
+    registries: "*"
