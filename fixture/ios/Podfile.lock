@@ -356,9 +356,9 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFlashList (0.1.0):
+  - RNFlashList (0.2.1):
     - React-Core
-  - RNFlashList/Tests (0.1.0):
+  - RNFlashList/Tests (0.2.1):
     - React-Core
   - RNGestureHandler (2.2.0):
     - React-Core
@@ -582,7 +582,7 @@ SPEC CHECKSUMS:
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   ReactNativePerformanceListsProfiler: 68334bc2a688cdd6762dcf0a71fe9f84abdfa0c9
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
-  RNFlashList: 7060ac139635ea64b9af68243c3671a870e7f7bd
+  RNFlashList: 2c3c0fed6997ec5f462627e5126246200c45681a
   RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
   RNScreens: d6da2b9e29cf523832c2542f47bf1287318b1868
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
