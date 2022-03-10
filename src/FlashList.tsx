@@ -161,7 +161,7 @@ class FlashList<T> extends React.PureComponent<
     }
     this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
     // eslint-disable-next-line react/state-in-constructor
-    this.state = FlashList.getInitialMutableState();
+    this.state = FlashList.getInitialMutableState(this);
   }
 
   private validateProps() {
@@ -221,13 +221,20 @@ class FlashList<T> extends React.PureComponent<
     return newState;
   }
 
-  private static getInitialMutableState<T>(): FlashListState<T> {
+  private static getInitialMutableState<T>(flashList): FlashListState<T> {
     return {
       data: null,
       layoutProvider: null!!,
-      dataProvider: new DataProvider((r1, r2) => {
-        return r1 !== r2;
-      }),
+      dataProvider: new DataProvider(
+        (r1, r2) => {
+          return r1 !== r2;
+        },
+        (index) => {
+          return flashList.props
+            .keyExtractor(flashList.props.data[index], index)
+            .toString();
+        }
+      ),
       numColumns: 0,
     };
   }
@@ -366,6 +373,7 @@ class FlashList<T> extends React.PureComponent<
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={initialScrollIndex || undefined}
           onItemLayout={this.raiseOnLoadEventIfNeeded}
+          optimizeForInsertDeleteAnimations
         />
       </StickyHeaderContainer>
     );
