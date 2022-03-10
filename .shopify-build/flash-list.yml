@@ -34,8 +34,8 @@ steps:
     run:
       - cd fixture
       - yarn
-      - mkdir -p /tmp/artifacts
-      - yarn react-native bundle --entry-file index.js --platform android --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
+      - cd android
+      - ./gradlew bundleDebugJsAndAssets
     artifact_paths:
       - path: /tmp/artifacts
         required: true
