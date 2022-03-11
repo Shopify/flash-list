@@ -9,7 +9,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@react-navigation/native": "^6.0.6",
+    "@react-navigation/native": "^6.0.8",
     "@react-navigation/stack": "^6.1.1",
     "@shopify/react-native-performance-lists-profiler": "^0.0.7",
     "react": "17.0.2",
