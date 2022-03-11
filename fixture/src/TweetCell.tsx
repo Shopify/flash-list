@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Image, Text } from "react-native";
 import FastImage from "react-native-fast-image";
-import { Author } from "./models/Author";
+import Author from "./models/Author";
 import Tweet from "./models/Tweet";
 
 export interface TweetCellProps {
