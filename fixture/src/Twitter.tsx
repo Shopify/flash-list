@@ -4,8 +4,7 @@ import { FlashList } from "@shopify/flash-list";
 import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import TweetCell from "./TweetCell";
-import Tweet from "./models/Tweet";
-const tweets: Tweet[] = require("./data/tweets.json");
+import { tweets } from "./data/tweets";
 
 const Twitter = () => {
   return (

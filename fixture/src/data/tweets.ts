@@ -1,4 +1,6 @@
-export const tweets = [
+import Tweet from "../models/tweet";
+
+export const tweets: Tweet[] = [
   {
     author: {
       name: "Aram Miquel",
