@@ -1,23 +1,11 @@
 import React from "react";
 import { StyleSheet, View, Image, Text } from "react-native";
 import FastImage from "react-native-fast-image";
+import { Author } from "./models/Author";
+import Tweet from "./models/Tweet";
 
-export interface Author {
-  name: string;
-  avatar: string;
-  screenName: string;
-}
-
-export interface TweetItem {
-  author: Author;
-  fullText: string;
-  retweetCount: number;
-  replyCount: number;
-  favoriteCount: number;
-}
-
-export interface Tweet {
-  item: TweetItem;
+export interface TweetCellProps {
+  tweet: Tweet;
 }
 
 const tweetActions = (retweets, comments, likes) => {
@@ -61,29 +49,28 @@ const GrayText = (props) => {
   return <Text style={styles.gray}>{props.children}</Text>;
 };
 
-const TweetCell = (tweet: Tweet) => {
-  const item = tweet.item;
+const TweetCell = ({ tweet }: TweetCellProps) => {
   return (
     <View style={styles.singleItem}>
       <View style={styles.row}>
-        {avatar(item.author)}
+        {avatar(tweet.author)}
         <View style={{ flexShrink: 1, flexGrow: 1 }}>
           <View style={styles.rowTop}>
             <Text numberOfLines={1} style={styles.header}>
-              {item.author.name}
+              {tweet.author.name}
             </Text>
             <GrayText style={{ flexShrink: 1 }} numberOfLines={1}>
-              @{item.author.screenName}
+              @{tweet.author.screenName}
             </GrayText>
             <GrayText>·</GrayText>
             <GrayText>2h</GrayText>
           </View>
-          <Text style={styles.description}>{item.fullText}</Text>
+          <Text style={styles.description}>{tweet.fullText}</Text>
           <View style={styles.rowActions}>
             {tweetActions(
-              item.retweetCount,
-              item.replyCount,
-              item.favoriteCount
+              tweet.retweetCount,
+              tweet.replyCount,
+              tweet.favoriteCount
             )}
           </View>
         </View>

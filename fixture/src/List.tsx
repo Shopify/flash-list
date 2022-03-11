@@ -3,7 +3,7 @@
  A scrollable list with different item type
  */
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
 /** *
@@ -50,11 +50,11 @@ export default class List extends React.Component {
   }
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     justifyContent: "space-around",
     alignItems: "center",
     height: 120,
     backgroundColor: "#00a1f1",
   },
-};
+});

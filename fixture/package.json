@@ -6,7 +6,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "build": "tsc -b"
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.8",
@@ -19,7 +20,9 @@
     "react-native-gesture-handler": "^2.3.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.13.1",
-    "recyclerlistview": "3.1.0-beta.5"
+    "recyclerlistview": "3.1.0-beta.5",
+    "typescript": "^4.6.2",
+    "@shopify/flash-list": "link:../"
   },
   "devDependencies": {
     "babel-plugin-module-resolver": "^4.1.0",
