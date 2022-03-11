@@ -945,10 +945,10 @@
     color "^3.1.3"
     warn-once "^0.1.0"
 
-"@shopify/react-native-performance-lists-profiler@^0.0.3":
-  version "0.0.3"
-  resolved "https://npm.shopify.io/node/@shopify/react-native-performance-lists-profiler/-/0.0.3/react-native-performance-lists-profiler-0.0.3.tgz#4541179dac122ccaab08e2c0dc20bf33e15b3549"
-  integrity sha512-6W9dMXXxAYWqy76SlibS1EqYIMjdZdGMHng4zwyXwL6B92+Hq6tjQkiY9wcWFvClV6sxR5prihoq76N8D2cf1Q==
+"@shopify/react-native-performance-lists-profiler@^0.0.6":
+  version "0.0.6"
+  resolved "https://npm.shopify.io/node/@shopify/react-native-performance-lists-profiler/-/0.0.6/react-native-performance-lists-profiler-0.0.6.tgz#c1af937056d8a48b7b3c8a0074b91f19f36139af"
+  integrity sha512-StP0QJR1HmCePCRj2LtHT1kxQzLyhbGQvtBrlQvtQMuAQfvf2K1StyTVVicPhIMv3VAtLSarLIACbAgBrfLtfw==
 
 "@sideway/address@^4.1.3":
   version "4.1.3"
