@@ -1,4 +1,6 @@
-import Tweet from "../models/tweet";
+/* eslint max-len: 0 */
+
+import Tweet from "../models/Tweet";
 
 export const tweets: Tweet[] = [
   {
