@@ -26,7 +26,7 @@
     "@babel/runtime": "*",
     "react": "*",
     "react-native": "*",
-    "recyclerlistview": "3.1.0-beta.5"
+    "recyclerlistview": "3.1.0-beta.6"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

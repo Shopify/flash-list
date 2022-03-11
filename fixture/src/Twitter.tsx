@@ -22,10 +22,6 @@ const Twitter = () => {
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
         data={tweets}
-        onEndReachedThreshold={0.5}
-        onEndReached={() => {
-          console.log("onEndReached");
-        }}
       />
     </RecyclerFlatListPerformanceView>
   );

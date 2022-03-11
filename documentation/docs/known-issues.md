@@ -23,26 +23,22 @@ This is something that hasn't been implemented yet. It will be part of the first
 
 It's not implemented yet but will be part of final release.
 
-### 4) `onEndReachedThreshold` value isn't working
-
-Please note that value accepted is in dp/px and not a multiplier to window size. Please make the change accordingly. We will address this in the future.
-
-### 5) `onEndReached` event doesn't have `distanceFromEnd`
+### 4) `onEndReached` event doesn't have `distanceFromEnd`
 
 This value is reported as 0. We don't have plans to implement this right now. Please provide feedback if this is important to you.
 
-### 6)`scrollToIndex` doesn't have `offset` support
+### 5)`scrollToIndex` doesn't have `offset` support
 
 The list only guarantees to bring the given index in view port (as close to the top as possible). There is no support for additional customization.
 
-### 7) `renderItem` callback doesn't have all features
+### 6) `renderItem` callback doesn't have all features
 
 As of now we only provide relevant data and index. No plans to change this.
 
-### 8) `viewability` related callbacks are missing
+### 7) `viewability` related callbacks are missing
 
 We are planning to add a version of this but we can't guarantee if it will be exactly same a `FlatList`.
 
-### 9) Horizontal lists do not change height to match tallest child
+### 8) Horizontal lists do not change height to match tallest child
 
 As of now, horizontal lists need a fixed height. It's not possible to resize it based on height of the tallest child item. This is because children have absolute positions and cannot expand the parent. This is something we will address in the future. Please provide feedback if this is important to you. Using `onLayout` to measure and resize is a possible workaround but it can cause visible movement on screen.
