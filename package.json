@@ -35,7 +35,7 @@
     "@shopify/eslint-plugin": "^41.2.0",
     "@types/react-native": "0.66.4",
     "babel-jest": "^27.5.1",
-    "eslint": "7.14.0",
+    "eslint": "8.10.0",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.69.0",
     "react": "17.0.2",
