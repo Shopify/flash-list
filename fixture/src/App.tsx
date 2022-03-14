@@ -11,6 +11,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ListsProfiler } from "@shopify/react-native-performance-lists-profiler";
+import { Platform, UIManager } from "react-native";
 
 import List from "./List";
 import PaginatedList from "./PaginatedList";
@@ -23,6 +24,12 @@ import Reminders from "./Reminders";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
+  if (Platform.OS === "android") {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
+
   return (
     <ListsProfiler
       onInteractive={(TTI) => {

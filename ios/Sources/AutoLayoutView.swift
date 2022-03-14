@@ -74,11 +74,13 @@ import UIKit
     /// Sorts views by index and then invokes clearGaps which does the correction.
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
-        guard subviews.count > 1 else { return }
+        guard
+            subviews.count > 1,
+            layer.animationKeys()?.isEmpty == true
+        else { return }
         let cellContainers = subviews
             .compactMap { $0 as? CellContainer }
             .sorted(by: { $0.index < $1.index })
-        
         clearGaps(for: cellContainers)
     }
     
