@@ -98,6 +98,12 @@ export interface FlashListProps<T> extends FlatListProps<T> {
   onBlankArea?: BlankAreaEventHandler;
 
   contentContainerStyle?: ContentStyle;
+
+  /**
+   * This event is raised once the list has drawn items on the screen. It also reports elapsedTimeInMs which is the time it took to draw the items.
+   * If you're using ListEmptyComponent this event is raised as soon as ListEmptyComponent is rendered.
+   */
+  onLoadComplete?: (info: { elapsedTimeInMs: number }) => void;
 }
 
 export interface FlashListState<T> {
@@ -133,6 +139,8 @@ class FlashList<T> extends React.PureComponent<
   private transformStyle = { transform: [{ scaleY: -1 }] };
   private distanceFromWindow = 0;
   private contentStyle: ContentStyle = {};
+  private loadStartTime = 0;
+  private isListLoaded = false;
 
   static defaultProps = {
     data: [],
@@ -141,6 +149,7 @@ class FlashList<T> extends React.PureComponent<
 
   constructor(props: FlashListProps<T>) {
     super(props);
+    this.loadStartTime = Date.now();
     this.validateProps();
     if (props.estimatedListSize) {
       if (props.horizontal) {
@@ -282,6 +291,12 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
+  componentDidMount() {
+    if (this.props.data?.length === 0) {
+      this.raiseOnLoadEvent();
+    }
+  }
+
   render() {
     if (this.state.dataProvider.getSize() === 0) {
       return this.getValidComponent(this.props.ListEmptyComponent);
@@ -338,6 +353,7 @@ class FlashList<T> extends React.PureComponent<
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={initialScrollIndex || undefined}
+          onItemLayout={this.raiseOnLoadEvent}
         />
       </StickyHeaderContainer>
     );
@@ -588,6 +604,15 @@ class FlashList<T> extends React.PureComponent<
     const state = currentOffset >= this.distanceFromWindow;
     this.stickyContentContainerRef?.setEnabled(state);
     return state;
+  };
+
+  private raiseOnLoadEvent = () => {
+    if (!this.isListLoaded) {
+      this.isListLoaded = true;
+      this.props.onLoadComplete?.({
+        elapsedTimeInMs: Date.now() - this.loadStartTime,
+      });
+    }
   };
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
