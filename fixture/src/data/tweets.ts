@@ -1,4 +1,4 @@
-/* eslint max-len: 0 */
+/* eslint-disable max-len */
 
 import Tweet from "../models/Tweet";
 
