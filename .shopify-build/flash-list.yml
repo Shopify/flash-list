@@ -12,7 +12,6 @@ steps:
     timeout: 20m
     run:
       - yarn
-      - yarn run build
       - cd fixture
       - yarn
       - yarn run build
