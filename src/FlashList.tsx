@@ -359,7 +359,7 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
-  private container = (props, children) => {
+  private container = (props: object, children: any) => {
     return (
       <>
         <PureComponentWrapper
@@ -374,7 +374,9 @@ class FlashList<T> extends React.PureComponent<
         />
         <AutoLayoutView
           {...props}
-          onBlankAreaEvent={this.props.onBlankArea}
+          onBlankAreaEvent={(event) => {
+            this.props.onBlankArea?.(event);
+          }}
           onLayout={(event) => {
             this.distanceFromWindow = this.props.horizontal
               ? event.nativeEvent.layout.x
@@ -397,7 +399,11 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
-  private itemContainer = (props, parentProps, children) => {
+  private itemContainer = (
+    props: any,
+    parentProps: any,
+    children?: React.ReactNode
+  ) => {
     return (
       <ItemContainer
         {...props}
@@ -475,7 +481,7 @@ class FlashList<T> extends React.PureComponent<
     }
   }
 
-  private separator = (index) => {
+  private separator = (index: number) => {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
     if (trailingItem === undefined) {
@@ -528,7 +534,9 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
-  private getValidComponent(component) {
+  private getValidComponent(
+    component: React.ComponentType | React.ReactElement | null | undefined
+  ) {
     const PassedComponent = component;
     return (
       (React.isValidElement(PassedComponent) && PassedComponent) ||
@@ -538,8 +546,8 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private applyWindowCorrection = (
-    _,
-    __,
+    _: any,
+    __: any,
     correctionObject: { windowShift: number }
   ) => {
     correctionObject.windowShift = -this.distanceFromWindow;
@@ -555,7 +563,7 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
-  private rowRenderer = (_, data, index, extraData) => {
+  private rowRenderer = (_: any, data: any, index: number, extraData: any) => {
     // known issue: expected to pass separators which isn't available in RLV
     return this.props.renderItem?.({
       item: data,
@@ -572,7 +580,7 @@ class FlashList<T> extends React.PureComponent<
     this.stickyContentContainerRef = ref;
   };
 
-  private stickyRowRenderer = (_, data, index, extraData) => {
+  private stickyRowRenderer = (_: any, __: any, index: number, ___: any) => {
     return (
       <PureComponentWrapper
         ref={this.stickyContentRef}
