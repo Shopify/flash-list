@@ -104,7 +104,7 @@ export interface FlashListProps<T> extends FlatListProps<T> {
    * This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render.
    * If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
    */
-  onLoadComplete?: (info: { elapsedTimeInMs: number }) => void;
+  onLoad?: (info: { elapsedTimeInMs: number }) => void;
 }
 
 export interface FlashListState<T> {
@@ -610,7 +610,7 @@ class FlashList<T> extends React.PureComponent<
   private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
       this.isListLoaded = true;
-      this.props.onLoadComplete?.({
+      this.props.onLoad?.({
         elapsedTimeInMs: Date.now() - this.loadStartTime,
       });
     }

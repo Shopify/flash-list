@@ -7,7 +7,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- Added `onLoadComplete` event that is called once the list has rendered items. This is required because FlashList doesn't render items in the first cycle.
+- Added `onLoad` event that is called once the list has rendered items. This is required because FlashList doesn't render items in the first cycle.
   - https://github.com/Shopify/flash-list/pull/180
 
 ## [0.2.0] - 2022-03-08
