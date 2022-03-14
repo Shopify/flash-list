@@ -102,7 +102,7 @@ export interface FlashListProps<T> extends FlatListProps<T> {
   /**
    * This event is raised once the list has drawn items on the screen. It also reports elapsedTimeInMs which is the time it took to draw the items.
    * This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render.
-   * If you're using ListEmptyComponent this event is raised as soon as ListEmptyComponent is rendered.
+   * If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
    */
   onLoadComplete?: (info: { elapsedTimeInMs: number }) => void;
 }
