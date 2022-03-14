@@ -294,7 +294,7 @@ class FlashList<T> extends React.PureComponent<
 
   componentDidMount() {
     if (this.props.data?.length === 0) {
-      this.raiseOnLoadEvent();
+      this.raiseOnLoadEventIfNeeded();
     }
   }
 
@@ -354,7 +354,7 @@ class FlashList<T> extends React.PureComponent<
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={initialScrollIndex || undefined}
-          onItemLayout={this.raiseOnLoadEvent}
+          onItemLayout={this.raiseOnLoadEventIfNeeded}
         />
       </StickyHeaderContainer>
     );
@@ -607,7 +607,7 @@ class FlashList<T> extends React.PureComponent<
     return state;
   };
 
-  private raiseOnLoadEvent = () => {
+  private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
       this.isListLoaded = true;
       this.props.onLoadComplete?.({
