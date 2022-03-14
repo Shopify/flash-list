@@ -974,8 +974,9 @@
     warn-once "^0.1.0"
 
 "@shopify/flash-list@link:..":
-  version "0.0.0"
-  uid ""
+  version "0.2.3"
+  dependencies:
+    invariant "^2.2.4"
 
 "@shopify/react-native-performance-lists-profiler@^0.0.7":
   version "0.0.7"
@@ -3944,10 +3945,10 @@ react-native-flipper@^0.138.0:
   resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.138.0.tgz#7b795d66b6134e2d802a5e0355dbd9e5ed1fd5b6"
   integrity sha512-8NNsuAyk/gZGZnmzx2VMNTnXW5WTlV3TQ1IIwHxNpz17tWg4wKttNWv1gk2ZArLwdHnntAqjtOoVq8NR8HFaNA==
 
-react-native-gesture-handler@^2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.3.1.tgz#d5779f47e5adabb8de0a1d1adf46829b1a5a14a0"
-  integrity sha512-Yq7cov7BMX9CTZ9oEIc6iX/XWgU5i88zSky7Vaq7deRQTq2s1REH4Idh0APEFLdHFWN/NKZMkHBRT7vaQAgvqg==
+react-native-gesture-handler@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.3.2.tgz#65ce3b145bd96242c2200abbb9730c94bc73386c"
+  integrity sha512-ibcYWHMiDbioUcaAMuw3/Taz3mYn0fJz0q2KnGX1hWpLNz/x/E5/BzKB+T3ycwAm1dQEgPgHWpaZ8eqO/EVFlw==
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
