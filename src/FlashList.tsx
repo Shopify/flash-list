@@ -98,6 +98,13 @@ export interface FlashListProps<T> extends FlatListProps<T> {
   onBlankArea?: BlankAreaEventHandler;
 
   contentContainerStyle?: ContentStyle;
+
+  /**
+   * This event is raised once the list has drawn items on the screen. It also reports @param elapsedTimeInMs which is the time it took to draw the items.
+   * This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render.
+   * If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
+   */
+  onLoad?: (info: { elapsedTimeInMs: number }) => void;
 }
 
 export interface FlashListState<T> {
@@ -133,6 +140,8 @@ class FlashList<T> extends React.PureComponent<
   private transformStyle = { transform: [{ scaleY: -1 }] };
   private distanceFromWindow = 0;
   private contentStyle: ContentStyle = {};
+  private loadStartTime = 0;
+  private isListLoaded = false;
 
   static defaultProps = {
     data: [],
@@ -141,6 +150,7 @@ class FlashList<T> extends React.PureComponent<
 
   constructor(props: FlashListProps<T>) {
     super(props);
+    this.loadStartTime = Date.now();
     this.validateProps();
     if (props.estimatedListSize) {
       if (props.horizontal) {
@@ -282,6 +292,12 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
+  componentDidMount() {
+    if (this.props.data?.length === 0) {
+      this.raiseOnLoadEventIfNeeded();
+    }
+  }
+
   render() {
     if (this.state.dataProvider.getSize() === 0) {
       return this.getValidComponent(this.props.ListEmptyComponent);
@@ -338,6 +354,7 @@ class FlashList<T> extends React.PureComponent<
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={initialScrollIndex || undefined}
+          onItemLayout={this.raiseOnLoadEventIfNeeded}
         />
       </StickyHeaderContainer>
     );
@@ -588,6 +605,15 @@ class FlashList<T> extends React.PureComponent<
     const state = currentOffset >= this.distanceFromWindow;
     this.stickyContentContainerRef?.setEnabled(state);
     return state;
+  };
+
+  private raiseOnLoadEventIfNeeded = () => {
+    if (!this.isListLoaded) {
+      this.isListLoaded = true;
+      this.props.onLoad?.({
+        elapsedTimeInMs: Date.now() - this.loadStartTime,
+      });
+    }
   };
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {

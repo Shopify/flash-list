@@ -177,3 +177,11 @@ interface ContentStyle {
 ```
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
+
+### `onLoad`
+
+```ts
+onLoad: (info: { elapsedTimeInMs: number }) => void;
+```
+
+This event is raised once the list has drawn items on the screen. It also reports elapsedTimeInMs which is the time it took to draw the items. This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render. If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
