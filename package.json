@@ -26,21 +26,21 @@
     "@babel/runtime": "*",
     "react": "*",
     "react-native": "*",
-    "recyclerlistview": "3.1.0-beta.5"
+    "recyclerlistview": "3.1.0-beta.6"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
-    "@babel/runtime": "^7.12.5",
+    "@babel/runtime": "^7.17.2",
     "@react-native-community/eslint-config": "^3.0.0",
     "@shopify/eslint-plugin": "^41.2.0",
-    "@types/react-native": "0.66.4",
+    "@types/react-native": "0.67.2",
     "babel-jest": "^27.5.1",
     "eslint": "8.10.0",
-    "jest": "^26.6.3",
+    "jest": "^27.5.1",
     "metro-react-native-babel-preset": "^0.69.0",
     "react": "17.0.2",
-    "react-native": "0.66.4",
-    "recyclerlistview": "3.1.0-beta.5",
+    "react-native": "0.67.3",
+    "recyclerlistview": "3.1.0-beta.6",
     "typescript": "^4.6.2"
   },
   "jest": {
