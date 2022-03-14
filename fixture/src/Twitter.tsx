@@ -1,29 +1,29 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { RecyclerFlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
+import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
-import { tweets } from "./data/tweets";
 import TweetCell from "./TweetCell";
+import { tweets } from "./data/tweets";
 
 const Twitter = () => {
   return (
-    <RecyclerFlatListPerformanceView listName="Twitter">
+    <FlashListPerformanceView listName="Twitter">
       <FlashList
         keyExtractor={(item) => {
           return item.id;
         }}
         renderItem={({ item }) => {
-          return <TweetCell item={item} />;
+          return <TweetCell tweet={item} />;
         }}
         ListHeaderComponent={Header}
-        ListHeaderCompomentStyle={{ backgroundColor: "#ccc" }}
+        ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
         ListFooterComponent={Footer}
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
         data={tweets}
       />
-    </RecyclerFlatListPerformanceView>
+    </FlashListPerformanceView>
   );
 };
 

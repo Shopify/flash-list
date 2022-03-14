@@ -14,7 +14,7 @@ const TwitterFlatList = () => {
           return item.id;
         }}
         renderItem={({ item }) => {
-          return <TweetCell item={item} />;
+          return <TweetCell tweet={item} />;
         }}
         ListHeaderComponent={Header}
         ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}

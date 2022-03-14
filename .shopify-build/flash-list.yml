@@ -8,6 +8,14 @@ steps:
       - yarn
       - yarn run build
 
+  - label: "Build fixture Typescript"
+    timeout: 20m
+    run:
+      - yarn
+      - cd fixture
+      - yarn
+      - yarn run build
+
   - label: "Lint Typescript :eslint:"
     timeout: 20m
     run:
