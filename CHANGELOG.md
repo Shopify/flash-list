@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Added `onLoadComplete` event that is called once the list has rendered items. This is required because FlashList doesn't render items in the first cycle.
+
 ## [0.2.0] - 2022-03-08
 
 - Rename the component from `RecyclerFlatList` to `FlashList`
