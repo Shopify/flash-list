@@ -50,6 +50,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     /** Sorts views by index and then invokes clearGaps which does the correction.
      * Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.*/
     private fun fixLayout() {
+        // Fixing layout during animation can interfere with it.
         if (animation != null) {
             return
         }
