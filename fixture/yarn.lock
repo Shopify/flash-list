@@ -974,7 +974,7 @@
     warn-once "^0.1.0"
 
 "@shopify/flash-list@link:..":
-  version "0.2.3"
+  version "0.2.4"
   dependencies:
     invariant "^2.2.4"
 
@@ -3956,10 +3956,10 @@ react-native-gesture-handler@^2.3.2:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
-react-native-safe-area-context@^4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.1.2.tgz#2433715c568550f29ae768f8ca7b561f99b5230c"
-  integrity sha512-35hLhtJRCZW0L2zTz0Wz3d0Oh6uYUiRWa/HvoITq7IvD8GkjjM97MKHSfVhC4N9ZNMzqXDuVfYBpHHisc9Z8+Q==
+react-native-safe-area-context@^4.1.4:
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.1.4.tgz#c9c0203d24c757645f4e2a884ac663c9b3fd84ed"
+  integrity sha512-y1+UXlqqhKhZQlLanWbF6dJlNBv9kaT/Lem7Luo/Nt2TD/q1A4dbTr0D4zrh5UKT/ykDssopNarsTXccxULzIQ==
 
 react-native-screens@^3.13.1:
   version "3.13.1"
