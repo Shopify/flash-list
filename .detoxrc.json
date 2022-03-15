@@ -1,0 +1,65 @@
+{
+  "testRunner": "jest",
+  "runnerConfig": "e2e/config.json",
+  "skipLegacyWorkersInjection": true,
+  "apps": {
+    "ios.release": {
+      "type": "ios.app",
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/FlatListPro.app",
+      "build": "export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace fixture/ios/FlatListPro.xcworkspace -scheme FlatListPro -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet -destination 'platform=iOS Simulator,name=iPhone 12 Pro Max,OS=latest'"
+    },
+    "android.release": {
+      "type": "android.apk",
+      "binaryPath": "fixture/android/app/build/outputs/apk/debug/app-debug.apk",
+      "build": "cd fixture/android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug"
+    }
+  },
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator",
+      "device": {
+        "type": "iPhone 11"
+      }
+    },
+    "emulator": {
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_3a_API_32_arm64-v8a"
+      }
+    }
+  },
+  "configurations": {
+    "ios.sim.release": {
+      "device": "simulator",
+      "app": "ios.release"
+    },
+    "android.emu.release": {
+      "device": "emulator",
+      "app": "android.release"
+    }
+  },
+  "artifacts": {
+    "rootDir": ".artifacts",
+    "plugins": {
+      "instruments": { "enabled": false },
+      "log": { "enabled": true },
+      "uiHierarchy": "enabled",
+      "screenshot": {
+        "shouldTakeAutomaticSnapshots": true,
+        "keepOnlyFailedTestsArtifacts": true,
+        "takeWhen": {
+          "testStart": false,
+          "testDone": true
+        }
+      },
+      "video": {
+        "android": {
+          "bitRate": 4000000
+        },
+        "simulator": {
+          "codec": "hevc"
+        }
+      }
+    }
+  }
+}

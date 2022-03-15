@@ -29,6 +29,7 @@ export const ExamplesScreen = () => {
     <>
       <StatusBar barStyle="dark-content" />
       <FlatList
+        testID="ExamplesFlatList"
         keyExtractor={(item) => item.destination}
         data={data}
         renderItem={({ item }) => (
