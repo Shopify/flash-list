@@ -221,7 +221,9 @@ class FlashList<T> extends React.PureComponent<
     return newState;
   }
 
-  private static getInitialMutableState<T>(flashList): FlashListState<T> {
+  private static getInitialMutableState<T>(
+    flashList: FlashList<T>
+  ): FlashListState<T> {
     return {
       data: null,
       layoutProvider: null!!,
@@ -230,6 +232,13 @@ class FlashList<T> extends React.PureComponent<
           return r1 !== r2;
         },
         (index) => {
+          if (
+            flashList.props == null ||
+            flashList.props.data == null ||
+            flashList.props.keyExtractor == null
+          ) {
+            return index.toString();
+          }
           return flashList.props
             .keyExtractor(flashList.props.data[index], index)
             .toString();
