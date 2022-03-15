@@ -7,6 +7,10 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fixed distributing untranspiled library code by enforcing stricters TS rules.
+
+  - https://github.com/Shopify/flash-list/pull/181
+
 - Added `onLoad` event that is called once the list has rendered items. This is required because FlashList doesn't render items in the first cycle.
   - https://github.com/Shopify/flash-list/pull/180
 
