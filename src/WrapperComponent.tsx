@@ -8,7 +8,7 @@ export interface WrapperComponentProps {
 }
 
 export default class WrapperComponent extends React.Component<WrapperComponentProps> {
-  shouldComponentUpdate(newProps) {
+  shouldComponentUpdate(newProps: WrapperComponentProps) {
     const hasExtendedStateChanged =
       this.props.extendedState !== newProps.extendedState;
     const hasInternalSnapshotChanged =

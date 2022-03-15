@@ -20,7 +20,7 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
     return { elems: this._generateArray(0, 20) } as PaginatedListState;
   }
 
-  private _generateArray(start, size) {
+  private _generateArray(start: number, size: number) {
     const arr = new Array(size);
     for (let i = 0; i < size; i++) {
       arr[i] = start + i;
@@ -31,14 +31,14 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
   render() {
     return (
       <FlashList
-        keyExtractor={(item) => {
-          return item;
+        keyExtractor={(item: number) => {
+          return item.toString();
         }}
-        renderItem={(data) => {
-          const backgroundColor = data.item % 2 === 0 ? "#00a1f1" : "#ffbb00";
+        renderItem={({ item }: { item: number }) => {
+          const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
           return (
             <View style={{ ...styles.container, backgroundColor }}>
-              <Text>Cell Id: {data.item}</Text>
+              <Text>Cell Id: {item}</Text>
             </View>
           );
         }}

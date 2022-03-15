@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { LayoutChangeEvent } from "react-native";
 
 import AutoLayoutViewNativeComponent, {
   OnBlankAreaEvent,
@@ -26,6 +27,7 @@ export interface BlankAreaEvent {
 
 export interface AutoLayoutViewProps {
   onBlankAreaEvent: BlankAreaEventHandler;
+  onLayout: (event: LayoutChangeEvent) => void;
 }
 
 class AutoLayoutView extends React.Component<AutoLayoutViewProps> {

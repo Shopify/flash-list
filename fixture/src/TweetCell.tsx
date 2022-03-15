@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Image, Text } from "react-native";
+import { StyleSheet, View, Image, Text, ViewStyle } from "react-native";
 import FastImage from "react-native-fast-image";
 
 import Author from "./models/Author";
@@ -9,7 +9,11 @@ export interface TweetCellProps {
   tweet: Tweet;
 }
 
-const tweetActions = (retweets, comments, likes) => {
+const tweetActions = (
+  retweets: React.ReactNode,
+  comments: React.ReactNode,
+  likes: React.ReactNode
+) => {
   return (
     <View style={[styles.rowActions, styles.actionBar]}>
       <View style={styles.elemAction}>
@@ -45,9 +49,18 @@ const avatar = (author: Author) => {
   const imageUrl = author.avatar.replace("_normal", "");
   return <FastImage style={styles.avatar} source={{ uri: imageUrl }} />;
 };
+interface GrayTextProps {
+  children: React.ReactNode;
+  numberOfLines?: number;
+  style?: ViewStyle;
+}
 
-const GrayText = (props) => {
-  return <Text style={styles.gray}>{props.children}</Text>;
+const GrayText = ({ children, numberOfLines, style }: GrayTextProps) => {
+  return (
+    <Text style={[style, styles.gray]} numberOfLines={numberOfLines}>
+      {children}
+    </Text>
+  );
 };
 
 const TweetCell = ({ tweet }: TweetCellProps) => {
@@ -60,7 +73,7 @@ const TweetCell = ({ tweet }: TweetCellProps) => {
             <Text numberOfLines={1} style={styles.header}>
               {tweet.author.name}
             </Text>
-            <GrayText style={{ flexShrink: 1 }} numberOfLines={1}>
+            <GrayText style={styles.author} numberOfLines={1}>
               @{tweet.author.screenName}
             </GrayText>
             <GrayText>·</GrayText>
@@ -81,6 +94,9 @@ const TweetCell = ({ tweet }: TweetCellProps) => {
 };
 
 const styles = StyleSheet.create({
+  author: {
+    flexShrink: 1,
+  },
   actionBar: {
     marginTop: 8,
     justifyContent: "space-between",

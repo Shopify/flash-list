@@ -14,7 +14,7 @@ export default class List extends React.Component {
     refreshing: false,
   };
 
-  private _generateArray(size) {
+  private _generateArray(size: number) {
     const arr = new Array(size);
     for (let i = 0; i < size; i++) {
       arr[i] = i;
@@ -32,10 +32,10 @@ export default class List extends React.Component {
             this.setState({ refreshing: false });
           }, 2000);
         }}
-        keyExtractor={(item) => {
-          return item;
+        keyExtractor={(item: number) => {
+          return item.toString();
         }}
-        renderItem={({ item }) => {
+        renderItem={({ item }: { item: number }) => {
           const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
           return (
             <View style={{ ...styles.container, backgroundColor }}>
