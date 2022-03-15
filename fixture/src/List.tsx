@@ -38,6 +38,27 @@ const List = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
 
+  const renderItem = ({ item }: { item: number }) => {
+    const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
+    return (
+      <Pressable
+        onPress={() => {
+          removeItem(item);
+        }}
+      >
+        <View
+          style={{
+            ...styles.container,
+            backgroundColor,
+            height: item % 2 === 0 ? 100 : 200,
+          }}
+        >
+          <Text>Cell Id: {item}</Text>
+        </View>
+      </Pressable>
+    );
+  };
+
   return (
     <FlashList
       refreshing={refreshing}
@@ -50,26 +71,7 @@ const List = () => {
       keyExtractor={(item: number) => {
         return item.toString();
       }}
-      renderItem={({ item }: { item: number }) => {
-        const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
-        return (
-          <Pressable
-            onPress={() => {
-              removeItem(item);
-            }}
-          >
-            <View
-              style={{
-                ...styles.container,
-                backgroundColor,
-                height: item % 2 === 0 ? 100 : 200,
-              }}
-            >
-              <Text>Cell Id: {item}</Text>
-            </View>
-          </Pressable>
-        );
-      }}
+      renderItem={renderItem}
       estimatedItemSize={100}
       data={data}
     />
