@@ -359,7 +359,7 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
-  private container = (props: object, children: any) => {
+  private container = (props: object, children: React.ReactNode[]) => {
     return (
       <>
         <PureComponentWrapper
