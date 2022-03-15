@@ -33,7 +33,7 @@
     "@babel/runtime": "^7.17.2",
     "@react-native-community/eslint-config": "^3.0.0",
     "@shopify/eslint-plugin": "^41.2.0",
-    "@types/react-native": "0.67.2",
+    "@types/react-native": "0.67.3",
     "babel-jest": "^27.5.1",
     "eslint": "8.11.0",
     "jest": "^27.5.1",
