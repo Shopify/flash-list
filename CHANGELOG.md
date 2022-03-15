@@ -7,6 +7,10 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.2] - 2022-03-15
+
+- Minor changes
+
 ## [0.3.1] - 2022-03-15
 
 - Revert react-native-safe-area upgrade and minSdkVersion bump
