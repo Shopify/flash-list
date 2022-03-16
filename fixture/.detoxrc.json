@@ -6,12 +6,12 @@
     "ios.release": {
       "type": "ios.app",
       "binaryPath": "../ios/build/Build/Products/Release-iphonesimulator/FlatListPro.app",
-      "build": "CODE_SIGNING_REQUIRED=NO && RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/FlatListPro.xcworkspace -scheme FlatListPro -configuration Release -sdk iphonesimulator -derivedDataPath ../ios/build -quiet -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest'"
+      "build": "export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/FlatListPro.xcworkspace -scheme FlatListPro -configuration Release -sdk iphonesimulator -derivedDataPath ../ios/build -quiet -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' && cd .."
     },
     "android.release": {
       "type": "android.apk",
       "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-      "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release"
+      "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
     }
   },
   "devices": {
