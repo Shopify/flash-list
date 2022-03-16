@@ -7,6 +7,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+<<<<<<< HEAD
 - Add support for layout animations
 
   - https://github.com/Shopify/flash-list/pull/183
@@ -14,6 +15,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Suppress recyclerlistview's bounded size exception for some missing cases.
   - https://github.com/Shopify/flash-list/pull/192
 
+=======
+>>>>>>> d8723299 (Changed recyclerlistview to be a dependency instead of peer dependency)
 ## [0.3.3] - 2022-03-16
 
 - Prevent implicit scroll to top on device orientation change
