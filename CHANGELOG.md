@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.3] - 2022-03-16
+
 - Prevent implicit scroll to top on device orientation change
 - Change recyclerlistview's bounded size exception to a warning
   - https://github.com/Shopify/flash-list/pull/187
