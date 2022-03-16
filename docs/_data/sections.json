@@ -6,7 +6,7 @@
   },
   {
     "title": "Developer friendly",
-    "description": "Using FlatList's API makes FlashList a really easy-to-use component. Simply change the name of your component and you are good to go.",
+    "description": "Using FlatList's API makes FlashList a really easy-to-use component. Simply change the name of your component, add the estimated size of the items, and you are good to go.",
     "image": "img/tezos-wPN1xnccGPw-unsplash.jpg"
   },
   {
