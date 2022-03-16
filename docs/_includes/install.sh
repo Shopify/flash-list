@@ -1,2 +1,2 @@
-yarn add @shopify/recycler-flat-list recyclerlistview@3.1.0-beta.4
+yarn add @shopify/flash-list
 cd ios && pod install

@@ -1,7 +1,7 @@
 [
   {
     "title": "Memory efficient scrolling",
-    "description": "Some libraries allocate more items in memory to achieve good performance. FlashList does not recreate items as a user scrolls, making it noticeably more memory efficient.",
+    "description": "Some libraries allocate more items in memory to achieve good performance. FlashList does not recreate items as a user scrolls, making it noticeably more memory efficient. ",
     "video": "img/scroll.webm"
   },
   {
@@ -16,7 +16,7 @@
   },
   {
     "title": " Extra configuration for even better performance.",
-    "description": "Apart from FlatList props, FlashList offers a set of extra props to even tweak the performance even more.",
+    "description": "Apart from FlatList props, FlashList offers a set of extra props to tweak the performance even more.Apart from FlatList props, FlashList offers a set of extra props to even tweak the performance even more.",
     "code": "snippet2.js"
   },
   {
