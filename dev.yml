@@ -25,10 +25,22 @@ up:
           name: React-Native-Tablet
           android_version: android-29
           abi: google_apis;x86_64
-        - device: pixel
+          require_host: x86_64
+        - device: Nexus 9
+          name: React-Native-Tablet
+          android_version: android-29
+          abi: google_apis;arm64-v8a
+          require_host: arm64
+        - device: pixel_5
           name: React-Native-Phone
           android_version: android-29
           abi: google_apis;x86_64
+          require_host: x86_64
+        - device: pixel_5
+          name: React-Native-Phone
+          android_version: android-29
+          abi: google_apis;arm64-v8a
+          require_host: arm64
       packages:
         - cmdline-tools;latest
         - emulator
