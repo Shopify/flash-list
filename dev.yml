@@ -7,6 +7,12 @@ type:
 up:
   - ruby: 3.0.3
   - bundler
+  - custom:
+      name: "Install Homebrew tap wix/brew"
+      met?: brew tap | grep wix/brew
+      meet: brew tap wix/brew
+  - homebrew:
+      - applesimutils
   - node:
       yarn: true
       version: v16.13.0
