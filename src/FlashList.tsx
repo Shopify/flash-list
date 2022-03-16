@@ -340,6 +340,8 @@ class FlashList<T> extends React.PureComponent<
             style: { ...this.getTransform() },
             contentContainerStyle: {
               backgroundColor: this.contentStyle.backgroundColor,
+
+              // Required to handle a scrollview bug. Check: https://github.com/Shopify/flash-list/pull/187
               minHeight: 1,
               minWidth: 1,
             },
