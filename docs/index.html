@@ -13,6 +13,7 @@ appname: FlashList
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600:100&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
 </head>
 
 <body>
@@ -20,7 +21,7 @@ appname: FlashList
         <div class="header">
             <h1>⚡️ {{page.appname}}</h1>
             <h2>Fast & Performant <br> React Native List</h2>
-            <h1>No more blank cells</h1>
+            <p class="subtitle">No more blank cells</p>
             <p class="claim">
                 Swap from FlatList in seconds. Get instant performance.
             </p>
@@ -143,14 +144,14 @@ appname: FlashList
         video=section.video isEven=isEven code=section.code %}
         {% endfor %}
 
-        <div class="section casestudy">
+        <!-- <div class="section casestudy">
             <div class="info">
                 <h2>See how <span class="shopify">Shopify</span> uses {{page.appname}} to make commerce better for
                     everyone</h2>
                 <a href="">Read case study</a>
             </div>
             <img src="img/commerce-better-for-everyone.png" alt="Shopify makes commerce better for everyone">
-        </div>
+        </div> -->
 
         <div class="section fullwidth" id="install">
             <div class="info">
