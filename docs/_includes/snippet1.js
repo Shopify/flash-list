@@ -1,6 +1,6 @@
 <FlashList
   renderItem={({ item }) => {
-    return <TweetCell item={item} />;
+    <TweetCell item={item} />;
   }}
   estimatedItemSize={50}
   data={tweets}

@@ -2,7 +2,7 @@
   {
     "title": "Memory efficient scrolling",
     "description": "Some libraries allocate more items in memory to achieve good performance. FlashList does not recreate items as a user scrolls, making it noticeably more memory efficient. ",
-    "video": "img/scroll.webm"
+    "video": "img/scroll.mp4"
   },
   {
     "title": "Developer friendly",

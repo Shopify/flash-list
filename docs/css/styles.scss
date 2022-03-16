@@ -36,12 +36,18 @@ body {
   color: white;
   font-family: sans-serif;
 }
+p.subtitle {
+  margin: 0px;
+  padding: 0px;
+}
 div.content {
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
   display: flex;
   flex-direction: column;
+
+  align-items: center;
 }
 div.header {
   display: flex;
@@ -109,17 +115,18 @@ div.section {
   padding: 20px 0px;
   align-items: center;
   border-radius: 20px;
+  max-width: 1000px;
+  align-items: center;
+  column-gap: 40px;
 }
 div.section img,
 div.section video {
-  max-width: 600px;
+  max-width: 450px;
   height: auto;
   border-radius: 6px;
-  width: 100%;
 }
 div.section .info {
   flex-direction: column;
-  margin-left: 40px;
   max-width: 450px;
 }
 div.section .info h1 {
