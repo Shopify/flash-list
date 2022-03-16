@@ -6,5 +6,7 @@ const WarningList = {
     " Please remove other values as they're not used. In case of vertical lists horizontal padding is ignored and vice versa, if you need it apply padding to your items instead.",
   styleUnsupportedPaddingType:
     "FlashList will ignore horizontal padding in case of vertical lists and vertical padding if the list is horizontal. If you need to have it apply relevant padding to your items instead.",
+  unusableRenderedSize:
+    "FlashList's rendered size is not usable. Either the height or width is too small (<2px). Please make sure that the parent view of the list has a valid size. FlashList will match the size of the parent. ",
 };
 export default WarningList;

@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Prevent implicit scroll to top on device orientation change
+- Change recyclerlistview's bounded size exception to a warning
+
 ## [0.3.2] - 2022-03-15
 
 - Minor changes
