@@ -12,7 +12,7 @@ appname: FlashList
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 </head>
 
@@ -61,78 +61,84 @@ appname: FlashList
         <div class="section half">
             <h1>Crazy performance on low-end devices</h1>
             <div>
-                <h2>FPS in UI Thread</h2>
-                <div class="column full">
-                    <div>
-                        <div class="row graph red center">
-                            <span class="progress bar thirty-seven"></span>
-                            <h2>37 FPS</h2>
+                <div class="metric-section">
+                    <h2>FPS in UI Thread</h2>
+                    <div class="column full">
+                        <div>
+                            <div class="row graph red center">
+                                <span class="progress bar thirty-seven"></span>
+                                <h2>37 FPS</h2>
+                            </div>
+                            <h3>FlatList</h3>
                         </div>
-                        <h3>FlatList</h3>
-                    </div>
-                    <div>
-                        <div class="row graph center">
-                            <span class="progress bar fifty-seven"></span>
-                            <h2>57 FPS</h2>
+                        <div>
+                            <div class="row graph center">
+                                <span class="progress bar fifty-seven"></span>
+                                <h2>57 FPS</h2>
+                            </div>
+                            <h3>{{page.appname}}</h3>
                         </div>
-                        <h3>{{page.appname}}</h3>
-                    </div>
-                </div>
-                <br>
-                <h2>FPS in JS Thread</h2>
-                <div class="column full">
-                    <div>
-                        <div class="row graph red center">
-                            <span class="progress bar twelve-five"></span>
-                            <h2>12.5 FPS</h2>
-                        </div>
-                        <h3>FlatList</h3>
-                    </div>
-                    <div>
-                        <div class="row graph center">
-                            <span class="progress bar fifty-four"></span>
-                            <h2>50.4 FPS</h2>
-                        </div>
-                        <h3>{{page.appname}}</h3>
                     </div>
                 </div>
-                <p class="note">* Average FPS on a 60FPS screen Android Moto G10 device. (Higher is better) </p>
+                <div class="metric-section">
+                    <h2>FPS in JS Thread</h2>
+                    <div class="column full">
+                        <div>
+                            <div class="row graph red center">
+                                <span class="progress bar twelve-five"></span>
+                                <h2>12.5 FPS</h2>
+                            </div>
+                            <h3>FlatList</h3>
+                        </div>
+                        <div>
+                            <div class="row graph center">
+                                <span class="progress bar fifty-four"></span>
+                                <h2>50.4 FPS</h2>
+                            </div>
+                            <h3>{{page.appname}}</h3>
+                        </div>
+                    </div>
+                    <p class="note">* Average FPS on a 60FPS screen Android Moto G10 device. (Higher is better) </p>
+                </div>
             </div>
             <div>
-                <h2>Blanks cells</h2>
-                <div class="column full">
-                    <div>
-                        <div class="row graph red center">
-                            <span class="progress bar hundred-seven"></span>
-                            <h2>107 dp*</h2>
+                <div class="metric-section">
+                    <h2>Blanks cells</h2>
+                    <div class="column full">
+                        <div>
+                            <div class="row graph red center">
+                                <span class="progress bar hundred-seven"></span>
+                                <h2>107 dp*</h2>
+                            </div>
+                            <h3>FlatList</h3>
                         </div>
-                        <h3>FlatList</h3>
-                    </div>
-                    <div>
-                        <div class="row graph center">
-                            <span class="progress bar zero-seventy-five"></span>
-                            <h2>0.75 dp*</h2>
+                        <div>
+                            <div class="row graph center">
+                                <span class="progress bar zero-seventy-five"></span>
+                                <h2>0.75 dp*</h2>
+                            </div>
+                            <h3>{{page.appname}}</h3>
                         </div>
-                        <h3>{{page.appname}}</h3>
                     </div>
+                    <p class="note">*number of points in screen showing blank cells. (lower is better)</p>
                 </div>
-                <p class="note">*number of points in screen showing blank cells. (lower is better)</p>
-                <br><br>
-                <h2>Time to interactive</h2>
-                <div class="column full">
-                    <div>
-                        <div class="row graph red center">
-                            <span class="progress bar hundred"></span>
-                            <h2>290ms</h2>
+                <div class="metric-section">
+                    <h2>Time to interactive</h2>
+                    <div class="column full">
+                        <div>
+                            <div class="row graph red center">
+                                <span class="progress bar hundred"></span>
+                                <h2>290ms</h2>
+                            </div>
+                            <h3>FlatList</h3>
                         </div>
-                        <h3>FlatList</h3>
-                    </div>
-                    <div>
-                        <div class="row graph center">
-                            <span class="progress bar hundred"></span>
-                            <h2>296ms</h2>
+                        <div>
+                            <div class="row graph center">
+                                <span class="progress bar hundred"></span>
+                                <h2>296ms</h2>
+                            </div>
+                            <h3>{{page.appname}}</h3>
                         </div>
-                        <h3>{{page.appname}}</h3>
                     </div>
                 </div>
             </div>

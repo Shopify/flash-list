@@ -394,7 +394,7 @@ p.subtitle {
     padding: 8px;
   }
   pre {
-    font-size: 13px;
+    font-size: 12px;
   }
   h1 {
     font-size: 20px;
@@ -410,5 +410,11 @@ p.subtitle {
       font-size: 40px;
       line-height: 1.2;
     }
+  }
+  .metric-section {
+    margin-bottom: 60px;
+  }
+  .section.pair {
+    flex-direction: column-reverse;
   }
 }
