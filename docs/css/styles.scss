@@ -392,6 +392,7 @@ p.subtitle {
     img,
     video {
       margin: 20px;
+      max-width: 80%;
     }
   }
   .highlight {
@@ -423,8 +424,5 @@ p.subtitle {
   }
   .section.pair {
     flex-direction: column-reverse;
-  }
-  video {
-    max-width: 80%;
   }
 }
