@@ -42,4 +42,7 @@ module.exports = {
     "jsx-a11y/no-autofocus": "off"
   },
   ignorePatterns: ["node_modules", "coverage", "dist", "build", "lib"],
+  env: {
+    jest: true,
+  },
 };

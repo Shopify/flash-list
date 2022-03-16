@@ -7,6 +7,12 @@ type:
 up:
   - ruby: 3.0.3
   - bundler
+  - custom:
+      name: "Install Homebrew tap wix/brew"
+      met?: brew tap | grep wix/brew
+      meet: brew tap wix/brew
+  - homebrew:
+      - applesimutils
   - node:
       yarn: true
       version: v16.13.0
@@ -19,10 +25,22 @@ up:
           name: React-Native-Tablet
           android_version: android-29
           abi: google_apis;x86_64
-        - device: pixel
+          require_host: x86_64
+        - device: Nexus 9
+          name: React-Native-Tablet
+          android_version: android-29
+          abi: google_apis;arm64-v8a
+          require_host: arm64
+        - device: pixel_5
           name: React-Native-Phone
           android_version: android-29
           abi: google_apis;x86_64
+          require_host: x86_64
+        - device: pixel_5
+          name: React-Native-Phone
+          android_version: android-29
+          abi: google_apis;arm64-v8a
+          require_host: arm64
       packages:
         - cmdline-tools;latest
         - emulator
@@ -44,3 +62,7 @@ commands:
   run-android:
     aliases: [ra]
     run: cd fixture && yarn react-native run-android
+  run-e2e-ios:
+    run: cd fixture && yarn e2e:build:ios && yarn e2e:test:ios
+  run-e2e-android:
+    run: cd fixture && yarn e2e:build:android && yarn e2e:test:android
