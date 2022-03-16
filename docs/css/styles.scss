@@ -424,4 +424,7 @@ p.subtitle {
   .section.pair {
     flex-direction: column-reverse;
   }
+  video {
+    max-width: 80%;
+  }
 }
