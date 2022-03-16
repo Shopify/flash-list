@@ -9,9 +9,9 @@ sidebar_position: 3
 
 FlashList and FlatList have very different internal. While the API is almost the same, the behaviour might be different in some cases due to a bug, limitation or missing implementation. In any case, if the issue is already listed here don't create a new one.
 
-### 1) recyclerlistview requires a bounded size exception
+### 1) FlashList's rendered size is not usable warning
 
-`FlashList` uses [recyclerlistview](https://github.com/Flipkart/recyclerlistview) to leverage recycling capability. `recyclerlistview` requires deterministic boundaries, this doesn't mean fixed height/width and could just be `flex: 1`. It should mount with some height and width. Layout setups like `flex-start` on parent will not work. If you can't do this then a nice workaround is to use `estimatedListSize` prop. If your list is fullscreen, you can just pass `Dimensions.get("window")`. It's good to pass accurate values. Please note that you cannot apply style directly to `FlashList` so you may need to wrap it in a `View`. `FlashList` will take the size of it's parent.
+`FlashList` uses [recyclerlistview](https://github.com/Flipkart/recyclerlistview) to leverage its recycling capability. `recyclerlistview's` default layout algorithm cannot work without a valid size. It needs to first measure itself and then decide how much to draw and reuse. So, make sure that the parent of the list mounts with a valid size (>=2px) and `FlashList` will match the size of its parent. Please note that you cannot apply style directly to `FlashList` so you may need to wrap it in a `View`.
 
 Please note most lists do mount with deterministic sizes so make sure to check if you really need workarounds.
 

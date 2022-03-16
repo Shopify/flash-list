@@ -345,6 +345,10 @@ class FlashList<T> extends React.PureComponent<
             style: { ...this.getTransform() },
             contentContainerStyle: {
               backgroundColor: this.contentStyle.backgroundColor,
+
+              // Required to handle a scrollview bug. Check: https://github.com/Shopify/flash-list/pull/187
+              minHeight: 1,
+              minWidth: 1,
             },
             ...this.props.overrideProps,
           }}
@@ -365,7 +369,15 @@ class FlashList<T> extends React.PureComponent<
     );
   }
 
+  private validateListSize(event: LayoutChangeEvent) {
+    const { height, width } = event.nativeEvent.layout;
+    if (Math.floor(height) <= 1 || Math.floor(width) <= 1) {
+      console.warn(WarningList.unusableRenderedSize);
+    }
+  }
+
   private handleSizeChange = (event: LayoutChangeEvent) => {
+    this.validateListSize(event);
     const newSize = this.props.horizontal
       ? event.nativeEvent.layout.height
       : event.nativeEvent.layout.width;
