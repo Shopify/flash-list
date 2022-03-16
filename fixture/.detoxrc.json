@@ -6,7 +6,7 @@
     "ios.release": {
       "type": "ios.app",
       "binaryPath": "../ios/build/Build/Products/Release-iphonesimulator/FlatListPro.app",
-      "build": "export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/FlatListPro.xcworkspace -scheme FlatListPro -configuration Release -sdk iphonesimulator -derivedDataPath ../ios/build -quiet -destination 'platform=iOS Simulator,name=iPhone 12 Pro Max,OS=latest'"
+      "build": "CODE_SIGNING_REQUIRED=NO && RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/FlatListPro.xcworkspace -scheme FlatListPro -configuration Release -sdk iphonesimulator -derivedDataPath ../ios/build -quiet -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest'"
     },
     "android.release": {
       "type": "android.apk",

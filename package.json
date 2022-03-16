@@ -20,11 +20,7 @@
     "test": "jest",
     "lint": "yarn eslint . --ext .ts,.tsx",
     "lint:fix": "yarn eslint . --ext .ts,.tsx --fix",
-    "build": "tsc -b",
-    "e2e:test:ios": "detox test -c ios.sim.release --artifacts-location /tmp/detox_artifacts/",
-    "e2e:build:ios": "detox build -c ios.sim.release",
-    "e2e:test:android": "detox test -c android.emu.release --artifacts-location /tmp/detox_artifacts/",
-    "e2e:build:android": "detox build -c android.emu.release"
+    "build": "tsc -b"
   },
   "peerDependencies": {
     "@babel/runtime": "*",
@@ -39,7 +35,6 @@
     "@shopify/eslint-plugin": "^41.2.0",
     "@types/react-native": "0.67.3",
     "babel-jest": "^27.5.1",
-    "detox": "^19.5.7",
     "eslint": "8.11.0",
     "jest": "^27.5.1",
     "metro-react-native-babel-preset": "^0.69.0",
