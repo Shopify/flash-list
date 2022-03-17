@@ -70,3 +70,15 @@ steps:
       - yarn
       - cd android
       - ./gradlew assembleDebug
+
+  - label: "Run e2e tests iOS :iOS:"
+    container: macos
+    timeout: 30m
+    run:
+      - bundle: ~
+      - cd fixture
+      - yarn
+      - cd ios
+      - bundle exec pod install
+      - yarn e2e:build:ios
+      - yarn e2e:test:ios
