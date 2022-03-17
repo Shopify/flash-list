@@ -77,6 +77,8 @@ steps:
     run:
       - bundle: ~
       - yarn
+      - brew tap wix/brew
+      - brew install applesimutils
       - yarn build
       - cd fixture
       - yarn
