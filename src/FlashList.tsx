@@ -12,6 +12,7 @@ import {
   ProgressiveListView,
   RecyclerListView,
   RecyclerListViewProps,
+  WindowCorrectionConfig,
 } from "recyclerlistview";
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
@@ -149,6 +150,15 @@ class FlashList<T> extends React.PureComponent<
   private contentStyle: ContentStyle = {};
   private loadStartTime = 0;
   private isListLoaded = false;
+  private windowCorrectionConfig: WindowCorrectionConfig = {
+    value: {
+      windowShift: 0,
+      startCorrection: 0,
+      endCorrection: 0,
+    },
+    applyToItemScroll: true,
+    applyToInitialOffset: true,
+  };
 
   static defaultProps = {
     data: [],
@@ -344,6 +354,8 @@ class FlashList<T> extends React.PureComponent<
       ...restProps
     } = this.props;
 
+    const initialOffset =
+      (initialScrollIndex === 0 && this.distanceFromWindow) || undefined;
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
 
     return (
@@ -387,10 +399,22 @@ class FlashList<T> extends React.PureComponent<
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={initialScrollIndex || undefined}
+          initialOffset={initialOffset}
           onItemLayout={this.raiseOnLoadEventIfNeeded}
+          windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>
     );
+  }
+
+  private getUpdatedWindowCorrectionConfig() {
+    if (this.props.initialScrollIndex === 0) {
+      this.windowCorrectionConfig.applyToInitialOffset = false;
+    } else {
+      this.windowCorrectionConfig.applyToInitialOffset = true;
+    }
+    this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
+    return this.windowCorrectionConfig;
   }
 
   private validateListSize(event: LayoutChangeEvent) {
