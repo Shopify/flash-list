@@ -137,7 +137,7 @@ async function runScrollBenchmark(
       const toX = rlvContentSize.width - rlvSize.width;
       const toY = rlvContentSize.height - rlvSize.height;
 
-      const scrollNow = (x, y) => {
+      const scrollNow = (x: number, y: number) => {
         ref.current?.scrollToOffset({
           offset: horizontal ? x : y,
           animated: false,

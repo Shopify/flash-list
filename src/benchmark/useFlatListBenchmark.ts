@@ -74,7 +74,7 @@ async function runScrollBenchmark(
     const toX = horizontal ? targetOffset : 0;
     const toY = horizontal ? 0 : targetOffset;
 
-    const scrollNow = (x, y) => {
+    const scrollNow = (x: number, y: number) => {
       ref.current?.scrollToOffset({
         offset: horizontal ? x : y,
         animated: false,

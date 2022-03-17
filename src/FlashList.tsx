@@ -642,6 +642,7 @@ class FlashList<T> extends React.PureComponent<
     | undefined {
     return this.rlvRef;
   }
+
   private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
       this.isListLoaded = true;

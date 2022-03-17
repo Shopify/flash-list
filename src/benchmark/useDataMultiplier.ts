@@ -5,7 +5,7 @@
  * @param count Final count of data to be returned from this hook
  * @returns
  */
-export function useDataMultiplier<T>(data: T[], count): [T[]] {
+export function useDataMultiplier<T>(data: T[], count: number): [T[]] {
   const len = data.length;
   const arr = new Array<T>(count);
   let isObject = false;
