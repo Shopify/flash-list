@@ -77,6 +77,7 @@ steps:
     run:
       - bundle: ~
       - yarn
+      - yarn build
       - cd fixture
       - yarn
       - cd ios
