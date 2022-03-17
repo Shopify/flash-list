@@ -76,6 +76,7 @@ steps:
     timeout: 30m
     run:
       - bundle: ~
+      - yarn
       - cd fixture
       - yarn
       - cd ios
