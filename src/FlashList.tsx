@@ -342,7 +342,9 @@ class FlashList<T> extends React.PureComponent<
             onLayout: this.handleSizeChange,
             refreshControl:
               this.props.refreshControl || this.getRefreshControl(),
-            style: { ...this.getTransform() },
+
+            // Min values are being used to suppress RLV's bounded exception
+            style: { ...this.getTransform(), minHeight: 1, minWidth: 1 },
             contentContainerStyle: {
               backgroundColor: this.contentStyle.backgroundColor,
 
