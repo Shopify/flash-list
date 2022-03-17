@@ -1,4 +1,8 @@
-export const tweets = [
+/* eslint-disable max-len */
+
+import Tweet from "../models/Tweet";
+
+export const tweets: Tweet[] = [
   {
     author: {
       name: "Aram Miquel",

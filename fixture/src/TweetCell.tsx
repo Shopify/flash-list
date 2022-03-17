@@ -1,26 +1,19 @@
 import React from "react";
-import { StyleSheet, View, Image, Text } from "react-native";
+import { StyleSheet, View, Image, Text, ViewStyle } from "react-native";
 import FastImage from "react-native-fast-image";
 
-export interface Author {
-  name: string;
-  avatar: string;
-  screenName: string;
+import Author from "./models/Author";
+import Tweet from "./models/Tweet";
+
+export interface TweetCellProps {
+  tweet: Tweet;
 }
 
-export interface TweetItem {
-  author: Author;
-  fullText: string;
-  retweetCount: number;
-  replyCount: number;
-  favoriteCount: number;
-}
-
-export interface Tweet {
-  item: TweetItem;
-}
-
-const tweetActions = (retweets, comments, likes) => {
+const tweetActions = (
+  retweets: React.ReactNode,
+  comments: React.ReactNode,
+  likes: React.ReactNode
+) => {
   return (
     <View style={[styles.rowActions, styles.actionBar]}>
       <View style={styles.elemAction}>
@@ -56,34 +49,42 @@ const avatar = (author: Author) => {
   const imageUrl = author.avatar.replace("_normal", "");
   return <FastImage style={styles.avatar} source={{ uri: imageUrl }} />;
 };
+interface GrayTextProps {
+  children: React.ReactNode;
+  numberOfLines?: number;
+  style?: ViewStyle;
+}
 
-const GrayText = (props) => {
-  return <Text style={styles.gray}>{props.children}</Text>;
+const GrayText = ({ children, numberOfLines, style }: GrayTextProps) => {
+  return (
+    <Text style={[style, styles.gray]} numberOfLines={numberOfLines}>
+      {children}
+    </Text>
+  );
 };
 
-const TweetCell = (tweet: Tweet) => {
-  const item = tweet.item;
+const TweetCell = ({ tweet }: TweetCellProps) => {
   return (
     <View style={styles.singleItem}>
       <View style={styles.row}>
-        {avatar(item.author)}
+        {avatar(tweet.author)}
         <View style={{ flexShrink: 1, flexGrow: 1 }}>
           <View style={styles.rowTop}>
             <Text numberOfLines={1} style={styles.header}>
-              {item.author.name}
+              {tweet.author.name}
             </Text>
-            <GrayText style={{ flexShrink: 1 }} numberOfLines={1}>
-              @{item.author.screenName}
+            <GrayText style={styles.author} numberOfLines={1}>
+              @{tweet.author.screenName}
             </GrayText>
             <GrayText>·</GrayText>
             <GrayText>2h</GrayText>
           </View>
-          <Text style={styles.description}>{item.fullText}</Text>
+          <Text style={styles.description}>{tweet.fullText}</Text>
           <View style={styles.rowActions}>
             {tweetActions(
-              item.retweetCount,
-              item.replyCount,
-              item.favoriteCount
+              tweet.retweetCount,
+              tweet.replyCount,
+              tweet.favoriteCount
             )}
           </View>
         </View>
@@ -93,6 +94,9 @@ const TweetCell = (tweet: Tweet) => {
 };
 
 const styles = StyleSheet.create({
+  author: {
+    flexShrink: 1,
+  },
   actionBar: {
     marginTop: 8,
     justifyContent: "space-between",

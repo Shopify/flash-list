@@ -6,27 +6,41 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "build": "tsc -b",
+    "e2e:test:ios": "detox test -c ios.sim.release --artifacts-location /tmp/detox_artifacts/ ",
+    "e2e:build:ios": "detox build -c ios.sim.release",
+    "e2e:test:android": "detox test -c android.emu.release --artifacts-location /tmp/detox_artifacts/ ",
+    "e2e:build:android": "detox build -c android.emu.release"
   },
   "dependencies": {
-    "@react-navigation/native": "^6.0.6",
-    "@react-navigation/stack": "^6.0.11",
-    "@shopify/react-native-performance-lists-profiler": "^0.0.3",
+    "@react-navigation/native": "^6.0.8",
+    "@react-navigation/stack": "^6.1.1",
+    "@shopify/react-native-performance-lists-profiler": "^0.0.7",
     "react": "17.0.2",
-    "react-native": "0.66.4",
+    "react-native": "0.67.3",
     "react-native-fast-image": "^8.5.11",
-    "react-native-flipper": "^0.129.0",
-    "react-native-gesture-handler": "^2.1.1",
+    "react-native-flipper": "^0.138.0",
+    "react-native-gesture-handler": "^2.3.2",
+    "react-native-reanimated": "^2.4.1",
     "react-native-safe-area-context": "^3.3.2",
-    "react-native-screens": "^3.10.1",
-    "recyclerlistview": "3.1.0-beta.5"
+    "react-native-screens": "^3.13.1",
+    "recyclerlistview": "3.1.0-beta.6",
+    "@shopify/flash-list": "link:../",
+    "detox": "^19.5.7"
   },
   "devDependencies": {
     "babel-plugin-module-resolver": "^4.1.0",
     "glob": "^7.1.6",
-    "metro-config": "^0.66.2",
-    "metro-react-native-babel-preset": "^0.66.2",
+    "metro-config": "^0.69.0",
+    "metro-react-native-babel-preset": "^0.69.0",
     "patch-package": "^6.4.7",
-    "postinstall-postinstall": "^2.1.0"
+    "postinstall-postinstall": "^2.1.0",
+    "typescript": "^4.6.2",
+    "jest": "^27.5.1",
+    "babel-jest": "^27.5.1"
+  },
+  "jest": {
+    "preset": "react-native"
   }
 }

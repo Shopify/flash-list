@@ -6,7 +6,6 @@ import {
   LayoutChangeEvent,
   ViewStyle,
   ColorValue,
-  Dimensions,
 } from "react-native";
 import {
   DataProvider,
@@ -99,6 +98,13 @@ export interface FlashListProps<T> extends FlatListProps<T> {
   onBlankArea?: BlankAreaEventHandler;
 
   contentContainerStyle?: ContentStyle;
+
+  /**
+   * This event is raised once the list has drawn items on the screen. It also reports @param elapsedTimeInMs which is the time it took to draw the items.
+   * This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render.
+   * If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
+   */
+  onLoad?: (info: { elapsedTimeInMs: number }) => void;
 }
 
 export interface FlashListState<T> {
@@ -135,6 +141,8 @@ class FlashList<T> extends React.PureComponent<
   private distanceFromWindow = 0;
   private contentStyle: ContentStyle = {};
   private onEndReachedDisabled = false;
+  private loadStartTime = 0;
+  private isListLoaded = false;
 
   static defaultProps = {
     data: [],
@@ -143,6 +151,7 @@ class FlashList<T> extends React.PureComponent<
 
   constructor(props: FlashListProps<T>) {
     super(props);
+    this.loadStartTime = Date.now();
     this.validateProps();
     if (props.estimatedListSize) {
       if (props.horizontal) {
@@ -286,9 +295,20 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
+  componentDidMount() {
+    if (this.props.data?.length === 0) {
+      this.raiseOnLoadEventIfNeeded();
+    }
+  }
+
   render() {
     if (this.state.dataProvider.getSize() === 0) {
-      return this.getValidComponent(this.props.ListEmptyComponent);
+      return (
+        <View style={{ flex: 1 }}>
+          {this.header()}
+          {this.props.ListEmptyComponent || null}
+        </View>
+      );
     }
     this.contentStyle = this.getContentContainerInfo().style;
 
@@ -306,12 +326,6 @@ class FlashList<T> extends React.PureComponent<
     } = this.props;
 
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
-
-    // TODO: Wait for #104 (https://github.com/Shopify/flash-list/issues/104) to be fixed and remove this. Temp workaround
-    const endDetectionThreshold =
-      (horizontal
-        ? Dimensions.get("window").width
-        : Dimensions.get("window").height) * (onEndReachedThreshold || 0);
 
     return (
       <StickyHeaderContainer
@@ -331,9 +345,15 @@ class FlashList<T> extends React.PureComponent<
             onLayout: this.handleSizeChange,
             refreshControl:
               this.props.refreshControl || this.getRefreshControl(),
-            style: { ...this.getTransform() },
+
+            // Min values are being used to suppress RLV's bounded exception
+            style: { ...this.getTransform(), minHeight: 1, minWidth: 1 },
             contentContainerStyle: {
               backgroundColor: this.contentStyle.backgroundColor,
+
+              // Required to handle a scrollview bug. Check: https://github.com/Shopify/flash-list/pull/187
+              minHeight: 1,
+              minWidth: 1,
             },
             ...this.props.overrideProps,
           }}
@@ -341,19 +361,28 @@ class FlashList<T> extends React.PureComponent<
           renderItemContainer={this.itemContainer}
           renderContentContainer={this.container}
           onEndReached={this.onEndReached}
-          onEndReachedThreshold={endDetectionThreshold || undefined}
+          onEndReachedThresholdRelative={onEndReachedThreshold || undefined}
           extendedState={this.state.extraData}
           layoutSize={estimatedListSize}
           maxRenderAhead={3 * finalDrawDistance}
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={initialScrollIndex || undefined}
+          onItemLayout={this.raiseOnLoadEventIfNeeded}
         />
       </StickyHeaderContainer>
     );
   }
 
+  private validateListSize(event: LayoutChangeEvent) {
+    const { height, width } = event.nativeEvent.layout;
+    if (Math.floor(height) <= 1 || Math.floor(width) <= 1) {
+      console.warn(WarningList.unusableRenderedSize);
+    }
+  }
+
   private handleSizeChange = (event: LayoutChangeEvent) => {
+    this.validateListSize(event);
     const newSize = this.props.horizontal
       ? event.nativeEvent.layout.height
       : event.nativeEvent.layout.width;
@@ -369,7 +398,7 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
-  private container = (props, children) => {
+  private container = (props: object, children: React.ReactNode[]) => {
     return (
       <>
         <PureComponentWrapper
@@ -384,7 +413,9 @@ class FlashList<T> extends React.PureComponent<
         />
         <AutoLayoutView
           {...props}
-          onBlankAreaEvent={this.props.onBlankArea}
+          onBlankAreaEvent={(event) => {
+            this.props.onBlankArea?.(event);
+          }}
           onLayout={(event) => {
             this.distanceFromWindow = this.props.horizontal
               ? event.nativeEvent.layout.x
@@ -407,7 +438,11 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
-  private itemContainer = (props, parentProps, children) => {
+  private itemContainer = (
+    props: any,
+    parentProps: any,
+    children?: React.ReactNode
+  ) => {
     return (
       <ItemContainer
         {...props}
@@ -485,7 +520,7 @@ class FlashList<T> extends React.PureComponent<
     }
   }
 
-  private separator = (index) => {
+  private separator = (index: number) => {
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
     if (trailingItem === undefined) {
@@ -538,7 +573,9 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
-  private getValidComponent(component) {
+  private getValidComponent(
+    component: React.ComponentType | React.ReactElement | null | undefined
+  ) {
     const PassedComponent = component;
     return (
       (React.isValidElement(PassedComponent) && PassedComponent) ||
@@ -548,8 +585,8 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private applyWindowCorrection = (
-    _,
-    __,
+    _: any,
+    __: any,
     correctionObject: { windowShift: number }
   ) => {
     correctionObject.windowShift = -this.distanceFromWindow;
@@ -565,7 +602,7 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
-  private rowRenderer = (_, data, index, extraData) => {
+  private rowRenderer = (_: any, data: any, index: number, extraData: any) => {
     // known issue: expected to pass separators which isn't available in RLV
     return this.props.renderItem?.({
       item: data,
@@ -582,7 +619,7 @@ class FlashList<T> extends React.PureComponent<
     this.stickyContentContainerRef = ref;
   };
 
-  private stickyRowRenderer = (_, data, index, extraData) => {
+  private stickyRowRenderer = (_: any, __: any, index: number, ___: any) => {
     return (
       <PureComponentWrapper
         ref={this.stickyContentRef}
@@ -605,6 +642,14 @@ class FlashList<T> extends React.PureComponent<
     | undefined {
     return this.rlvRef;
   }
+  private raiseOnLoadEventIfNeeded = () => {
+    if (!this.isListLoaded) {
+      this.isListLoaded = true;
+      this.props.onLoad?.({
+        elapsedTimeInMs: Date.now() - this.loadStartTime,
+      });
+    }
+  };
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
