@@ -57,10 +57,10 @@ const ReminderCell = ({
     // We delete the element after 1s
     // like the reminders app does on iOS
     setTimeout(() => {
-      onCompleted(item);
       setChecked(false);
+      onCompleted(item);
     }, 1000);
-  }, [checked, item]);
+  }, [checked, item, onCompleted]);
 
   return (
     <Animated.View
@@ -121,22 +121,28 @@ const Reminders = () => {
     ]);
   };
 
-  const updateTitle = (id: string, title: string) => {
-    const newReminders = [...reminders];
-    const elem = newReminders.find((reminder) => reminder.id === id);
-    if (elem !== undefined) {
-      elem.title = title;
-    }
-    setReminders(newReminders);
-  };
+  const updateTitle = useCallback(
+    (id: string, title: string) => {
+      const newReminders = [...reminders];
+      const elem = newReminders.find((reminder) => reminder.id === id);
+      if (elem !== undefined) {
+        elem.title = title;
+      }
+      setReminders(newReminders);
+    },
+    [setReminders, reminders]
+  );
 
-  const removeItem = (reminder: Reminder) => {
-    setReminders(
-      reminders.filter(({ title }) => {
-        return title !== reminder.title;
-      })
-    );
-  };
+  const removeItem = useCallback(
+    (reminder: Reminder) => {
+      setReminders(
+        reminders.filter(({ title }) => {
+          return title !== reminder.title;
+        })
+      );
+    },
+    [setReminders, reminders]
+  );
 
   const list = useRef<FlashList<Reminder> | null>(null);
 
@@ -144,14 +150,14 @@ const Reminders = () => {
     (item: Reminder, text: string) => {
       updateTitle(item.id, text);
     },
-    [reminders]
+    [updateTitle]
   );
 
   const onCompleted = useCallback(
     (item: Reminder) => {
       removeItem(item);
     },
-    [reminders]
+    [removeItem]
   );
 
   const animateToBottomIfNewItemAdded = (item: Reminder) => {
