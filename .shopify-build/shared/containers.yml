@@ -7,7 +7,9 @@ containers:
     docker_pull_timeout: 480
 
   macos:
-    anka: macos-xcode13
+    anka:
+      image: macos-xclt-xcode-ios
+      arch: arm
 
   docs_container:
     docker: gcr.io/shopify-docker-images/apps/production/apidocs-generator-alpine:production
