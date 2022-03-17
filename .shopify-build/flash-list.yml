@@ -71,7 +71,7 @@ steps:
       - cd android
       - ./gradlew assembleDebug
 
-  - label: "Run e2e tests iOS :iOS:"
+  - label: "Run e2e tests iOS :ios:"
     container: macos
     timeout: 30m
     run:
