@@ -2,7 +2,7 @@
  Use this component inside your React Native Application.
  A scrollable list with different item type
  */
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -28,12 +28,15 @@ const List = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState(generateArray(100));
 
+  const list = useRef<FlashList | null>(null);
+
   const removeItem = (item: number) => {
     setData(
       data.filter((dataItem) => {
         return dataItem !== item;
       })
     );
+    list.current?.prepareForLayoutAnimationRender();
     // after removing the item, we start animation
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
@@ -61,6 +64,7 @@ const List = () => {
 
   return (
     <FlashList
+      ref={list}
       refreshing={refreshing}
       onRefresh={() => {
         setRefreshing(true);

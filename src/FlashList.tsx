@@ -382,7 +382,6 @@ class FlashList<T> extends React.PureComponent<
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={initialScrollIndex || undefined}
           onItemLayout={this.raiseOnLoadEventIfNeeded}
-          optimizeForInsertDeleteAnimations
         />
       </StickyHeaderContainer>
     );
@@ -659,6 +658,10 @@ class FlashList<T> extends React.PureComponent<
       });
     }
   };
+
+  public prepareForLayoutAnimationRender(): void {
+    this.rlvRef?.prepareForLayoutAnimationRender();
+  }
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
