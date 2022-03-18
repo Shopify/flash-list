@@ -2,9 +2,9 @@ import React from "react";
 import { ScrollView, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount } from "@quilted/react-testing";
+import { ProgressiveListView } from "recyclerlistview";
 
 import FlashList from "../FlashList";
-import { ProgressiveListView } from "recyclerlistview";
 
 describe("FlashList", () => {
   beforeEach(() => {
@@ -21,19 +21,16 @@ describe("FlashList", () => {
         data={["One", "Two"]}
       />
     );
-    flashList
-      .findAll(ScrollView)
-      .at(0)!
-      .trigger("onLayout", {
-        nativeEvent: { layout: { height: 900, width: 400 } },
-      });
+    flashList.findAll(ScrollView)[0].trigger("onLayout", {
+      nativeEvent: { layout: { height: 900, width: 400 } },
+    });
     expect(flashList).toContainReactComponent(Text, { children: "One" });
   });
 
   it("sets ProgressiveListView to horizontal", () => {
     const flashList = mount(
       <FlashList
-        horizontal={true}
+        horizontal
         renderItem={(text) => {
           return <Text>{text.item}</Text>;
         }}

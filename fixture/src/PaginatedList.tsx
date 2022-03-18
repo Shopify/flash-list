@@ -7,6 +7,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
 export interface PaginatedListState {
+  /* eslint-disable react/no-unused-prop-types */
   elems: any[];
 }
 
