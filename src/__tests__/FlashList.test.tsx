@@ -1,12 +1,10 @@
 import React from "react";
-import { createElement, FlatList, ScrollView, Text } from "react-native";
+import { ScrollView, Text } from "react-native";
 import "@quilted/react-testing/matchers";
-import { createMount, mount } from "@quilted/react-testing";
+import { mount } from "@quilted/react-testing";
 
 import FlashList from "../FlashList";
-
-interface Config {}
-interface Context {}
+import { ProgressiveListView } from "recyclerlistview";
 
 describe("FlashList", () => {
   beforeEach(() => {
@@ -21,8 +19,7 @@ describe("FlashList", () => {
         }}
         estimatedItemSize={200}
         data={["One", "Two"]}
-      />,
-      {}
+      />
     );
     flashList
       .findAll(ScrollView)
@@ -31,5 +28,21 @@ describe("FlashList", () => {
         nativeEvent: { layout: { height: 900, width: 400 } },
       });
     expect(flashList).toContainReactComponent(Text, { children: "One" });
+  });
+
+  it("sets ProgressiveListView to horizontal", () => {
+    const flashList = mount(
+      <FlashList
+        horizontal={true}
+        renderItem={(text) => {
+          return <Text>{text.item}</Text>;
+        }}
+        estimatedItemSize={200}
+        data={["One", "Two"]}
+      />
+    );
+    expect(flashList).toContainReactComponent(ProgressiveListView, {
+      isHorizontal: true,
+    });
   });
 });
