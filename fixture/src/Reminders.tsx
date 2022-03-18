@@ -11,14 +11,7 @@ import {
   ViewProps,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import Animated, {
-  FadeOut,
-  Layout,
-  SlideInRight,
-  SlideOutRight,
-} from "react-native-reanimated";
-
-import { AnimatedFlashList } from "../../src";
+import Animated, { FadeOut, Layout } from "react-native-reanimated";
 
 interface Reminder {
   id: string;
