@@ -1,7 +1,6 @@
 #include "shared/containers.yml"
 
 steps:
-  # TODO: Add steps for iOS, Android, linting...
   - label: "Build Typescript :typescript:"
     timeout: 20m
     run:
@@ -21,6 +20,12 @@ steps:
     run:
       - yarn
       - yarn lint
+
+  - label: "Test Typescript :jest:"
+    timeout: 20m
+    run:
+      - yarn
+      - yarn test
 
   - label: "Metro bundling for iOS :metro: :ios:"
     container: macos
