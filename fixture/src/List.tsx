@@ -28,7 +28,7 @@ const List = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState(generateArray(100));
 
-  const list = useRef<FlashList | null>(null);
+  const list = useRef<FlashList<number> | null>(null);
 
   const removeItem = (item: number) => {
     setData(
