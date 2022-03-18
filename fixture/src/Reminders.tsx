@@ -11,7 +11,14 @@ import {
   ViewProps,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import Animated, { FadeOut, Layout } from "react-native-reanimated";
+import Animated, {
+  FadeOut,
+  Layout,
+  SlideInRight,
+  SlideOutRight,
+} from "react-native-reanimated";
+
+import { AnimatedFlashList } from "../../src";
 
 interface Reminder {
   id: string;
@@ -135,6 +142,7 @@ const Reminders = () => {
 
   const removeItem = useCallback(
     (reminder: Reminder) => {
+      list.current?.prepareForLayoutAnimationRender();
       setReminders(
         reminders.filter(({ title }) => {
           return title !== reminder.title;
@@ -166,6 +174,18 @@ const Reminders = () => {
     }
   };
 
+  const renderItem = ({ item }: { item: Reminder }) => {
+    return (
+      <ReminderCell
+        item={item}
+        onChangeText={onChangeText}
+        onCompleted={onCompleted}
+        onIntroPressed={addReminder}
+        onLayout={() => animateToBottomIfNewItemAdded(item)}
+      />
+    );
+  };
+
   return (
     <TouchableWithoutFeedback onPress={addReminder}>
       <View
@@ -177,18 +197,8 @@ const Reminders = () => {
       >
         <FlashList
           ref={list}
-          renderItem={({ item }) => {
-            return (
-              <ReminderCell
-                item={item}
-                onChangeText={onChangeText}
-                onCompleted={onCompleted}
-                onIntroPressed={addReminder}
-                onLayout={() => animateToBottomIfNewItemAdded(item)}
-              />
-            );
-          }}
-          keyExtractor={(item) => {
+          renderItem={renderItem}
+          keyExtractor={(item: Reminder) => {
             return item.id;
           }}
           ListHeaderComponent={Header}
