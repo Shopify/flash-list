@@ -7,6 +7,10 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add support for layout animations
+
+  - https://github.com/Shopify/flash-list/pull/183
+
 - Suppress recyclerlistview's bounded size exception for some missing cases.
   - https://github.com/Shopify/flash-list/pull/192
 

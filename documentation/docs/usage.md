@@ -185,3 +185,15 @@ onLoad: (info: { elapsedTimeInMs: number }) => void;
 ```
 
 This event is raised once the list has drawn items on the screen. It also reports elapsedTimeInMs which is the time it took to draw the items. This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render. If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
+
+# FlashList methods
+
+```ts
+prepareForLayoutAnimationRender(): void;
+```
+
+Run this method before running layout animations, such as when animating an element when deleting it. This method disable recycling for the next frame so that layout animations run well.
+
+:::warning
+Avoid this when making large changes to the data as the list might draw too much to run animations. Single item insertions/deletions should be good. With recycling paused the list cannot do much optimization. The next render will run as normal and reuse items.
+:::

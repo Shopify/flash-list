@@ -17,7 +17,7 @@ Check out [the Vault project](https://vault.shopify.io/projects/22845) to learn 
 
 ### Adding a package to your project
 
-Add the package to your project via `yarn add @shopify/flash-list recyclerlistview@3.1.0-beta.6` and run `pod install` in the `ios` directory.
+Add the package to your project via `yarn add @shopify/flash-list recyclerlistview@3.1.0-alpha.8` and run `pod install` in the `ios` directory.
 
 :::note
 [`recyclerlistview`](https://github.com/Flipkart/recyclerlistview) is a peer dependency of `@shopify/flash-list`.

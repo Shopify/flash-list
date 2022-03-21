@@ -161,7 +161,7 @@ class FlashList<T> extends React.PureComponent<
     }
     this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
     // eslint-disable-next-line react/state-in-constructor
-    this.state = FlashList.getInitialMutableState();
+    this.state = FlashList.getInitialMutableState(this);
   }
 
   private validateProps() {
@@ -221,13 +221,29 @@ class FlashList<T> extends React.PureComponent<
     return newState;
   }
 
-  private static getInitialMutableState<T>(): FlashListState<T> {
+  private static getInitialMutableState<T>(
+    flashList: FlashList<T>
+  ): FlashListState<T> {
     return {
       data: null,
       layoutProvider: null!!,
-      dataProvider: new DataProvider((r1, r2) => {
-        return r1 !== r2;
-      }),
+      dataProvider: new DataProvider(
+        (r1, r2) => {
+          return r1 !== r2;
+        },
+        (index) => {
+          if (
+            flashList.props == null ||
+            flashList.props.data == null ||
+            flashList.props.keyExtractor == null
+          ) {
+            return index.toString();
+          }
+          return flashList.props
+            .keyExtractor(flashList.props.data[index], index)
+            .toString();
+        }
+      ),
       numColumns: 0,
     };
   }
@@ -642,6 +658,16 @@ class FlashList<T> extends React.PureComponent<
       });
     }
   };
+
+  /**
+   * Disables recycling for the next frame so that layout animations run well.
+   * Warning: Avoid this when making large changes to the data as the list might draw too much to run animations. Single item insertions/deletions
+   * should be good. With recycling paused the list cannot do much optimization.
+   * The next render will run as normal and reuse items.
+   */
+  public prepareForLayoutAnimationRender(): void {
+    this.rlvRef?.prepareForLayoutAnimationRender();
+  }
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
