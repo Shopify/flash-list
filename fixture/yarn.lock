@@ -1379,8 +1379,10 @@
     warn-once "^0.1.0"
 
 "@shopify/flash-list@link:..":
-  version "0.0.0"
-  uid ""
+  version "0.3.3"
+  dependencies:
+    invariant "^2.2.4"
+    recyclerlistview "3.1.0-alpha.8"
 
 "@shopify/react-native-performance-lists-profiler@^0.0.7":
   version "0.0.7"
@@ -5685,10 +5687,10 @@ react-native-screens@^3.4.0:
     react-native-gradle-plugin "^0.0.3"
     warn-once "^0.1.0"
 
-react-native@0.67.3:
-  version "0.67.3"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.67.3.tgz#ee8bafb644afbe511a4a2c8e9c144a9720d06dd8"
-  integrity sha512-epMVRMRH7dLCis97+YwiV4dmTVZO6qKmQgwcTNcxVt/kEMxAa+OYK7h81+99/n7XCeMFk/U2zYOBuQqc7c5Amg==
+react-native@0.67.4:
+  version "0.67.4"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.67.4.tgz#57a1503daa81f66a61f521ff67b259f126d87f9c"
+  integrity sha512-NA9d9lNJu9TViEJu2uZxWXUP+QNUilGGA5tdMbVFedNroOH1lnQ3n/FAVoGK1gqGarCgNTtheBxUpEa979Cu8w==
   dependencies:
     "@jest/create-cache-key-function" "^27.0.1"
     "@react-native-community/cli" "^6.0.0"
