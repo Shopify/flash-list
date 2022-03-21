@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- initialScrollIndex, scrollTo methods will now account for size of header
+  - https://github.com/Shopify/flash-list/pull/194
+
 ## [0.4.0] - 2022-03-23
 
 - Add support for layout animations
