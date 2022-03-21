@@ -354,6 +354,9 @@ class FlashList<T> extends React.PureComponent<
       ...restProps
     } = this.props;
 
+    // RecyclerListView simple ignores if initialScrollIndex is set to 0 because it doesn't understand headers
+    // Known issue - This won't work if there's a grid and index 1 is next to 0. Anything with x or y as 0 is ignored by RLV
+    // Using initialOffset to force RLV to scroll to the right place
     const initialOffset =
       (initialScrollIndex === 0 && this.distanceFromWindow) || undefined;
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
@@ -408,6 +411,9 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private getUpdatedWindowCorrectionConfig() {
+    // If initial offset is 0 the we're forcing RLV to use initialOffset and thus we need to disable window correction
+    // This isn't clean but it's the only way to get RLV to scroll to the right place
+    // TODO: Remove this when RLV fixes this
     if (this.props.initialScrollIndex === 0) {
       this.windowCorrectionConfig.applyToInitialOffset = false;
     } else {
