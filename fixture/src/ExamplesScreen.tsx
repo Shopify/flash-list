@@ -38,6 +38,7 @@ export const ExamplesScreen = () => {
             onPress={() => {
               navigate(item.destination);
             }}
+            testID={item.title}
           >
             <Text style={styles.rowTitle}>{item.title}</Text>
           </TouchableOpacity>
