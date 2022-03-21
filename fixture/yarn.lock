@@ -1384,10 +1384,10 @@
     invariant "^2.2.4"
     recyclerlistview "3.1.0-alpha.8"
 
-"@shopify/react-native-performance-lists-profiler@^0.0.7":
-  version "0.0.7"
-  resolved "https://npm.shopify.io/node/@shopify/react-native-performance-lists-profiler/-/0.0.7/react-native-performance-lists-profiler-0.0.7.tgz#ab8a2150969367468101bcea1d5a021bdd6e0eba"
-  integrity sha512-lzlCuvoB4tPoPXT6LtSx1UPqn3lCz49f9rdMA4ppL3zE679WS8G25ZVTCnyTcX0NxeLulzAuoaNdmV542k6XyQ==
+"@shopify/react-native-performance-lists-profiler@^0.0.10":
+  version "0.0.10"
+  resolved "https://npm.shopify.io/node/@shopify/react-native-performance-lists-profiler/-/0.0.10/react-native-performance-lists-profiler-0.0.10.tgz#48f28b3effe72a3599222c5536bb711168d2c7ad"
+  integrity sha512-G3ZY1vHcREqS79/4sPbgmgeLJsnMMX2pzF6Ho6yFWDF1O3iA9JBger42/iQ3V6+5kyQB4Ff1nYjHj/NYFxVkyg==
 
 "@sideway/address@^4.1.3":
   version "4.1.3"
