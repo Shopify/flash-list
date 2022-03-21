@@ -1,8 +1,8 @@
 ---
 id: performance-troubleshooting
-title: Performance troubleshooting ⚡️
+title: Performance troubleshooting
 slug: /performance-troubleshooting
-sidebar_position: 2
+sidebar_position: 1
 ---
 
 ## Profiling

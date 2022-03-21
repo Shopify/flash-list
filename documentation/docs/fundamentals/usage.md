@@ -1,8 +1,8 @@
 ---
 id: usage
-title: Usage 📝
+title: Usage
 slug: /usage
-sidebar_position: 1
+sidebar_position: 0
 ---
 
 If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` just by changing the component name and adding `estimatedItemSize` or refer to the example below:
@@ -188,12 +188,14 @@ This event is raised once the list has drawn items on the screen. It also report
 
 # FlashList methods
 
+### `prepareForLayoutAnimationRender`
+
 ```ts
 prepareForLayoutAnimationRender(): void;
 ```
 
-Run this method before running layout animations, such as when animating an element when deleting it. This method disable recycling for the next frame so that layout animations run well.
+Run this method before running layout animations, such as when animating an element when deleting it. This method disables recycling for the next frame so that layout animations run well.
 
 :::warning
-Avoid this when making large changes to the data as the list might draw too much to run animations. Single item insertions/deletions should be good. With recycling paused the list cannot do much optimization. The next render will run as normal and reuse items.
+Avoid using this when making large changes to the data as the list might draw too much to run animations since the method disables recycling temporarily. Single item insertions or deletions should animate smoothly. The render after animation will enable recycling again and you can stop avoiding making large data changes.
 :::
