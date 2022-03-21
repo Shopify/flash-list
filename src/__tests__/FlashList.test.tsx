@@ -25,6 +25,9 @@ describe("FlashList", () => {
       nativeEvent: { layout: { height: 900, width: 400 } },
     });
     expect(flashList).toContainReactComponent(Text, { children: "One" });
+    expect(flashList).toContainReactComponent(ProgressiveListView, {
+      isHorizontal: false,
+    });
   });
 
   it("sets ProgressiveListView to horizontal", () => {
