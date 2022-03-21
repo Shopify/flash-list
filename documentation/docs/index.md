@@ -5,8 +5,6 @@ slug: /
 sidebar_position: 0
 ---
 
-[![Build status](img/FlashList.png)](https://buildkite.com/shopify/flash-list)
-
 **Fast & performant React Native list. No more blank cells.**
 
 Swap from FlatList in seconds. Get instant performance.

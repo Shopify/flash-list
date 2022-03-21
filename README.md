@@ -1,7 +1,6 @@
-[![Build status](./documentation/static/img/FlashList.png)](https://buildkite.com/shopify/flash-list)
+[![Build status](./FlashList.png)](https://buildkite.com/shopify/flash-list)
 
 <div align="center">
-
 [Website](https://shpoify.github.io/flash-list) • [Getting started](https://flash-list.docs.shopify.io/) • [Usage](https://flash-list.docs.shopify.io/usage) • [Performance](https://flash-list.docs.shopify.io/performance-troubleshooting) • [Known Issues](https://flash-list.docs.shopify.io/known-issues)
 
 **Fast & performant React Native list. No more blank cells.**
