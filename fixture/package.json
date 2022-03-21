@@ -16,6 +16,7 @@
   "dependencies": {
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/stack": "^6.1.1",
+    "@shopify/flash-list": "link:../",
     "@shopify/react-native-performance-lists-profiler": "^0.0.7",
     "react": "17.0.2",
     "react-native": "0.67.3",
@@ -26,7 +27,6 @@
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.13.1",
     "recyclerlistview": "3.1.0-alpha.8",
-    "@shopify/flash-list": "link:../",
     "detox": "^19.5.7"
   },
   "devDependencies": {
