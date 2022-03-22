@@ -18,6 +18,10 @@ LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
 For the animation to work properly, you additionally need to add [`keyExtractor`](/usage#keyextractor) prop to your `FlashList` component if you have not already done so.
 
+:::note
+`LayoutAnimation` is experimental on Android, so we cannot guarantee its stability when used with `FlashList`.
+:::
+
 ## Example
 
 ```ts
