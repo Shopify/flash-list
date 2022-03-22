@@ -7,8 +7,9 @@ sidebar_position: 1
 
 ## Profiling
 
-:::note
-Before assessing whether list's performance is subpar, make sure you are in release mode. On Android, you can disable JS dev mode inside the developer menu, whereas you need to run the release configuration on iOS.
+:::warning
+Before assessing your list's performance, make sure you are in release mode. On Android, you can disable JS dev mode inside the developer menu, whereas you need to run the release configuration on iOS.
+FlashList can appear to be slower than FlatList in dev mode. The primary reason is a much smaller and fixed [window size](https://reactnative.dev/docs/virtualizedlist#windowsize) equivalent. Check [here](https://reactnative.dev/docs/performance#running-in-development-mode-devtrue) to know more about why you shouldn't profile with dev mode on.
 :::
 
 The following metrics can be used for profiling the list's overall performance:
