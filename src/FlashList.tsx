@@ -707,7 +707,8 @@ class FlashList<T> extends React.PureComponent<
 
   // Allows access to internal recyclerlistview. This is useful for enabling access to it's public APIs.
   // Warning: We may swap recyclerlistview for something else in the future. Use with caution.
-  public get recyclerListView_unsafe() {
+  /* eslint-disable @typescript-eslint/naming-convention */
+  public get recyclerlistview_unsafe() {
     return this.rlvRef;
   }
 
