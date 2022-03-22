@@ -665,6 +665,9 @@ class FlashList<T> extends React.PureComponent<
    * The next render will run as normal and reuse items.
    */
   public prepareForLayoutAnimationRender(): void {
+    if (this.props.keyExtractor == null) {
+      console.warn(WarningList.missingKeyExtractor);
+    }
     this.rlvRef?.prepareForLayoutAnimationRender();
   }
 
