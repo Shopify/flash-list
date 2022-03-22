@@ -5,5 +5,9 @@
   "testTimeout": 120000,
   "testRegex": "\\.e2e\\.js$",
   "reporters": ["detox/runners/jest/streamlineReporter"],
-  "verbose": true
+  "verbose": true,
+  "preset": "react-native",
+  "transformIgnorePatterns": [
+    "<rootDir>/node_modules/(?!((jest-)?react-native|@react-native(-community)?)/)"
+  ]
 }

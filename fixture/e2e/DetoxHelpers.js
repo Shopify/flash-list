@@ -1,22 +1,30 @@
 const path = require("path");
 const fs = require("fs");
 const pixelmatch = require("pixelmatch");
-const PNG = require("pngjs").PNG;
+const { PNG } = require("pngjs");
+const { execSync } = require("child_process");
 
 const ROOT_PATH = path.resolve(__dirname, "..");
 
-export function pixelDifference(reference, toMatch) => (diff: Number) {
-  const reference = PNG.sync.read(fs.readFileSync(reference));
-  const toMatch = PNG.sync.read(fs.readFileSync(toMatch));
+export function pixelDifference(
+  referencePath: String,
+  toMatchPath: String,
+  diffPath?: String
+): [Number, PNG] {
+  const reference = PNG.sync.read(fs.readFileSync(referencePath));
+  const toMatch = PNG.sync.read(fs.readFileSync(toMatchPath));
   const { width, height } = reference;
   const diff = new PNG({ width, height });
 
-  const numDiffPixels = pixelmatch(reference.data, toMatch.data, diff.data, width, height);
+  const numDiffPixels = pixelmatch(
+    reference.data,
+    toMatch.data,
+    diff.data,
+    width,
+    height
+  );
 
   return numDiffPixels;
-
-//   const diffLocation = path.resolve(ROOT_PATH, "e2e/tmp/diff.png");
-//   fs.writeFileSync(diffLocation, PNG.sync.write(diff));
 }
 
 export async function setDemoMode() {
