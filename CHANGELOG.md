@@ -16,7 +16,11 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/192
 
 - Expose reference to recyclerlistview and firstItemOffset
+
   - https://github.com/Shopify/flash-list/pull/217
+
+- recyclerlistview upgraded to v3.1.0-alpha.9
+  - https://github.com/Shopify/flash-list/pull/227
 
 ## [0.3.3] - 2022-03-16
 
