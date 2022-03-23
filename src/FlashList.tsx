@@ -224,26 +224,25 @@ class FlashList<T> extends React.PureComponent<
   private static getInitialMutableState<T>(
     flashList: FlashList<T>
   ): FlashListState<T> {
+    let getStableId: ((index: number) => string) | undefined;
+    if (
+      flashList.props.keyExtractor !== null &&
+      flashList.props.keyExtractor !== undefined
+    ) {
+      getStableId = (index) =>
+        // We assume `keyExtractor` function will never change from being `null | undefined` to defined and vice versa.
+        // Similarly, data should never be `null | undefined` when `getStableId` is called.
+        flashList.props.keyExtractor!(
+          flashList.props.data![index],
+          index
+        ).toString();
+    }
     return {
       data: null,
       layoutProvider: null!!,
-      dataProvider: new DataProvider(
-        (r1, r2) => {
-          return r1 !== r2;
-        },
-        (index) => {
-          if (
-            flashList.props == null ||
-            flashList.props.data == null ||
-            flashList.props.keyExtractor == null
-          ) {
-            return index.toString();
-          }
-          return flashList.props
-            .keyExtractor(flashList.props.data[index], index)
-            .toString();
-        }
-      ),
+      dataProvider: new DataProvider((r1, r2) => {
+        return r1 !== r2;
+      }, getStableId),
       numColumns: 0,
     };
   }
