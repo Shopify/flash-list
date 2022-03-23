@@ -34,7 +34,14 @@ Having few items on the screen is great for performance and responsiveness. Smal
 ## What happens if the value are way off compared to actual numbers?
 
 - If values are too big, you may see few items load on screen and then immediately more will show up. During fast scroll you may see some blank area. It's not because things have become slow. The list just doesn't know that it has not drawn enough.
+
+![Large estimatedItemSize drawio (1)](https://user-images.githubusercontent.com/7811728/159797425-844cd68c-0d39-4673-a2fd-6df09710e001.png)
+
 - If the values are too small, visibly not much will change but you will be drawing more than necessary and in cases where component are very heavy load times can increase.
+
+![estimatedItemSize drawio (1)](https://user-images.githubusercontent.com/7811728/159797580-7ab0a1c0-d510-48f8-8147-1618b72821fa.png)
+
+
 - Please note `FlashList` will not overlap or show gaps between items due to incorrect values provided here.
 
 ## Will it always be this way?
