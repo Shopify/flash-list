@@ -27,6 +27,9 @@ We're thinking of ways to workaround this limitation but for now we think that l
 - If items **vary too much in sizes**, choose a few that are quite different, use element inspector and calculate an average. This average will work great and don't worry about solving for different devices sizes. There's enough tolerance internally.
 - If you run into a situation where more than one value seems like a good fit pick the smaller one.
 
+![Element Inspector](https://user-images.githubusercontent.com/7811728/159806998-ce6b0c27-576c-4fe1-8170-cfa23788cfae.png)
+
+
 ### Impact on scroll
 
 During very quick scrolls if offsets are changing very quickly `FlashList` might run into situation where it needs to prepare more than one item. This is just another version of the same problem. If your estimate is too big `FlashList` might think that a small number of items are enough to fill the screen and you might end up seeing blanks. This is the primary reason we suggest using a smaller value if you're confused between two of them. Drawing a few more items is better than showing blanks. With `FlashList` we don't expect blanks unless components are very slow or `estimatedItemSize` are too large.
