@@ -670,8 +670,9 @@ class FlashList<T> extends React.PureComponent<
       this.props.keyExtractor === undefined
     ) {
       console.warn(WarningList.missingKeyExtractor);
+    } else {
+      this.rlvRef?.prepareForLayoutAnimationRender();
     }
-    this.rlvRef?.prepareForLayoutAnimationRender();
   }
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {

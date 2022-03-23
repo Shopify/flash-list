@@ -70,7 +70,7 @@ describe("FlashList", () => {
       "prepareForLayoutAnimationRender"
     );
     flashList.instance.prepareForLayoutAnimationRender();
-    expect(prepareForLayoutAnimationRender).toHaveBeenCalledTimes(1);
+    expect(prepareForLayoutAnimationRender).not.toHaveBeenCalled();
     expect(warn).toHaveBeenCalledWith(Warnings.missingKeyExtractor);
   });
 });
