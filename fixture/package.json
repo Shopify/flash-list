@@ -26,7 +26,7 @@
     "react-native-reanimated": "^2.4.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.13.1",
-    "recyclerlistview": "3.1.0-alpha.8",
+    "recyclerlistview": "3.1.0-alpha.9",
     "detox": "^19.5.7"
   },
   "devDependencies": {
