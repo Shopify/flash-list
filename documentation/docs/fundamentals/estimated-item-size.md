@@ -35,11 +35,11 @@ Having few items on the screen is great for performance and responsiveness. Smal
 
 - **If values are too big**, you may see few items load on screen and then immediately more will show up. During fast scroll you may see some blank area. It's not because things have become slow. The list just doesn't know that it has not drawn enough. If your JS FPS is good and you still have blanks it's most likely this problem.
 
-![Large estimatedItemSize](https://user-images.githubusercontent.com/7811728/159797425-844cd68c-0d39-4673-a2fd-6df09710e001.png)
+![Large estimatedItemSize](https://user-images.githubusercontent.com/7811728/159801541-5540820d-4d90-491d-9645-dd43b684c437.png)
 
 - **If the values are too small**, visibly not much will change but you will be drawing more than necessary and in cases where component are very heavy load times can increase.
 
-![Small estimatedItemSize](https://user-images.githubusercontent.com/7811728/159797580-7ab0a1c0-d510-48f8-8147-1618b72821fa.png)
+![Small estimatedItemSize](https://user-images.githubusercontent.com/7811728/159801594-51a26edc-8f5b-4fb5-a268-c138b525bd3c.png)
 
 - Please note `FlashList` will not overlap or show gaps between items due to incorrect values provided here.
 
