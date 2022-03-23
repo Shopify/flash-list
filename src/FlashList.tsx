@@ -704,6 +704,22 @@ class FlashList<T> extends React.PureComponent<
   public getScrollableNode(): number | null {
     return this.rlvRef?.getScrollableNode?.() || null;
   }
+
+  /**
+   * Allows access to internal recyclerlistview. This is useful for enabling access to its public APIs.
+   * Warning: We may swap recyclerlistview for something else in the future. Use with caution.
+   */
+  /* eslint-disable @typescript-eslint/naming-convention */
+  public get recyclerlistview_unsafe() {
+    return this.rlvRef;
+  }
+
+  /**
+   * Specifies how far the first item is from top of the list. This would normally be a sum of header size and top/left padding applied to the list.
+   */
+  public get firstItemOffset() {
+    return this.distanceFromWindow;
+  }
 }
 
 export default FlashList;

@@ -12,7 +12,11 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/183
 
 - Suppress recyclerlistview's bounded size exception for some missing cases.
+
   - https://github.com/Shopify/flash-list/pull/192
+
+- Expose reference to recyclerlistview and firstItemOffset
+  - https://github.com/Shopify/flash-list/pull/217
 
 ## [0.3.3] - 2022-03-16
 
