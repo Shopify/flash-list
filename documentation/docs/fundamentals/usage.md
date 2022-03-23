@@ -273,41 +273,11 @@ Avoid using this when making large changes to the data as the list might draw to
 
 # ScrollView props
 
-`FlashList`, as `FlatList` uses `ScrollView` under the hood. But we currently support only a subset of [`ScrollView`](https://reactnative.dev/docs/scrollview) props that you can find below.
-
-### `horizontal`
-
-```ts
-horizontal?: boolean;
-```
-
-When `true`, the scroll view's children are arranged horizontally in a row instead of vertically in a column.
-
-### `refreshControl`
-
-```ts
-refreshControl?: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-```
-
-A `RefreshControl` component, used to provide pull-to-refresh functionality for the `ScrollView`. Only works for vertical ScrollViews (`horizontal` prop must be `false`).
-
-See [RefreshControl](https://reactnative.dev/docs/refreshcontrol) for more details.
-
-# ScrollView methods
-
-### `scrollToEnd()`
-
-```ts
-scrollToEnd(params?: { animated?: boolean | null | undefined });
-```
-
-If this is a vertical ScrollView scrolls to the bottom. If this is a horizontal ScrollView scrolls to the right.
-
-Use `scrollToEnd({ animated: true })` for smooth animated scrolling, `scrollToEnd({ animated: false })` for immediate scrolling. If no options are passed, `animated` defaults to `true`.
+`FlashList`, as `FlatList`, uses `ScrollView` under the hood. You can take a look into the React Native documentation for [`ScrollView`](https://reactnative.dev/docs/scrollview) to see the exhaustive list of props.
 
 # Unsupported `FlatList` props
 
-The following props from `FlatList` and `ScrollView` (which `FlatList` inherits) are currently not implemented:
+The following props from `FlatList` are currently not implemented:
 
 - [`columnWrapperStyle`](https://reactnative.dev/docs/flatlist#columnwrapperstyle)
 - [`viewabilityConfig`](https://reactnative.dev/docs/flatlist#viewabilityconfig)
