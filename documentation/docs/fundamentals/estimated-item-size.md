@@ -21,17 +21,22 @@ sidebar_position: 2
 
 We're thinking of ways to workaround this limitation but for now we think that learning about this and providing a good value is better than providing suboptimal results.
 
-## Impact on scroll
+### How to calculate
+
+- If most items are of **similar heights** or widths (if horizontal), just open up element inspector from `react-native's` dev menu and check the size of one of the items and use it. Don't worry about different devices we have enough tolerance to work around it.
+- If items **vary too much in sizes**, choose a few that are quite different, use element inspector and calculate an average. This average will work great and don't worry about solving for different devices sizes. There's enough tolerance internally.
+
+### Impact on scroll
 
 During very quick scrolls if offsets are changing very quickly `FlashList` might run into situation where it needs to prepare more than one item. This is just another version of the same problem. If your estimate is too big `FlashList` might think that a small number of items are enough to fill the screen and you might end up seeing blanks. This is the primary reason we suggest using a smaller value if you're confused between two of them. Drawing a few more items is better than showing blanks. With `FlashList` we don't expect blanks unless components are very slow or `estimatedItemSize` are too large.
 
-## Impact of number of items drawn on responsiveness
+### Impact of number of items drawn on responsiveness
 
 Having few items on the screen is great for performance and responsiveness. Small render tree is much faster to update. Let's say there's a checkbox wthin your list items and you store their selected state in a store. You'd want this checkbox to be extremely responsive to check and uncheck. A large render tree will prevent that from happening. Many of you might have seen this problem in `FlatList`.
 
 `FlatList` has a default `windowSize` of `21` which means that, on a `1000px` tall device, it will draw about `10,000px` at the bottom and at the top of currently visible window. `FlashList` in comparison will only draw `250px` extra on the top and bottom irrespective of the screen size. You will be amazed with how responsive things become when we have a very small number of items and that's why we care so much about it.
 
-## Impact of having wrong `estimatedItemSize`
+### Impact of having wrong `estimatedItemSize`
 
 - Please note `FlashList` will not overlap or show gaps between items due to incorrect values provided here.
 - **If values are too big**, you may see few items load on screen and then immediately more will show up. During fast scroll you may see some blank area. It's not because things have become slow. The list just doesn't know that it has not drawn enough. If your JS FPS is good and you still have blanks it's most likely this problem. Once the list knows the size it won't rely on estimates and that's why on scrolling up you may not see the same problem.
@@ -42,6 +47,6 @@ Having few items on the screen is great for performance and responsiveness. Smal
 
 ![Small estimatedItemSize](https://user-images.githubusercontent.com/7811728/159801594-51a26edc-8f5b-4fb5-a268-c138b525bd3c.png)
 
-## Future Revisions
+### Future Revisions
 
 We're looking at ways to remove this requirement by leveraging `Fabric`. In the short term we plan to compute this average after the initial load to prevent issues during quick scrolls and the value provided will be more relevant for load time optimization.
