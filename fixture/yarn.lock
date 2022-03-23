@@ -1319,10 +1319,8 @@
     warn-once "^0.1.0"
 
 "@shopify/flash-list@link:..":
-  version "0.3.3"
-  dependencies:
-    invariant "^2.2.4"
-    recyclerlistview "3.1.0-alpha.8"
+  version "0.0.0"
+  uid ""
 
 "@shopify/react-native-performance-lists-profiler@^0.0.10":
   version "0.0.10"
@@ -5704,10 +5702,10 @@ recast@^0.20.3, recast@^0.20.4:
     source-map "~0.6.1"
     tslib "^2.0.1"
 
-recyclerlistview@3.1.0-alpha.8:
-  version "3.1.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.1.0-alpha.8.tgz#748a4f281de4444e394af047346ad27feb13aeef"
-  integrity sha512-33fOzqhSXDap8PIU/ITVo3xD9KLEMSwDHROxn0g5Pp99E+junQrBSKi2+GQBSd6P2IWfitC5NwrN4IKMRbDchQ==
+recyclerlistview@3.1.0-alpha.9:
+  version "3.1.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.1.0-alpha.9.tgz#1b5ec3e9c88e55becbbde2a6697f54fd0c5ddf9a"
+  integrity sha512-X8gMH3jqiNhaJaJVd6TROF4CPk2pbh8zmy/mqMdN7jYj+rsMfuquUyNAv0KRMtzpqHY9/ZRjju/qslNCuDPPow==
   dependencies:
     lodash.debounce "4.0.8"
     prop-types "15.5.8"

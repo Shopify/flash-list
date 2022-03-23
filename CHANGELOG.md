@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0] - 2022-03-23
+
 - Add support for layout animations
 
   - https://github.com/Shopify/flash-list/pull/183
