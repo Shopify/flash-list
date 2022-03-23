@@ -10,7 +10,7 @@ export function pixelDifference(
   referencePath: String,
   toMatchPath: String,
   diffPath?: String
-): [Number, PNG] {
+): PNG | null {
   const reference = PNG.sync.read(fs.readFileSync(referencePath));
   const toMatch = PNG.sync.read(fs.readFileSync(toMatchPath));
   const { width, height } = reference;
@@ -24,7 +24,7 @@ export function pixelDifference(
     height
   );
 
-  return numDiffPixels;
+  return numDiffPixels > 0 ? diff : null;
 }
 
 export async function setDemoMode() {
@@ -55,5 +55,29 @@ export async function setDemoMode() {
     execSync(
       "adb shell am broadcast -a com.android.systemui.demo -e command battery -e plugged false -e level 100"
     );
+  }
+}
+
+export function ensureArtifactsLocation(
+  name: String,
+  platform: String
+): String {
+  const location = path.resolve(ROOT_PATH, `e2e/artifacts/${platform}`, name);
+  if (!fs.existsSync(location)) {
+    fs.mkdirSync(location, { recursive: true });
+  }
+
+  return location;
+}
+
+export function wipeArtifactsLocation(name: String, platform: String): String {
+  const location = path.resolve(ROOT_PATH, `e2e/artifacts/${platform}`, name);
+
+  if (fs.existsSync(location)) {
+    fs.rmdirSync(location, { recursive: true }, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
   }
 }

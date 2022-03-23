@@ -2,82 +2,88 @@ const fs = require("fs");
 const path = require("path");
 
 import { Platform } from "react-native";
-import { pixelDifference, setDemoMode } from "./DetoxHelpers";
-
-const ROOT_PATH = path.resolve(__dirname, "..");
-const artifactsLocation = path.resolve(
-  ROOT_PATH,
-  `e2e/artifacts/${Platform.OS}`
-);
-const flashTwitterReferenceName = `Twitter_Flash_List_screenshot_${Platform.OS}`;
-const flatTwitterReferenceName = `Twitter_Flat_List_screenshot_${Platform.OS}`;
-
-const flashTwitterReferenceLocation = path.resolve(
-  artifactsLocation,
-  `flash_twitter_looks_the_same`
-);
-
-const diffLocation = (name: String) => {
-  return path.resolve(artifactsLocation, `diffs`, name);
-};
+import {
+  pixelDifference,
+  setDemoMode,
+  ensureArtifactsLocation,
+  wipeArtifactsLocation,
+} from "./DetoxHelpers";
 
 describe("FlashList", () => {
+  const platform = device.getPlatform();
+
+  const flashTwitterReferenceName = `Twitter_Flash_List_screenshot_${platform}.png`;
+  const flatTwitterReferenceName = `Twitter_Flat_List_screenshot_${platform}.png`;
+
   beforeAll(async () => {
     await device.launchApp({ newInstance: true });
+
+    wipeArtifactsLocation("diffs", platform);
   });
 
   beforeEach(async () => {
     await device.reloadReactNative();
   });
 
-  it("should have examples screen", async () => {
-    await expect(element(by.id("ExamplesFlatList"))).toBeVisible();
-  });
-
   it("Twitter with FlashList looks the same", async () => {
+    const testArtifactsLocation = ensureArtifactsLocation(
+      `twitter_with_flash_list`,
+      platform
+    );
+
     await element(by.id("Twitter Timeline")).tap();
 
+    // Raw Path to just created screenshot
     const testRunScreenshotPath = await element(
       by.id("FlashList")
     ).takeScreenshot(flashTwitterReferenceName);
 
-    const referencePath = path.resolve(
-      flashTwitterReferenceLocation,
-      `${flashTwitterReferenceName}.png`
+    // Path where we want to save the screenshot
+    const flatListReferencePath = path.resolve(
+      testArtifactsLocation,
+      flashTwitterReferenceName
     );
 
-    if (fs.existsSync(referencePath)) {
-      const numDiffPixels = pixelDifference(
+    // If reference is already there, compare the two screenshots
+    if (fs.existsSync(flatListReferencePath)) {
+      console.log(`testRunScreenshotPath ${testRunScreenshotPath}`);
+      console.log(`flatListReferencePath ${flatListReferencePath}`);
+      // compare screenshots, get difference
+      const diffPNG = pixelDifference(
         testRunScreenshotPath,
-        referencePath
+        flatListReferencePath
       );
 
-      if (numDiffPixels > 0) {
-        /* TODOs: Write diff to file
-        fs.writeFileSync(
-          diffLocation("flash_twitter_looks_the_same_diff"),
-          PNG.sync.write(diff)
-        );*/
+      // If there is difference, fail the test
+      if (diffPNG !== null) {
+        saveDiff(diffPNG, "flash_twitter_looks_the_same_diff", platform);
+
         throw new Error(
           "There is difference between reference screenshot and test run screenshot"
         );
       }
     } else {
-      if (!fs.existsSync(flashTwitterReferenceLocation)) {
-        fs.mkdirSync(flashTwitterReferenceLocation, { recursive: true });
-      }
       // Save reference screenshot cause it doesn't exist yet
-      fs.renameSync(testRunScreenshotPath, referencePath, function (err) {
-        if (err) throw err;
-      });
+      fs.renameSync(
+        testRunScreenshotPath,
+        flatListReferencePath,
+        function (err) {
+          if (err) throw err;
+        }
+      );
       console.log("Reference screenshot created");
     }
   });
 
   it("Twitter with FlatList looks the same as with FlashList", async () => {
-    const testRunArtifactsLocation = path.resolve(
-      artifactsLocation,
-      `flat_list_vs_flash_list`
+    const testArtifactsLocation = ensureArtifactsLocation(
+      `flat_list_vs_flash_list`,
+      platform
+    );
+
+    const flashTwitterReferenceLocation = ensureArtifactsLocation(
+      `twitter_with_flash_list`,
+      platform
     );
 
     await element(by.id("Twitter FlatList Timeline")).tap();
@@ -86,43 +92,37 @@ describe("FlashList", () => {
       by.id("FlatList")
     ).takeScreenshot(flatTwitterReferenceName);
 
-    const flatTwitterReferencePath = path.resolve(
-      testRunArtifactsLocation,
-      `${flatTwitterReferenceName}.png`
+    const flatListReferencePath = path.resolve(
+      testArtifactsLocation,
+      flatTwitterReferenceName
     );
 
     const flashTwitterReferencePath = path.resolve(
       flashTwitterReferenceLocation,
-      `${flashTwitterReferenceName}.png`
+      flashTwitterReferenceName
     );
 
-    if (!fs.existsSync(flatTwitterReferencePath)) {
-      if (!fs.existsSync(testRunArtifactsLocation)) {
-        fs.mkdirSync(testRunArtifactsLocation, { recursive: true });
-      }
-
+    // If reference doesn't exist yet, save it
+    if (!fs.existsSync(flatListReferencePath)) {
       fs.renameSync(
         testRunScreenshotPath,
-        flatTwitterReferencePath,
+        flatListReferencePath,
         function (err) {
           if (err) throw err;
         }
       );
     }
 
+    // If FlashList reference exists, compare it with current FlatList screenshot
     if (fs.existsSync(flashTwitterReferencePath)) {
-      const numDiffPixels = pixelDifference(
-        flatTwitterReferencePath,
+      const diffPNG = pixelDifference(
+        flatListReferencePath,
         flashTwitterReferencePath
       );
 
-      if (numDiffPixels > 0) {
-        /* TODOs: Write diff to file
-        const diffLocation = path.resolve(
-          ROOT_PATH,
-          "e2e/artifacts/flat_list_vs_flash_list_diff.png"
-        );
-        fs.writeFileSync(diffLocation, PNG.sync.write(diff));*/
+      // If there is difference, fail the test
+      if (diffPNG !== null) {
+        saveDiff(diffPNG, "flat_list_vs_flash_list_diff", platform);
 
         throw new Error(
           "There is difference between reference screenshot and test run screenshot."
@@ -135,3 +135,9 @@ describe("FlashList", () => {
     }
   });
 });
+
+const saveDiff = (diff, testName, platform) => {
+  const diffsLocation = ensureArtifactsLocation(`diffs`, platform);
+  const diffPath = path.resolve(diffsLocation, testName);
+  fs.writeFileSync(diffPath, PNG.sync.write(diff));
+};
