@@ -8,8 +8,7 @@ const ROOT_PATH = path.resolve(__dirname, "..");
 
 export function pixelDifference(
   referencePath: String,
-  toMatchPath: String,
-  diffPath?: String
+  toMatchPath: String
 ): PNG | null {
   const reference = PNG.sync.read(fs.readFileSync(referencePath));
   const toMatch = PNG.sync.read(fs.readFileSync(toMatchPath));
@@ -80,4 +79,10 @@ export function wipeArtifactsLocation(name: String, platform: String): String {
       }
     });
   }
+}
+
+export function saveDiff(diff: PNG, testName: String, platform: String) {
+  const diffsLocation = ensureArtifactsLocation(`diffs`, platform);
+  const diffPath = path.resolve(diffsLocation, testName);
+  fs.writeFileSync(diffPath, PNG.sync.write(diff));
 }

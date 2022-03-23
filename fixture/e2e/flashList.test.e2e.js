@@ -7,6 +7,7 @@ import {
   setDemoMode,
   ensureArtifactsLocation,
   wipeArtifactsLocation,
+  saveDiff,
 } from "./DetoxHelpers";
 
 describe("FlashList", () => {
@@ -122,7 +123,7 @@ describe("FlashList", () => {
 
       // If there is difference, fail the test
       if (diffPNG !== null) {
-        saveDiff(diffPNG, "flat_list_vs_flash_list_diff", platform);
+        saveDiff(diffPNG, "flat_list_vs_flash_list_diff.png", platform);
 
         throw new Error(
           "There is difference between reference screenshot and test run screenshot."
@@ -135,9 +136,3 @@ describe("FlashList", () => {
     }
   });
 });
-
-const saveDiff = (diff, testName, platform) => {
-  const diffsLocation = ensureArtifactsLocation(`diffs`, platform);
-  const diffPath = path.resolve(diffsLocation, testName);
-  fs.writeFileSync(diffPath, PNG.sync.write(diff));
-};
