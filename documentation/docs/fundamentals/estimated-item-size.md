@@ -19,4 +19,20 @@ We're thinking of ways to workaround this limitation but for now we think that l
 
 ## How is this value used during scrolling?
 
-During quick scrolls if positions are changing very quickly `FlashList` might run into situation where it needs to prepare more than one item. This is just another version of the same problem. If you estimate is too big `FlashList` might think that a small number of items are enough to fill the screens and you might end up seeing blanks. This is the primary reason we suggest using a smaller value if you're confused between two of them.
+During quick scrolls if positions are changing very quickly `FlashList` might run into situation where it needs to prepare more than one item. This is just another version of the same problem. If your estimate is too big `FlashList` might think that a small number of items are enough to fill the screen and you might end up seeing blanks. This is the primary reason we suggest using a smaller value if you're confused between two of them. Drawing a few more items is better than showing blanks.
+
+## Why do we care so much about number of items drawn?
+
+Having few items on the screen is great for performance and responsiveness. Small render tree is much faster to update. Let's say there's a checkbox in your list items and you store this state in another object. You'd want this checkout to be extremely responsive to check and uncheck. A large render tree will prevent that from happening. Many of you might have seen this problem in `FlatList`.
+
+`FlatList` has a default `windowSize` of 21 which means that, on a 1000px tall device, it will draw about 10,000px at the bottom and at the top of currently visible window. `FlashList` in comparison will only `250px` (top and bottom) irrespective of the screen size. You will be amazed with how responsive things become when we have a very small number of items and that's why we care so much about it.
+
+## What happens if the value are way off compared to actual numbers?
+
+- If values are too big, you may see few items load on screen and then immediately more will show up. During fast scroll you may see some blank area. It's not because things have become slow. The list just doesn't know that it has not drawn enough.
+- If the values are too small, visibly not much will change but you will be drawing more than necessary and in cases where component are very heavy load times can increase.
+- Please note `FlashList` will not overlap or show gaps between items due to incorrect values provided here.
+
+## Will it always be this way?
+
+Hopefully not. We're looking at ways to remove this requirement by leveraging `Fabric`. In the short term we plan to compute this average after the initial load to prevent issues during quick scroll and the values provided will be more relevant for load time optimization.
