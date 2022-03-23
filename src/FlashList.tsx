@@ -715,7 +715,7 @@ class FlashList<T> extends React.PureComponent<
   }
 
   /**
-   *  Specifies how far the first item is from top of the list. This would normally be a sum of header size and top/left padding applied to the list.
+   * Specifies how far the first item is from top of the list. This would normally be a sum of header size and top/left padding applied to the list.
    */
   public get firstItemOffset() {
     return this.distanceFromWindow;
