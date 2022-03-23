@@ -665,7 +665,14 @@ class FlashList<T> extends React.PureComponent<
    * The next render will run as normal and reuse items.
    */
   public prepareForLayoutAnimationRender(): void {
-    this.rlvRef?.prepareForLayoutAnimationRender();
+    if (
+      this.props.keyExtractor === null ||
+      this.props.keyExtractor === undefined
+    ) {
+      console.warn(WarningList.missingKeyExtractor);
+    } else {
+      this.rlvRef?.prepareForLayoutAnimationRender();
+    }
   }
 
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {

@@ -9,5 +9,7 @@ const WarningList = {
   unusableRenderedSize:
     "FlashList's rendered size is not usable. Either the height or width is too small (<2px). " +
     "Please make sure that the parent view of the list has a valid size. FlashList will match the size of the parent.",
+  missingKeyExtractor:
+    "FlashList requires a keyExtractor prop to be defined when animating elements. Without it, the animations will not run as expected.",
 };
 export default WarningList;
