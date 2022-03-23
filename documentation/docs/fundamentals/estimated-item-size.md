@@ -25,6 +25,7 @@ We're thinking of ways to workaround this limitation but for now we think that l
 
 - If most items are of **similar heights** or widths (if horizontal), just open up element inspector from `react-native's` dev menu and check the size of one of the items and use it. Don't worry about different devices we have enough tolerance to work around it.
 - If items **vary too much in sizes**, choose a few that are quite different, use element inspector and calculate an average. This average will work great and don't worry about solving for different devices sizes. There's enough tolerance internally.
+- If you run into a situation where more than one value seems like a good fit pick the smaller one.
 
 ### Impact on scroll
 
