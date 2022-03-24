@@ -393,7 +393,7 @@ Scrolls to the end of the content.
 
 ### `scrollToIndex()`
 
-```jsx
+```ts
 scrollToIndex(params: {
   animated?: boolean | null | undefined;
   index: number;
