@@ -5,13 +5,12 @@ import {
   wipeArtifactsLocation,
   saveReference,
   referenceExists,
-} from "./SnapshotLocation";
+} from "../src/Detox/SnapshotLocation";
 
-import { assertSnapshots, assertSnapshot } from "./SnapshotAsserts";
+import { assertSnapshots, assertSnapshot } from "../src/Detox/SnapshotAsserts";
 
 describe("FlashList", () => {
-  const platform = device.getPlatform();
-  const flatTwitterReferenceName = `Twitter_Flat_List_screenshot_${platform}.png`;
+  const flashListReferenceTestName = "Twitter with FlashList looks the same";
 
   beforeAll(async () => {
     await device.launchApp({ newInstance: true });
@@ -23,20 +22,16 @@ describe("FlashList", () => {
   });
 
   it("Twitter with FlashList looks the same", async () => {
-    // TODOs: Get it from Jest
-    // expect.getState().currentTestName - doesn't  work
-    const testName = "Twitter with FlashList looks the same";
-
     await element(by.id("Twitter Timeline")).tap();
 
     const testRunScreenshotPath = await element(
       by.id("FlashList")
-    ).takeScreenshot(testName);
+    ).takeScreenshot(flashListReferenceTestName);
 
-    if (referenceExists(testName)) {
-      assertSnapshot(testRunScreenshotPath, testName);
+    if (referenceExists(flashListReferenceTestName)) {
+      assertSnapshot(testRunScreenshotPath, flashListReferenceTestName);
     } else {
-      saveReference(testRunScreenshotPath, testName);
+      saveReference(testRunScreenshotPath, flashListReferenceTestName);
     }
   });
 
@@ -49,15 +44,13 @@ describe("FlashList", () => {
 
     const testRunScreenshotPath = await element(
       by.id("FlatList")
-    ).takeScreenshot(flatTwitterReferenceName);
+    ).takeScreenshot(testName);
 
     if (!referenceExists(testName)) {
       saveReference(testRunScreenshotPath, testName);
     }
 
-    const flashListReference = referenceExists(
-      "Twitter with FlashList looks the same"
-    );
+    const flashListReference = referenceExists(flashListReferenceTestName);
     const flatListReference = referenceExists(testName);
 
     if (flashListReference && flatListReference) {

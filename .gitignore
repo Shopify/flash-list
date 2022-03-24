@@ -208,3 +208,7 @@ fixture/ios/**/xcshareddata/WorkspaceSettings.xcsettings
 # Android
 
 fixture/android/*.hprof
+
+# e2e
+
+fixture/e2e/diff
