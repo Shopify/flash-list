@@ -354,7 +354,7 @@ class FlashList<T> extends React.PureComponent<
       ...restProps
     } = this.props;
 
-    // RecyclerListView simple ignores if initialScrollIndex is set to 0 because it doesn't understand headers
+    // RecyclerListView simply ignores if initialScrollIndex is set to 0 because it doesn't understand headers
     // Known issue - This won't work if there's a grid and index 1 is next to 0. Anything with x or y as 0 is ignored by RLV
     // Using initialOffset to force RLV to scroll to the right place
     const initialOffset =
