@@ -13,7 +13,7 @@ sidebar_position: 2
 
 - If most items are of **similar heights** or widths (if horizontal), just open up element inspector from `react-native's` dev menu, check the size of one of the items, and use it. Don't worry about different devices. We have enough tolerance to work around it.
 - If items **vary too much in sizes**, choose a few that are pretty different, use element inspector, and calculate an average. This average will work great, don't worry about solving for different devices sizes. There's enough tolerance internally.
-- If you run into a situation where more than one value seems like a good fit pick the smaller one.
+- If you run into a situation where more than one value seems like a good fit, pick the smaller one.
 
 ![Element Inspector](https://user-images.githubusercontent.com/7811728/159806998-ce6b0c27-576c-4fe1-8170-cfa23788cfae.png)
 
