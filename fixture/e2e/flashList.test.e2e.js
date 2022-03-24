@@ -1,25 +1,21 @@
-const fs = require("fs");
-const path = require("path");
-
+import * as path from "path";
+import * as fs from "fs";
 import { Platform } from "react-native";
 import {
-  pixelDifference,
-  setDemoMode,
-  ensureArtifactsLocation,
   wipeArtifactsLocation,
-  saveDiff,
-} from "./DetoxHelpers";
+  saveReference,
+  referenceExists,
+} from "./SnapshotLocation";
+
+import { assertSnapshots, assertSnapshot } from "./SnapshotAsserts";
 
 describe("FlashList", () => {
   const platform = device.getPlatform();
-
-  const flashTwitterReferenceName = `Twitter_Flash_List_screenshot_${platform}.png`;
   const flatTwitterReferenceName = `Twitter_Flat_List_screenshot_${platform}.png`;
 
   beforeAll(async () => {
     await device.launchApp({ newInstance: true });
-
-    wipeArtifactsLocation("diffs", platform);
+    wipeArtifactsLocation("diffs");
   });
 
   beforeEach(async () => {
@@ -27,65 +23,27 @@ describe("FlashList", () => {
   });
 
   it("Twitter with FlashList looks the same", async () => {
-    const testArtifactsLocation = ensureArtifactsLocation(
-      `twitter_with_flash_list`,
-      platform
-    );
+    // TODOs: Get it from Jest
+    // expect.getState().currentTestName - doesn't  work
+    const testName = "Twitter with FlashList looks the same";
 
     await element(by.id("Twitter Timeline")).tap();
 
-    // Raw Path to just created screenshot
     const testRunScreenshotPath = await element(
       by.id("FlashList")
-    ).takeScreenshot(flashTwitterReferenceName);
+    ).takeScreenshot(testName);
 
-    // Path where we want to save the screenshot
-    const flatListReferencePath = path.resolve(
-      testArtifactsLocation,
-      flashTwitterReferenceName
-    );
-
-    // If reference is already there, compare the two screenshots
-    if (fs.existsSync(flatListReferencePath)) {
-      console.log(`testRunScreenshotPath ${testRunScreenshotPath}`);
-      console.log(`flatListReferencePath ${flatListReferencePath}`);
-      // compare screenshots, get difference
-      const diffPNG = pixelDifference(
-        testRunScreenshotPath,
-        flatListReferencePath
-      );
-
-      // If there is difference, fail the test
-      if (diffPNG !== null) {
-        saveDiff(diffPNG, "flash_twitter_looks_the_same_diff", platform);
-
-        throw new Error(
-          "There is difference between reference screenshot and test run screenshot"
-        );
-      }
+    if (referenceExists(testName)) {
+      assertSnapshot(testRunScreenshotPath, testName);
     } else {
-      // Save reference screenshot cause it doesn't exist yet
-      fs.renameSync(
-        testRunScreenshotPath,
-        flatListReferencePath,
-        function (err) {
-          if (err) throw err;
-        }
-      );
-      console.log("Reference screenshot created");
+      saveReference(testRunScreenshotPath, testName);
     }
   });
 
   it("Twitter with FlatList looks the same as with FlashList", async () => {
-    const testArtifactsLocation = ensureArtifactsLocation(
-      `flat_list_vs_flash_list`,
-      platform
-    );
-
-    const flashTwitterReferenceLocation = ensureArtifactsLocation(
-      `twitter_with_flash_list`,
-      platform
-    );
+    // TODOs: Get it from Jest
+    // expect.getState().currentTestName - doesn't  work
+    const testName = "Twitter with FlatList looks the same as with FlashList";
 
     await element(by.id("Twitter FlatList Timeline")).tap();
 
@@ -93,45 +51,20 @@ describe("FlashList", () => {
       by.id("FlatList")
     ).takeScreenshot(flatTwitterReferenceName);
 
-    const flatListReferencePath = path.resolve(
-      testArtifactsLocation,
-      flatTwitterReferenceName
-    );
-
-    const flashTwitterReferencePath = path.resolve(
-      flashTwitterReferenceLocation,
-      flashTwitterReferenceName
-    );
-
-    // If reference doesn't exist yet, save it
-    if (!fs.existsSync(flatListReferencePath)) {
-      fs.renameSync(
-        testRunScreenshotPath,
-        flatListReferencePath,
-        function (err) {
-          if (err) throw err;
-        }
-      );
+    if (!referenceExists(testName)) {
+      saveReference(testRunScreenshotPath, testName);
     }
 
-    // If FlashList reference exists, compare it with current FlatList screenshot
-    if (fs.existsSync(flashTwitterReferencePath)) {
-      const diffPNG = pixelDifference(
-        flatListReferencePath,
-        flashTwitterReferencePath
-      );
+    const flashListReference = referenceExists(
+      "Twitter with FlashList looks the same"
+    );
+    const flatListReference = referenceExists(testName);
 
-      // If there is difference, fail the test
-      if (diffPNG !== null) {
-        saveDiff(diffPNG, "flat_list_vs_flash_list_diff.png", platform);
-
-        throw new Error(
-          "There is difference between reference screenshot and test run screenshot."
-        );
-      }
+    if (flashListReference && flatListReference) {
+      assertSnapshots(flatListReference, flashListReference, testName);
     } else {
       throw new Error(
-        "Reference screenshot for FlashList example doesn't exist"
+        "One of the references doesn't exist. Please run the tests again."
       );
     }
   });
