@@ -15,7 +15,10 @@ sidebar_position: 2
 - If the items **have a lot of different sizes**, choose a few that are pretty different, use element inspector, read their sizes, and calculate an average. This average will work great, don't worry about solving for different devices sizes. There's enough tolerance internally.
 - If you run into a situation where more than one value seems like a good fit, pick the smaller one.
 
-![Element Inspector](https://user-images.githubusercontent.com/7811728/159806998-ce6b0c27-576c-4fe1-8170-cfa23788cfae.png)
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/7811728/159806998-ce6b0c27-576c-4fe1-8170-cfa23788cfae.png" width="700"/>
+</div>
 
 ## More Context
 
@@ -42,11 +45,16 @@ Having a few items on the screen is great for performance and responsiveness. Sm
 - Please note `FlashList` will not overlap or show gaps between items due to incorrect values provided here.
 - **If the estimate is much higher than actual values**, you may see few items load on screen and then immediately more will show up. During fast scroll you may see some blank area. It's not because things have become slow. The list just doesn't know that it has not drawn enough. Once the list knows the actual sizes of items it won't rely on estimates and that's why on scrolling up you may not see the same problem.
 
-![Large estimatedItemSize](https://user-images.githubusercontent.com/7811728/159801541-5540820d-4d90-491d-9645-dd43b684c437.png)
+<div align="center">
+<img src="https://user-images.githubusercontent.com/7811728/159801541-5540820d-4d90-491d-9645-dd43b684c437.png" width="700"/>
+</div>
 
 - **If the estimate is much smaller than actual values**, not much will change visibly but you will be drawing more than necessary. If your components are complex, load times might increase.
 
-![Small estimatedItemSize](https://user-images.githubusercontent.com/7811728/159801594-51a26edc-8f5b-4fb5-a268-c138b525bd3c.png)
+<div align="center">
+<img src="https://user-images.githubusercontent.com/7811728/159801594-51a26edc-8f5b-4fb5-a268-c138b525bd3c.png" width="700"/>
+</div>
+
 
 ### Future Revisions
 
