@@ -18,6 +18,10 @@
     "@react-navigation/stack": "^6.1.1",
     "@shopify/flash-list": "link:../",
     "@shopify/react-native-performance-lists-profiler": "^0.0.10",
+    "@types/pixelmatch": "^5.2.4",
+    "@types/pngjs": "^6.0.1",
+    "detox": "^19.5.7",
+    "pixelmatch": "^5.2.1",
     "react": "17.0.2",
     "react-native": "0.67.4",
     "react-native-fast-image": "^8.5.11",
@@ -26,20 +30,18 @@
     "react-native-reanimated": "^2.4.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.13.1",
-    "recyclerlistview": "3.1.0-alpha.9",
-    "detox": "^19.5.7",
-    "pixelmatch": "^5.2.1"
+    "recyclerlistview": "3.1.0-alpha.9"
   },
   "devDependencies": {
+    "babel-jest": "^27.5.1",
     "babel-plugin-module-resolver": "^4.1.0",
     "glob": "^7.1.6",
+    "jest": "^27.5.1",
     "metro-config": "^0.69.1",
     "metro-react-native-babel-preset": "^0.69.1",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
-    "typescript": "^4.6.2",
-    "jest": "^27.5.1",
-    "babel-jest": "^27.5.1"
+    "typescript": "^4.6.2"
   },
   "jest": {
     "preset": "react-native"
