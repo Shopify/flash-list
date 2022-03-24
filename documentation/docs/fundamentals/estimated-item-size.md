@@ -43,7 +43,7 @@ Having few items on the screen is great for performance and responsiveness. Smal
 ### Impact of having wrong `estimatedItemSize`
 
 - Please note `FlashList` will not overlap or show gaps between items due to incorrect values provided here.
-- **If values are too big**, you may see few items load on screen and then immediately more will show up. During fast scroll you may see some blank area. It's not because things have become slow. The list just doesn't know that it has not drawn enough. If your JS FPS is good and you still have blanks it's most likely this problem. Once the list knows the size it won't rely on estimates and that's why on scrolling up you may not see the same problem.
+- **If values are too big**, you may see few items load on screen and then immediately more will show up. During fast scroll you may see some blank area. It's not because things have become slow. The list just doesn't know that it has not drawn enough. If your JS FPS is good and you still have blanks, it's most likely due to the `esimateItemSize` being too low. Once the list knows the size it won't rely on estimates and that's why on scrolling up you may not see the same problem.
 
 ![Large estimatedItemSize](https://user-images.githubusercontent.com/7811728/159801541-5540820d-4d90-491d-9645-dd43b684c437.png)
 
