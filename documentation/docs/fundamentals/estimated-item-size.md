@@ -15,12 +15,11 @@ sidebar_position: 2
 - If the items **have a lot of different sizes**, choose a few that are pretty different, use element inspector, read their sizes, and calculate an average. This average will work great, don't worry about solving for different devices sizes. There's enough tolerance internally.
 - If you run into a situation where more than one value seems like a good fit, pick the smaller one.
 
-
 <div align="center">
 <img src="https://user-images.githubusercontent.com/7811728/159806998-ce6b0c27-576c-4fe1-8170-cfa23788cfae.png" width="700"/>
 </div>
 
-## More Context
+## Deep dive
 
 `FlashList` doesn't know the size of its children before they're rendered. When the list is loading it needs to decide how many items it wants to render. There are only few choices here:
 
@@ -54,7 +53,6 @@ Having a few items on the screen is great for performance and responsiveness. Sm
 <div align="center">
 <img src="https://user-images.githubusercontent.com/7811728/159801594-51a26edc-8f5b-4fb5-a268-c138b525bd3c.png" width="700"/>
 </div>
-
 
 ### Future Revisions
 
