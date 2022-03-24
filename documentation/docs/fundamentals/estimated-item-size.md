@@ -9,7 +9,7 @@ sidebar_position: 2
 
 ### tl;dr
 
-`estimatedItemSize` is a single numeric value that hints `FlashList` about the approximate size of the items before they're rendered. It can then use this information to decide how many items it needs to draw on the screen before initial load and while scrolling. If most of the items are of different sizes you can think of an average or median value and if most items are of the same size just use that number. A quick look at `Element Inspector` can help you determine this. If you're confused between two values using the smaller value is a better choice.
+`estimatedItemSize` is a single numeric value that hints `FlashList` about the approximate size of the items before they're rendered. `FlashList` can then use this information to decide how many items it needs to draw on the screen before initial load and while scrolling. If most of the items are of *different sizes*, you can think of an average or median value and if most items are of *the same size*, just use that number. A quick look at `Element Inspector` can help you determine this.  If you're confused between two values, the smaller value is a better choice.
 
 ### Requirement
 
