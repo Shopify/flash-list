@@ -53,4 +53,4 @@ Having few items on the screen is great for performance and responsiveness. Smal
 
 ### Future Revisions
 
-We're looking at ways to remove this requirement by leveraging `Fabric`. In the short term we plan to compute this average after the initial load to prevent issues during quick scrolls and the value provided will be more relevant for load time optimization.
+We're looking at ways to remove this requirement by leveraging `Fabric`. In the short term, we plan to compute this average after the initial load to prevent issues during quick scrolls. The value provided will be also more relevant for load time optimization.
