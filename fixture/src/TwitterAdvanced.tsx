@@ -6,7 +6,7 @@ import TweetCell from "./TweetCell";
 import { tweets } from "./data/tweets2";
 import Tweet from "./models/Tweet";
 
-enum CellTypes {
+enum CellType {
   Text = 1,
   Image,
   Liked,
@@ -33,12 +33,12 @@ const AdvancedTwitter = () => {
 };
 
 const ItemType = (item: Tweet) => {
-  let cellType = CellTypes.Text;
+  let cellType = CellType.Text;
   if (item.image !== undefined && item.image !== null) {
-    cellType += CellTypes.Image;
+    cellType += CellType.Image;
   }
   if (item.someLiked !== undefined && item.someLiked !== null) {
-    cellType += CellTypes.Liked;
+    cellType += CellType.Liked;
   }
   return cellType;
 };
