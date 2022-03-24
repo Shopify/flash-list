@@ -60,6 +60,7 @@ export const tweets: Tweet[] = [
     retweetCount: 10,
     replyCount: 22,
     favoriteCount: 202,
+    someLiked: "David Cortés and 4 other liked",
   },
   {
     author: {
@@ -296,7 +297,6 @@ export const tweets: Tweet[] = [
     retweetCount: 9,
     replyCount: 22,
     favoriteCount: 12,
-    someLiked: "Toni Colom and 4 other liked",
     image:
       "https://images.unsplash.com/flagged/photo-1573496760140-f15e236b5801?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2029&q=80",
   },

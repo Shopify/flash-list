@@ -128,11 +128,12 @@ const styles = StyleSheet.create({
   },
   likedRow: {
     flexDirection: "row",
-    marginLeft: 27,
+    marginLeft: 32,
   },
   likedText: {
     fontWeight: "700",
     marginBottom: 4,
+    paddingLeft: 0,
     color: "#666",
     fontSize: 12,
   },
@@ -147,12 +148,11 @@ const styles = StyleSheet.create({
     paddingRight: 2,
   },
   avatar: {
-    height: 44,
-    width: 44,
-    borderRadius: 22,
+    height: 50,
+    width: 50,
+    borderRadius: 25,
     marginRight: 8,
     flexShrink: 0,
-    marginTop: 4,
   },
   header: {
     fontSize: 14,
@@ -166,11 +166,11 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   singleItem: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 15,
     minHeight: 44,
     flex: 1,
-    padding: 8,
-    paddingBottom: 16,
+    paddingTop: 11,
+    paddingBottom: 13,
     backgroundColor: "#FFF",
   },
   rowTop: {
