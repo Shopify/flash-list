@@ -62,10 +62,33 @@ const GrayText = ({ children, numberOfLines, style }: GrayTextProps) => {
     </Text>
   );
 };
+const tweetImage = (tweet: Tweet) => {
+  if (tweet.image !== undefined) {
+    return (
+      <FastImage style={styles.tweetImage} source={{ uri: tweet.image }} />
+    );
+  }
+  return <></>;
+};
+const likedText = (tweet: Tweet) => {
+  if (tweet.someLiked !== undefined) {
+    return (
+      <View style={styles.likedRow}>
+        <Image
+          style={styles.actionButton}
+          source={require("./assets/like.png")}
+        />
+        <Text style={styles.likedText}>{tweet.someLiked}</Text>
+      </View>
+    );
+  }
+  return <></>;
+};
 
 const TweetCell = ({ tweet }: TweetCellProps) => {
   return (
     <View style={styles.singleItem}>
+      {likedText(tweet)}
       <View style={styles.row}>
         {avatar(tweet.author)}
         <View style={{ flexShrink: 1, flexGrow: 1 }}>
@@ -80,6 +103,7 @@ const TweetCell = ({ tweet }: TweetCellProps) => {
             <GrayText>2h</GrayText>
           </View>
           <Text style={styles.description}>{tweet.fullText}</Text>
+          {tweetImage(tweet)}
           <View style={styles.rowActions}>
             {tweetActions(
               tweet.retweetCount,
@@ -102,6 +126,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginRight: 16,
   },
+  likedRow: {
+    flexDirection: "row",
+    marginLeft: 27,
+  },
+  likedText: {
+    fontWeight: "700",
+    marginBottom: 4,
+    color: "#666",
+    fontSize: 12,
+  },
   actionButton: {
     width: 18,
     height: 18,
@@ -116,7 +150,7 @@ const styles = StyleSheet.create({
     height: 44,
     width: 44,
     borderRadius: 22,
-    marginRight: 16,
+    marginRight: 8,
     flexShrink: 0,
     marginTop: 4,
   },
@@ -135,7 +169,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     minHeight: 44,
     flex: 1,
-    padding: 16,
+    padding: 8,
+    paddingBottom: 16,
     backgroundColor: "#FFF",
   },
   rowTop: {
@@ -157,6 +192,12 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 12,
     color: "#444",
+  },
+  tweetImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 8,
+    marginTop: 8,
   },
 });
 

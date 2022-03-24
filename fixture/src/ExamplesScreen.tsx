@@ -20,6 +20,7 @@ export const ExamplesScreen = () => {
     { title: "PaginatedList", destination: NavigationKeys.PAGINATED_LIST },
     { title: "Reminders", destination: NavigationKeys.REMINDERS },
     { title: "Twitter Timeline", destination: NavigationKeys.TWITTER },
+    { title: "Advanced Twitter", destination: NavigationKeys.ADVANCED_TWITTER },
     {
       title: "Twitter FlatList Timeline",
       destination: NavigationKeys.TWITTER_FLAT_LIST,

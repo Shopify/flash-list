@@ -7,4 +7,6 @@ export default interface Tweet {
   retweetCount: number;
   replyCount: number;
   favoriteCount: number;
+  image?: string;
+  someLiked?: string;
 }
