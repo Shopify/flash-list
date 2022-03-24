@@ -11,6 +11,9 @@ describe("FlashList", () => {
   const mountFlashList = (props?: {
     horizontal?: boolean;
     keyExtractor?: (item: string, index: number) => string;
+    initialScrollIndex?: number;
+    numColumns?: number;
+    estimatedFirstItemOffset?: number;
   }) => {
     const flashList = mount(
       <FlashList
@@ -20,7 +23,10 @@ describe("FlashList", () => {
           return <Text>{text.item}</Text>;
         }}
         estimatedItemSize={200}
-        data={["One", "Two"]}
+        data={["One", "Two", "Three", "Four"]}
+        initialScrollIndex={props?.initialScrollIndex}
+        numColumns={props?.numColumns}
+        estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
       />
     );
     flashList.findAll(ScrollView)[0].trigger("onLayout", {
@@ -72,5 +78,27 @@ describe("FlashList", () => {
     flashList.instance.prepareForLayoutAnimationRender();
     expect(prepareForLayoutAnimationRender).not.toHaveBeenCalled();
     expect(warn).toHaveBeenCalledWith(Warnings.missingKeyExtractor);
+  });
+  it("disables initial scroll correction on recyclerlistview if initialScrollIndex is in first row", () => {
+    let flashList = mountFlashList({ initialScrollIndex: 0, numColumns: 3 });
+    expect(
+      flashList.instance.getUpdatedWindowCorrectionConfig().applyToInitialOffset
+    ).toBe(false);
+
+    flashList = mountFlashList({ initialScrollIndex: 3, numColumns: 3 });
+    expect(
+      flashList.instance.getUpdatedWindowCorrectionConfig().applyToInitialOffset
+    ).toBe(true);
+
+    flashList = mountFlashList({ initialScrollIndex: 2, numColumns: 3 });
+    expect(
+      flashList.instance.getUpdatedWindowCorrectionConfig().applyToInitialOffset
+    ).toBe(false);
+  });
+  it("assigns distance from window to window correction object", () => {
+    const flashList = mountFlashList({ estimatedFirstItemOffset: 100 });
+    expect(
+      flashList.instance.getUpdatedWindowCorrectionConfig().value.windowShift
+    ).toBe(-100);
   });
 });
