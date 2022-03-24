@@ -32,8 +32,10 @@ const StickyHeaderContainer =
 export interface FlashListProps<T> extends FlatListProps<T> {
   // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
   /**
-   * Average or median size for elements in the list. Doesn't have to be very accurate but a good estimate can work better.
+   * Average or median size for elements in the list. Doesn't have to be very accurate but a good estimate can improve performance.
+   * A quick look at `Element Inspector` can help you determine this. If you're confused between two values, the smaller value is a better choice.
    * For vertical lists provide average height and for horizontal average width.
+   * Read more about it here: https://flash-list.docs.shopify.io/estimated-item-size
    */
   estimatedItemSize: number;
 
