@@ -35,7 +35,7 @@ export const wipeArtifactsLocation = (name: string) => {
 };
 
 export const saveDiff = (diff: PNG, testName: string): string => {
-  const diffsLocation = ensureArtifactsLocation(`diffs`);
+  const diffsLocation = ensureArtifactsLocation("diff");
   const diffPath = path.resolve(diffsLocation, testName);
   fs.writeFileSync(diffPath, PNG.sync.write(diff));
 
