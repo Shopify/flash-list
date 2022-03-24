@@ -97,8 +97,6 @@ Rendered in between each item, but not at the top or bottom. By default, `highli
 ItemSeparatorComponent?: React.ComponentType<any>;
 ```
 
----
-
 ### `ListEmptyComponent`
 
 Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
@@ -172,7 +170,7 @@ Draw distance for advanced rendering (in `dp`/`px`).
 estimatedFirstItemOffset?: number;
 ```
 
-`estimatedFirstItemOffset` specifies how far the first item is drawn from start of the list window or offset of the first item of the list (not the header). This prop is necessary if you're using [initialScrollIndex](https://reactnative.dev/docs/flatlist#initialscrollindex) prop. Before the initial draw, the list does not know the size of a header or any special margin/padding that might have been applied using header styles etc. If this isn't provided initialScrollIndex might not scroll to the provided index.
+`estimatedFirstItemOffset` specifies how far the first item is drawn from start of the list window or offset of the first item of the list (not the header). This prop is necessary if you're using [initialScrollIndex](#initialscrollindex) prop. Before the initial draw, the list does not know the size of a header or any special margin/padding that might have been applied using header styles etc. If this isn't provided initialScrollIndex might not scroll to the provided index.
 
 ### `estimatedListSize`
 
@@ -181,6 +179,68 @@ estimatedListSize?: { height: number; width: number }
 ```
 
 Estimated visible height and width of the list. It is not the scroll content size.
+
+### `extraData`
+
+A marker property for telling the list to re-render (since it implements `PureComponent`). If any of your `renderItem`, Header, Footer, etc. functions depend on anything outside of the `data` prop, stick it here and treat it immutably.
+
+```ts
+extraData?: any;
+```
+
+### `horizontal`
+
+If `true`, renders items next to each other horizontally instead of stacked vertically. Default is `false`.
+
+```ts
+horizontal?: boolean;
+```
+
+### `initialScrollIndex`
+
+Instead of starting at the top with the first item, start at `initialScrollIndex`. This disables the "scroll to top" optimization that keeps the first `initialNumToRender` items always rendered and immediately renders the items starting at this initial index. Requires `getItemLayout` to be implemented.
+
+```ts
+initialScrollIndex?: number;
+```
+
+### `inverted`
+
+Reverses the direction of scroll. Uses scale transforms of `-1`.
+
+```ts
+inverted?: boolean;
+```
+
+### `keyExtractor`
+
+```ts
+keyExtractor?: (item: object, index: number) => string;
+```
+
+Used to extract a unique key for a given item at the specified index. Key is used for optimizing performance. Defining `keyExtractor` is also necessary when doing [layout animations](/layout-animation) to uniquely identify animated components.
+
+### `numColumns`
+
+Multiple columns can only be rendered with `horizontal={false}` and will zig-zag like a `flexWrap` layout. Items should all be the same height - masonry layouts are not supported.
+
+`numColumns?: number;`
+
+### `onEndReached`
+
+```ts
+onEndReached?: (info: {distanceFromEnd: number}) => void;
+```
+
+Called once when the scroll position gets within `onEndReachedThreshold` of the rendered content.
+
+### `onEndReachedThreshold`
+
+```ts
+onEndReachedThreshold?: number;
+```
+
+How far from the end (in units of visible length of the list) the bottom edge of the list must be from the end of the content to trigger the `onEndReached` callback. Thus a value of 0.5 will trigger `onEndReached` when the end of the content is within half the visible length of the list.
 
 ### `onBlankArea`
 
@@ -216,6 +276,30 @@ onLoad: (info: { elapsedTimeInMs: number }) => void;
 
 This event is raised once the list has drawn items on the screen. It also reports elapsedTimeInMs which is the time it took to draw the items. This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render. If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
 
+### `onRefresh`
+
+```ts
+onRefresh?: () => void;
+```
+
+If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the `refreshing` prop correctly.
+
+### `progressViewOffset`
+
+```ts
+progressViewOffset?: number;
+```
+
+Set this when offset is needed for the loading indicator to show correctly.
+
+### `refreshing`
+
+```ts
+refreshing?: boolean;
+```
+
+Set this true while waiting for new data from a refresh.
+
 ### `overrideItemType`
 
 ```ts
@@ -244,7 +328,7 @@ overrideItemLayout?: (
 ) => void;
 ```
 
-When [numColumns](https://reactnative.dev/docs/flatlist#numcolumns) is greater than 1, you can choose to increase span of some of the items. You can also modify estimated height for some items. Instead of returning the layout from the method, modify it in-place.
+When [numColumns](#numcolumns) is greater than 1, you can choose to increase span of some of the items. You can also modify estimated height for some items. Instead of returning the layout from the method, modify it in-place.
 :::warning Performance
 This method is called very frequently. Keep it fast.
 :::
@@ -256,6 +340,30 @@ overrideProps?: object;
 ```
 
 We do not recommend using this prop for anything else than debugging. Internal props of the list will be overriden with the provided values.
+
+### `progressViewOffset`
+
+```ts
+progressViewOffset?: number;
+```
+
+Set this when offset is needed for the loading indicator to show correctly.
+
+### `refreshControl`
+
+```ts
+refreshControl?: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+```
+
+A custom refresh control element. When set, it overrides the default `<RefreshControl>` component built internally. The onRefresh and refreshing props are also ignored. Only works for vertical VirtualizedList.
+
+### `refreshing`
+
+```ts
+refreshing?: boolean;
+```
+
+Set this true while waiting for new data from a refresh.
 
 # FlashList methods
 
@@ -271,6 +379,54 @@ Run this method before running layout animations, such as when animating an elem
 Avoid using this when making large changes to the data as the list might draw too much to run animations since the method disables recycling temporarily. Single item insertions or deletions should animate smoothly. The render after animation will enable recycling again and you can stop avoiding making large data changes.
 :::
 
+### `scrollToEnd()`
+
+```ts
+scrollToEnd?: (params?: { animated?: boolean | null | undefined });
+```
+
+Scrolls to the end of the content.
+
+### `scrollToIndex()`
+
+```jsx
+scrollToIndex(params: {
+  animated?: boolean | null | undefined;
+  index: number;
+  viewOffset?: number | undefined;
+  viewPosition?: number | undefined;
+});
+```
+
+Scroll to a given index.
+
+### `scrollToItem()`
+
+```ts
+scrollToItem(params: {
+  animated?: boolean | null | undefined;
+  item: any;
+  viewPosition?: number | undefined;
+});
+```
+
+Scroll to a given item.
+
+### `scrollToOffset()`
+
+```ts
+scrollToOffset(params: {
+  animated?: boolean | null | undefined;
+  offset: number;
+});
+```
+
+Scroll to a specific content pixel offset in the list.
+
+Param `offset` expects the offset to scroll to. In case of `horizontal` is true, the offset is the x-value, in any other case the offset is the y-value.
+
+Param `animated` (`true` by default) defines whether the list should do an animation while scrolling.
+
 # ScrollView props
 
 `FlashList`, as `FlatList`, uses `ScrollView` under the hood. You can take a look into the React Native documentation for [`ScrollView`](https://reactnative.dev/docs/scrollview) to see the exhaustive list of props.
@@ -279,18 +435,36 @@ Avoid using this when making large changes to the data as the list might draw to
 
 The following props from `FlatList` are currently not implemented:
 
+- [`CellRendererComponent`](https://reactnative.dev/docs/virtualizedlist#cellrenderercomponent)
 - [`columnWrapperStyle`](https://reactnative.dev/docs/flatlist#columnwrapperstyle)
-- [`viewabilityConfig`](https://reactnative.dev/docs/flatlist#viewabilityconfig)
+- [`debug`](https://reactnative.dev/docs/virtualizedlist#debug)
+- [`listKey`](https://reactnative.dev/docs/virtualizedlist#listkey)
+- [`onScrollToIndexFailed`](https://reactnative.dev/docs/virtualizedlist#onscrolltoindexfailed)
 - [`onViewableItemsChanged`](https://reactnative.dev/docs/flatlist#onviewableitemschanged)
+- [`renderScrollComponent`](https://reactnative.dev/docs/virtualizedlist#renderscrollcomponent)
+- [`viewabilityConfig`](https://reactnative.dev/docs/flatlist#viewabilityconfig)
 - [`viewabilityConfigCallbackPairs`](https://reactnative.dev/docs/flatlist#viewabilityconfigcallbackpairs)
+- [`windowSize`](https://reactnative.dev/docs/virtualizedlist#windowsize)
+
+Unsupported methods:
+
 - [`flashScrollIndicators()`](https://reactnative.dev/docs/flatlist#flashscrollindicators)
+- [`hasMore`](https://reactnative.dev/docs/virtualizedlist#hasmore)
+- [`getChildContext`](https://reactnative.dev/docs/virtualizedlist#getchildcontext)
 - [`getNativeScrollRef()`​](https://reactnative.dev/docs/flatlist#getnativescrollref)
+- [`getScrollableNode`](https://reactnative.dev/docs/virtualizedlist#getscrollablenode)
+- [`getScrollRef`](https://reactnative.dev/docs/virtualizedlist#getscrollref)
 - [`getScrollResponder()`](https://reactnative.dev/docs/flatlist#getscrollresponder)
 - [`recordInteraction()`](https://reactnative.dev/docs/flatlist#recordinteraction)
 
 There are also `FlatList` props that would bring no value if ported to `FlashList` due to the differences in their underlying implementation:
 
-- [`initialNumToRender`](https://reactnative.dev/docs/flatlist#initialnumtorender)
+- [`disableVirtualization`](https://reactnative.dev/docs/virtualizedlist#disablevirtualization)
 - [`getItemLayout`](https://reactnative.dev/docs/flatlist#getItemLayout)
+- [`initialNumToRender`](https://reactnative.dev/docs/flatlist#initialnumtorender)
+- [`maxToRenderPerBatch`](https://reactnative.dev/docs/virtualizedlist#maxtorenderperbatch)
+- [`recordInteraction`](https://reactnative.dev/docs/virtualizedlist#recordinteraction)
+- [`setNativeProps`](https://reactnative.dev/docs/virtualizedlist#setnativeprops)
+- [`updateCellsBatchingPeriod`](https://reactnative.dev/docs/virtualizedlist#updatecellsbatchingperiod)
 
 We don't currently plan to implement these props.
