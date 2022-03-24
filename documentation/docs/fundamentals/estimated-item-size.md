@@ -47,7 +47,7 @@ Having few items on the screen is great for performance and responsiveness. Smal
 
 ![Large estimatedItemSize](https://user-images.githubusercontent.com/7811728/159801541-5540820d-4d90-491d-9645-dd43b684c437.png)
 
-- **If the values are too small**, visibly not much will change but you will be drawing more than necessary and in cases where components are very heavy load times can increase.
+- **If the values are too small**, not much will change visibly but you will be drawing more than necessary. If your components are complex, load times might increase.
 
 ![Small estimatedItemSize](https://user-images.githubusercontent.com/7811728/159801594-51a26edc-8f5b-4fb5-a268-c138b525bd3c.png)
 
