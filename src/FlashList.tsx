@@ -411,7 +411,7 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private getUpdatedWindowCorrectionConfig() {
-    // If initial offset is 0 the we're forcing RLV to use initialOffset and thus we need to disable window correction
+    // If initial offset is 0 then we're forcing RLV to use initialOffset and thus we need to disable window correction
     // This isn't clean but it's the only way to get RLV to scroll to the right place
     // TODO: Remove this when RLV fixes this
     if (this.props.initialScrollIndex === 0) {
