@@ -36,7 +36,7 @@ const MyList = () => {
 [`estimatedItemSize`](#estimateditemsize) is necessary to achieve optimal performance.
 :::
 
-This is a comprehensive list of supported `FlashList` props. Some of them might be familiar from `FlatList` [props](https://reactnative.dev/docs/flatlist). Not all of them are available in `FlashList` and for some the documentation and behavior might slightly differ. We therefore recommend using our documentation as the primary reference.
+Most of the props from `FlatList` are available in `FlashList`, too. This documentation includes both `FlatList` and additional `FlashList` props and should be used as a primary reference. But you can also read more about the props available in both `FlatList` and `FlashList` [here](https://reactnative.dev/docs/flatlist).
 
 # Props
 
@@ -91,7 +91,7 @@ Value of `estimatedItemSize` should ideally correspond to a median height or wid
 
 ### `ItemSeparatorComponent`
 
-Rendered in between each item, but not at the top or bottom. By default, `highlighted` and `leadingItem` props are provided.
+Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
 
 ```ts
 ItemSeparatorComponent?: React.ComponentType<any>;
@@ -156,6 +156,10 @@ interface ContentStyle {
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
 
+:::note
+Horizontal padding is ignored on vertical lists and vertical padding on horizontal ones.
+:::
+
 ### `drawDistance`
 
 ```ts
@@ -178,7 +182,7 @@ estimatedFirstItemOffset?: number;
 estimatedListSize?: { height: number; width: number }
 ```
 
-Estimated visible height and width of the list. It is not the scroll content size.
+Estimated visible height and width of the list. It is not the scroll content size. Defining this prop will enable the list to be rendered immediately. Without it, the list first needs to measure its size, leading to a small delay during the first render.
 
 ### `extraData`
 
