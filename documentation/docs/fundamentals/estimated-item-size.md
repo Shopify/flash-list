@@ -32,7 +32,7 @@ We're thinking of ways to workaround this limitation but for now we think that l
 
 ### Impact on scroll
 
-During very quick scrolls if offsets are changing very quickly `FlashList` might run into situation where it needs to prepare more than one item. This is just another version of the same problem. If your estimate is too big `FlashList` might think that a small number of items are enough to fill the screen and you might end up seeing blanks. This is the primary reason we suggest using a smaller value if you're confused between two of them. Drawing a few more items is better than showing blanks. With `FlashList` we don't expect blanks unless components are very slow or `estimatedItemSize` are too large.
+During very quick scrolls, if offsets are changing very quickly, `FlashList` might run into a situation where it needs to prepare more than one item. This is just another version of the same problem. If your estimate is too big, `FlashList` might think that a small number of items are enough to fill the screen, and you might see blanks. _This is the primary reason we suggest using a smaller value if you're confused between the two of them._ Drawing a few more items is better than showing blanks. With `FlashList`, we don't expect blanks unless components are very slow or `estimatedItemSize` is too large.
 
 ### Impact of number of items drawn on responsiveness
 
