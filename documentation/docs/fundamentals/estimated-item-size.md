@@ -23,7 +23,7 @@ sidebar_position: 2
 
 `FlashList` doesn't know the size of its children before they're rendered. When the list is loading, it needs to decide how many items to render. There are only few choices here:
 
-- **Render a fixed number of items:** A default number of items to render on load may not be right for all devices and it should ideally depend on screen size. Drawing less number of items will show up blank space on load and drawing too many will increase load time.
+- **Render a fixed number of items:** A default number of items to render on load may not be right for all devices and it should ideally depend on screen size. Drawing smaller number of items will show up blank space on load and drawing too many will increase load time.
 - **Use a default value for `estimatedItemSize`:** If we use a default size for items on launch, we still run into problems. Let's say we use `50px` as the default, with you having no awareness of this, and you're rendering a list with large items like a news feed where items are also complex. Let's say the actual rendered size is around `500px`. Based on this assumption, we will draw `20` items on load if the screen size is `1000px` while we should only draw 2. This result is not optimal, and you may not even realize how much faster loads can be.
 - **Take `estimatedItemSize` from developers:** We leaned towards this option, instead of trying to hide away this requirement we're letting you decide. We're going with a size estimate and not an initial count to render because size seems like a more stable value across device sizes.
 
