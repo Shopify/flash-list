@@ -1,12 +1,9 @@
 import * as path from "path";
 import { ensureArtifactsLocation, saveDiff } from "./SnapshotLocation";
-import element from "detox";
 
 import { pixelDifference } from "./PixelDifference";
 
-export const assertSnapshot = (element: element, testName: string) => {
-  const testRunScreenshotPath = element.takeScreenshot(testName);
-
+export const assertSnapshot = (snapshotPath: string, testName: string) => {
   const testArtifactsLocation = ensureArtifactsLocation(testName);
   const referenceName = path.resolve(testArtifactsLocation, `${testName}.png`);
 
