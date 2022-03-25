@@ -1,11 +1,16 @@
 [![Build status](./FlashList.png)](https://buildkite.com/shopify/flash-list)
 
 <div align="center">
-[Website](https://shpoify.github.io/flash-list) • [Getting started](https://flash-list.docs.shopify.io/) • [Usage](https://flash-list.docs.shopify.io/usage) • [Performance](https://flash-list.docs.shopify.io/performance-troubleshooting) • [Known Issues](https://flash-list.docs.shopify.io/known-issues)
-
+  <a href="https://shopify.github.io/flash-list">Website</a> • 
+  <a href="https://flash-list.docs.shopify.io/">Getting started</a> • 
+  <a href="https://flash-list.docs.shopify.io/usage">Usage</a> • 
+  <a href="https://flash-list.docs.shopify.io/performance-troubleshooting">Performance</a> • 
+  <a href="https://flash-list.docs.shopify.io/known-issues">Known Issues</a>
+<br><br>
+  
 **Fast & performant React Native list. No more blank cells.**
 
-Swap from FlatList in seconds. Get instant performance.
+  Swap from FlatList in seconds. Get instant performance.
 
 </div>
 
