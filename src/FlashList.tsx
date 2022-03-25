@@ -23,7 +23,6 @@ import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
-import { valueOrDefault } from "./utils/ValueHelpers";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
@@ -355,13 +354,11 @@ class FlashList<T> extends React.PureComponent<
       ...restProps
     } = this.props;
 
-    const isInitialScrollIndexInFirstRow =
-      this.isInitialScrollIndexInFirstRow();
-
     // RecyclerListView simply ignores if initialScrollIndex is set to 0 because it doesn't understand headers
     // Using initialOffset to force RLV to scroll to the right place
     const initialOffset =
-      (isInitialScrollIndexInFirstRow && this.distanceFromWindow) || undefined;
+      (this.isInitialScrollIndexInFirstRow() && this.distanceFromWindow) ||
+      undefined;
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
 
     return (
@@ -405,7 +402,8 @@ class FlashList<T> extends React.PureComponent<
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
           initialRenderIndex={
-            (!isInitialScrollIndexInFirstRow && initialScrollIndex) || undefined
+            (!this.isInitialScrollIndexInFirstRow() && initialScrollIndex) ||
+            undefined
           }
           initialOffset={initialOffset}
           onItemLayout={this.raiseOnLoadEventIfNeeded}
@@ -416,7 +414,7 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private getUpdatedWindowCorrectionConfig() {
-    // If initial offset is 0 then we're forcing RLV to use initialOffset and thus we need to disable window correction
+    // If the initial scroll index is in the first row then we're forcing RLV to use initialOffset and thus we need to disable window correction
     // This isn't clean but it's the only way to get RLV to scroll to the right place
     // TODO: Remove this when RLV fixes this
     if (this.isInitialScrollIndexInFirstRow()) {
@@ -430,7 +428,7 @@ class FlashList<T> extends React.PureComponent<
 
   private isInitialScrollIndexInFirstRow() {
     return (
-      valueOrDefault(this.props.initialScrollIndex, this.state.numColumns) <
+      (this.props.initialScrollIndex ?? this.state.numColumns) <
       this.state.numColumns
     );
   }
