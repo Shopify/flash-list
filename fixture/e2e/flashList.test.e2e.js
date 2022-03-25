@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 import {
   wipeArtifactsLocation,
   saveReference,
-  referenceExists,
+  reference,
 } from "../src/Detox/SnapshotLocation";
 
 import {
@@ -35,8 +35,6 @@ describe("FlashList", () => {
   });
 
   it("Twitter with FlatList looks the same as with FlashList", async () => {
-    // TODOs: Get it from Jest
-    // expect.getState().currentTestName - doesn't  work
     const testName = "Twitter with FlatList looks the same as with FlashList";
 
     await element(by.id("Twitter FlatList Timeline")).tap();
@@ -50,8 +48,8 @@ describe("FlashList", () => {
 
     // Assert that FlatList reference is the same as with FlashList
     assertSnapshotsEqual(
-      referenceExists(flashListReferenceTestName),
-      referenceExists(testName),
+      reference(flashListReferenceTestName),
+      reference(testName),
       testName
     );
   });

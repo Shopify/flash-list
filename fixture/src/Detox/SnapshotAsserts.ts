@@ -1,11 +1,11 @@
-import { saveDiff, referenceExists, saveReference } from "./SnapshotLocation";
+import { saveDiff, reference, saveReference } from "./SnapshotLocation";
 import { pixelDifference } from "./PixelDifference";
 
 export const assertSnapshot = (snapshotPath: string, testName: string) => {
-  const reference = referenceExists(testName);
+  const referencePath = reference(testName);
 
-  if (reference) {
-    const diffPNG = pixelDifference(snapshotPath, reference);
+  if (referencePath) {
+    const diffPNG = pixelDifference(snapshotPath, referencePath);
 
     if (diffPNG !== null) {
       const diffPath = saveDiff(diffPNG, `${testName}_diff`);
@@ -33,13 +33,13 @@ export const assertSnapshotsEqual = (
 ) => {
   if (!firstPath) {
     throw new Error(
-      "First screenshot path is null. Please make sure that you have a screenshot before running this assertion."
+      `Invalid path: ${firstPath}. Please make sure that you have a screenshot before running this assertion.`
     );
   }
 
   if (!secondPath) {
     throw new Error(
-      "Second screenshot path is null. Please make sure that you have a screenshot before running this assertion."
+      `Invalid path: ${secondPath}. Please make sure that you have a screenshot before running this assertion.`
     );
   }
 

@@ -52,7 +52,7 @@ export const saveReference = (referencePath: string, testName: string) => {
   console.log(`Reference screenshot for test name "${testName}" was created`);
 };
 
-export const referenceExists = (testName: string): string | null => {
+export const reference = (testName: string): string | null => {
   const testArtifactsLocation = ensureArtifactsLocation(testName);
   const referenceName = path.resolve(testArtifactsLocation, `${testName}.png`);
   return fs.existsSync(referenceName) ? referenceName : null;
