@@ -22,6 +22,7 @@
     "@types/pngjs": "^6.0.1",
     "detox": "^19.5.7",
     "pixelmatch": "^5.2.1",
+    "pngjs": "^6.0.0",
     "react": "17.0.2",
     "react-native": "0.67.4",
     "react-native-fast-image": "^8.5.11",

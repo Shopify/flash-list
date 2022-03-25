@@ -1,6 +1,6 @@
 import * as path from "path";
-import { ensureArtifactsLocation, saveDiff } from "./SnapshotLocation";
 
+import { ensureArtifactsLocation, saveDiff } from "./SnapshotLocation";
 import { pixelDifference } from "./PixelDifference";
 
 export const assertSnapshot = (snapshotPath: string, testName: string) => {

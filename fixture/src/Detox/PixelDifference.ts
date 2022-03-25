@@ -1,5 +1,6 @@
-import pixelmatch from "pixelmatch";
 import * as fs from "fs";
+
+import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 
 export const pixelDifference = (

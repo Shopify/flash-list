@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
+
 import detox from "detox";
 import { PNG } from "pngjs";
 
