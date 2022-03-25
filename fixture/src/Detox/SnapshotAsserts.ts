@@ -4,15 +4,7 @@ import { pixelDifference } from "./PixelDifference";
 export const assertSnapshot = (snapshotPath: string, testName: string) => {
   const reference = referenceExists(testName);
 
-  if (!reference) {
-    saveReference(snapshotPath, testName);
-
-    throw Error(
-      `There is no reference screenshot present.
-       New reference screenshot was just created for test name "${testName}".
-       Please run the test again.`
-    );
-  } else {
+  if (reference) {
     const diffPNG = pixelDifference(snapshotPath, reference);
 
     if (diffPNG !== null) {
@@ -23,6 +15,14 @@ export const assertSnapshot = (snapshotPath: string, testName: string) => {
          See diff: ${diffPath}`
       );
     }
+  } else {
+    saveReference(snapshotPath, testName);
+
+    throw Error(
+      `There is no reference screenshot present.
+       New reference screenshot was just created for test name "${testName}".
+       Please run the test again.`
+    );
   }
 };
 
