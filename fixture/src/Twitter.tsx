@@ -10,6 +10,7 @@ const Twitter = () => {
   return (
     <FlashListPerformanceView listName="Twitter">
       <FlashList
+        testID="FlashList"
         keyExtractor={(item) => {
           return item.id;
         }}

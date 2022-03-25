@@ -55,6 +55,7 @@ const App = () => {
           <Stack.Screen
             name={NavigationKeys.TWITTER_FLAT_LIST}
             component={TwitterFlatList}
+            options={{ title: "Twitter" }}
           />
         </Stack.Navigator>
       </NavigationContainer>
