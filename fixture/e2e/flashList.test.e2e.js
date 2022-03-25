@@ -7,7 +7,10 @@ import {
   referenceExists,
 } from "../src/Detox/SnapshotLocation";
 
-import { assertSnapshots, assertSnapshot } from "../src/Detox/SnapshotAsserts";
+import {
+  assertSnapshotsEqual,
+  assertSnapshot,
+} from "../src/Detox/SnapshotAsserts";
 
 describe("FlashList", () => {
   const flashListReferenceTestName = "Twitter with FlashList looks the same";
@@ -28,11 +31,7 @@ describe("FlashList", () => {
       by.id("FlashList")
     ).takeScreenshot(flashListReferenceTestName);
 
-    if (referenceExists(flashListReferenceTestName)) {
-      assertSnapshot(testRunScreenshotPath, flashListReferenceTestName);
-    } else {
-      saveReference(testRunScreenshotPath, flashListReferenceTestName);
-    }
+    assertSnapshot(testRunScreenshotPath, flashListReferenceTestName);
   });
 
   it("Twitter with FlatList looks the same as with FlashList", async () => {
@@ -46,19 +45,14 @@ describe("FlashList", () => {
       by.id("FlatList")
     ).takeScreenshot(testName);
 
-    if (!referenceExists(testName)) {
-      saveReference(testRunScreenshotPath, testName);
-    }
+    // Assert that FlatList reference is the same
+    assertSnapshot(testRunScreenshotPath, testName);
 
-    const flashListReference = referenceExists(flashListReferenceTestName);
-    const flatListReference = referenceExists(testName);
-
-    if (flashListReference && flatListReference) {
-      assertSnapshots(flatListReference, flashListReference, testName);
-    } else {
-      throw new Error(
-        "One of the references doesn't exist. Please run the tests again."
-      );
-    }
+    // Assert that FlatList reference is the same as with FlashList
+    assertSnapshotsEqual(
+      referenceExists(flashListReferenceTestName),
+      referenceExists(testName),
+      testName
+    );
   });
 });

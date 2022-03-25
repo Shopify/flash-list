@@ -1,35 +1,56 @@
-import * as path from "path";
-
-import { ensureArtifactsLocation, saveDiff } from "./SnapshotLocation";
+import { saveDiff, referenceExists, saveReference } from "./SnapshotLocation";
 import { pixelDifference } from "./PixelDifference";
 
 export const assertSnapshot = (snapshotPath: string, testName: string) => {
-  const testArtifactsLocation = ensureArtifactsLocation(testName);
-  const referenceName = path.resolve(testArtifactsLocation, `${testName}.png`);
+  const reference = referenceExists(testName);
 
-  const diffPNG = pixelDifference(snapshotPath, referenceName);
+  if (!reference) {
+    saveReference(snapshotPath, testName);
 
-  if (diffPNG !== null) {
-    const diffPath = saveDiff(diffPNG, `${testName}_diff`);
-
-    throw new Error(
-      `There is difference between reference screenshot and test run screenshot. See diff: ${diffPath}`
+    throw Error(
+      `There is no reference screenshot present.
+       New reference screenshot was just created for test name "${testName}".
+       Please run the test again.`
     );
+  } else {
+    const diffPNG = pixelDifference(snapshotPath, reference);
+
+    if (diffPNG !== null) {
+      const diffPath = saveDiff(diffPNG, `${testName}_diff`);
+
+      throw Error(
+        `There is difference between reference screenshot and test run screenshot.
+         See diff: ${diffPath}`
+      );
+    }
   }
 };
 
-export const assertSnapshots = (
-  firstPath: string,
-  secondPath: string,
+export const assertSnapshotsEqual = (
+  firstPath: string | null,
+  secondPath: string | null,
   testName: string
 ) => {
+  if (!firstPath) {
+    throw new Error(
+      "First screenshot path is null. Please make sure that you have a screenshot before running this assertion."
+    );
+  }
+
+  if (!secondPath) {
+    throw new Error(
+      "Second screenshot path is null. Please make sure that you have a screenshot before running this assertion."
+    );
+  }
+
   const diffPNG = pixelDifference(firstPath, secondPath);
 
   if (diffPNG !== null) {
     const diffPath = saveDiff(diffPNG, `${testName}_diff.png`);
 
-    throw new Error(
-      `There is difference between reference screenshot and test run screenshot. See diff: ${diffPath}`
+    throw Error(
+      `There is difference between reference screenshot and test run screenshot.
+       See diff: ${diffPath}`
     );
   }
 };

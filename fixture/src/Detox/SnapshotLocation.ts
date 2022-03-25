@@ -10,7 +10,7 @@ const artifactsLocation = (testCaseName: string): string => {
   const platform = detox.device.getPlatform();
   const location = path.resolve(
     ROOT_PATH,
-    `e2e/artifacts/${platform}`,
+    `../e2e/artifacts/${platform}`,
     testCaseName
   );
 

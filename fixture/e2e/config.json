@@ -6,8 +6,5 @@
   "testRegex": "\\.e2e\\.js$",
   "reporters": ["detox/runners/jest/streamlineReporter"],
   "verbose": true,
-  "preset": "react-native",
-  "transformIgnorePatterns": [
-    "<rootDir>/node_modules/(?!((jest-)?react-native|@react-native(-community)?)/)"
-  ]
+  "preset": "react-native"
 }
