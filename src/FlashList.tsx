@@ -12,6 +12,7 @@ import {
   ProgressiveListView,
   RecyclerListView,
   RecyclerListViewProps,
+  WindowCorrectionConfig,
 } from "recyclerlistview";
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
@@ -149,6 +150,15 @@ class FlashList<T> extends React.PureComponent<
   private contentStyle: ContentStyle = {};
   private loadStartTime = 0;
   private isListLoaded = false;
+  private windowCorrectionConfig: WindowCorrectionConfig = {
+    value: {
+      windowShift: 0,
+      startCorrection: 0,
+      endCorrection: 0,
+    },
+    applyToItemScroll: true,
+    applyToInitialOffset: true,
+  };
 
   static defaultProps = {
     data: [],
@@ -344,6 +354,11 @@ class FlashList<T> extends React.PureComponent<
       ...restProps
     } = this.props;
 
+    // RecyclerListView simply ignores if initialScrollIndex is set to 0 because it doesn't understand headers
+    // Using initialOffset to force RLV to scroll to the right place
+    const initialOffset =
+      (this.isInitialScrollIndexInFirstRow() && this.distanceFromWindow) ||
+      undefined;
     const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
 
     return (
@@ -386,10 +401,35 @@ class FlashList<T> extends React.PureComponent<
           maxRenderAhead={3 * finalDrawDistance}
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
-          initialRenderIndex={initialScrollIndex || undefined}
+          initialRenderIndex={
+            (!this.isInitialScrollIndexInFirstRow() && initialScrollIndex) ||
+            undefined
+          }
+          initialOffset={initialOffset}
           onItemLayout={this.raiseOnLoadEventIfNeeded}
+          windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>
+    );
+  }
+
+  private getUpdatedWindowCorrectionConfig() {
+    // If the initial scroll index is in the first row then we're forcing RLV to use initialOffset and thus we need to disable window correction
+    // This isn't clean but it's the only way to get RLV to scroll to the right place
+    // TODO: Remove this when RLV fixes this
+    if (this.isInitialScrollIndexInFirstRow()) {
+      this.windowCorrectionConfig.applyToInitialOffset = false;
+    } else {
+      this.windowCorrectionConfig.applyToInitialOffset = true;
+    }
+    this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
+    return this.windowCorrectionConfig;
+  }
+
+  private isInitialScrollIndexInFirstRow() {
+    return (
+      (this.props.initialScrollIndex ?? this.state.numColumns) <
+      this.state.numColumns
     );
   }
 
