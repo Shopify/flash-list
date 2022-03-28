@@ -45,7 +45,7 @@ describe("Twitter", () => {
 
   it("looks the same after orientation change", async () => {
     const testName = "looks the same after orientation change";
-    const flatListTestName = "with FlatList " + testName;
+    const flatListTestName = `with FlatList ${testName}`;
 
     // Go to Twitter with FlashList screen
     await element(by.id("Twitter Timeline")).tap();
