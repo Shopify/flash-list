@@ -35,6 +35,10 @@ We are planning to add a version of this but we can't guarantee if it will be ex
 
 As of now, horizontal lists need a fixed height. It's not possible to resize it based on height of the tallest child item. This is because children have absolute positions and cannot expand the parent. This is something we will address in the future. Please provide feedback if this is important to you. Using `onLayout` to measure and resize is a possible workaround but it can cause visible movement on screen.
 
-### 7) Layout animations for insert and delete operations may start from wrong coordinates
+### 7) Layout animations for insert and delete operations don't work as expected
 
-These animations aren't supported right now but we're looking into them.
+Please read more about layout animations here: https://flash-list.docs.shopify.io/layout-animation
+
+### 8) Reanimated support
+
+If you experience unexpected performance issues try to avoid reanimated within FlashList components. We're working on testing its compatibility with FlashList.
