@@ -5,7 +5,7 @@ slug: /testing
 sidebar_position: 1
 ---
 
-Since `FlashList` does not immediately render but waits for the size of the underlying `ScrollView` (unless [`estimatedListSize`](usage#estimatedlistsize)), we need to mock triggering `onLayout` event.
+Since `FlashList` does not immediately render but waits for the size of the underlying `ScrollView` (unless you specify [`estimatedListSize`](usage#estimatedlistsize)), we need to mock triggering `onLayout` event.
 
 ## Setup
 
