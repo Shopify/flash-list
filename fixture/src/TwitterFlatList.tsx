@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, View } from "react-native";
+import { FlatList } from "react-native";
 import { FlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import { tweets } from "./data/tweets";
