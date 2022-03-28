@@ -48,7 +48,8 @@
     "ios",
     "dist",
     "RNFlashList.podspec",
-    "src"
+    "src",
+    "jestSetup.js"
   ],
   "dependencies": {
     "invariant": "^2.2.4",

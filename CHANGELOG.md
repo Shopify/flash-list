@@ -10,6 +10,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - initialScrollIndex, scrollTo methods will now account for size of header
   - https://github.com/Shopify/flash-list/pull/194
 
+- Added a new mock for easier testing of components with `FlashList`
+  - https://github.com/Shopify/flash-list/pull/236
+
 ## [0.4.0] - 2022-03-23
 
 - Add support for layout animations
