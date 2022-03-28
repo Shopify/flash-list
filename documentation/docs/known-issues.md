@@ -19,7 +19,7 @@ Please note most lists do mount with deterministic sizes so make sure to check i
 
 This value is reported as 0. We don't have plans to implement this right now. Please provide feedback if this is important to you.
 
-### 3)`scrollToIndex` doesn't have `offset` support
+### 3)`scrollToIndex` doesn't have `viewOffset, viewPosition` support
 
 The list only guarantees to bring the given index in view port (as close to the top as possible). There is no support for additional customization.
 
