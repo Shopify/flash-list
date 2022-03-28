@@ -10,6 +10,10 @@
 # Files for the ART/Dalvik VM
 *.dex
 
+# Jekyll generated files
+docs/.jekyll-cache
+docs/_site
+
 # Java class files
 *.class
 

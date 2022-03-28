@@ -1,0 +1,7 @@
+[
+  {
+    "title": " Tools to measure performance",
+    "description": "Build a performant list in React Native is difficult. Apart from providing an out-of-the-box performant component, FlashList also has Flipper Plugins to measure things like FPS, blank cells or TTI.",
+    "image": "img/untitled.png"
+  }
+]

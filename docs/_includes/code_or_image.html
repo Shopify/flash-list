@@ -1,0 +1,10 @@
+{% if include.code %}
+{% highlight tsx %}{% include {{include.code}} %}{% endhighlight %}
+{% else %}
+{% if video %}
+<video src="{{video}}" autoplay muted></video>
+{% endif %}
+{% if image %}
+<img src="{{include.image}}" alt="" />
+{% endif %}
+{% endif %}
