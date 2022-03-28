@@ -9,21 +9,20 @@ import { Header, Footer, Divider } from "./Twitter";
 const TwitterFlatList = () => {
   return (
     <FlatListPerformanceView listName="TwitterFlatList">
-      <View testID="FlatList">
-        <FlatList
-          keyExtractor={(item) => {
-            return item.id;
-          }}
-          renderItem={({ item }) => {
-            return <TweetCell tweet={item} />;
-          }}
-          ListHeaderComponent={Header}
-          ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
-          ListFooterComponent={Footer}
-          ItemSeparatorComponent={Divider}
-          data={tweets}
-        />
-      </View>
+      <FlatList
+        testID="FlatList"
+        keyExtractor={(item) => {
+          return item.id;
+        }}
+        renderItem={({ item }) => {
+          return <TweetCell tweet={item} />;
+        }}
+        ListHeaderComponent={Header}
+        ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
+        ListFooterComponent={Footer}
+        ItemSeparatorComponent={Divider}
+        data={tweets}
+      />
     </FlatListPerformanceView>
   );
 };

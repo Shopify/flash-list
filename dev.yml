@@ -67,6 +67,8 @@ commands:
     aliases: [ra]
     run: cd fixture && yarn react-native run-android && yarn build --watch
   run-e2e-ios:
+    aliases: [rei]
     run: cd fixture && yarn e2e:build:ios && yarn e2e:test:ios
   run-e2e-android:
+    aliases: [rea]
     run: cd fixture && yarn e2e:build:android && yarn e2e:test:android
