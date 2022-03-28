@@ -7,7 +7,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- Added a new for easier testing of components with `FlashList`
+- Added a new mock for easier testing of components with `FlashList`
   - https://github.com/Shopify/flash-list/pull/236
 
 ## [0.4.0] - 2022-03-23
