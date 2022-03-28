@@ -33,7 +33,7 @@
     "babel-plugin-module-resolver": "^4.1.0",
     "glob": "^7.1.6",
     "jest": "^27.5.1",
-    "metro-config": "^0.69.1",
+    "metro-config": "^0.70.0",
     "metro-react-native-babel-preset": "^0.69.1",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
