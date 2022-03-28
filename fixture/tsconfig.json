@@ -4,11 +4,12 @@
     "baseUrl": ".",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "."
   },
   "references": [
     {
       "path": "../"
     }
-  ]
+  ],
+  "include": ["src/**/*", "e2e/**/*"]
 }
