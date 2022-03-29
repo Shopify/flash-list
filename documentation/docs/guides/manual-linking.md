@@ -1,7 +1,6 @@
 ---
 id: manual-linking
 title: Manual linking
-sidebar_position: 1
 ---
 
 ## iOS

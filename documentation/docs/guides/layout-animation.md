@@ -1,7 +1,6 @@
 ---
 id: layout-animation
 title: LayoutAnimation
-sidebar_position: 0
 ---
 
 [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) is a popular way how to animate views in React Native.
