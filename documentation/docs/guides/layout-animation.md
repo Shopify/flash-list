@@ -1,7 +1,6 @@
 ---
 id: layout-animation
 title: LayoutAnimation
-slug: /layout-animation
 sidebar_position: 0
 ---
 
