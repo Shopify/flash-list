@@ -9,7 +9,7 @@ sidebar_position: 1
 ### Using 'Pods'
 
 - Navigate to your iOS folder `cd ios`
-- Add this line to your `Podfile`:
+- Add this line to your `Podfile` just below the last pod:
 
 ```ruby
 pod 'RNFlashList', :path => '../node_modules/@shopify/flash-list'
