@@ -7,7 +7,12 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Reduce number of render item calls
+
+  - https://github.com/Shopify/flash-list/pull/253
+
 - initialScrollIndex, scrollTo methods will now account for size of header
+
   - https://github.com/Shopify/flash-list/pull/194
 
 - Added a new mock for easier testing of components with `FlashList`
