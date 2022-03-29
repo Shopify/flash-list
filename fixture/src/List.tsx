@@ -11,6 +11,17 @@ import {
   StyleSheet,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
+import Animated, {
+  FadeOut,
+  Layout,
+  SlideOutRight,
+  useAnimatedStyle,
+  useCode,
+  useSharedValue,
+  useValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
 
 /** *
  * To test out just copy this component and render in you root component
@@ -38,27 +49,53 @@ const List = () => {
     );
     list.current?.prepareForLayoutAnimationRender();
     // after removing the item, we start animation
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  };
+
+  const Item = () => {
+    const animatedValue = useSharedValue(1);
+    animatedValue.value = withRepeat(withTiming(70), -1, true);
+    const animatedStyles = useAnimatedStyle(() => {
+      return {
+        width: animatedValue.value,
+      };
+    });
+    return (
+      <Animated.View
+        style={[
+          {
+            backgroundColor: "blue",
+            height: 30,
+          },
+          animatedStyles,
+        ]}
+      />
+    );
   };
 
   const renderItem = ({ item }: { item: number }) => {
     const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
     return (
-      <Pressable
-        onPress={() => {
-          removeItem(item);
-        }}
-      >
-        <View
-          style={{
-            ...styles.container,
-            backgroundColor,
-            height: item % 2 === 0 ? 100 : 200,
+      <Animated.View layout={Layout} exiting={SlideOutRight}>
+        <Pressable
+          onPress={() => {
+            removeItem(item);
           }}
         >
-          <Text>Cell Id: {item}</Text>
-        </View>
-      </Pressable>
+          <View
+            style={{
+              ...styles.container,
+              backgroundColor,
+              height: item % 2 === 0 ? 100 : 200,
+            }}
+          >
+            <Item />
+            {/* <Animated.View style={{ marginLeft: animatedValue }}> */}
+            {/* <Text>Cell Id: {item}</Text> */}
+            {/* </Animated.View> */}
+          </View>
+        </Pressable>
+      </Animated.View>
     );
   };
 
