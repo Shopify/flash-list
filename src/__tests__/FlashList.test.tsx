@@ -102,7 +102,6 @@ describe("FlashList", () => {
       flashList.instance.getUpdatedWindowCorrectionConfig().value.windowShift
     ).toBe(-100);
   });
-
   it("only forwards onBlankArea prop to AutoLayout when needed", () => {
     const flashList = mountFlashList();
     expect(
