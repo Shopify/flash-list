@@ -7,7 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- Crash fix for android
+- Crash fix for android activity switching (#256)
+
+  - https://github.com/Shopify/flash-list/pull/257
 
 - initialScrollIndex, scrollTo methods will now account for size of header
 
