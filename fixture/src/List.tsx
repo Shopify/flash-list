@@ -10,7 +10,7 @@ import {
   LayoutAnimation,
   StyleSheet,
 } from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import { AnimatedFlashList, FlashList } from "@shopify/flash-list";
 import Animated, {
   FadeOut,
   Layout,
@@ -76,7 +76,7 @@ const List = () => {
   const renderItem = ({ item }: { item: number }) => {
     const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
     return (
-      <Animated.View layout={Layout} exiting={SlideOutRight}>
+      <Animated.View exiting={SlideOutRight}>
         <Pressable
           onPress={() => {
             removeItem(item);
@@ -89,10 +89,7 @@ const List = () => {
               height: item % 2 === 0 ? 100 : 200,
             }}
           >
-            <Item />
-            {/* <Animated.View style={{ marginLeft: animatedValue }}> */}
-            {/* <Text>Cell Id: {item}</Text> */}
-            {/* </Animated.View> */}
+            <Text>Cell Id: {item}</Text>
           </View>
         </Pressable>
       </Animated.View>
@@ -100,7 +97,7 @@ const List = () => {
   };
 
   return (
-    <FlashList
+    <AnimatedFlashList
       ref={list}
       refreshing={refreshing}
       onRefresh={() => {
