@@ -650,9 +650,11 @@ class FlashList<T> extends React.PureComponent<
     } as any) as JSX.Element;
   };
 
-  // This will prevent render item calls unless data changes.
-  // Output of this method is received as children object so returning null here is no issue as
-  // long as we handle it inside our child container
+  /**
+   * This will prevent render item calls unless data changes.
+   * Output of this method is received as children object so returning null here is no issue as long as we handle it inside our child container.
+   * @module getCellContainerChild acts as the new rowRenderer and is called directly from our child container.
+   */
   private emptyRowRenderer = () => {
     return null;
   };
