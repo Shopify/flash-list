@@ -472,14 +472,8 @@ class FlashList<T> extends React.PureComponent<
         />
         <AutoLayoutView
           {...props}
-          onBlankAreaEvent={(event) => {
-            this.props.onBlankArea?.(event);
-          }}
-          onLayout={(event) => {
-            this.distanceFromWindow = this.props.horizontal
-              ? event.nativeEvent.layout.x
-              : event.nativeEvent.layout.y;
-          }}
+          onBlankAreaEvent={this.props.onBlankArea}
+          onLayout={this.updateDistanceFromWindow}
         >
           {children}
         </AutoLayoutView>
@@ -533,6 +527,12 @@ class FlashList<T> extends React.PureComponent<
         </WrapperComponent>
       </ItemContainer>
     );
+  };
+
+  private updateDistanceFromWindow = (event: LayoutChangeEvent) => {
+    this.distanceFromWindow = this.props.horizontal
+      ? event.nativeEvent.layout.x
+      : event.nativeEvent.layout.y;
   };
 
   private getTransform() {
