@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.1] - 2022-03-29
+
 - Crash fix for android activity switching (#256)
 
   - https://github.com/Shopify/flash-list/pull/257
