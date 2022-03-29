@@ -26,8 +26,8 @@ export interface BlankAreaEvent {
 }
 
 export interface AutoLayoutViewProps {
-  onBlankAreaEvent: BlankAreaEventHandler;
-  onLayout: (event: LayoutChangeEvent) => void;
+  onBlankAreaEvent?: BlankAreaEventHandler;
+  onLayout?: (event: LayoutChangeEvent) => void;
 }
 
 class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
