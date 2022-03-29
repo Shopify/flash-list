@@ -13,7 +13,7 @@ Swap from FlatList in seconds. Get instant performance.
 
 ### Adding a package to your project
 
-Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
+Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory. If you don't use React Native CLI's [autolinking](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md) feature, you will need to manually link the dependency - read [here](/guides/manual-linking) to learn more.
 
 ### Usage
 

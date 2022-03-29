@@ -42,4 +42,48 @@ describe("Twitter", () => {
       testName
     );
   });
+
+  it("looks the same after orientation change", async () => {
+    const testName = "looks the same after orientation change";
+    const flatListTestName = `with FlatList ${testName}`;
+
+    // Go to Twitter with FlashList screen
+    await element(by.id("Twitter Timeline")).tap();
+    // Scroll 500px down and change orientation to lansdsape
+    await scrollAndRotate("FlashList");
+    const flashListScreenshotPath = await element(
+      by.id("FlashList")
+    ).takeScreenshot(testName);
+
+    assertSnapshot(flashListScreenshotPath, testName);
+
+    await device.setOrientation("portrait");
+    await goBack();
+
+    // Go to Twitter with FlatList screen
+    await element(by.id("Twitter FlatList Timeline")).tap();
+    await scrollAndRotate("FlatList");
+
+    const flatListScreenshotPath = await element(
+      by.id("FlatList")
+    ).takeScreenshot(flatListTestName);
+
+    assertSnapshotsEqual(
+      flashListScreenshotPath,
+      flatListScreenshotPath,
+      flatListTestName
+    );
+  });
 });
+
+const scrollAndRotate = async (id: string) => {
+  await element(by.id(id)).scroll(500, "down");
+
+  await device.setOrientation("landscape");
+};
+
+const goBack = async () => {
+  await element(by.traits(["button"]))
+    .atIndex(0)
+    .tap();
+};

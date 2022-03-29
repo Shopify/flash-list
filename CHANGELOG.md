@@ -8,8 +8,13 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 - Reduce number of render item calls
-
   - https://github.com/Shopify/flash-list/pull/253
+
+## [0.4.1] - 2022-03-29
+
+- Crash fix for android activity switching (#256)
+
+  - https://github.com/Shopify/flash-list/pull/257
 
 - initialScrollIndex, scrollTo methods will now account for size of header
 

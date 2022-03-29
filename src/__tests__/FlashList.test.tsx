@@ -6,6 +6,7 @@ import { ProgressiveListView } from "recyclerlistview";
 
 import FlashList from "../FlashList";
 import Warnings from "../errors/Warnings";
+import AutoLayoutView from "../AutoLayoutView";
 
 describe("FlashList", () => {
   const mountFlashList = (props?: {
@@ -100,6 +101,17 @@ describe("FlashList", () => {
     expect(
       flashList.instance.getUpdatedWindowCorrectionConfig().value.windowShift
     ).toBe(-100);
+  });
+
+  it("only forwards onBlankArea prop to AutoLayout when needed", () => {
+    const flashList = mountFlashList();
+    expect(
+      flashList.findAll(AutoLayoutView)[0].instance.props.onBlankAreaEvent
+    ).toBeUndefined();
+    flashList.setProps({ onBlankArea: () => {} });
+    expect(
+      flashList.findAll(AutoLayoutView)[0].instance.props.onBlankAreaEvent
+    ).not.toBeUndefined();
   });
   it("calls render item only when data of the items has changed", (done) => {
     const renderItemMock = jest.fn(({ item }) => {

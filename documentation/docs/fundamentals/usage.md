@@ -222,7 +222,7 @@ inverted?: boolean;
 keyExtractor?: (item: object, index: number) => string;
 ```
 
-Used to extract a unique key for a given item at the specified index. Key is used for optimizing performance. Defining `keyExtractor` is also necessary when doing [layout animations](/layout-animation) to uniquely identify animated components.
+Used to extract a unique key for a given item at the specified index. Key is used for optimizing performance. Defining `keyExtractor` is also necessary when doing [layout animations](/guides/layout-animation) to uniquely identify animated components.
 
 ### `numColumns`
 
