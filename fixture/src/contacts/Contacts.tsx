@@ -33,7 +33,6 @@ const Contacts = () => {
       estimatedItemSize={100}
       data={data}
       renderItem={({ item }) => {
-        // item will never be string since it will be rendered with `StickyHeaderComponent`
         if (typeof item === "string") {
           return <ContactSectionHeader title={item} />;
         } else {
@@ -41,9 +40,6 @@ const Contacts = () => {
         }
       }}
       stickyHeaderIndices={stickyHeaderIndices}
-      //   StickyHeaderComponent={({ title }) => {
-      //     return <ContactSectionHeader title={title} />;
-      //   }}
     />
   );
 };
