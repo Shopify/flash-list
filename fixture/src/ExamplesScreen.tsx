@@ -8,12 +8,17 @@ import {
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
+import { DebugButton } from "./Debug";
 
 import { NavigationKeys, RootStackParamList } from "./constants";
 
 export const ExamplesScreen = () => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Examples">>();
+
+  const onDebugButton = () => {
+    navigate(NavigationKeys.DEBUG);
+  };
 
   const data = [
     { title: "List", destination: NavigationKeys.LIST },
@@ -44,6 +49,7 @@ export const ExamplesScreen = () => {
           </TouchableOpacity>
         )}
       />
+      <DebugButton onPress={onDebugButton} />
     </>
   );
 };

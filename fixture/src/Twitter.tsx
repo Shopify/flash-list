@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import TweetCell from "./TweetCell";
 import { tweets } from "./data/tweets";
+import { DebugContext } from "./Debug";
 
 const Twitter = () => {
+  const debugContext = useContext(DebugContext);
+  const initialScrollIndex = debugContext?.initialScrollIndexEnabled
+    ? 10
+    : undefined;
+
   return (
     <FlashListPerformanceView listName="Twitter">
       <FlashList
@@ -23,6 +29,7 @@ const Twitter = () => {
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
         data={tweets}
+        initialScrollIndex={initialScrollIndex}
       />
     </FlashListPerformanceView>
   );

@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { FlatList } from "react-native";
 import { FlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import { tweets } from "./data/tweets";
 import TweetCell from "./TweetCell";
 import { Header, Footer, Divider } from "./Twitter";
+import { DebugContext } from "./Debug";
 
 const TwitterFlatList = () => {
+  const debugContext = useContext(DebugContext);
+  const initialScrollIndex = debugContext?.initialScrollIndexEnabled
+    ? 10
+    : undefined;
+
   return (
     <FlatListPerformanceView listName="TwitterFlatList">
       <FlatList
@@ -22,6 +28,7 @@ const TwitterFlatList = () => {
         ListFooterComponent={Footer}
         ItemSeparatorComponent={Divider}
         data={tweets}
+        initialScrollIndex={initialScrollIndex}
       />
     </FlatListPerformanceView>
   );
