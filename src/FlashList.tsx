@@ -638,7 +638,7 @@ class FlashList<T> extends React.PureComponent<
     correctionObject: { windowShift: number }
   ) => {
     correctionObject.windowShift = -this.distanceFromWindow;
-    this.stickyContentContainerRef?.setEnabled(this.isStickyEnabled);
+    this.checkAndUpdateStickyState();
   };
 
   private rowRendererWithIndex = (index: number) => {
@@ -689,17 +689,19 @@ class FlashList<T> extends React.PureComponent<
     return (
       <PureComponentWrapper
         ref={this.stickyContentRef}
-        enabled={this.isStickyEnabled}
+        enabled={this.checkAndUpdateStickyState()}
         arg={index}
         renderer={this.rowRendererWithIndex}
       />
     );
   };
 
-  private get isStickyEnabled() {
+  private checkAndUpdateStickyState = () => {
     const currentOffset = this.rlvRef?.getCurrentScrollOffset() || 0;
-    return currentOffset >= this.distanceFromWindow;
-  }
+    const state = currentOffset >= this.distanceFromWindow;
+    this.stickyContentContainerRef?.setEnabled(state);
+    return state;
+  };
 
   private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
