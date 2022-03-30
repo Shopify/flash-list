@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 import React, { useContext, useEffect, useState } from "react";
 import { SectionList } from "react-native";
 
 import { DebugContext } from "../Debug";
+=======
+import React, { useEffect, useState } from "react";
+import { SectionList } from "react-native";
+
+>>>>>>> 0e3162d2 (Add FlashList contacts)
 import Contact from "../models/Contact";
 
 import ContactSectionHeader from "./ContactSectionHeader";
