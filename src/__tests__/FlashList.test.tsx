@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ListRenderItem, ScrollView, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount } from "@quilted/react-testing";
@@ -80,6 +80,7 @@ describe("FlashList", () => {
     expect(prepareForLayoutAnimationRender).not.toHaveBeenCalled();
     expect(warn).toHaveBeenCalledWith(Warnings.missingKeyExtractor);
   });
+
   it("disables initial scroll correction on recyclerlistview if initialScrollIndex is in first row", () => {
     let flashList = mountFlashList({ initialScrollIndex: 0, numColumns: 3 });
     expect(
@@ -96,12 +97,14 @@ describe("FlashList", () => {
       flashList.instance.getUpdatedWindowCorrectionConfig().applyToInitialOffset
     ).toBe(false);
   });
+
   it("assigns distance from window to window correction object", () => {
     const flashList = mountFlashList({ estimatedFirstItemOffset: 100 });
     expect(
       flashList.instance.getUpdatedWindowCorrectionConfig().value.windowShift
     ).toBe(-100);
   });
+
   it("only forwards onBlankArea prop to AutoLayout when needed", () => {
     const flashList = mountFlashList();
     expect(
@@ -112,6 +115,7 @@ describe("FlashList", () => {
       flashList.findAll(AutoLayoutView)[0].instance.props.onBlankAreaEvent
     ).not.toBeUndefined();
   });
+
   it("calls render item only when data of the items has changed", (done) => {
     const renderItemMock = jest.fn(({ item }) => {
       return <Text>{item}</Text>;
@@ -135,5 +139,34 @@ describe("FlashList", () => {
     requestAnimationFrame(() => {
       done();
     });
+  });
+
+  it("keeps component mounted based on prepareForLayoutAnimationRender being called", () => {
+    // Tracks components being unmounted
+    const unmountMock = jest.fn();
+    const Item = ({ text }: { text: string }) => {
+      useEffect(() => {
+        return unmountMock;
+      }, []);
+      return <Text>{text}</Text>;
+    };
+
+    const flashList = mountFlashList({
+      keyExtractor: (item) => item,
+      renderItem: ({ item }) => {
+        return <Item text={item} />;
+      },
+      data: ["One", "Two", "Three", "Four"],
+    });
+
+    // Change data without prepareForLayoutAnimationRender
+    flashList.setProps({ data: ["One", "Two", "Three", "Five"] });
+    expect(unmountMock).not.toHaveBeenCalled();
+
+    // Before changing data, we run prepareForLayoutAnimationRender.
+    // This ensures component gets unmounted instead of being recycled to ensure layout animations run as expected.
+    flashList.instance.prepareForLayoutAnimationRender();
+    flashList.setProps({ data: ["One", "Two", "Three", "Six"] });
+    expect(unmountMock).toHaveBeenCalledTimes(1);
   });
 });
