@@ -7,6 +7,7 @@ import ContactSectionHeader from "./ContactSectionHeader";
 import ContactDivider from "./ContactDivider";
 import ContactCell from "./ContactCell";
 import contacts from "./data/contacts";
+import ContactHeader from "./ContactHeader";
 
 interface Section {
   title: string;
@@ -37,13 +38,14 @@ const ContactsFlatList = () => {
   return (
     <SectionList
       testID="SectionList"
-      keyExtractor={({ lastName }) => lastName}
+      keyExtractor={({ firstName, lastName }) => firstName + lastName}
       renderItem={({ item }) => <ContactCell contact={item} />}
       renderSectionHeader={({ section: { title } }) => (
         <ContactSectionHeader title={title} />
       )}
       ItemSeparatorComponent={ContactDivider}
       sections={data}
+      ListHeaderComponent={ContactHeader}
     />
   );
 };

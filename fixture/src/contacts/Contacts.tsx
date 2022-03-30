@@ -6,6 +6,7 @@ import Contact from "../models/Contact";
 import contacts from "./data/contacts";
 import ContactCell from "./ContactCell";
 import ContactSectionHeader from "./ContactSectionHeader";
+import ContactHeader from "./ContactHeader";
 
 const Contacts = () => {
   const [data, setData] = useState<(Contact | string)[]>([]);
@@ -40,6 +41,7 @@ const Contacts = () => {
         }
       }}
       stickyHeaderIndices={stickyHeaderIndices}
+      ListHeaderComponent={ContactHeader}
     />
   );
 };
