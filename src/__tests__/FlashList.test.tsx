@@ -30,7 +30,7 @@ describe("FlashList", () => {
         estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
       />
     );
-    flashList.findAll(ScrollView)[0].trigger("onLayout", {
+    flashList.find(ScrollView)?.trigger("onLayout", {
       nativeEvent: { layout: { height: 900, width: 400 } },
     });
     return flashList;
@@ -104,12 +104,9 @@ describe("FlashList", () => {
   });
   it("only forwards onBlankArea prop to AutoLayout when needed", () => {
     const flashList = mountFlashList();
-    expect(
-      flashList.findAll(AutoLayoutView)[0].instance.props.onBlankAreaEvent
-    ).toBeUndefined();
+    const autoLayoutView = flashList.find(AutoLayoutView)?.instance;
+    expect(autoLayoutView.props.onBlankAreaEvent).toBeUndefined();
     flashList.setProps({ onBlankArea: () => {} });
-    expect(
-      flashList.findAll(AutoLayoutView)[0].instance.props.onBlankAreaEvent
-    ).not.toBeUndefined();
+    expect(autoLayoutView.props.onBlankAreaEvent).not.toBeUndefined();
   });
 });
