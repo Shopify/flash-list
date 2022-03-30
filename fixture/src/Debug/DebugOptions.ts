@@ -1,21 +1,26 @@
 import { DebugContextInterface } from "./DebugContext";
 
-export interface DebugOption {
+export interface DebugItem {
   name: string;
   value: boolean;
   onToggle: (value: boolean) => void;
+  testID: DebugOption;
 }
 
-export const getDebugOptions = (
-  context: DebugContextInterface
-): DebugOption[] => {
-  const items: DebugOption[] = [
+export enum DebugOption {
+  emptyList = "empty-list",
+  initialScrollIndex = "initial-scroll-index",
+}
+
+export const getDebugItems = (context: DebugContextInterface): DebugItem[] => {
+  const items: DebugItem[] = [
     {
       name: "Show empty list",
       value: context.emptyListEnabled,
       onToggle: (value: boolean) => {
         context.setEmptyListEnabled(value);
       },
+      testID: DebugOption.emptyList,
     },
     {
       name: "initialScrollIndex enabled",
@@ -23,6 +28,7 @@ export const getDebugOptions = (
       onToggle: (value: boolean) => {
         context.setInitialScrollIndexEnabled(value);
       },
+      testID: DebugOption.initialScrollIndex,
     },
   ];
 

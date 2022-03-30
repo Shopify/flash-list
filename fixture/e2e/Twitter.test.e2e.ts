@@ -1,8 +1,9 @@
 import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
+import { DebugOption } from "../src/Debug/DebugOptions";
 
 describe("Twitter", () => {
-  const flashListReferenceTestName = "Twitter with FlashList looks the same";
+  const flashListReferenceTestName = "with FlashList looks the same";
 
   beforeAll(async () => {
     await device.launchApp({ newInstance: true });
@@ -24,7 +25,7 @@ describe("Twitter", () => {
   });
 
   it("with FlatList looks the same as with FlashList", async () => {
-    const testName = "Twitter with FlatList looks the same as with FlashList";
+    const testName = "with FlatList looks the same as with FlashList";
 
     await element(by.id("Twitter FlatList Timeline")).tap();
 
@@ -73,8 +74,30 @@ describe("Twitter", () => {
       flatListScreenshotPath,
       flatListTestName
     );
+
+    await device.setOrientation("portrait");
+  });
+
+  it("is scrolled to initialScrollIndex", async () => {
+    const testName = "is scrolled to initialScrollIndex";
+
+    await enableDebugOption(DebugOption.initialScrollIndex);
+
+    await element(by.id("Twitter Timeline")).tap();
+
+    const testRunScreenshotPath = await element(
+      by.id("FlashList")
+    ).takeScreenshot(testName);
+
+    assertSnapshot(testRunScreenshotPath, testName);
   });
 });
+
+const enableDebugOption = async (option: DebugOption) => {
+  await element(by.id("debug-button")).tap();
+  await element(by.id(option)).longPress();
+  await goBack();
+};
 
 const scrollAndRotate = async (id: string) => {
   await element(by.id(id)).scroll(500, "down");

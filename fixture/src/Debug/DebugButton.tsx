@@ -8,7 +8,12 @@ export interface DebugButtonProps {
 const DebugButton = (props: DebugButtonProps) => {
   return (
     <View style={styles.pressableStyle}>
-      <Button onPress={props.onPress} title="DEBUG" color="red" />
+      <Button
+        onPress={props.onPress}
+        title="DEBUG"
+        color="red"
+        testID="debug-button"
+      />
     </View>
   );
 };
