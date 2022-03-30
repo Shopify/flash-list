@@ -1,5 +1,6 @@
 import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
+import goBack from "./utils/goBack";
 
 describe("Twitter", () => {
   const flashListReferenceTestName = "Twitter with FlashList looks the same";
@@ -80,10 +81,4 @@ const scrollAndRotate = async (id: string) => {
   await element(by.id(id)).scroll(500, "down");
 
   await device.setOrientation("landscape");
-};
-
-const goBack = async () => {
-  await element(by.traits(["button"]))
-    .atIndex(0)
-    .tap();
 };

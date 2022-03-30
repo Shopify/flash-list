@@ -34,6 +34,7 @@ const Contacts = () => {
 
   return (
     <FlashList
+      testID="FlashList"
       estimatedItemSize={100}
       data={data}
       renderItem={({ item }) => {
