@@ -8,7 +8,10 @@ import Contact from "../models/Contact";
 import contacts from "./data/contacts";
 import ContactCell from "./ContactCell";
 import ContactSectionHeader from "./ContactSectionHeader";
+<<<<<<< HEAD
 import ContactHeader from "./ContactHeader";
+=======
+>>>>>>> d65617a0 (Add FlashList contacts)
 
 const Contacts = () => {
   const debugContext = useContext(DebugContext);
