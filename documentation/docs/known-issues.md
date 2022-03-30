@@ -19,7 +19,7 @@ Please note most lists do mount with deterministic sizes so make sure to check i
 
 This value is reported as 0. We don't have plans to implement this right now. Please provide feedback if this is important to you.
 
-### 3)`scrollToIndex` doesn't have `offset` support
+### 3)`scrollToIndex` doesn't have `viewOffset, viewPosition` support
 
 The list only guarantees to bring the given index in view port (as close to the top as possible). There is no support for additional customization.
 
@@ -34,7 +34,3 @@ We are planning to add a version of this but we can't guarantee if it will be ex
 ### 6) Horizontal lists do not change height to match tallest child
 
 As of now, horizontal lists need a fixed height. It's not possible to resize it based on height of the tallest child item. This is because children have absolute positions and cannot expand the parent. This is something we will address in the future. Please provide feedback if this is important to you. Using `onLayout` to measure and resize is a possible workaround but it can cause visible movement on screen.
-
-### 7) Layout animations for insert and delete operations may start from wrong coordinates
-
-These animations aren't supported right now but we're looking into them.

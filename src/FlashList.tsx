@@ -416,7 +416,7 @@ class FlashList<T> extends React.PureComponent<
   private getUpdatedWindowCorrectionConfig() {
     // If the initial scroll index is in the first row then we're forcing RLV to use initialOffset and thus we need to disable window correction
     // This isn't clean but it's the only way to get RLV to scroll to the right place
-    // TODO: Remove this when RLV fixes this
+    // TODO: Remove this when RLV fixes this. Current implementation will also fail if column span is overridden in the first row.
     if (this.isInitialScrollIndexInFirstRow()) {
       this.windowCorrectionConfig.applyToInitialOffset = false;
     } else {
@@ -733,7 +733,6 @@ class FlashList<T> extends React.PureComponent<
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }
 
-  // TODO: Improve accuracy with headers
   public scrollToIndex(params: {
     animated?: boolean | null | undefined;
     index: number;

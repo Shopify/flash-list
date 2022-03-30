@@ -53,8 +53,7 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
             return { elems };
           });
         }}
-        // known issue: Flatlist uses fraction of visible window while RLV wants pixels. Will fix later
-        onEndReachedThreshold={100}
+        onEndReachedThreshold={0.2}
         data={this.state.elems}
       />
     );
