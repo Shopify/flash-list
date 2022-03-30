@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { DebugButton } from "./Debug";
 
+import { DebugButton } from "./Debug";
 import { NavigationKeys, RootStackParamList } from "./constants";
 
 export const ExamplesScreen = () => {
