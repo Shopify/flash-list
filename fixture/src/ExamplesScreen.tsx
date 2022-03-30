@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  StatusBar,
-  StyleSheet,
-  FlatList,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { StatusBar, StyleSheet, FlatList, Text, Pressable } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 
@@ -38,7 +32,7 @@ export const ExamplesScreen = () => {
         keyExtractor={(item) => item.destination}
         data={data}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <Pressable
             style={styles.row}
             onPress={() => {
               navigate(item.destination);
@@ -46,7 +40,7 @@ export const ExamplesScreen = () => {
             testID={item.title}
           >
             <Text style={styles.rowTitle}>{item.title}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       />
       <DebugButton onPress={onDebugButton} />

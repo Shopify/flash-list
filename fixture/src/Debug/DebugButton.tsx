@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Image, StyleSheet } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 
 export interface DebugButtonProps {
   onPress: () => void;
@@ -7,34 +7,21 @@ export interface DebugButtonProps {
 
 const DebugButton = (props: DebugButtonProps) => {
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={props.onPress}
-      style={styles.touchableOpacityStyle}
-    >
-      <Image
-        source={require("./debug-icon.png")}
-        style={styles.floatingButtonStyle}
-      />
-    </TouchableOpacity>
+    <View style={styles.pressableStyle}>
+      <Button onPress={props.onPress} title="DEBUG" color="red" />
+    </View>
   );
 };
 
 export default DebugButton;
 
 const styles = StyleSheet.create({
-  touchableOpacityStyle: {
+  pressableStyle: {
     position: "absolute",
-    width: 50,
-    height: 50,
+
     alignItems: "center",
     justifyContent: "center",
     right: 30,
     bottom: 30,
-  },
-  floatingButtonStyle: {
-    resizeMode: "contain",
-    width: 44,
-    height: 44,
   },
 });

@@ -6,9 +6,9 @@ import {
   StyleSheet,
   TextInput,
   Button,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   ViewProps,
+  Pressable,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import Animated, { FadeOut, Layout } from "react-native-reanimated";
@@ -70,9 +70,9 @@ const ReminderCell = ({
       exiting={FadeOut}
     >
       <View style={styles.checkbox}>
-        <TouchableOpacity onPress={toggle}>
+        <Pressable onPress={toggle}>
           <Checkbox checked={checked} />
-        </TouchableOpacity>
+        </Pressable>
       </View>
       <TextInput
         style={styles.textInput}
