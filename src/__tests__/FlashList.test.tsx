@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, Text } from "react-native";
+import { ListRenderItem, ScrollView, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount } from "@quilted/react-testing";
 import { ProgressiveListView } from "recyclerlistview";
@@ -15,16 +15,16 @@ describe("FlashList", () => {
     initialScrollIndex?: number;
     numColumns?: number;
     estimatedFirstItemOffset?: number;
+    data?: string[];
+    renderItem?: ListRenderItem<string>;
   }) => {
     const flashList = mount(
       <FlashList
         horizontal={props?.horizontal}
         keyExtractor={props?.keyExtractor}
-        renderItem={(text) => {
-          return <Text>{text.item}</Text>;
-        }}
+        renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
         estimatedItemSize={200}
-        data={["One", "Two", "Three", "Four"]}
+        data={props?.data || ["One", "Two", "Three", "Four"]}
         initialScrollIndex={props?.initialScrollIndex}
         numColumns={props?.numColumns}
         estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
@@ -111,5 +111,29 @@ describe("FlashList", () => {
     expect(
       flashList.findAll(AutoLayoutView)[0].instance.props.onBlankAreaEvent
     ).not.toBeUndefined();
+  });
+  it("calls render item only when data of the items has changed", (done) => {
+    const renderItemMock = jest.fn(({ item }) => {
+      return <Text>{item}</Text>;
+    });
+    const flashList = mountFlashList({
+      renderItem: renderItemMock,
+      data: ["One", "Two", "Three", "Four"],
+    });
+
+    // because we have 4 data items
+    expect(renderItemMock).toHaveBeenCalledTimes(4);
+    // reset counter
+    renderItemMock.mockReset();
+    // changes layout of all four items
+    flashList.setProps({ numColumns: 2 });
+    // render item should be called 0 times because only layout of items would have changed
+    expect(renderItemMock).toHaveBeenCalledTimes(0);
+
+    // There's some async operation happening inside the scroll component causing jest to throw errors
+    // This is a workaround to silence it.
+    requestAnimationFrame(() => {
+      done();
+    });
   });
 });

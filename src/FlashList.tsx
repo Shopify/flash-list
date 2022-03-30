@@ -18,7 +18,7 @@ import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
 import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
-import WrapperComponent, { PureComponentWrapper } from "./WrapperComponent";
+import { PureComponentWrapper } from "./PureComponentWrapper";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
@@ -372,7 +372,7 @@ class FlashList<T> extends React.PureComponent<
           ref={this.recyclerRef}
           layoutProvider={this.state.layoutProvider}
           dataProvider={this.state.dataProvider}
-          rowRenderer={this.rowRenderer}
+          rowRenderer={this.emptyRowRenderer}
           canChangeSize
           isHorizontal={Boolean(horizontal)}
           scrollViewProps={{
@@ -507,24 +507,13 @@ class FlashList<T> extends React.PureComponent<
         }}
         index={parentProps.index}
       >
-        <WrapperComponent
+        <PureComponentWrapper
           extendedState={parentProps.extendedState}
           internalSnapshot={parentProps.internalSnapshot}
-          dataHasChanged={parentProps.dataHasChanged}
           data={parentProps.data}
-        >
-          <View
-            style={{
-              flexDirection:
-                this.props.horizontal || this.props.numColumns === 1
-                  ? "column"
-                  : "row",
-            }}
-          >
-            {children}
-          </View>
-          {this.separator(parentProps.index)}
-        </WrapperComponent>
+          arg={parentProps.index}
+          renderer={this.getCellContainerChild}
+        />
       </ItemContainer>
     );
   };
@@ -653,21 +642,39 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private rowRendererWithIndex = (index: number) => {
-    return this.rowRenderer(
-      undefined,
-      this.props.data?.[index],
-      index,
-      this.state.extraData
-    );
-  };
-
-  private rowRenderer = (_: any, data: any, index: number, extraData: any) => {
     // known issue: expected to pass separators which isn't available in RLV
     return this.props.renderItem?.({
-      item: data,
+      item: this.props.data?.[index],
       index,
-      extraData: extraData?.value,
+      extraData: this.state.extraData?.value,
     } as any) as JSX.Element;
+  };
+
+  /**
+   * This will prevent render item calls unless data changes.
+   * Output of this method is received as children object so returning null here is no issue as long as we handle it inside our child container.
+   * @module getCellContainerChild acts as the new rowRenderer and is called directly from our child container.
+   */
+  private emptyRowRenderer = () => {
+    return null;
+  };
+
+  private getCellContainerChild = (index: number) => {
+    return (
+      <>
+        <View
+          style={{
+            flexDirection:
+              this.props.horizontal || this.props.numColumns === 1
+                ? "column"
+                : "row",
+          }}
+        >
+          {this.rowRendererWithIndex(index)}
+        </View>
+        {this.separator(index)}
+      </>
+    );
   };
 
   private recyclerRef = (ref: any) => {

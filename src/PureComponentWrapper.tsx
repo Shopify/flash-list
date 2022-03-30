@@ -1,31 +1,5 @@
 import React from "react";
 
-export interface WrapperComponentProps {
-  extendedState?: object;
-  internalSnapshot?: object;
-  dataHasChanged: (r1: any, r2: any) => boolean;
-  data: any;
-}
-
-export default class WrapperComponent extends React.Component<WrapperComponentProps> {
-  shouldComponentUpdate(newProps: WrapperComponentProps) {
-    const hasExtendedStateChanged =
-      this.props.extendedState !== newProps.extendedState;
-    const hasInternalSnapshotChanged =
-      this.props.internalSnapshot !== newProps.internalSnapshot;
-    const hasDataChanged =
-      this.props.dataHasChanged &&
-      this.props.dataHasChanged(this.props.data, newProps.data);
-    return (
-      hasDataChanged || hasExtendedStateChanged || hasInternalSnapshotChanged
-    );
-  }
-
-  render() {
-    return this.props.children;
-  }
-}
-
 export interface PureComponentWrapperProps {
   renderer: (arg: unknown) => JSX.Element | null;
 
