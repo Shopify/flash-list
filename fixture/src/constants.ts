@@ -6,6 +6,7 @@ export const NavigationKeys = {
   TWITTER: "Twitter" as const,
   TWITTER_FLAT_LIST: "TwitterFlatList" as const,
   DEBUG: "Debug" as const,
+  CONTACTS: "Contacts" as const,
   CONTACTS_FLAT_LIST: "ContactsFlatList" as const,
 };
 

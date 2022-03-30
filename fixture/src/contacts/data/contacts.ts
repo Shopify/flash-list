@@ -1,6 +1,7 @@
 import Contact from "src/models/Contact";
 
-const contacts: Contact[] = [
+// Generated with https://generatedata.com/
+const contactsData: Contact[] = [
   {
     firstName: "Illana",
     lastName: "Torres",
@@ -402,4 +403,12 @@ const contacts: Contact[] = [
     lastName: "Hurley",
   },
 ];
+
+const contacts = contactsData.reduce((contactsMap, contact) => {
+  const lastNameInitial = contact.lastName[0];
+  const currentLetterContacts = contactsMap.get(lastNameInitial) ?? [];
+  contactsMap.set(lastNameInitial, [...currentLetterContacts, contact]);
+  return contactsMap;
+}, new Map<string, Contact[]>());
+
 export default contacts;
