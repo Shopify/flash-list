@@ -6,16 +6,7 @@ import { DebugContext, DebugContextInterface } from "./DebugContext";
 import { getDebugOptions, DebugOption } from "./DebugOptions";
 
 const DebugScreen = () => {
-  const debugContext = useContext<DebugContextInterface | null>(DebugContext);
-
-  if (debugContext === null) {
-    return (
-      <View style={styles.row}>
-        <Text style={styles.rowTitle}>No context is present</Text>
-      </View>
-    );
-  }
-
+  const debugContext = useContext<DebugContextInterface>(DebugContext);
   const debugOptions = getDebugOptions(debugContext);
 
   const renderItem = ({ item }: { item: DebugOption }) => {

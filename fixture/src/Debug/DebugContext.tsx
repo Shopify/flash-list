@@ -8,7 +8,16 @@ export interface DebugContextInterface {
   setInitialScrollIndexEnabled: (initialScrollIndexEnabled: boolean) => void;
 }
 
-export const DebugContext = createContext<DebugContextInterface | null>(null);
+const DebugContextDefaultValue = {
+  emptyList: false,
+  initialScrollIndexEnabled: false,
+  setEmptyList: () => {},
+  setInitialScrollIndexEnabled: () => {},
+};
+
+export const DebugContext = createContext<DebugContextInterface>(
+  DebugContextDefaultValue
+);
 
 interface DebugContextProviderProps {
   children: ReactNode;
