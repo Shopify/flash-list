@@ -9,8 +9,8 @@ import { DebugContext } from "./Debug";
 
 const TwitterFlatList = () => {
   const debugContext = useContext(DebugContext);
-  const initialScrollIndex = debugContext?.initialScrollIndexEnabled
-    ? 10
+  const initialScrollIndex = debugContext.initialScrollIndexEnabled
+    ? debugContext.initialScrollIndex
     : undefined;
 
   return (

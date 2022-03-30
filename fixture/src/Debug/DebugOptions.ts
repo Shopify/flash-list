@@ -12,9 +12,9 @@ export const getDebugOptions = (
   const items: DebugOption[] = [
     {
       name: "Show empty list",
-      value: context.emptyList,
+      value: context.emptyListEnabled,
       onToggle: (value: boolean) => {
-        context.setEmptyList(value);
+        context.setEmptyListEnabled(value);
       },
     },
     {

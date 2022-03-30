@@ -1,17 +1,21 @@
 import React, { useState, createContext, useMemo } from "react";
 import type { ReactNode } from "react";
 
+const initialScrollIndexDefaultValue = 10;
+
 export interface DebugContextInterface {
-  emptyList: boolean;
+  emptyListEnabled: boolean;
   initialScrollIndexEnabled: boolean;
-  setEmptyList: (emptyList: boolean) => void;
+  initialScrollIndex: number;
+  setEmptyListEnabled: (emptyList: boolean) => void;
   setInitialScrollIndexEnabled: (initialScrollIndexEnabled: boolean) => void;
 }
 
 const DebugContextDefaultValue = {
-  emptyList: false,
+  emptyListEnabled: false,
   initialScrollIndexEnabled: false,
-  setEmptyList: () => {},
+  initialScrollIndex: initialScrollIndexDefaultValue,
+  setEmptyListEnabled: () => {},
   setInitialScrollIndexEnabled: () => {},
 };
 
@@ -24,20 +28,21 @@ interface DebugContextProviderProps {
 }
 
 const DebugContextProvider = ({ children }: DebugContextProviderProps) => {
-  const [emptyList, setEmptyList] = useState(false);
+  const [emptyListEnabled, setEmptyListEnabled] = useState(false);
   const [initialScrollIndexEnabled, setInitialScrollIndexEnabled] =
     useState(false);
 
   const memoizedValue = useMemo(
     () => ({
-      emptyList,
-      setEmptyList,
+      emptyListEnabled,
+      setEmptyListEnabled,
       initialScrollIndexEnabled,
       setInitialScrollIndexEnabled,
+      initialScrollIndex: initialScrollIndexDefaultValue,
     }),
     [
-      emptyList,
-      setEmptyList,
+      emptyListEnabled,
+      setEmptyListEnabled,
       initialScrollIndexEnabled,
       setInitialScrollIndexEnabled,
     ]
