@@ -1,6 +1,7 @@
+import { DebugOption } from "../src/Debug";
+
 import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
-import { DebugOption } from "../src/Debug/DebugOptions";
 
 describe("Twitter", () => {
   const flashListReferenceTestName = "with FlashList looks the same";
@@ -81,7 +82,7 @@ describe("Twitter", () => {
   it("is scrolled to initialScrollIndex", async () => {
     const testName = "is scrolled to initialScrollIndex";
 
-    await enableDebugOption(DebugOption.initialScrollIndex);
+    await enableDebugOption(DebugOption.InitialScrollIndex);
 
     await element(by.id("Twitter Timeline")).tap();
 
