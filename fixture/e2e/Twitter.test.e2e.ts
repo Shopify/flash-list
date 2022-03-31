@@ -110,9 +110,23 @@ describe("Twitter", () => {
   });
 
   it("is scrolled to initialScrollIndex", async () => {
-    const testName = "is scrolled to initialScrollIndex";
+    const testName = "Twitter_is_scrolled_to_initialScrollIndex";
 
     await enableDebugOption(DebugOption.InitialScrollIndex);
+
+    await element(by.id("Twitter Timeline")).tap();
+
+    const testRunScreenshotPath = await element(
+      by.id("FlashList")
+    ).takeScreenshot(testName);
+
+    assertSnapshot(testRunScreenshotPath, testName);
+  });
+
+  it("with empty list looks the same", async () => {
+    const testName = "Twitter_with_empty_list_looks_the_same";
+
+    await enableDebugOption(DebugOption.EmptyList);
 
     await element(by.id("Twitter Timeline")).tap();
 
