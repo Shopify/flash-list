@@ -3,7 +3,7 @@ id: reanimated
 title: React Native Reanimated
 ---
 
-[React Native Reanimated](https://www.reanimated2.com/) is an alternative animation library of the [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) API provided by React Native.
+[React Native Reanimated](https://www.reanimated2.com/) is an alternative animation library to the [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) API provided by React Native.
 
 We support both view animations and the experimental [layout animations](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/layout_animations/).
 
