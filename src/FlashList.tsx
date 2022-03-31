@@ -569,13 +569,6 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private separator = (index: number) => {
-    if (
-      this.props.stickyHeaderIndices !== undefined &&
-      (this.props.stickyHeaderIndices?.indexOf(index) !== -1 ||
-        this.props.stickyHeaderIndices?.indexOf(index + 1) !== -1)
-    ) {
-      return null;
-    }
     const leadingItem = this.props.data?.[index];
     const trailingItem = this.props.data?.[index + 1];
     if (trailingItem === undefined) {
