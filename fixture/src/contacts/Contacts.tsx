@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
+import { DebugContext } from "src/Debug";
 
 import Contact from "../models/Contact";
 
@@ -9,6 +10,7 @@ import ContactSectionHeader from "./ContactSectionHeader";
 import ContactHeader from "./ContactHeader";
 
 const Contacts = () => {
+  const debugContext = useContext(DebugContext);
   const [data, setData] = useState<(Contact | string)[]>([]);
   useEffect(() => {
     const contactsWithTitles = Array.from(contacts.keys())
@@ -42,6 +44,7 @@ const Contacts = () => {
       }}
       stickyHeaderIndices={stickyHeaderIndices}
       ListHeaderComponent={ContactHeader}
+      initialScrollIndex={debugContext.initialScrollIndex}
     />
   );
 };

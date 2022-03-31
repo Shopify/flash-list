@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SectionList } from "react-native";
+import { DebugContext } from "src/Debug";
 
 import Contact from "../models/Contact";
 
@@ -15,6 +16,7 @@ interface Section {
 }
 
 const ContactsFlatList = () => {
+  const debugContext = useContext(DebugContext);
   const [data, setData] = useState<Section[]>([]);
   useEffect(() => {
     const sectionedContacts: Section[] = Array.from(contacts.keys())
@@ -46,6 +48,7 @@ const ContactsFlatList = () => {
       ItemSeparatorComponent={ContactDivider}
       sections={data}
       ListHeaderComponent={ContactHeader}
+      initialScrollIndex={debugContext.initialScrollIndex}
     />
   );
 };

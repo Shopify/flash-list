@@ -9,9 +9,6 @@ import { DebugContext } from "./Debug";
 
 const TwitterFlatList = () => {
   const debugContext = useContext(DebugContext);
-  const initialScrollIndex = debugContext.initialScrollIndexEnabled
-    ? debugContext.initialScrollIndex
-    : undefined;
 
   return (
     <FlatListPerformanceView listName="TwitterFlatList">
@@ -28,7 +25,7 @@ const TwitterFlatList = () => {
         ListFooterComponent={Footer}
         ItemSeparatorComponent={Divider}
         data={tweets}
-        initialScrollIndex={initialScrollIndex}
+        initialScrollIndex={debugContext.initialScrollIndex}
       />
     </FlatListPerformanceView>
   );

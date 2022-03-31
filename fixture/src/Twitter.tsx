@@ -9,9 +9,6 @@ import { DebugContext } from "./Debug";
 
 const Twitter = () => {
   const debugContext = useContext(DebugContext);
-  const initialScrollIndex = debugContext.initialScrollIndexEnabled
-    ? debugContext.initialScrollIndex
-    : undefined;
 
   return (
     <FlashListPerformanceView listName="Twitter">
@@ -29,7 +26,7 @@ const Twitter = () => {
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
         data={tweets}
-        initialScrollIndex={initialScrollIndex}
+        initialScrollIndex={debugContext.initialScrollIndex}
       />
     </FlashListPerformanceView>
   );
