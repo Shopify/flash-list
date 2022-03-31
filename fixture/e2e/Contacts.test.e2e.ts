@@ -1,6 +1,6 @@
 import goBack from "./utils/goBack";
-import { assertSnapshot, assertSnapshotsEqual } from "./utils/SnapshotAsserts";
-import { reference, wipeArtifactsLocation } from "./utils/SnapshotLocation";
+import { assertSnapshot } from "./utils/SnapshotAsserts";
+import { wipeArtifactsLocation } from "./utils/SnapshotLocation";
 
 describe("Contacts", () => {
   beforeAll(async () => {
@@ -36,10 +36,11 @@ describe("Contacts", () => {
     ).takeScreenshot(flashListTestName);
     assertSnapshot(sectionListScreenshotPath, sectionListTestName);
 
-    assertSnapshotsEqual(
-      reference(flashListTestName),
-      reference(sectionListTestName),
-      `SectionList_and_FlashList_${testName}`
-    );
+    // TODO: Uncomment when we make the call on SectionList
+    // assertSnapshotsEqual(
+    //   reference(flashListTestName),
+    //   reference(sectionListTestName),
+    //   `SectionList_and_FlashList_${testName}`
+    // );
   });
 });
