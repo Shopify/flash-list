@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { ListRenderItem, ScrollView, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount } from "@quilted/react-testing";
-import { ProgressiveListView } from "recyclerlistview";
+import { ProgressiveListView, RecyclerListView } from "recyclerlistview";
 
 import FlashList from "../FlashList";
 import Warnings from "../errors/Warnings";
@@ -17,6 +17,7 @@ describe("FlashList", () => {
     estimatedFirstItemOffset?: number;
     data?: string[];
     renderItem?: ListRenderItem<string>;
+    onLoad?: (info: { elapsedTimeInMs: number }) => void;
   }) => {
     const flashList = mount(
       <FlashList
@@ -28,6 +29,7 @@ describe("FlashList", () => {
         initialScrollIndex={props?.initialScrollIndex}
         numColumns={props?.numColumns}
         estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
+        onLoad={props?.onLoad}
       />
     );
     flashList.find(ScrollView)?.trigger("onLayout", {
@@ -125,7 +127,7 @@ describe("FlashList", () => {
     // because we have 4 data items
     expect(renderItemMock).toHaveBeenCalledTimes(4);
     // reset counter
-    renderItemMock.mockReset();
+    renderItemMock.mockClear();
     // changes layout of all four items
     flashList.setProps({ numColumns: 2 });
     // render item should be called 0 times because only layout of items would have changed
@@ -165,5 +167,25 @@ describe("FlashList", () => {
     flashList.instance.prepareForLayoutAnimationRender();
     flashList.setProps({ data: ["One", "Two", "Three", "Six"] });
     expect(unmountMock).toHaveBeenCalledTimes(1);
+  });
+  it("fires onLoad event", () => {
+    let elapsedTime;
+    const onLoadMock = jest.fn((event) => {
+      elapsedTime = event.elapsedTimeInMs;
+    });
+
+    // empty list
+    mountFlashList({ data: [], onLoad: onLoadMock });
+    expect(onLoadMock).toHaveBeenCalledTimes(1);
+    expect(elapsedTime).not.toBeUndefined();
+
+    onLoadMock.mockClear();
+    elapsedTime = undefined;
+
+    // non-empty list
+    const flashList = mountFlashList({ onLoad: onLoadMock });
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    expect(onLoadMock).toHaveBeenCalledTimes(1);
+    expect(elapsedTime).not.toBeUndefined();
   });
 });
