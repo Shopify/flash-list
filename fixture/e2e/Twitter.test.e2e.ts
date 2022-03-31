@@ -3,7 +3,7 @@ import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
 import goBack from "./utils/goBack";
 
 describe("Twitter", () => {
-  const flashListReferenceTestName = "Twitter with FlashList looks the same";
+  const flashListReferenceTestName = "Twitter_with_FlashList_looks_the_same";
 
   beforeAll(async () => {
     await device.launchApp({ newInstance: true });
@@ -25,7 +25,7 @@ describe("Twitter", () => {
   });
 
   it("with FlatList looks the same as with FlashList", async () => {
-    const testName = "Twitter with FlatList looks the same as with FlashList";
+    const testName = "Twitter_with_FlatList_looks_the_same_as_with_FlashList";
 
     await element(by.id("Twitter FlatList Timeline")).tap();
 
@@ -45,8 +45,8 @@ describe("Twitter", () => {
   });
 
   it("looks the same after orientation change", async () => {
-    const testName = "looks the same after orientation change";
-    const flatListTestName = `with FlatList ${testName}`;
+    const testName = "looks_the_same_after_orientation_change";
+    const flatListTestName = `with_FlatList_${testName}`;
 
     // Go to Twitter with FlashList screen
     await element(by.id("Twitter Timeline")).tap();

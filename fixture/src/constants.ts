@@ -7,7 +7,7 @@ export const NavigationKeys = {
   TWITTER_FLAT_LIST: "TwitterFlatList" as const,
   DEBUG: "Debug" as const,
   CONTACTS: "Contacts" as const,
-  CONTACTS_FLAT_LIST: "ContactsFlatList" as const,
+  CONTACTS_SECTION_LIST: "ContactsSectionList" as const,
 };
 
 type ValueOf<T> = T[keyof T];

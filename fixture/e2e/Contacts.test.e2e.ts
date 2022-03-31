@@ -1,6 +1,6 @@
 import goBack from "./utils/goBack";
 import { assertSnapshot, assertSnapshotsEqual } from "./utils/SnapshotAsserts";
-import { wipeArtifactsLocation } from "./utils/SnapshotLocation";
+import { reference, wipeArtifactsLocation } from "./utils/SnapshotLocation";
 
 describe("Contacts", () => {
   beforeAll(async () => {
@@ -13,8 +13,8 @@ describe("Contacts", () => {
   });
 
   it("with FlashList and SectionList look the same", async () => {
-    const testName = "Contacts with FlashList looks the same";
-    const flashListTestName = `FlashList ${testName}`;
+    const testName = "Contacts_with_FlashList_looks_the_same";
+    const flashListTestName = `FlashList_${testName}`;
     // Go to contacts with FlashList
     await element(by.id("Contacts")).tap();
 
@@ -27,18 +27,19 @@ describe("Contacts", () => {
     await goBack();
 
     // Go to contacts with SectionList
-    await element(by.id("SectionLit")).tap();
+    await element(by.id("Contacts SectionList")).tap();
 
-    const sectionListTestName = `SectionList ${testName}`;
+    const sectionListTestName = `SectionList_${testName}`;
 
     const sectionListScreenshotPath = await element(
       by.id("SectionList")
     ).takeScreenshot(flashListTestName);
+    assertSnapshot(sectionListScreenshotPath, sectionListTestName);
 
     assertSnapshotsEqual(
-      flashListScreenshotPath,
-      sectionListScreenshotPath,
-      sectionListTestName
+      reference(flashListTestName),
+      reference(sectionListTestName),
+      `SectionList_and_FlashList_${testName}`
     );
   });
 });
