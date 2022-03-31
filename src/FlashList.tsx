@@ -522,6 +522,7 @@ class FlashList<T> extends React.PureComponent<
     this.distanceFromWindow = this.props.horizontal
       ? event.nativeEvent.layout.x
       : event.nativeEvent.layout.y;
+    this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
   };
 
   private getTransform() {
