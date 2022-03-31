@@ -1,4 +1,4 @@
-import Contact from "src/models/Contact";
+import Contact from "../models/Contact";
 
 // Generated with https://generatedata.com/
 const contactsData: Contact[] = [
@@ -410,11 +410,13 @@ const contacts = contactsData.reduce((contactsMap, contact) => {
   contactsMap.set(lastNameInitial, [...currentLetterContacts, contact]);
   return contactsMap;
 }, new Map<string, Contact[]>());
-contacts.forEach((contacts, key, map) => {
-  const sortedContacts = contacts.sort((aContact, bContact) =>
-    aContact.lastName.localeCompare(bContact.lastName)
-  );
-  map.set(key, sortedContacts);
-});
+contacts.forEach(
+  (contacts: Contact[], key: string, map: Map<string, Contact[]>) => {
+    const sortedContacts = contacts.sort((aContact, bContact) =>
+      aContact.lastName.localeCompare(bContact.lastName)
+    );
+    map.set(key, sortedContacts);
+  }
+);
 
 export default contacts;

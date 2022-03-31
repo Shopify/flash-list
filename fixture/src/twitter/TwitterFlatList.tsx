@@ -2,10 +2,11 @@ import React, { useContext } from "react";
 import { FlatList } from "react-native";
 import { FlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
+import { DebugContext } from "../Debug";
+
 import { tweets } from "./data/tweets";
 import TweetCell from "./TweetCell";
 import { Header, Footer, Divider } from "./Twitter";
-import { DebugContext } from "./Debug";
 
 const TwitterFlatList = () => {
   const debugContext = useContext(DebugContext);

@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 
 import { DebugContext } from "../Debug";
-import Contact from "../models/Contact";
 
+import Contact from "./models/Contact";
 import contacts from "./data/contacts";
 import ContactCell from "./ContactCell";
 import ContactSectionHeader from "./ContactSectionHeader";

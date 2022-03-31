@@ -2,11 +2,11 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import TwitterFlatList from "./TwitterFlatList";
+import TwitterFlatList from "./twitter/TwitterFlatList";
 import Reminders from "./Reminders";
 import List from "./List";
 import PaginatedList from "./PaginatedList";
-import Twitter from "./Twitter";
+import Twitter from "./twitter/Twitter";
 import ContactsSectionList from "./contacts/ContactsSectionList";
 import Contacts from "./contacts/Contacts";
 import { NavigationKeys, RootStackParamList } from "./constants";
