@@ -7,6 +7,8 @@ import Reminders from "./Reminders";
 import List from "./List";
 import PaginatedList from "./PaginatedList";
 import Twitter from "./Twitter";
+import ContactsFlatList from "./contacts/ContactsFlatList";
+import Contacts from "./contacts/Contacts";
 import { NavigationKeys, RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
 import { DebugScreen } from "./Debug";
@@ -33,6 +35,12 @@ const NavigationTree = () => {
             name={NavigationKeys.TWITTER_FLAT_LIST}
             component={TwitterFlatList}
             options={{ title: "Twitter" }}
+          />
+          <Stack.Screen name={NavigationKeys.CONTACTS} component={Contacts} />
+          <Stack.Screen
+            name={NavigationKeys.CONTACTS_FLAT_LIST}
+            component={ContactsFlatList}
+            options={{ title: "Contacts" }}
           />
         </Stack.Group>
         <Stack.Group screenOptions={{ presentation: "modal" }}>
