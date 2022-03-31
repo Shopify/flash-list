@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { ListRenderItem, ScrollView, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount } from "@quilted/react-testing";
-import { ProgressiveListView, RecyclerListView } from "recyclerlistview";
+import { ProgressiveListView } from "recyclerlistview";
 
 import FlashList from "../FlashList";
 import Warnings from "../errors/Warnings";
