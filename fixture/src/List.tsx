@@ -12,10 +12,6 @@ import {
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
-/** *
- * To test out just copy this component and render in you root component
- */
-
 const generateArray = (size: number) => {
   const arr = new Array(size);
   for (let i = 0; i < size; i++) {
