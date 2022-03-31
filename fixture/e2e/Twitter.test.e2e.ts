@@ -73,6 +73,20 @@ describe("Twitter", () => {
       flatListScreenshotPath,
       flatListTestName
     );
+
+    await device.setOrientation("portrait");
+  });
+
+  it("is updated after refreshed", async () => {
+    const testName = "Twitter_is_updated_after_refreshed";
+    await element(by.id("Twitter Timeline")).tap();
+
+    const flashList = element(by.id("FlashList"));
+    await flashList.swipe("down", "fast");
+
+    const flashListScreenshotPath = await flashList.takeScreenshot(testName);
+
+    assertSnapshot(flashListScreenshotPath, testName);
   });
 });
 

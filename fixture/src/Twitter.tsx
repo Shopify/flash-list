@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import TweetCell from "./TweetCell";
-import { tweets } from "./data/tweets";
+import { tweets as tweetsData } from "./data/tweets";
 import { DebugContext } from "./Debug";
 
 const Twitter = () => {
@@ -12,6 +12,8 @@ const Twitter = () => {
   const initialScrollIndex = debugContext.initialScrollIndexEnabled
     ? debugContext.initialScrollIndex
     : undefined;
+  const [refreshing, setRefreshing] = useState(false);
+  const [tweets, setTweets] = useState(tweetsData);
 
   return (
     <FlashListPerformanceView listName="Twitter">
@@ -22,6 +24,14 @@ const Twitter = () => {
         }}
         renderItem={({ item }) => {
           return <TweetCell tweet={item} />;
+        }}
+        refreshing={refreshing}
+        onRefresh={() => {
+          setRefreshing(true);
+          setTimeout(() => {
+            setRefreshing(false);
+            setTweets([...tweets.reverse()]);
+          }, 500);
         }}
         ListHeaderComponent={Header}
         ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
