@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SectionList } from "react-native";
-import { DebugContext } from "../Debug";
 
+import { DebugContext } from "../Debug";
 import Contact from "../models/Contact";
 
 import ContactSectionHeader from "./ContactSectionHeader";
