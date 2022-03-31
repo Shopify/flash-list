@@ -1,7 +1,16 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import Contact from "src/models/Contact";
 
-const ContactDivider = () => {
+interface ContactDividerProps {
+  leadingItem: Contact | string;
+  trailingItem: Contact | string;
+}
+
+const ContactDivider = ({ leadingItem, trailingItem }: ContactDividerProps) => {
+  if (typeof leadingItem === "string" || typeof trailingItem === "string") {
+    return null;
+  }
   return (
     <View style={styles.dividerContainer}>
       <View style={styles.divider} />

@@ -45,7 +45,7 @@ describe("Twitter", () => {
   });
 
   it("looks the same after orientation change", async () => {
-    const testName = "looks_the_same_after_orientation_change";
+    const testName = "Twitter_looks_the_same_after_orientation_change";
     const flatListTestName = `with_FlatList_${testName}`;
 
     // Go to Twitter with FlashList screen
