@@ -1,19 +1,18 @@
 import React from "react";
-import {
-  StatusBar,
-  StyleSheet,
-  FlatList,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { StatusBar, StyleSheet, FlatList, Text, Pressable } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 
+import { DebugButton } from "./Debug";
 import { NavigationKeys, RootStackParamList } from "./constants";
 
 export const ExamplesScreen = () => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Examples">>();
+
+  const onDebugButton = () => {
+    navigate(NavigationKeys.DEBUG);
+  };
 
   const data = [
     { title: "List", destination: NavigationKeys.LIST },
@@ -33,7 +32,7 @@ export const ExamplesScreen = () => {
         keyExtractor={(item) => item.destination}
         data={data}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <Pressable
             style={styles.row}
             onPress={() => {
               navigate(item.destination);
@@ -41,9 +40,10 @@ export const ExamplesScreen = () => {
             testID={item.title}
           >
             <Text style={styles.rowTitle}>{item.title}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       />
+      <DebugButton onPress={onDebugButton} />
     </>
   );
 };
