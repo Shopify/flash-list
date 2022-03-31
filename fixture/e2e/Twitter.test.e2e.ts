@@ -108,6 +108,20 @@ describe("Twitter", () => {
 
     assertSnapshot(flashListScreenshotPath, testName);
   });
+
+  it("is scrolled to initialScrollIndex", async () => {
+    const testName = "is scrolled to initialScrollIndex";
+
+    // await enableDebugOption(DebugOption.InitialScrollIndex);
+
+    await element(by.id("Twitter Timeline")).tap();
+
+    const testRunScreenshotPath = await element(
+      by.id("FlashList")
+    ).takeScreenshot(testName);
+
+    assertSnapshot(testRunScreenshotPath, testName);
+  });
 });
 
 const scrollAndRotate = async (id: string) => {
