@@ -79,6 +79,8 @@ steps:
   - label: "Run e2e tests iOS :ios:"
     container: macos
     timeout: 30m
+    soft_fail:
+      - exit_status: "*"
     run:
       - bundle: ~
       - yarn
