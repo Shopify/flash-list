@@ -74,6 +74,7 @@ describe("Twitter", () => {
       flatListTestName
     );
 
+    // Return device to the original state
     await device.setOrientation("portrait");
   });
 
@@ -82,6 +83,7 @@ describe("Twitter", () => {
     await element(by.id("Twitter Timeline")).tap();
 
     const flashList = element(by.id("FlashList"));
+    // Simulate pull to refresh
     await flashList.swipe("down", "fast");
 
     const flashListScreenshotPath = await flashList.takeScreenshot(testName);
