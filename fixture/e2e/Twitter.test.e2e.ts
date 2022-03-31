@@ -103,6 +103,18 @@ describe("Twitter", () => {
 
     const flashList = element(by.id("FlashList"));
     await flashList.swipe("up", "fast");
+    const flashListScreenshotPath = await flashList.takeScreenshot(testName);
+
+    assertSnapshot(flashListScreenshotPath, testName);
+  });
+
+  it("is updated after refreshed", async () => {
+    const testName = "Twitter_is_updated_after_refreshed";
+    await element(by.id("Twitter Timeline")).tap();
+
+    const flashList = element(by.id("FlashList"));
+    // Simulate pull to refresh
+    await flashList.swipe("down", "fast");
 
     const flashListScreenshotPath = await flashList.takeScreenshot(testName);
 
