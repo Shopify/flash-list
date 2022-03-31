@@ -1,7 +1,7 @@
 [![Build status](./FlashList.png)](https://buildkite.com/shopify/flash-list)
 
 <div align="center">
-  <a href="https://shopify.github.io/flash-list">Website</a> • 
+  <a href="https://shopify.github.io/flash-list/">Website</a> • 
   <a href="https://flash-list.docs.shopify.io/">Getting started</a> • 
   <a href="https://flash-list.docs.shopify.io/usage">Usage</a> • 
   <a href="https://flash-list.docs.shopify.io/performance-troubleshooting">Performance</a> • 
