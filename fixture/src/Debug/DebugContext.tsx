@@ -6,7 +6,7 @@ const initialScrollIndexDefaultValue = 10;
 export interface DebugContextInterface {
   emptyListEnabled: boolean;
   initialScrollIndexEnabled: boolean;
-  initialScrollIndex: number;
+  initialScrollIndex?: number | null;
   setEmptyListEnabled: (emptyList: boolean) => void;
   setInitialScrollIndexEnabled: (initialScrollIndexEnabled: boolean) => void;
 }
@@ -14,7 +14,6 @@ export interface DebugContextInterface {
 const DebugContextDefaultValue = {
   emptyListEnabled: false,
   initialScrollIndexEnabled: false,
-  initialScrollIndex: initialScrollIndexDefaultValue,
   setEmptyListEnabled: () => {},
   setInitialScrollIndexEnabled: () => {},
 };
@@ -38,7 +37,9 @@ const DebugContextProvider = ({ children }: DebugContextProviderProps) => {
       setEmptyListEnabled,
       initialScrollIndexEnabled,
       setInitialScrollIndexEnabled,
-      initialScrollIndex: initialScrollIndexDefaultValue,
+      initialScrollIndex: initialScrollIndexEnabled
+        ? initialScrollIndexDefaultValue
+        : null,
     }),
     [
       emptyListEnabled,
