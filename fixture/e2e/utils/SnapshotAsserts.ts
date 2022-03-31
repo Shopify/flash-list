@@ -50,7 +50,8 @@ export const assertSnapshotsEqual = (
 
     throw Error(
       `There is difference between reference screenshot and test run screenshot.
-       See diff: ${diffPath}`
+       See diff: ${diffPath}.
+       Original screenshots: ${firstPath} and ${secondPath}`
     );
   }
 };

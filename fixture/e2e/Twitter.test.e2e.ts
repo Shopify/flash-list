@@ -1,8 +1,9 @@
 import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
+import goBack from "./utils/goBack";
 
 describe("Twitter", () => {
-  const flashListReferenceTestName = "Twitter with FlashList looks the same";
+  const flashListReferenceTestName = "Twitter_with_FlashList_looks_the_same";
 
   beforeAll(async () => {
     await device.launchApp({ newInstance: true });
@@ -24,7 +25,7 @@ describe("Twitter", () => {
   });
 
   it("with FlatList looks the same as with FlashList", async () => {
-    const testName = "Twitter with FlatList looks the same as with FlashList";
+    const testName = "Twitter_with_FlatList_looks_the_same_as_with_FlashList";
 
     await element(by.id("Twitter FlatList Timeline")).tap();
 
@@ -44,8 +45,8 @@ describe("Twitter", () => {
   });
 
   it("looks the same after orientation change", async () => {
-    const testName = "looks the same after orientation change";
-    const flatListTestName = `with FlatList ${testName}`;
+    const testName = "Twitter_looks_the_same_after_orientation_change";
+    const flatListTestName = `with_FlatList_${testName}`;
 
     // Go to Twitter with FlashList screen
     await element(by.id("Twitter Timeline")).tap();
@@ -80,10 +81,4 @@ const scrollAndRotate = async (id: string) => {
   await element(by.id(id)).scroll(500, "down");
 
   await device.setOrientation("landscape");
-};
-
-const goBack = async () => {
-  await element(by.traits(["button"]))
-    .atIndex(0)
-    .tap();
 };

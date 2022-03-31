@@ -28,8 +28,8 @@ export const ExamplesScreen = () => {
       destination: NavigationKeys.CONTACTS,
     },
     {
-      title: "Contacts FlatList",
-      destination: NavigationKeys.CONTACTS_FLAT_LIST,
+      title: "Contacts SectionList",
+      destination: NavigationKeys.CONTACTS_SECTION_LIST,
     },
   ];
   return (

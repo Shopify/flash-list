@@ -8,6 +8,7 @@ import contacts from "./data/contacts";
 import ContactCell from "./ContactCell";
 import ContactSectionHeader from "./ContactSectionHeader";
 import ContactHeader from "./ContactHeader";
+import ContactDivider from "./ContactDivider";
 
 const Contacts = () => {
   const debugContext = useContext(DebugContext);
@@ -33,6 +34,7 @@ const Contacts = () => {
 
   return (
     <FlashList
+      testID="FlashList"
       estimatedItemSize={100}
       data={data}
       renderItem={({ item }) => {
@@ -42,6 +44,7 @@ const Contacts = () => {
           return <ContactCell contact={item as Contact} />;
         }
       }}
+      ItemSeparatorComponent={ContactDivider}
       stickyHeaderIndices={stickyHeaderIndices}
       ListHeaderComponent={ContactHeader}
       initialScrollIndex={debugContext.initialScrollIndex}

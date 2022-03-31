@@ -15,7 +15,7 @@ interface Section {
   data: Contact[];
 }
 
-const ContactsFlatList = () => {
+const ContactsSectionList = () => {
   const debugContext = useContext(DebugContext);
   const [data, setData] = useState<Section[]>([]);
   useEffect(() => {
@@ -23,12 +23,7 @@ const ContactsFlatList = () => {
       .map((key) => {
         return {
           title: key,
-          data:
-            contacts
-              .get(key)
-              ?.sort((aContact, bContact) =>
-                aContact.lastName.localeCompare(bContact.lastName)
-              ) ?? [],
+          data: contacts.get(key) ?? [],
         };
       })
       .sort((aSection, bSection) =>
@@ -53,4 +48,4 @@ const ContactsFlatList = () => {
   );
 };
 
-export default ContactsFlatList;
+export default ContactsSectionList;
