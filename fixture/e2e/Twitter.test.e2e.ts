@@ -112,7 +112,7 @@ describe("Twitter", () => {
   it("is scrolled to initialScrollIndex", async () => {
     const testName = "is scrolled to initialScrollIndex";
 
-    // await enableDebugOption(DebugOption.InitialScrollIndex);
+    await enableDebugOption(DebugOption.InitialScrollIndex);
 
     await element(by.id("Twitter Timeline")).tap();
 
