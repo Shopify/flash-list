@@ -8,7 +8,7 @@ export const assertSnapshot = (snapshotPath: string, testName: string) => {
     const diffPNG = pixelDifference(snapshotPath, referencePath);
 
     if (diffPNG !== null) {
-      const diffPath = saveDiff(diffPNG, `${testName}_diff`);
+      const diffPath = saveDiff(diffPNG, `${testName}_diff.png`);
 
       throw Error(
         `There is difference between reference screenshot and test run screenshot.

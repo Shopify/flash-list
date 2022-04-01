@@ -1,4 +1,5 @@
-import { DebugOption } from "src/Debug/DebugOptions";
+/* eslint-disable @shopify/strict-component-boundaries */
+import { DebugOption } from "../src/Debug/DebugOptions";
 
 import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
@@ -97,6 +98,7 @@ describe("Twitter", () => {
   it("loads a new page when gets to the bottom of the list", async () => {
     const testName =
       "Twitter_loads_a_new_page_when_gets_to_the_bottom_of_the_list";
+    await enableDebugOption(DebugOption.PagingEnabled);
     await element(by.id("Twitter Timeline")).tap();
 
     const flashList = element(by.id("FlashList"));
@@ -112,4 +114,10 @@ const scrollAndRotate = async (id: string) => {
   await element(by.id(id)).scroll(500, "down");
 
   await device.setOrientation("landscape");
+};
+
+const enableDebugOption = async (option: DebugOption) => {
+  await element(by.id("debug-button")).tap();
+  await element(by.id(option)).longPress();
+  await goBack();
 };
