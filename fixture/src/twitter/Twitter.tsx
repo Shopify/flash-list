@@ -11,11 +11,9 @@ import { tweets as tweetsData } from "./data/tweets";
 const Twitter = () => {
   const debugContext = useContext(DebugContext);
   const [refreshing, setRefreshing] = useState(false);
-  const remainingTweets = useRef([...tweetsData]);
+  const remainingTweets = useRef([...tweetsData].splice(10, tweetsData.length));
   const [tweets, setTweets] = useState(
-    debugContext.pagingEnabled
-      ? remainingTweets.current.splice(0, 10)
-      : tweetsData
+    debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData
   );
 
   return (
@@ -47,7 +45,12 @@ const Twitter = () => {
         ListHeaderComponent={Header}
         ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
         ListFooterComponent={() => {
-          return <Footer isLoading />;
+          return (
+            <Footer
+              isLoading={tweets.length !== tweetsData.length}
+              isPagingEnabled={debugContext.pagingEnabled}
+            />
+          );
         }}
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
@@ -72,12 +75,13 @@ export const Header = () => {
 
 interface FooterProps {
   isLoading: boolean;
+  isPagingEnabled: boolean;
 }
 
-export const Footer = ({ isLoading }: FooterProps) => {
+export const Footer = ({ isLoading, isPagingEnabled }: FooterProps) => {
   return (
     <View style={styles.footer}>
-      {isLoading ? (
+      {isLoading && isPagingEnabled ? (
         <ActivityIndicator />
       ) : (
         <Text style={styles.footerTitle}>No more tweets</Text>
