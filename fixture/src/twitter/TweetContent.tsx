@@ -65,7 +65,7 @@ const TweetContent = ({ tweet }: TweetContentProps) => {
     <View style={styles.singleItem}>
       <View style={styles.row}>
         {avatar(tweet.author)}
-        <View style={{ flexShrink: 1, flexGrow: 1 }}>
+        <View style={styles.tweetContentContainer}>
           <View style={styles.rowTop}>
             <Text numberOfLines={1} style={styles.header}>
               {tweet.author.name}
@@ -154,6 +154,10 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 12,
     color: "#444",
+  },
+  tweetContentContainer: {
+    flexShrink: 1,
+    flexGrow: 1,
   },
 });
 
