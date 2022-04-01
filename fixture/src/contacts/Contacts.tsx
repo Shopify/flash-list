@@ -35,7 +35,7 @@ const Contacts = () => {
   return (
     <FlashList
       testID="FlashList"
-      estimatedItemSize={100}
+      estimatedItemSize={44}
       data={data}
       renderItem={({ item }) => {
         if (typeof item === "string") {
