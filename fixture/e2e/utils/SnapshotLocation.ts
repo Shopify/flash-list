@@ -31,7 +31,7 @@ export const wipeArtifactsLocation = (name: string) => {
   const location = artifactsLocation(name);
 
   if (fs.existsSync(location)) {
-    fs.rmdirSync(location, { recursive: true });
+    fs.rmSync(location, { recursive: true });
   }
 };
 

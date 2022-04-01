@@ -27,6 +27,7 @@ export enum DebugOption {
   EmptyList = "empty-list",
   InitialScrollIndex = "initial-scroll-index",
   PagingEnabled = "paging-enabled",
+  ScrollToIndexWithDelay = "scroll-to-index-with-delay",
 }
 
 export const getDebugItems = (context: DebugContextInterface): DebugItem[] => {
@@ -57,6 +58,14 @@ export const getDebugItems = (context: DebugContextInterface): DebugItem[] => {
         context.setPagingEnabled(value);
       },
       testID: DebugOption.PagingEnabled,
+    },
+    {
+      name: "scrollToIndex with delay enabled",
+      value: context.scrollToIndex.enabled,
+      onToggle: (value: boolean) => {
+        context.scrollToIndex.setEnabled(value);
+      },
+      testID: DebugOption.ScrollToIndexWithDelay,
     },
   ];
 

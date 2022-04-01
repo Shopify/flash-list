@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
@@ -7,19 +7,33 @@ import { DebugContext } from "../Debug";
 
 import TweetCell from "./TweetCell";
 import { tweets as tweetsData } from "./data/tweets";
+import Tweet from "./models/Tweet";
 
 const Twitter = () => {
   const debugContext = useContext(DebugContext);
+  const scrollToIndexContext = debugContext.scrollToIndex;
   const [refreshing, setRefreshing] = useState(false);
   const remainingTweets = useRef([...tweetsData].splice(10, tweetsData.length));
   const [tweets, setTweets] = useState(
     debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData
   );
 
+  const flashListRef = useRef<FlashList<Tweet> | null>(null);
+
+  useEffect(() => {
+    if (scrollToIndexContext.delay && scrollToIndexContext.index) {
+      const scrollToIndex = scrollToIndexContext.index;
+      setTimeout(() => {
+        flashListRef.current?.scrollToIndex({ index: scrollToIndex });
+      }, scrollToIndexContext.delay);
+    }
+  });
+
   return (
     <FlashListPerformanceView listName="Twitter">
       <FlashList
         testID="FlashList"
+        ref={flashListRef}
         keyExtractor={(item) => {
           return item.id;
         }}
@@ -56,6 +70,7 @@ const Twitter = () => {
         ItemSeparatorComponent={Divider}
         data={tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
+        estimatedFirstItemOffset={styles.header.height}
       />
     </FlashListPerformanceView>
   );

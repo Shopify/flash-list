@@ -4,13 +4,15 @@ import { DebugOption } from "../src/Debug/DebugOptions";
 import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
 import goBack from "./utils/goBack";
+import enableDebugOption from "./utils/enableDebugOption";
+import { expect } from "detox";
 
 describe("Twitter", () => {
   const flashListReferenceTestName = "Twitter_with_FlashList_looks_the_same";
 
   beforeAll(async () => {
     await device.launchApp({ newInstance: true });
-    wipeArtifactsLocation("diffs");
+    wipeArtifactsLocation("diff");
   });
 
   beforeEach(async () => {
@@ -136,16 +138,33 @@ describe("Twitter", () => {
 
     assertSnapshot(testRunScreenshotPath, testName);
   });
+
+  it("is scrolled to index", async () => {
+    const testName = "Twitter_is_scrolled_to_index";
+    const tweetAuthorAtTargetIndex = "Sommer Panage";
+
+    await enableDebugOption(DebugOption.ScrollToIndexWithDelay);
+
+    await element(by.id("Twitter Timeline")).tap();
+
+    // Tweet shouldn't be visible untill scrolling has started
+    await expect(element(by.text(tweetAuthorAtTargetIndex))).toNotExist();
+
+    // await for scroll to happen
+    await waitFor(element(by.text(tweetAuthorAtTargetIndex)))
+      .toExist()
+      .withTimeout(2100);
+
+    const flashList = element(by.id("FlashList"));
+
+    const flashListScreenshotPath = await flashList.takeScreenshot(testName);
+
+    assertSnapshot(flashListScreenshotPath, testName);
+  });
 });
 
 const scrollAndRotate = async (id: string) => {
   await element(by.id(id)).scroll(500, "down");
 
   await device.setOrientation("landscape");
-};
-
-const enableDebugOption = async (option: DebugOption) => {
-  await element(by.id("debug-button")).tap();
-  await element(by.id(option)).longPress();
-  await goBack();
 };

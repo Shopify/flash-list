@@ -1,6 +1,14 @@
 import React, { useState, createContext, useMemo } from "react";
 import type { ReactNode } from "react";
 
+const scrollToIndexDelayDefaultValue = 2000;
+
+interface ScrollToIndexInterface {
+  delay?: number;
+  index?: number;
+  setIndex: (index: number) => void;
+}
+
 export interface DebugContextInterface {
   emptyListEnabled: boolean;
   pagingEnabled: boolean;
@@ -8,6 +16,7 @@ export interface DebugContextInterface {
   setEmptyListEnabled: (emptyList: boolean) => void;
   setPagingEnabled: (pagingEnabled: boolean) => void;
   setInitialScrollIndex: (initialScrollIndex: number) => void;
+  scrollToIndex: ScrollToIndexInterface;
 }
 
 const DebugContextDefaultValue = {
@@ -16,6 +25,9 @@ const DebugContextDefaultValue = {
   setEmptyListEnabled: () => {},
   setInitialScrollIndex: () => {},
   setPagingEnabled: () => {},
+  scrollToIndex: {
+    setIndex: () => {},
+  },
 };
 
 export const DebugContext = createContext<DebugContextInterface>(
@@ -33,6 +45,21 @@ const DebugContextProvider = ({ children }: DebugContextProviderProps) => {
   >(undefined);
   const [pagingEnabled, setPagingEnabled] = useState(false);
 
+  const [scrollToIndexWithDelay, setScrollToIndexWithDelay] = useState<
+    number | undefined
+  >(undefined);
+
+  const scrollToIndexMomoized = useMemo(
+    () => ({
+      delay: scrollToIndexWithDelay
+        ? scrollToIndexDelayDefaultValue
+        : undefined,
+      index: initialScrollIndex,
+      setIndex: setScrollToIndexWithDelay,
+    }),
+    [scrollToIndexWithDelay, setScrollToIndexWithDelay]
+  );
+
   const memoizedValue = useMemo(
     () => ({
       emptyListEnabled,
@@ -41,6 +68,7 @@ const DebugContextProvider = ({ children }: DebugContextProviderProps) => {
       setInitialScrollIndex,
       pagingEnabled,
       setPagingEnabled,
+      scrollToIndex: scrollToIndexMomoized,
     }),
     [
       emptyListEnabled,
@@ -49,6 +77,7 @@ const DebugContextProvider = ({ children }: DebugContextProviderProps) => {
       setInitialScrollIndex,
       pagingEnabled,
       setPagingEnabled,
+      scrollToIndexMomoized,
     ]
   );
 
