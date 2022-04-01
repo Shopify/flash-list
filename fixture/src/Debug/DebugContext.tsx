@@ -7,15 +7,19 @@ export interface DebugContextInterface {
   emptyListEnabled: boolean;
   initialScrollIndexEnabled: boolean;
   initialScrollIndex?: number | null;
+  pagingEnabled: boolean;
   setEmptyListEnabled: (emptyList: boolean) => void;
   setInitialScrollIndexEnabled: (initialScrollIndexEnabled: boolean) => void;
+  setPagingEnabled: (pagingEnabled: boolean) => void;
 }
 
 const DebugContextDefaultValue = {
   emptyListEnabled: false,
   initialScrollIndexEnabled: false,
+  pagingEnabled: false,
   setEmptyListEnabled: () => {},
   setInitialScrollIndexEnabled: () => {},
+  setPagingEnabled: () => {},
 };
 
 export const DebugContext = createContext<DebugContextInterface>(
@@ -30,6 +34,7 @@ const DebugContextProvider = ({ children }: DebugContextProviderProps) => {
   const [emptyListEnabled, setEmptyListEnabled] = useState(false);
   const [initialScrollIndexEnabled, setInitialScrollIndexEnabled] =
     useState(false);
+  const [pagingEnabled, setPagingEnabled] = useState(false);
 
   const memoizedValue = useMemo(
     () => ({
@@ -40,12 +45,16 @@ const DebugContextProvider = ({ children }: DebugContextProviderProps) => {
       initialScrollIndex: initialScrollIndexEnabled
         ? initialScrollIndexDefaultValue
         : null,
+      pagingEnabled,
+      setPagingEnabled,
     }),
     [
       emptyListEnabled,
       setEmptyListEnabled,
       initialScrollIndexEnabled,
       setInitialScrollIndexEnabled,
+      pagingEnabled,
+      setPagingEnabled,
     ]
   );
 

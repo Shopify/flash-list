@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useContext, useRef, useState } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
@@ -11,7 +11,10 @@ import { tweets as tweetsData } from "./data/tweets";
 const Twitter = () => {
   const debugContext = useContext(DebugContext);
   const [refreshing, setRefreshing] = useState(false);
-  const [tweets, setTweets] = useState(tweetsData);
+  const remainingTweets = useRef([...tweetsData].splice(10, tweetsData.length));
+  const [tweets, setTweets] = useState(
+    debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData
+  );
 
   return (
     <FlashListPerformanceView listName="Twitter">
@@ -31,9 +34,24 @@ const Twitter = () => {
             setTweets([...tweets.reverse()]);
           }, 500);
         }}
+        onEndReached={() => {
+          if (!debugContext.pagingEnabled) {
+            return;
+          }
+          setTimeout(() => {
+            setTweets([...tweets, ...remainingTweets.current.splice(0, 10)]);
+          }, 1000);
+        }}
         ListHeaderComponent={Header}
         ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
-        ListFooterComponent={Footer}
+        ListFooterComponent={() => {
+          return (
+            <Footer
+              isLoading={tweets.length !== tweetsData.length}
+              isPagingEnabled={debugContext.pagingEnabled}
+            />
+          );
+        }}
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
         data={tweets}
@@ -55,10 +73,19 @@ export const Header = () => {
   );
 };
 
-export const Footer = () => {
+interface FooterProps {
+  isLoading: boolean;
+  isPagingEnabled: boolean;
+}
+
+export const Footer = ({ isLoading, isPagingEnabled }: FooterProps) => {
   return (
     <View style={styles.footer}>
-      <Text style={styles.footerTitle}>No more tweets</Text>
+      {isLoading && isPagingEnabled ? (
+        <ActivityIndicator />
+      ) : (
+        <Text style={styles.footerTitle}>No more tweets</Text>
+      )}
     </View>
   );
 };

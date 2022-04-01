@@ -3,30 +3,34 @@ import { View, Text, StyleSheet, Switch } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
 import { DebugContext, DebugContextInterface } from "./DebugContext";
-import { getDebugOptions, DebugOption } from "./DebugOptions";
+import { getDebugItems, DebugItem } from "./DebugOptions";
 
 const DebugScreen = () => {
   const debugContext = useContext<DebugContextInterface>(DebugContext);
-  const debugOptions = getDebugOptions(debugContext);
+  const debugItems = getDebugItems(debugContext);
 
-  const renderItem = ({ item }: { item: DebugOption }) => {
+  const renderItem = ({ item }: { item: DebugItem }) => {
     return (
       <View style={styles.row}>
         <Text style={styles.rowTitle}>{item.name}</Text>
-        <Switch onValueChange={item.onToggle} value={item.value} />
+        <Switch
+          onValueChange={item.onToggle}
+          value={item.value}
+          testID={item.testID}
+        />
       </View>
     );
   };
 
   return (
     <FlashList
-      keyExtractor={(item: DebugOption) => {
+      keyExtractor={(item: DebugItem) => {
         return item.name;
       }}
       renderItem={renderItem}
       estimatedItemSize={44}
       ItemSeparatorComponent={Divider}
-      data={debugOptions}
+      data={debugItems}
     />
   );
 };
