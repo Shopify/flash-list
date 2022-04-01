@@ -169,23 +169,21 @@ describe("FlashList", () => {
     expect(unmountMock).toHaveBeenCalledTimes(1);
   });
   it("fires onLoad event", () => {
-    let elapsedTime;
-    const onLoadMock = jest.fn((event) => {
-      elapsedTime = event.elapsedTimeInMs;
-    });
+    const onLoadMock = jest.fn();
 
     // empty list
     mountFlashList({ data: [], onLoad: onLoadMock });
-    expect(onLoadMock).toHaveBeenCalledTimes(1);
-    expect(elapsedTime).not.toBeUndefined();
+    expect(onLoadMock).toHaveBeenCalledWith({
+      elapsedTimeInMs: expect.any(Number),
+    });
 
     onLoadMock.mockClear();
-    elapsedTime = undefined;
 
     // non-empty list
     const flashList = mountFlashList({ onLoad: onLoadMock });
     flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
-    expect(onLoadMock).toHaveBeenCalledTimes(1);
-    expect(elapsedTime).not.toBeUndefined();
+    expect(onLoadMock).toHaveBeenCalledWith({
+      elapsedTimeInMs: expect.any(Number),
+    });
   });
 });
