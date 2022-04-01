@@ -11,7 +11,7 @@ const TweetDetailScreen = () => {
     params: { tweet },
   } = useRoute<RouteProp<RootStackParamList, "TweetDetailScreen">>();
   return (
-    <View style={styles.container}>
+    <View testID="TweetDetailScreen" style={styles.container}>
       <TweetContent tweet={tweet} />
     </View>
   );
