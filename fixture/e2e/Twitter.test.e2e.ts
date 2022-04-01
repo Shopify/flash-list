@@ -1,11 +1,12 @@
 /* eslint-disable @shopify/strict-component-boundaries */
+import { expect } from "detox";
+
 import { DebugOption } from "../src/Debug/DebugOptions";
 
 import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
 import goBack from "./utils/goBack";
 import enableDebugOption from "./utils/enableDebugOption";
-import { expect } from "detox";
 
 describe("Twitter", () => {
   const flashListReferenceTestName = "Twitter_with_FlashList_looks_the_same";
