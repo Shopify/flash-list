@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 
-import Contact from "../models/Contact";
+import Contact from "./models/Contact";
 
 interface ContactCellProps {
   contact: Contact;

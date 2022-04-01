@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import Contact from "src/models/Contact";
+
+import Contact from "./models/Contact";
 
 interface ContactDividerProps {
   leadingItem: Contact | string;

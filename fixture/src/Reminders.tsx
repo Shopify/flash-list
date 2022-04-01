@@ -25,8 +25,8 @@ interface CheckboxProps {
 
 const Checkbox = (props: CheckboxProps) => {
   const source = props.checked
-    ? require("./assets/checkboxOn.png")
-    : require("./assets/checkboxOff.png");
+    ? require("assets/checkboxOn.png")
+    : require("assets/checkboxOff.png");
   return <Image source={source} style={styles.checkboxImage} />;
 };
 
