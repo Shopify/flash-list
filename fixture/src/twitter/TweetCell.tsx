@@ -3,7 +3,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { Pressable } from "react-native";
 
-import { RootStackParamList } from "./constants";
+import { RootStackParamList } from "../constants";
+
 import Tweet from "./models/Tweet";
 import TweetContent from "./TweetContent";
 

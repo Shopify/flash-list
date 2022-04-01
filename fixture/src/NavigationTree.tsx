@@ -5,13 +5,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Reminders from "./Reminders";
 import List from "./List";
 import PaginatedList from "./PaginatedList";
-import { Twitter, TwitterFlatList } from "./twitter";
+import { Twitter, TwitterFlatList, TweetDetailScreen } from "./twitter";
 import ContactsSectionList from "./contacts/ContactsSectionList";
 import Contacts from "./contacts/Contacts";
 import { RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
 import { DebugScreen } from "./Debug";
-import TweetDetailScreen from "./TweetDetailScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 

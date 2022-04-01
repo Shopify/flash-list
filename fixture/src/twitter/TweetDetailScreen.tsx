@@ -2,7 +2,8 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-import { RootStackParamList } from "./constants";
+import { RootStackParamList } from "../constants";
+
 import TweetContent from "./TweetContent";
 
 const TweetDetailScreen = () => {

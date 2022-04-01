@@ -1,4 +1,4 @@
-import { TweetContentProps } from "./TweetContent";
+import { TweetContentProps } from "./twitter/TweetContent";
 
 // `react-navigation` expects to work with type instead of interface
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
