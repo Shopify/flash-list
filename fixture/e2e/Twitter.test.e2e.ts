@@ -1,3 +1,5 @@
+import { DebugOption } from "src/Debug/DebugOptions";
+
 import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
 import goBack from "./utils/goBack";
@@ -86,6 +88,19 @@ describe("Twitter", () => {
     const flashList = element(by.id("FlashList"));
     // Simulate pull to refresh
     await flashList.swipe("down", "fast");
+
+    const flashListScreenshotPath = await flashList.takeScreenshot(testName);
+
+    assertSnapshot(flashListScreenshotPath, testName);
+  });
+
+  it("loads a new page when gets to the bottom of the list", async () => {
+    const testName =
+      "Twitter_loads_a_new_page_when_gets_to_the_bottom_of_the_list";
+    await element(by.id("Twitter Timeline")).tap();
+
+    const flashList = element(by.id("FlashList"));
+    await flashList.swipe("up", "fast");
 
     const flashListScreenshotPath = await flashList.takeScreenshot(testName);
 

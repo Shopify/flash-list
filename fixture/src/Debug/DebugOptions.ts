@@ -24,6 +24,13 @@ export const getDebugOptions = (
         context.setInitialScrollIndexEnabled(value);
       },
     },
+    {
+      name: "Paging enabled",
+      value: context.pagingEnabled,
+      onToggle: (value: boolean) => {
+        context.setPagingEnabled(value);
+      },
+    },
   ];
 
   return items;
