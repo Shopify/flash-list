@@ -115,7 +115,7 @@ describe("FlashList", () => {
     expect(autoLayoutView.props.onBlankAreaEvent).not.toBeUndefined();
   });
 
-  it("calls render item only when data of the items has changed", (done) => {
+  it("calls render item only when data of the items has changed", () => {
     const renderItemMock = jest.fn(({ item }) => {
       return <Text>{item}</Text>;
     });
@@ -132,12 +132,7 @@ describe("FlashList", () => {
     flashList.setProps({ numColumns: 2 });
     // render item should be called 0 times because only layout of items would have changed
     expect(renderItemMock).toHaveBeenCalledTimes(0);
-
-    // There's some async operation happening inside the scroll component causing jest to throw errors
-    // This is a workaround to silence it.
-    setTimeout(() => {
-      done();
-    }, 64);
+    flashList.unmount();
   });
 
   it("keeps component mounted based on prepareForLayoutAnimationRender being called", () => {
