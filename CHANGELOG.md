@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.2] - 2022-01-04
+
 - Reduce number of render item calls
 
   - https://github.com/Shopify/flash-list/pull/253
