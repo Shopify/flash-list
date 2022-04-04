@@ -135,9 +135,9 @@ describe("FlashList", () => {
 
     // There's some async operation happening inside the scroll component causing jest to throw errors
     // This is a workaround to silence it.
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       done();
-    });
+    }, 64);
   });
 
   it("keeps component mounted based on prepareForLayoutAnimationRender being called", () => {
