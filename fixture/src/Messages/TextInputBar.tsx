@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  TextInput,
-  Pressable,
-  ImageStyle,
-} from "react-native";
+import { View, StyleSheet, Image, TextInput, Pressable } from "react-native";
 
 interface TextInputBarProps {
   onSend: (text: string) => void;
@@ -15,9 +8,6 @@ interface TextInputBarProps {
 const TextInputBar = ({ onSend }: TextInputBarProps) => {
   const [text, setText] = useState("");
 
-  const opacityStyle = () => {
-    return text.length < 1 ? { opacity: 0.3 } : { opacity: 1 };
-  };
   return (
     <View style={styles.textInputBar}>
       <TextInput
@@ -38,8 +28,11 @@ const TextInputBar = ({ onSend }: TextInputBarProps) => {
         }}
       >
         <Image
-          style={[styles.sendButton, opacityStyle()]}
-          source={require("../assets/send.png")}
+          style={[
+            styles.sendButton,
+            text.length < 1 ? { opacity: 0.3 } : { opacity: 1 },
+          ]}
+          source={require("assets/send.png")}
         />
       </Pressable>
     </View>

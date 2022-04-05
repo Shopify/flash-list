@@ -23,9 +23,7 @@ const TextBubble = ({ text, mine, avatar, name }: TextBubbleProps) => {
       <Image
         style={mine ? styles.mineArrow : styles.otherArrow}
         source={
-          mine
-            ? require("../assets/arrow.png")
-            : require("../assets/arrowOther.png")
+          mine ? require("assets/arrow.png") : require("assets/arrowOther.png")
         }
       />
     </View>

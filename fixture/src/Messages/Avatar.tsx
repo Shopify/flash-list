@@ -10,8 +10,7 @@ const Avatar = ({ avatar }: AvatarProps) => {
   if (avatar === undefined) {
     return null;
   }
-  const imageUrl = avatar.replace("_normal", "");
-  return <FastImage style={styles.avatar} source={{ uri: imageUrl }} />;
+  return <FastImage style={styles.avatar} source={{ uri: avatar }} />;
 };
 
 export default Avatar;

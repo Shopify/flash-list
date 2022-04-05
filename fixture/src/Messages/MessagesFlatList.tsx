@@ -4,21 +4,21 @@ import React, { useState } from "react";
 import MessageType from "./models/MessageType";
 import initialMessages from "./data/messages";
 import TextInputBar from "./TextInputBar";
-import UserName from "./UserName";
+import userName from "./userName";
 import MessageItem from "./MessageItem";
 import Message from "./models/Message";
 
 const MessagesFlatList = () => {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState(initialMessages);
 
   const appendMessage = (text: string) => {
     const message = {
       text,
-      sender: UserName,
+      sender: userName,
       type: MessageType.Text,
     } as Message;
 
-    setMessages((messages) => [message, ...messages]);
+    setMessages([message, ...messages]);
   };
 
   return (
@@ -29,7 +29,7 @@ const MessagesFlatList = () => {
     >
       <FlatList renderItem={MessageItem} inverted data={messages} />
       <TextInputBar
-        onSend={function (text: string): void {
+        onSend={(text) => {
           appendMessage(text);
         }}
       />
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   keyboardAvoidingViewStyles: {
     flex: 1,
     marginBottom: 40,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
   },
 });
 

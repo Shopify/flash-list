@@ -1,11 +1,11 @@
-import { KeyboardAvoidingView, StyleSheet } from "react-native";
+import { FlatList, KeyboardAvoidingView, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import React, { useState } from "react";
 
 import MessageType from "./models/MessageType";
 import messages from "./data/messages";
 import TextInputBar from "./TextInputBar";
-import UserName from "./UserName";
+import userName from "./userName";
 import MessageItem from "./MessageItem";
 import Message from "./models/Message";
 
@@ -17,10 +17,10 @@ const Messages = () => {
   const appendMessage = (text: string) => {
     const message = {
       text,
-      sender: UserName,
+      sender: userName,
       type: MessageType.Text,
     } as Message;
-    setMessages((messages) => [message, ...messages]);
+    setMessages([message, ...messages]);
   };
 
   return (
@@ -49,7 +49,7 @@ const Messages = () => {
         data={messages}
       />
       <TextInputBar
-        onSend={function (text: string): void {
+        onSend={(text) => {
           appendMessage(text);
         }}
       />
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   keyboardAvoidingViewStyles: {
     flex: 1,
     marginBottom: 40,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
   },
 });
 
