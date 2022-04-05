@@ -1,15 +1,13 @@
-import { FlatList, KeyboardAvoidingView, StyleSheet } from "react-native";
+import { KeyboardAvoidingView, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import React, { useState } from "react";
 
 import MessageType from "./models/MessageType";
-import messages from "./data/messages";
+import initialMessages from "./data/messages";
 import TextInputBar from "./TextInputBar";
 import userName from "./userName";
 import MessageItem from "./MessageItem";
 import Message from "./models/Message";
-
-const initialMessages = messages;
 
 const Messages = () => {
   const [messages, setMessages] = useState(initialMessages);
