@@ -118,7 +118,7 @@ export interface FlashListProps<T> extends FlatListProps<T> {
 export interface FlashListState<T> {
   dataProvider: DataProvider;
   numColumns: number;
-  layoutProvider: GridLayoutProviderWithProps<FlashListProps<T>>;
+  layoutProvider: GridLayoutProviderWithProps<T>;
   data?: ReadonlyArray<T> | null;
   extraData?: ExtraData<unknown>;
 }
@@ -269,7 +269,7 @@ class FlashList<T> extends React.PureComponent<
     numColumns: number,
     props: FlashListProps<T>
   ) {
-    return new GridLayoutProviderWithProps<FlashListProps<T>>(
+    return new GridLayoutProviderWithProps<T>(
       // max span or, total columns
       numColumns,
       (index, props) => {
@@ -301,7 +301,7 @@ class FlashList<T> extends React.PureComponent<
           numColumns,
           props.extraData
         );
-        return mutableLayout?.size || props.estimatedItemSize;
+        return mutableLayout?.size;
       },
       props
     );
@@ -406,7 +406,7 @@ class FlashList<T> extends React.PureComponent<
             undefined
           }
           initialOffset={initialOffset}
-          onItemLayout={this.raiseOnLoadEventIfNeeded}
+          onItemLayout={this.onItemLayout}
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>
@@ -701,6 +701,11 @@ class FlashList<T> extends React.PureComponent<
     const currentOffset = this.rlvRef?.getCurrentScrollOffset() || 0;
     return currentOffset >= this.distanceFromWindow;
   }
+
+  private onItemLayout = (index: number) => {
+    this.state.layoutProvider.reportItemLayout(index);
+    this.raiseOnLoadEventIfNeeded();
+  };
 
   private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
