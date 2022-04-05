@@ -4,32 +4,37 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 
 import { DebugButton } from "./Debug";
-import { NavigationKeys, RootStackParamList } from "./constants";
+import { RootStackParamList } from "./constants";
+
+interface ExampleItem {
+  title: string;
+  destination: keyof RootStackParamList;
+}
 
 export const ExamplesScreen = () => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Examples">>();
 
   const onDebugButton = () => {
-    navigate(NavigationKeys.DEBUG);
+    navigate("Debug");
   };
 
-  const data = [
-    { title: "List", destination: NavigationKeys.LIST },
-    { title: "PaginatedList", destination: NavigationKeys.PAGINATED_LIST },
-    { title: "Reminders", destination: NavigationKeys.REMINDERS },
-    { title: "Twitter Timeline", destination: NavigationKeys.TWITTER },
+  const data: ExampleItem[] = [
+    { title: "List", destination: "List" },
+    { title: "PaginatedList", destination: "PaginatedList" },
+    { title: "Reminders", destination: "Reminders" },
+    { title: "Twitter Timeline", destination: "Twitter" },
     {
       title: "Twitter FlatList Timeline",
-      destination: NavigationKeys.TWITTER_FLAT_LIST,
+      destination: "TwitterFlatList",
     },
     {
       title: "Contacts",
-      destination: NavigationKeys.CONTACTS,
+      destination: "Contacts",
     },
     {
       title: "Contacts SectionList",
-      destination: NavigationKeys.CONTACTS_SECTION_LIST,
+      destination: "ContactsSectionList",
     },
   ];
   return (
