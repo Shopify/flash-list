@@ -69,7 +69,7 @@ describe("FlashList", () => {
     const flashList = mountFlashList({
       keyExtractor: (item) => item,
     });
-    const warn = jest.spyOn(console, "warn");
+    const warn = jest.spyOn(console, "warn").mockReturnValue();
     const prepareForLayoutAnimationRender = jest.spyOn(
       flashList.instance.rlvRef,
       "prepareForLayoutAnimationRender"
@@ -81,7 +81,7 @@ describe("FlashList", () => {
 
   it("sends a warning when prepareForLayoutAnimationRender without keyExtractor", () => {
     const flashList = mountFlashList();
-    const warn = jest.spyOn(console, "warn");
+    const warn = jest.spyOn(console, "warn").mockReturnValue();
     const prepareForLayoutAnimationRender = jest.spyOn(
       flashList.instance.rlvRef,
       "prepareForLayoutAnimationRender"
@@ -197,6 +197,7 @@ describe("FlashList", () => {
     );
     flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
     expect(reportItemLayoutMock).toHaveBeenCalledWith(0);
+    flashList.unmount();
   });
   it("should prefer overrideItemLayout over estimate and average", () => {
     const flashList = mountFlashList({

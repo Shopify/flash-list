@@ -39,7 +39,7 @@ describe("GridLayoutProviderWithProps", () => {
     ).toBe(20);
     flashList.unmount();
   });
-  it("vertical list: average should only update when heights change", () => {
+  it("vertical list: average should not update when widths change", () => {
     const flashList = mountFlashList();
     const layoutProvider = flashList.instance.state.layoutProvider;
     const oldAverage = layoutProvider.averageItemSize;
@@ -50,12 +50,12 @@ describe("GridLayoutProviderWithProps", () => {
     expect(oldAverage).toBe(layoutProvider.averageItemSize);
     flashList.unmount();
   });
-  it("horizontal list: average should only update when widths change", () => {
+  it("horizontal list: average should not update when heights change", () => {
     const flashList = mountFlashList({ horizontal: true });
     const layoutProvider = flashList.instance.state.layoutProvider;
     const oldAverage = layoutProvider.averageItemSize;
 
-    layoutProvider.getLayoutManager().getLayouts()[0].height = 500;
+    layoutProvider.getLayoutManager().getLayouts()[0].height = 600;
     flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
 
     expect(oldAverage).toBe(layoutProvider.averageItemSize);
@@ -79,5 +79,6 @@ describe("GridLayoutProviderWithProps", () => {
 
     // estimatedItemSize is treated as one of the values. That's why 240.
     expect(layoutProvider.averageItemSize).toBe(240);
+    flashList.unmount();
   });
 });
