@@ -2,7 +2,7 @@ export class AverageWindow {
   private maxSize: number;
   private currentAverage: number;
   private currentCount: number;
-  private inputValues: Array<number | undefined>;
+  private inputValues: (number | undefined)[];
   private totalItemsAdded: number = 0;
   constructor(size: number, startValue?: number) {
     this.maxSize = Math.max(1, size);
@@ -12,6 +12,7 @@ export class AverageWindow {
     this.totalItemsAdded = this.currentCount;
     this.inputValues[0] = startValue;
   }
+
   public get currentValue(): number {
     return this.currentAverage;
   }
