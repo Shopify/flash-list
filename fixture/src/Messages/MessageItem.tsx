@@ -3,11 +3,11 @@ import React from "react";
 import Message from "./models/Message";
 import ImageMessage from "./ImageMessage";
 import TextBubble from "./TextBubble";
-import UserName from "./UserName";
+import userName from "./userName";
 import MessageType from "./models/MessageType";
 
 const MessageItem = ({ item }: { item: Message }) => {
-  const mine = item.sender === UserName;
+  const mine = item.sender === userName;
   switch (item.type) {
     case MessageType.Text:
       return (
