@@ -3,11 +3,13 @@ export class AverageWindow {
   private currentAverage: number;
   private currentCount: number;
   private inputValues: Array<number | undefined>;
+  private totalItemsAdded: number = 0;
   constructor(size: number, startValue?: number) {
     this.maxSize = Math.max(1, size);
     this.inputValues = new Array<number>(this.maxSize);
     this.currentAverage = startValue ?? 0;
     this.currentCount = startValue === undefined ? 0 : 1;
+    this.totalItemsAdded = this.currentCount;
     this.inputValues[0] = startValue;
   }
   public get currentValue(): number {
@@ -15,7 +17,7 @@ export class AverageWindow {
   }
 
   public addValue(value: number): void {
-    const target = this.getRandomNumber(0, this.maxSize - 1);
+    const target = this.getNextIndex();
     const oldValue = this.inputValues[target];
     const newCount =
       oldValue === undefined ? this.currentCount + 1 : this.currentCount;
@@ -33,7 +35,7 @@ export class AverageWindow {
     return this.inputValues;
   }
 
-  protected getRandomNumber(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  private getNextIndex(): number {
+    return this.totalItemsAdded++ % this.maxSize;
   }
 }
