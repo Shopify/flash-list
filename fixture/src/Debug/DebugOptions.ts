@@ -1,17 +1,26 @@
 import { DebugContextInterface } from "./DebugContext";
 
-export interface DebugItem {
-  name: string;
-  type: DebugOptionType;
-  value: number | boolean | undefined;
-  // value: boolean;
-  onValue: (value: number | boolean) => void;
-  testID: DebugOption;
-}
-
 export enum DebugOptionType {
   Switch,
   Input,
+}
+
+export type DebugItem = DebugSwitchItem | DebugInputItem;
+
+interface DebugSwitchItem {
+  type: DebugOptionType.Switch;
+  name: string;
+  value?: boolean;
+  onValue: (value: boolean) => void;
+  testID: DebugOption;
+}
+
+interface DebugInputItem {
+  type: DebugOptionType.Input;
+  name: string;
+  value?: number;
+  onValue: (value: number) => void;
+  testID: DebugOption;
 }
 
 export enum DebugOption {

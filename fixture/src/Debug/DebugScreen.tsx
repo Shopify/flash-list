@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet, Switch } from "react-native";
 import { FlashList } from "@shopify/flash-list";
+import { TextInput } from "react-native-gesture-handler";
 
 import { DebugContext, DebugContextInterface } from "./DebugContext";
 import { getDebugItems, DebugItem, DebugOptionType } from "./DebugOptions";
-import { TextInput } from "react-native-gesture-handler";
 
 const DebugScreen = () => {
   const debugContext = useContext<DebugContextInterface>(DebugContext);
@@ -14,7 +14,7 @@ const DebugScreen = () => {
     return (
       <View style={styles.row}>
         <Text style={styles.rowTitle}>{item.name}</Text>
-        {inputComponent(item)}
+        {renderInput(item)}
       </View>
     );
   };
@@ -36,15 +36,14 @@ const Divider = () => {
   return <View style={styles.divider} />;
 };
 
-const inputComponent = (item: DebugItem) => {
-  console.log(item.type);
+const renderInput = (item: DebugItem) => {
   if (item.type === DebugOptionType.Switch) {
     return (
       <Switch
         onValueChange={(value) => {
           item.onValue(value);
         }}
-        value={item.value as boolean}
+        value={item.value}
         testID={item.testID}
       />
     );
@@ -54,8 +53,9 @@ const inputComponent = (item: DebugItem) => {
         onChangeText={(value) => {
           item.onValue(Number(value));
         }}
-        placeholder={"Set value"}
-        value={item.value ? item.value.toString() : undefined}
+        placeholder="Set value"
+        value={item.value === undefined ? undefined : item.value.toString()}
+        keyboardType="number-pad"
       />
     );
   }
