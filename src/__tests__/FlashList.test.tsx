@@ -8,36 +8,44 @@ import FlashList from "../FlashList";
 import Warnings from "../errors/Warnings";
 import AutoLayoutView from "../AutoLayoutView";
 
-describe("FlashList", () => {
-  const mountFlashList = (props?: {
-    horizontal?: boolean;
-    keyExtractor?: (item: string, index: number) => string;
-    initialScrollIndex?: number;
-    numColumns?: number;
-    estimatedFirstItemOffset?: number;
-    data?: string[];
-    renderItem?: ListRenderItem<string>;
-    onLoad?: (info: { elapsedTimeInMs: number }) => void;
-  }) => {
-    const flashList = mount(
-      <FlashList
-        horizontal={props?.horizontal}
-        keyExtractor={props?.keyExtractor}
-        renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
-        estimatedItemSize={200}
-        data={props?.data || ["One", "Two", "Three", "Four"]}
-        initialScrollIndex={props?.initialScrollIndex}
-        numColumns={props?.numColumns}
-        estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
-        onLoad={props?.onLoad}
-      />
-    );
-    flashList.find(ScrollView)?.trigger("onLayout", {
-      nativeEvent: { layout: { height: 900, width: 400 } },
-    });
-    return flashList;
-  };
+export const mountFlashList = (props?: {
+  horizontal?: boolean;
+  keyExtractor?: (item: string, index: number) => string;
+  initialScrollIndex?: number;
+  numColumns?: number;
+  estimatedFirstItemOffset?: number;
+  data?: string[];
+  renderItem?: ListRenderItem<string>;
+  onLoad?: (info: { elapsedTimeInMs: number }) => void;
+  overrideItemLayout?: (
+    layout: { span?: number; size?: number },
+    item: string,
+    index: number,
+    maxColumns: number,
+    extraData?: any
+  ) => void;
+}) => {
+  const flashList = mount(
+    <FlashList
+      horizontal={props?.horizontal}
+      keyExtractor={props?.keyExtractor}
+      renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
+      estimatedItemSize={200}
+      data={props?.data || ["One", "Two", "Three", "Four"]}
+      initialScrollIndex={props?.initialScrollIndex}
+      numColumns={props?.numColumns}
+      estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
+      onLoad={props?.onLoad}
+      overrideItemLayout={props?.overrideItemLayout}
+    />
+  );
+  flashList.find(ScrollView)?.trigger("onLayout", {
+    nativeEvent: { layout: { height: 900, width: 400 } },
+  });
+  return flashList;
+};
 
+describe("FlashList", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -180,5 +188,26 @@ describe("FlashList", () => {
     expect(onLoadMock).toHaveBeenCalledWith({
       elapsedTimeInMs: expect.any(Number),
     });
+  });
+  it("reports layout changes to the layout provider", () => {
+    const flashList = mountFlashList();
+    const reportItemLayoutMock = jest.spyOn(
+      flashList.instance.state.layoutProvider,
+      "reportItemLayout"
+    );
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    expect(reportItemLayoutMock).toHaveBeenCalledWith(0);
+  });
+  it("should prefer overrideItemLayout over estimate and average", () => {
+    const flashList = mountFlashList({
+      overrideItemLayout: (layout) => {
+        layout.size = 50;
+      },
+    });
+    expect(flashList.instance.state.layoutProvider.averageItemSize).toBe(200);
+    expect(
+      flashList.instance.state.layoutProvider.getLayoutManager().getLayouts()[0]
+        .height
+    ).toBe(50);
   });
 });
