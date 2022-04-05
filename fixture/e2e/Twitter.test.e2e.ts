@@ -98,7 +98,7 @@ describe("Twitter", () => {
   it("loads a new page when gets to the bottom of the list", async () => {
     const testName =
       "Twitter_loads_a_new_page_when_gets_to_the_bottom_of_the_list";
-    await enableDebugOption(DebugOption.PagingEnabled);
+    await toggleDebugSwitch(DebugOption.PagingEnabled);
     await element(by.id("Twitter Timeline")).tap();
 
     const flashList = element(by.id("FlashList"));
@@ -122,6 +122,34 @@ describe("Twitter", () => {
 
     assertSnapshot(tweetDetailScreenshotPath, testName);
   });
+
+  it("is scrolled to initialScrollIndex = 3", async () => {
+    const testName = "Twitter_is_scrolled_to_initialScrollIndex_3";
+
+    await setDebugOptionValue(DebugOption.InitialScrollIndex, "3");
+
+    await element(by.id("Twitter Timeline")).tap();
+
+    const testRunScreenshotPath = await element(
+      by.id("FlashList")
+    ).takeScreenshot(testName);
+
+    assertSnapshot(testRunScreenshotPath, testName);
+  });
+
+  it("is scrolled to initialScrollIndex = 13", async () => {
+    const testName = "Twitter_is_scrolled_to_initialScrollIndex_13";
+
+    await setDebugOptionValue(DebugOption.InitialScrollIndex, "13");
+
+    await element(by.id("Twitter Timeline")).tap();
+
+    const testRunScreenshotPath = await element(
+      by.id("FlashList")
+    ).takeScreenshot(testName);
+
+    assertSnapshot(testRunScreenshotPath, testName);
+  });
 });
 
 const scrollAndRotate = async (id: string) => {
@@ -130,8 +158,14 @@ const scrollAndRotate = async (id: string) => {
   await device.setOrientation("landscape");
 };
 
-const enableDebugOption = async (option: DebugOption) => {
+const toggleDebugSwitch = async (option: DebugOption) => {
   await element(by.id("debug-button")).tap();
-  await element(by.id(option)).longPress();
+  await element(by.id(option)).tap();
+  await goBack();
+};
+
+const setDebugOptionValue = async (option: DebugOption, value: string) => {
+  await element(by.id("debug-button")).tap();
+  await element(by.id(option)).typeText(value);
   await goBack();
 };

@@ -56,6 +56,7 @@ const Twitter = () => {
         ItemSeparatorComponent={Divider}
         data={tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
+        estimatedFirstItemOffset={styles.header.height}
       />
     </FlashListPerformanceView>
   );

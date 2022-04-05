@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, Switch } from "react-native";
+import { View, Text, StyleSheet, Switch, TextInput } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { TextInput } from "react-native-gesture-handler";
 
 import { DebugContext, DebugContextInterface } from "./DebugContext";
 import { getDebugItems, DebugItem, DebugOptionType } from "./DebugOptions";
@@ -56,6 +55,7 @@ const renderInput = (item: DebugItem) => {
         placeholder="Set value"
         value={item.value?.toString()}
         keyboardType="number-pad"
+        testID={item.testID}
       />
     );
   }
