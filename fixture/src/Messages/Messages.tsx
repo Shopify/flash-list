@@ -33,9 +33,6 @@ const Messages = () => {
         estimatedItemSize={100}
         overrideItemLayout={(layout, item) => {
           switch (item.type) {
-            case MessageType.Text:
-              layout.size = 100;
-              break;
             case MessageType.Image:
               layout.size = 200;
               break;
