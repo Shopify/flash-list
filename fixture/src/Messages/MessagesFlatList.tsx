@@ -1,4 +1,10 @@
-import { KeyboardAvoidingView, StyleSheet, FlatList } from "react-native";
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  FlatList,
+  Platform,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 
 import MessageType from "./models/MessageType";
@@ -23,11 +29,16 @@ const MessagesFlatList = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior="padding"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={100}
       style={styles.keyboardAvoidingViewStyles}
     >
-      <FlatList renderItem={MessageItem} inverted data={messages} />
+      <FlatList
+        renderItem={MessageItem}
+        inverted
+        data={messages}
+        style={styles.list}
+      />
       <TextInputBar
         onSend={(text) => {
           appendMessage(text);
@@ -42,6 +53,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 40,
     backgroundColor: "white",
+  },
+  list: {
+    flex: 1,
   },
 });
 

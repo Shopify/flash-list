@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, StyleSheet } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import React, { useState } from "react";
 
@@ -23,7 +23,7 @@ const Messages = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior="padding"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={100}
       style={styles.keyboardAvoidingViewStyles}
     >
