@@ -3,7 +3,6 @@ import {
   StyleSheet,
   FlatList,
   Platform,
-  View,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -19,6 +18,7 @@ const MessagesFlatList = () => {
 
   const appendMessage = (text: string) => {
     const message = {
+      id: Math.floor(Math.random() * 1000000).toString(),
       text,
       sender: userName,
       type: MessageType.Text,
@@ -38,6 +38,9 @@ const MessagesFlatList = () => {
         inverted
         data={messages}
         style={styles.list}
+        keyExtractor={(item) => {
+          return item.id;
+        }}
       />
       <TextInputBar
         onSend={(text) => {

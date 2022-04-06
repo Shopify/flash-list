@@ -1,6 +1,7 @@
 import MessageType from "./MessageType";
 
 export interface TextMessage {
+  id: string;
   text: string;
   avatar?: string;
   sender: string;
@@ -8,6 +9,7 @@ export interface TextMessage {
 }
 
 export interface ImageMessage {
+  id: string;
   avatar?: string;
   type: MessageType.Image;
   sender: string;

@@ -14,6 +14,7 @@ const Messages = () => {
 
   const appendMessage = (text: string) => {
     const message = {
+      id: Math.floor(Math.random() * 1000000).toString(),
       text,
       sender: userName,
       type: MessageType.Text,
@@ -31,6 +32,9 @@ const Messages = () => {
         renderItem={MessageItem}
         inverted
         estimatedItemSize={100}
+        keyExtractor={(item) => {
+          return item.id;
+        }}
         overrideItemLayout={(layout, item) => {
           switch (item.type) {
             case MessageType.Image:
