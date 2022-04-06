@@ -30,7 +30,7 @@ const DebugContextProvider = ({ children }: DebugContextProviderProps) => {
   const [emptyListEnabled, setEmptyListEnabled] = useState(false);
   const [initialScrollIndex, setInitialScrollIndex] = useState<
     number | undefined
-  >(undefined);
+  >();
   const [pagingEnabled, setPagingEnabled] = useState(false);
 
   const memoizedValue = useMemo(
