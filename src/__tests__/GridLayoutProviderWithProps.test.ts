@@ -1,5 +1,6 @@
 import { ScrollView } from "react-native";
 import { ProgressiveListView } from "recyclerlistview";
+
 import { mountFlashList } from "./FlashList.test";
 
 describe("GridLayoutProviderWithProps", () => {
@@ -56,7 +57,9 @@ describe("GridLayoutProviderWithProps", () => {
     const oldAverage = layoutProvider.averageItemSize;
 
     layoutProvider.getLayoutManager().getLayouts()[0].height = 600;
-    flashList.find(ProgressiveListView)?.instance.onItemLayout(0); // can throw a no op set state warning. Should be handled in PLV.
+
+    // Can throw a no op set state warning. Should be handled in PLV.
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
 
     expect(oldAverage).toBe(layoutProvider.averageItemSize);
     flashList.unmount();

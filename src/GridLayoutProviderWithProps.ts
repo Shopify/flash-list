@@ -44,8 +44,9 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
       },
       (i) => {
         return (
+          // Using average item size if no override has been provided by the developer
           getHeightOrWidth(i, this.props, this.getCleanLayoutObj()) ??
-          this.averageItemSize // Using average item size if no override has been provided by the developer
+          this.averageItemSize
         );
       },
       acceptableRelayoutDelta
@@ -58,7 +59,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     this.props = props;
   }
 
-  // Calling this method will help the layout provider track average item sizes on it's own
+  // Calling this method will help the layout provider track average item sizes on its own
   // Overriding layout manager can help achieve the same thing without relying on this method being called however, it will make implementation very complex for a simple use case
   public reportItemLayout(index: number) {
     const layout = this.getLayoutManager()?.getLayouts()[index];
@@ -79,7 +80,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     isHorizontal?: boolean,
     cachedLayouts?: Layout[]
   ): LayoutManager {
-    // Average Window is update whenever a new layout manager is created. This is because old values are not relevant anymore.
+    // Average window is updated whenever a new layout manager is created. This is because old values are not relevant anymore.
     const estimatedItemCount = Math.round(
       (this.props.horizontal
         ? renderWindowSize.width
