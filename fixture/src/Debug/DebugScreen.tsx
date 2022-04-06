@@ -54,7 +54,7 @@ const renderInput = (item: DebugItem) => {
           item.onValue(Number(value));
         }}
         placeholder="Set value"
-        value={item.value === undefined ? undefined : item.value.toString()}
+        value={item.value?.toString()}
         keyboardType="number-pad"
       />
     );
