@@ -297,7 +297,7 @@ class FlashList<T> extends React.PureComponent<
           numColumns,
           props.extraData
         );
-        return mutableLayout?.span || 1;
+        return mutableLayout?.span ?? 1;
       },
       (index, props, mutableLayout) => {
         // estimated size of the item an given index

@@ -24,13 +24,14 @@ export const mountFlashList = (props?: {
     maxColumns: number,
     extraData?: any
   ) => void;
+  estimatedItemSize?: number;
 }) => {
   const flashList = mount(
     <FlashList
       horizontal={props?.horizontal}
       keyExtractor={props?.keyExtractor}
       renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
-      estimatedItemSize={200}
+      estimatedItemSize={props?.estimatedItemSize ?? 200}
       data={props?.data || ["One", "Two", "Three", "Four"]}
       initialScrollIndex={props?.initialScrollIndex}
       numColumns={props?.numColumns}
@@ -210,5 +211,50 @@ describe("FlashList", () => {
       flashList.instance.state.layoutProvider.getLayoutManager().getLayouts()[0]
         .height
     ).toBe(50);
+  });
+  it("should override span with overrideItemLayout", () => {
+    const renderItemMock = jest.fn(({ item }) => {
+      return <Text>{item}</Text>;
+    });
+    mountFlashList({
+      overrideItemLayout: (layout) => {
+        layout.span = 2;
+      },
+      numColumns: 2,
+      estimatedItemSize: 300,
+      renderItem: renderItemMock,
+    });
+    expect(renderItemMock).toHaveBeenCalledTimes(3);
+
+    renderItemMock.mockClear();
+    mountFlashList({
+      overrideItemLayout: (layout, _, index) => {
+        if (index > 2) {
+          layout.span = 2;
+        }
+      },
+      data: new Array(20).fill(""),
+      numColumns: 3,
+      estimatedItemSize: 100,
+      renderItem: renderItemMock,
+    });
+
+    expect(renderItemMock).toHaveBeenCalledTimes(11);
+  });
+  it("overrideItemLayout should consider 0 as a valid span", () => {
+    const renderItemMock = jest.fn(({ item }) => {
+      return <Text>{item}</Text>;
+    });
+    mountFlashList({
+      overrideItemLayout: (layout, _, index) => {
+        if (index < 4) {
+          layout.span = 0;
+        }
+      },
+      data: new Array(20).fill(""),
+      numColumns: 2,
+      renderItem: renderItemMock,
+    });
+    expect(renderItemMock).toHaveBeenCalledTimes(14);
   });
 });
