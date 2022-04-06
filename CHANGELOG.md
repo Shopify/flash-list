@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Calculate average item sizes automatically
+  - https://github.com/Shopify/flash-list/pull/296
+
 ## [0.4.4] - 2022-04-06
 
 - Fix `FlashList` mock when no data is provided
