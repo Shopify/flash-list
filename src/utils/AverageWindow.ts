@@ -1,3 +1,6 @@
+/**
+ * Helper class to calculate running average of most recent n values
+ */
 export class AverageWindow {
   private maxSize: number;
   private currentAverage: number;
@@ -13,10 +16,17 @@ export class AverageWindow {
     this.inputValues[0] = startValue;
   }
 
+  /**
+   * Can be used to get the current average value
+   */
   public get currentValue(): number {
     return this.currentAverage;
   }
 
+  /**
+   *
+   * @param value Add new value to the average window and updated current average
+   */
   public addValue(value: number): void {
     const target = this.getNextIndex();
     const oldValue = this.inputValues[target];

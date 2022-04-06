@@ -56,7 +56,7 @@ describe("GridLayoutProviderWithProps", () => {
     const oldAverage = layoutProvider.averageItemSize;
 
     layoutProvider.getLayoutManager().getLayouts()[0].height = 600;
-    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0); // can throw a no op set state warning. Should be handled in PLV.
 
     expect(oldAverage).toBe(layoutProvider.averageItemSize);
     flashList.unmount();

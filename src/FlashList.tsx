@@ -710,6 +710,7 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private onItemLayout = (index: number) => {
+    // Informing the layout provider about change to an item's layout. It already knows the dimensions so there's not need to pass them.
     this.state.layoutProvider.reportItemLayout(index);
     this.raiseOnLoadEventIfNeeded();
   };

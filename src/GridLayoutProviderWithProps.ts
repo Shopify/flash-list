@@ -45,7 +45,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
       (i) => {
         return (
           getHeightOrWidth(i, this.props, this.getCleanLayoutObj()) ??
-          this.averageItemSize
+          this.averageItemSize // Using average item size if no override has been provided by the developer
         );
       },
       acceptableRelayoutDelta
