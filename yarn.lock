@@ -1522,10 +1522,10 @@
     "@sewing-kit/core" "^0.4.0"
     "@sewing-kit/hooks" "^0.2.0"
 
-"@shopify/eslint-plugin@^41.2.0":
-  version "41.2.0"
-  resolved "https://registry.yarnpkg.com/@shopify/eslint-plugin/-/eslint-plugin-41.2.0.tgz#fe4e3bc01933b246ec45bf7386a1addb9ec8808b"
-  integrity sha512-keM+MGev6dIep7cQ2RNY0p5lCK7DaG03XKSwehfUK3Uc0Qunb52dopK+RjNjlSpJwGfMX1H/bIRpFf4HERvwng==
+"@shopify/eslint-plugin@^41.2.1":
+  version "41.2.1"
+  resolved "https://registry.yarnpkg.com/@shopify/eslint-plugin/-/eslint-plugin-41.2.1.tgz#b3093bd1e79fe6f5a1fa8ffb06a29b09b88a0a86"
+  integrity sha512-hck0hukEaVAW4na28qGGvolWpi4c/+4SzMXGYiZ4AOXTeeIyGAFWFcyuEI0JJhFzq5trlzYY6U5hMSlU+ay5+g==
   dependencies:
     "@babel/eslint-parser" "^7.16.3"
     "@babel/eslint-plugin" "^7.14.5"
