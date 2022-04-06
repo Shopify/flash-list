@@ -13,4 +13,6 @@ export type RootStackParamList = {
   Debug: undefined;
   Contacts: undefined;
   ContactsSectionList: undefined;
+  Messages: undefined;
+  MessagesFlatList: undefined;
 };

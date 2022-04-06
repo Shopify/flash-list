@@ -36,6 +36,14 @@ export const ExamplesScreen = () => {
       title: "Contacts SectionList",
       destination: "ContactsSectionList",
     },
+    {
+      title: "Messages",
+      destination: "Messages",
+    },
+    {
+      title: "Messages FlatList",
+      destination: "MessagesFlatList",
+    },
   ];
   return (
     <>

@@ -11,6 +11,7 @@ import Contacts from "./contacts/Contacts";
 import { RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
 import { DebugScreen } from "./Debug";
+import { Messages, MessagesFlatList } from "./Messages";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -39,6 +40,8 @@ const NavigationTree = () => {
             name="TweetDetailScreen"
             component={TweetDetailScreen}
           />
+          <Stack.Screen name="Messages" component={Messages} />
+          <Stack.Screen name="MessagesFlatList" component={MessagesFlatList} />
         </Stack.Group>
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />
