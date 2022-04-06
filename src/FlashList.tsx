@@ -6,6 +6,7 @@ import {
   LayoutChangeEvent,
   ViewStyle,
   ColorValue,
+  ViewToken,
 } from "react-native";
 import {
   DataProvider,
@@ -358,6 +359,7 @@ class FlashList<T> extends React.PureComponent<
       initialScrollIndex,
       style,
       contentContainerStyle,
+      onViewableItemsChanged,
       ...restProps
     } = this.props;
 
@@ -414,6 +416,37 @@ class FlashList<T> extends React.PureComponent<
           }
           initialOffset={initialOffset}
           onItemLayout={this.onItemLayout}
+          onVisibleIndicesChanged={(all, now, notNow) => {
+            if (
+              this.props?.data === null ||
+              this.props?.data === undefined ||
+              onViewableItemsChanged === null ||
+              onViewableItemsChanged === undefined
+            ) {
+              return;
+            }
+            onViewableItemsChanged({
+              viewableItems: all
+                .map((index) => {
+                  if (
+                    this.props?.data === null ||
+                    this.props?.data === undefined
+                  ) {
+                    return null;
+                  }
+                  const item = this.props.data[index];
+                  return {
+                    index,
+                    isViewable: true,
+                    item: this.props.data[index],
+                    key: this.props.keyExtractor?.(item, index) ?? "",
+                    section: "",
+                  };
+                })
+                .filter((element) => element !== null) as ViewToken[],
+              changed: [],
+            });
+          }}
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>

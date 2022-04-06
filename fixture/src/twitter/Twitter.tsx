@@ -56,6 +56,14 @@ const Twitter = () => {
         ItemSeparatorComponent={Divider}
         data={tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
+        viewabilityConfig={{
+          // waitForInteraction: true,
+          viewAreaCoveragePercentThreshold: 95,
+          minimumViewTime: 250,
+        }}
+        onViewableItemsChanged={(info) => {
+          console.log(info);
+        }}
       />
     </FlashListPerformanceView>
   );
