@@ -7,10 +7,12 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.4] - 2022-04-06
+
 - Fix `FlashList` mock when no data is provided
   - https://github.com/Shopify/flash-list/pull/295
 
-## [0.4.2] - 2022-04-04
+## [0.4.3] - 2022-04-04
 
 - Reduce number of render item calls
 
@@ -18,6 +20,10 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Upgrade recyclerlistview to v3.2.0-beta.2
   - https://github.com/Shopify/flash-list/pull/284
+
+## [0.4.2] - 2022-04-04
+
+- Minor changes
 
 ## [0.4.1] - 2022-03-29
 
