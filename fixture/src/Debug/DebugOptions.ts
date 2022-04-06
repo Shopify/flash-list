@@ -1,9 +1,25 @@
 import { DebugContextInterface } from "./DebugContext";
 
-export interface DebugItem {
+export enum DebugOptionType {
+  Switch,
+  Input,
+}
+
+export type DebugItem = DebugSwitchItem | DebugInputItem;
+
+interface DebugSwitchItem {
+  type: DebugOptionType.Switch;
   name: string;
-  value: boolean;
-  onToggle: (value: boolean) => void;
+  value?: boolean;
+  onValue: (value: boolean) => void;
+  testID: DebugOption;
+}
+
+interface DebugInputItem {
+  type: DebugOptionType.Input;
+  name: string;
+  value?: number;
+  onValue: (value: number) => void;
   testID: DebugOption;
 }
 
@@ -17,24 +33,27 @@ export const getDebugItems = (context: DebugContextInterface): DebugItem[] => {
   const items: DebugItem[] = [
     {
       name: "Show empty list",
+      type: DebugOptionType.Switch,
       value: context.emptyListEnabled,
-      onToggle: (value: boolean) => {
+      onValue: (value: boolean) => {
         context.setEmptyListEnabled(value);
       },
       testID: DebugOption.EmptyList,
     },
     {
-      name: "initialScrollIndex enabled",
-      value: context.initialScrollIndexEnabled,
-      onToggle: (value: boolean) => {
-        context.setInitialScrollIndexEnabled(value);
+      name: "initialScrollIndex",
+      type: DebugOptionType.Input,
+      value: context.initialScrollIndex,
+      onValue: (value: number) => {
+        context.setInitialScrollIndex(value);
       },
       testID: DebugOption.InitialScrollIndex,
     },
     {
       name: "Paging enabled",
+      type: DebugOptionType.Switch,
       value: context.pagingEnabled,
-      onToggle: (value: boolean) => {
+      onValue: (value: boolean) => {
         context.setPagingEnabled(value);
       },
       testID: DebugOption.PagingEnabled,

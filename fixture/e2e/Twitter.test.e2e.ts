@@ -108,6 +108,20 @@ describe("Twitter", () => {
 
     assertSnapshot(flashListScreenshotPath, testName);
   });
+
+  it("goes to Tweet detail after tweet cell is tapped", async () => {
+    const testName = "Twitter_goes_to_Tweet_detail_after_tweet_cell_is_tapped";
+    await element(by.id("Twitter Timeline")).tap();
+
+    // Tap on tweet
+    await element(by.text("Aram Miquel")).tap();
+
+    const tweetDetailScreenshotPath = await element(
+      by.id("TweetDetailScreen")
+    ).takeScreenshot(testName);
+
+    assertSnapshot(tweetDetailScreenshotPath, testName);
+  });
 });
 
 const scrollAndRotate = async (id: string) => {

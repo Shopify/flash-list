@@ -342,7 +342,7 @@ class FlashList<T> extends React.PureComponent<
       return (
         <View style={{ flex: 1 }}>
           {this.header()}
-          {this.props.ListEmptyComponent || null}
+          {this.getValidComponent(this.props.ListEmptyComponent)}
         </View>
       );
     }
@@ -498,11 +498,7 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
-  private itemContainer = (
-    props: any,
-    parentProps: any,
-    children?: React.ReactNode
-  ) => {
+  private itemContainer = (props: any, parentProps: any) => {
     return (
       <ItemContainer
         {...props}

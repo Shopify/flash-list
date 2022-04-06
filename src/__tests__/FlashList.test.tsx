@@ -1,12 +1,25 @@
 import React, { useEffect } from "react";
-import { ListRenderItem, ScrollView, Text } from "react-native";
+import { ListRenderItem, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount } from "@quilted/react-testing";
 import { ProgressiveListView } from "recyclerlistview";
 
-import FlashList from "../FlashList";
+import FlashList, { FlashListProps } from "../FlashList";
 import Warnings from "../errors/Warnings";
 import AutoLayoutView from "../AutoLayoutView";
+
+jest.mock("../FlashList", () => {
+  const ActualFlashList = jest.requireActual("../FlashList").default;
+  class MockFlashList extends ActualFlashList {
+    componentDidMount() {
+      super.componentDidMount();
+      this.rlvRef?._scrollComponent?._scrollViewRef?.props.onLayout({
+        nativeEvent: { layout: { height: 900, width: 400 } },
+      });
+    }
+  }
+  return MockFlashList;
+});
 
 export const mountFlashList = (props?: {
   horizontal?: boolean;
@@ -25,6 +38,7 @@ export const mountFlashList = (props?: {
     extraData?: any
   ) => void;
   estimatedItemSize?: number;
+  ListEmptyComponent?: FlashListProps<string>["ListEmptyComponent"];
 }) => {
   const flashList = mount(
     <FlashList
@@ -38,11 +52,9 @@ export const mountFlashList = (props?: {
       estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
       onLoad={props?.onLoad}
       overrideItemLayout={props?.overrideItemLayout}
+      ListEmptyComponent={props?.ListEmptyComponent}
     />
   );
-  flashList.find(ScrollView)?.trigger("onLayout", {
-    nativeEvent: { layout: { height: 900, width: 400 } },
-  });
   return flashList;
 };
 
@@ -189,6 +201,16 @@ describe("FlashList", () => {
     expect(onLoadMock).toHaveBeenCalledWith({
       elapsedTimeInMs: expect.any(Number),
     });
+  });
+  it("loads an empty state", () => {
+    const EmptyComponent = () => {
+      return <Text>Empty</Text>;
+    };
+    const flashList = mountFlashList({
+      data: [],
+      ListEmptyComponent: EmptyComponent,
+    });
+    expect(flashList).toContainReactComponent(EmptyComponent);
   });
   it("reports layout changes to the layout provider", () => {
     const flashList = mountFlashList();
