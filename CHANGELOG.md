@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix `FlashList` mock when no data is provided
+  - https://github.com/Shopify/flash-list/pull/295
+
 ## [0.4.2] - 2022-04-04
 
 - Reduce number of render item calls
