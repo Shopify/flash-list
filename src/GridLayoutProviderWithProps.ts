@@ -59,8 +59,11 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     this.props = props;
   }
 
-  // Calling this method will help the layout provider track average item sizes on its own
-  // Overriding layout manager can help achieve the same thing without relying on this method being called however, it will make implementation very complex for a simple use case
+  /**
+   * Calling this method will help the layout provider track average item sizes on its own
+   * Overriding layout manager can help achieve the same thing without relying on this method being called however, it will make implementation very complex for a simple use case
+   * @param index Index of the item being reported
+   */
   public reportItemLayout(index: number) {
     const layout = this.getLayoutManager()?.getLayouts()[index];
     if (layout) {
@@ -70,7 +73,6 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     }
   }
 
-  // API for future use cases and testing
   public get averageItemSize() {
     return this.averageWindow.currentValue;
   }

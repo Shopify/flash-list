@@ -1,14 +1,8 @@
 import { AverageWindow } from "../utils/AverageWindow";
 
-class AverageWindowTest extends AverageWindow {
-  public get storedValues(): (number | undefined)[] {
-    return super.getStoredValues();
-  }
-}
-
 describe("AverageWindow", () => {
   const fillAverageWindow = (
-    averageWindow: AverageWindowTest,
+    averageWindow: AverageWindow,
     from: number,
     to: number
   ) => {
@@ -19,8 +13,8 @@ describe("AverageWindow", () => {
   it("all input window values should be filled with correct values", () => {
     const commonValue = 50;
     const size = 100;
-    const averageWindow = new AverageWindowTest(size);
-    const inputValues = averageWindow.storedValues;
+    const averageWindow = new AverageWindow(size);
+    const inputValues = averageWindow["inputValues"];
 
     for (let i = 0; i < size; i++) {
       averageWindow.addValue(commonValue);
@@ -31,8 +25,8 @@ describe("AverageWindow", () => {
   it("computes correct average", () => {
     // We're gonna check if average from internal array matches the current average value
     const size = 100;
-    const averageWindow = new AverageWindowTest(size);
-    const inputValues = averageWindow.storedValues;
+    const averageWindow = new AverageWindow(size);
+    const inputValues = averageWindow["inputValues"];
     fillAverageWindow(averageWindow, 0, 200);
 
     // calculate average directly
@@ -54,7 +48,7 @@ describe("AverageWindow", () => {
   });
   it("should prioritize new values quickly", () => {
     const size = 30;
-    const averageWindow = new AverageWindowTest(size);
+    const averageWindow = new AverageWindow(size);
     fillAverageWindow(averageWindow, 0, 100);
     expect(averageWindow.currentValue).toBeGreaterThan(70);
 
@@ -63,12 +57,12 @@ describe("AverageWindow", () => {
   });
   it("reports initial average correctly", () => {
     const size = 30;
-    const averageWindow = new AverageWindowTest(size, 25);
+    const averageWindow = new AverageWindow(size, 25);
     expect(averageWindow.currentValue).toBe(25);
   });
   it("updates initial average correctly", () => {
     const size = 30;
-    const averageWindow = new AverageWindowTest(size, 10);
+    const averageWindow = new AverageWindow(size, 10);
     averageWindow.addValue(20);
     expect(averageWindow.currentValue).toBe(15);
   });

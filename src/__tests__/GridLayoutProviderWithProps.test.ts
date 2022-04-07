@@ -1,13 +1,13 @@
 import { ScrollView } from "react-native";
 import { ProgressiveListView } from "recyclerlistview";
-
-import { mountFlashList } from "./FlashList.test";
+import FlashList from "../FlashList";
+import { mountFlashList } from "./helpers/mountFlashList";
 
 describe("GridLayoutProviderWithProps", () => {
   it("updates average window on layout manager change", () => {
     const flashList = mountFlashList();
-    const oldAverageWindow =
-      flashList.instance.state.layoutProvider.averageWindow;
+    const oldAverageWindow = (flashList.instance as FlashList<any>).state
+      .layoutProvider["averageWindow"];
 
     // width change from default 400 to 600 will force layout manager to change
     flashList.find(ScrollView)?.trigger("onLayout", {
@@ -15,7 +15,7 @@ describe("GridLayoutProviderWithProps", () => {
     });
 
     const newAverageWindow =
-      flashList.instance.state.layoutProvider.averageWindow;
+      flashList.instance.state.layoutProvider["averageWindow"];
 
     expect(newAverageWindow).not.toBe(oldAverageWindow);
     flashList.unmount();
@@ -23,19 +23,19 @@ describe("GridLayoutProviderWithProps", () => {
   it("average window's size is two times the number of items that will fill the screen", () => {
     const flashList = mountFlashList({ numColumns: 2 });
     expect(
-      flashList.instance.state.layoutProvider.averageWindow.getStoredValues()
+      flashList.instance.state.layoutProvider["averageWindow"]["inputValues"]
         .length
     ).toBe(20);
     flashList.find(ScrollView)?.trigger("onLayout", {
       nativeEvent: { layout: { height: 2000, width: 600 } },
     });
     expect(
-      flashList.instance.state.layoutProvider.averageWindow.getStoredValues()
+      flashList.instance.state.layoutProvider["averageWindow"]["inputValues"]
         .length
     ).toBe(40);
     flashList.setProps({ numColumns: 1 });
     expect(
-      flashList.instance.state.layoutProvider.averageWindow.getStoredValues()
+      flashList.instance.state.layoutProvider["averageWindow"]["inputValues"]
         .length
     ).toBe(20);
     flashList.unmount();
@@ -46,7 +46,7 @@ describe("GridLayoutProviderWithProps", () => {
       nativeEvent: { layout: { height: 100, width: 100 } },
     });
     expect(
-      flashList.instance.state.layoutProvider.averageWindow.getStoredValues()
+      flashList.instance.state.layoutProvider["averageWindow"]["inputValues"]
         .length
     ).toBe(6);
     flashList.unmount();
@@ -56,7 +56,7 @@ describe("GridLayoutProviderWithProps", () => {
     const layoutProvider = flashList.instance.state.layoutProvider;
     const oldAverage = layoutProvider.averageItemSize;
 
-    layoutProvider.getLayoutManager().getLayouts()[0].width = 500;
+    layoutProvider.getLayoutManager()!.getLayouts()[0].width = 500;
     flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
 
     expect(oldAverage).toBe(layoutProvider.averageItemSize);
@@ -67,7 +67,7 @@ describe("GridLayoutProviderWithProps", () => {
     const layoutProvider = flashList.instance.state.layoutProvider;
     const oldAverage = layoutProvider.averageItemSize;
 
-    layoutProvider.getLayoutManager().getLayouts()[0].height = 600;
+    layoutProvider.getLayoutManager()!.getLayouts()[0].height = 600;
 
     // Can throw a no op set state warning. Should be handled in PLV.
     flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
@@ -80,7 +80,7 @@ describe("GridLayoutProviderWithProps", () => {
     const layoutProvider = flashList.instance.state.layoutProvider;
     expect(layoutProvider.averageItemSize).toBe(200);
 
-    const layouts = layoutProvider.getLayoutManager().getLayouts();
+    const layouts = layoutProvider.getLayoutManager()!.getLayouts();
     const progressiveListView = flashList.find(ProgressiveListView);
     layouts[0].height = 100;
     layouts[1].height = 200;

@@ -1,62 +1,11 @@
 import React, { useEffect } from "react";
-import { ListRenderItem, Text } from "react-native";
+import { Text } from "react-native";
 import "@quilted/react-testing/matchers";
-import { mount } from "@quilted/react-testing";
 import { ProgressiveListView } from "recyclerlistview";
 
-import FlashList, { FlashListProps } from "../FlashList";
 import Warnings from "../errors/Warnings";
 import AutoLayoutView from "../AutoLayoutView";
-
-jest.mock("../FlashList", () => {
-  const ActualFlashList = jest.requireActual("../FlashList").default;
-  class MockFlashList extends ActualFlashList {
-    componentDidMount() {
-      super.componentDidMount();
-      this.rlvRef?._scrollComponent?._scrollViewRef?.props.onLayout({
-        nativeEvent: { layout: { height: 900, width: 400 } },
-      });
-    }
-  }
-  return MockFlashList;
-});
-
-export const mountFlashList = (props?: {
-  horizontal?: boolean;
-  keyExtractor?: (item: string, index: number) => string;
-  initialScrollIndex?: number;
-  numColumns?: number;
-  estimatedFirstItemOffset?: number;
-  data?: string[];
-  renderItem?: ListRenderItem<string>;
-  onLoad?: (info: { elapsedTimeInMs: number }) => void;
-  overrideItemLayout?: (
-    layout: { span?: number; size?: number },
-    item: string,
-    index: number,
-    maxColumns: number,
-    extraData?: any
-  ) => void;
-  estimatedItemSize?: number;
-  ListEmptyComponent?: FlashListProps<string>["ListEmptyComponent"];
-}) => {
-  const flashList = mount(
-    <FlashList
-      horizontal={props?.horizontal}
-      keyExtractor={props?.keyExtractor}
-      renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
-      estimatedItemSize={props?.estimatedItemSize ?? 200}
-      data={props?.data || ["One", "Two", "Three", "Four"]}
-      initialScrollIndex={props?.initialScrollIndex}
-      numColumns={props?.numColumns}
-      estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
-      onLoad={props?.onLoad}
-      overrideItemLayout={props?.overrideItemLayout}
-      ListEmptyComponent={props?.ListEmptyComponent}
-    />
-  );
-  return flashList;
-};
+import { mountFlashList } from "./helpers/mountFlashList";
 
 describe("FlashList", () => {
   beforeEach(() => {
@@ -84,7 +33,7 @@ describe("FlashList", () => {
     });
     const warn = jest.spyOn(console, "warn").mockReturnValue();
     const prepareForLayoutAnimationRender = jest.spyOn(
-      flashList.instance.rlvRef,
+      flashList.instance!.recyclerlistview_unsafe!,
       "prepareForLayoutAnimationRender"
     );
     flashList.instance.prepareForLayoutAnimationRender();
@@ -96,7 +45,7 @@ describe("FlashList", () => {
     const flashList = mountFlashList();
     const warn = jest.spyOn(console, "warn").mockReturnValue();
     const prepareForLayoutAnimationRender = jest.spyOn(
-      flashList.instance.rlvRef,
+      flashList.instance!.recyclerlistview_unsafe!,
       "prepareForLayoutAnimationRender"
     );
     flashList.instance.prepareForLayoutAnimationRender();
@@ -107,24 +56,27 @@ describe("FlashList", () => {
   it("disables initial scroll correction on recyclerlistview if initialScrollIndex is in first row", () => {
     let flashList = mountFlashList({ initialScrollIndex: 0, numColumns: 3 });
     expect(
-      flashList.instance.getUpdatedWindowCorrectionConfig().applyToInitialOffset
+      flashList.instance["getUpdatedWindowCorrectionConfig"]()
+        .applyToInitialOffset
     ).toBe(false);
 
     flashList = mountFlashList({ initialScrollIndex: 3, numColumns: 3 });
     expect(
-      flashList.instance.getUpdatedWindowCorrectionConfig().applyToInitialOffset
+      flashList.instance["getUpdatedWindowCorrectionConfig"]()
+        .applyToInitialOffset
     ).toBe(true);
 
     flashList = mountFlashList({ initialScrollIndex: 2, numColumns: 3 });
     expect(
-      flashList.instance.getUpdatedWindowCorrectionConfig().applyToInitialOffset
+      flashList.instance["getUpdatedWindowCorrectionConfig"]()
+        .applyToInitialOffset
     ).toBe(false);
   });
 
   it("assigns distance from window to window correction object", () => {
     const flashList = mountFlashList({ estimatedFirstItemOffset: 100 });
     expect(
-      flashList.instance.getUpdatedWindowCorrectionConfig().value.windowShift
+      flashList.instance["getUpdatedWindowCorrectionConfig"]().value.windowShift
     ).toBe(-100);
   });
 
@@ -230,8 +182,9 @@ describe("FlashList", () => {
     });
     expect(flashList.instance.state.layoutProvider.averageItemSize).toBe(200);
     expect(
-      flashList.instance.state.layoutProvider.getLayoutManager().getLayouts()[0]
-        .height
+      flashList.instance.state
+        .layoutProvider!.getLayoutManager()!
+        .getLayouts()[0].height
     ).toBe(50);
   });
   it("should override span with overrideItemLayout", () => {

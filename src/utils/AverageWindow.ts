@@ -42,10 +42,6 @@ export class AverageWindow {
     this.currentCount = newCount;
   }
 
-  protected getStoredValues() {
-    return this.inputValues;
-  }
-
   private getNextIndex(): number {
     return this.totalItemsAdded++ % this.maxSize;
   }
