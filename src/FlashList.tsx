@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import {
   DataProvider,
+  Dimension,
+  Layout,
   ProgressiveListView,
   RecyclerListView,
   RecyclerListViewProps,
@@ -168,6 +170,8 @@ class FlashList<T> extends React.PureComponent<
     applyToInitialOffset: true,
   };
 
+  private viewabilityHelper: ViewabilityHelper | undefined;
+
   static defaultProps = {
     data: [],
     numColumns: 1,
@@ -187,6 +191,31 @@ class FlashList<T> extends React.PureComponent<
     this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
     // eslint-disable-next-line react/state-in-constructor
     this.state = FlashList.getInitialMutableState(this);
+    if (
+      this.props.onViewableItemsChanged !== null &&
+      this.props.onViewableItemsChanged !== undefined
+    ) {
+      this.viewabilityHelper = new ViewabilityHelper((indices) => {
+        this.props.onViewableItemsChanged?.({
+          viewableItems: indices
+            .map((index) => {
+              if (this.props?.data === null || this.props?.data === undefined) {
+                return null;
+              }
+              const item = this.props.data[index];
+              return {
+                index,
+                isViewable: true,
+                item: this.props.data[index],
+                key: this.props.keyExtractor?.(item, index) ?? "",
+                section: "",
+              };
+            })
+            .filter((element) => element !== null) as ViewToken[],
+          changed: [],
+        });
+      });
+    }
   }
 
   private validateProps() {
@@ -416,40 +445,38 @@ class FlashList<T> extends React.PureComponent<
           }
           initialOffset={initialOffset}
           onItemLayout={this.onItemLayout}
-          onVisibleIndicesChanged={(all, now, notNow) => {
-            if (
-              this.props?.data === null ||
-              this.props?.data === undefined ||
-              onViewableItemsChanged === null ||
-              onViewableItemsChanged === undefined
-            ) {
+          onScroll={() => {
+            this.updateViewableItems();
+          }}
+          onVisibleIndicesChanged={(all) => {
+            if (this.viewabilityHelper === undefined) {
               return;
             }
-            onViewableItemsChanged({
-              viewableItems: all
-                .map((index) => {
-                  if (
-                    this.props?.data === null ||
-                    this.props?.data === undefined
-                  ) {
-                    return null;
-                  }
-                  const item = this.props.data[index];
-                  return {
-                    index,
-                    isViewable: true,
-                    item: this.props.data[index],
-                    key: this.props.keyExtractor?.(item, index) ?? "",
-                    section: "",
-                  };
-                })
-                .filter((element) => element !== null) as ViewToken[],
-              changed: [],
-            });
+            this.viewabilityHelper.possiblyViewableIndices = all;
+            this.updateViewableItems();
           }}
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>
+    );
+  }
+
+  private updateViewableItems() {
+    const listSize = this.rlvRef?.getRenderedSize();
+    if (
+      this.rlvRef === null ||
+      this.rlvRef === undefined ||
+      listSize === undefined ||
+      this.rlvRef.getLayout === undefined
+    ) {
+      return;
+    }
+    this.viewabilityHelper?.updateViewableItems(
+      this.props.horizontal ?? false,
+      this.rlvRef?.getCurrentScrollOffset() || 0,
+      listSize,
+      this.props.viewabilityConfig?.viewAreaCoveragePercentThreshold ?? 0,
+      (index) => this.rlvRef?.getLayout(index)
     );
   }
 
@@ -819,6 +846,90 @@ class FlashList<T> extends React.PureComponent<
    */
   public get firstItemOffset() {
     return this.distanceFromWindow;
+  }
+}
+
+class ViewabilityHelper {
+  /**
+   * Viewable indices regardless of the viewability config
+   */
+  possiblyViewableIndices: number[] = [];
+
+  viewableIndices: number[] = [];
+
+  private viewableIndicesChanged: (indices: number[]) => void;
+  constructor(viewableIndicesChanged: (indices: number[]) => void) {
+    this.viewableIndicesChanged = viewableIndicesChanged;
+  }
+
+  updateViewableItems(
+    horizontal: boolean,
+    scrollOffset: number,
+    listSize: Dimension,
+    viewAreaCoveragePercentThreshold: number | null | undefined,
+    getLayout: (index: number) => Layout | undefined
+  ) {
+    const newViewableIndices = this.possiblyViewableIndices.filter((index) =>
+      this.isItemViewable(
+        index,
+        horizontal,
+        scrollOffset,
+        listSize,
+        viewAreaCoveragePercentThreshold,
+        getLayout
+      )
+    );
+
+    // These can be done faster (for inspiration, look at rlv)
+    const newlyVisibleItems = newViewableIndices.filter(
+      (index) => !this.viewableIndices.includes(index)
+    );
+    const newlyNonvisibleItems = this.viewableIndices.filter(
+      (index) => !newViewableIndices.includes(index)
+    );
+
+    if (newlyVisibleItems.length > 0 || newlyNonvisibleItems.length > 0) {
+      this.viewableIndices = newViewableIndices;
+      this.viewableIndicesChanged(newViewableIndices);
+    }
+  }
+
+  private isItemViewable(
+    index: number,
+    horizontal: boolean,
+    scrollOffset: number,
+    listSize: Dimension,
+    viewAreaCoveragePercentThreshold: number | null | undefined,
+    getLayout: (index: number) => Layout | undefined
+  ) {
+    // const offset = this.rlvRef?.getCurrentScrollOffset() || 0;
+    // const size = this.rlvRef!.getRenderedSize();
+    const itemLayout = getLayout(index);
+    if (itemLayout === undefined) {
+      return false;
+    }
+    let pixelsVisible = 0;
+    if (horizontal) {
+      // TODO: Implmement
+    } else {
+      const itemTop = itemLayout.y - scrollOffset;
+      pixelsVisible =
+        Math.min(itemTop + itemLayout.height, listSize.height) -
+        Math.max(itemTop, 0);
+      if (
+        viewAreaCoveragePercentThreshold !== null &&
+        viewAreaCoveragePercentThreshold !== undefined
+      ) {
+        return (
+          pixelsVisible / itemLayout.height >=
+          viewAreaCoveragePercentThreshold / 100
+        );
+      } else {
+        return pixelsVisible > 0;
+      }
+    }
+    // if (this.distanceFromWindow)
+    return true;
   }
 }
 
