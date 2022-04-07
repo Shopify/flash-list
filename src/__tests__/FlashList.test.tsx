@@ -5,6 +5,7 @@ import { ProgressiveListView } from "recyclerlistview";
 
 import Warnings from "../errors/Warnings";
 import AutoLayoutView from "../AutoLayoutView";
+
 import { mountFlashList } from "./helpers/mountFlashList";
 
 describe("FlashList", () => {
