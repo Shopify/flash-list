@@ -59,7 +59,7 @@ const Twitter = () => {
         viewabilityConfig={{
           // waitForInteraction: true,
           viewAreaCoveragePercentThreshold: 50,
-          minimumViewTime: 250,
+          minimumViewTime: 1000,
         }}
         onViewableItemsChanged={(info) => {
           console.log(info);

@@ -475,6 +475,7 @@ class FlashList<T> extends React.PureComponent<
       this.props.horizontal ?? false,
       this.rlvRef?.getCurrentScrollOffset() || 0,
       listSize,
+      this.props.viewabilityConfig?.minimumViewTime ?? 0,
       this.props.viewabilityConfig?.viewAreaCoveragePercentThreshold ?? 0,
       (index) => this.rlvRef?.getLayout(index)
     );
@@ -856,16 +857,24 @@ class ViewabilityHelper {
   possiblyViewableIndices: number[] = [];
 
   viewableIndices: number[] = [];
+  lastReportedViewableIndices: number[] = [];
 
   private viewableIndicesChanged: (indices: number[]) => void;
+  private timers: Set<NodeJS.Timeout> = new Set();
+
   constructor(viewableIndicesChanged: (indices: number[]) => void) {
     this.viewableIndicesChanged = viewableIndicesChanged;
+  }
+
+  dispose() {
+    // Clean up on dismount (clear timers)
   }
 
   updateViewableItems(
     horizontal: boolean,
     scrollOffset: number,
     listSize: Dimension,
+    minimumViewTime: number,
     viewAreaCoveragePercentThreshold: number | null | undefined,
     getLayout: (index: number) => Layout | undefined
   ) {
@@ -879,18 +888,34 @@ class ViewabilityHelper {
         getLayout
       )
     );
+    this.viewableIndices = newViewableIndices;
+    if (minimumViewTime > 0) {
+      const timeoutId = setTimeout(() => {
+        this.timers.delete(timeoutId);
+        this.checkViewableIndicesChanges(newViewableIndices);
+      }, minimumViewTime);
+      this.timers.add(timeoutId);
+    } else {
+      this.checkViewableIndicesChanges(newViewableIndices);
+    }
+  }
 
-    // These can be done faster (for inspiration, look at rlv)
-    const newlyVisibleItems = newViewableIndices.filter(
-      (index) => !this.viewableIndices.includes(index)
+  checkViewableIndicesChanges(newViewableIndices: number[]) {
+    // Check if all viewable indices are still available (applicable if minimumViewTime > 0)
+    const currentlyNewViewableIndices = newViewableIndices.filter((index) =>
+      this.viewableIndices.includes(index)
     );
-    const newlyNonvisibleItems = this.viewableIndices.filter(
-      (index) => !newViewableIndices.includes(index)
+    // These can be done faster (for inspiration, look at rlv)
+    const newlyVisibleItems = currentlyNewViewableIndices.filter(
+      (index) => !this.lastReportedViewableIndices.includes(index)
+    );
+    const newlyNonvisibleItems = this.lastReportedViewableIndices.filter(
+      (index) => !currentlyNewViewableIndices.includes(index)
     );
 
     if (newlyVisibleItems.length > 0 || newlyNonvisibleItems.length > 0) {
-      this.viewableIndices = newViewableIndices;
-      this.viewableIndicesChanged(newViewableIndices);
+      this.lastReportedViewableIndices = currentlyNewViewableIndices;
+      this.viewableIndicesChanged(currentlyNewViewableIndices);
     }
   }
 
@@ -902,8 +927,6 @@ class ViewabilityHelper {
     viewAreaCoveragePercentThreshold: number | null | undefined,
     getLayout: (index: number) => Layout | undefined
   ) {
-    // const offset = this.rlvRef?.getCurrentScrollOffset() || 0;
-    // const size = this.rlvRef!.getRenderedSize();
     const itemLayout = getLayout(index);
     if (itemLayout === undefined) {
       return false;
