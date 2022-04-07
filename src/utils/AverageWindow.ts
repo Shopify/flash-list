@@ -2,14 +2,12 @@
  * Helper class to calculate running average of the most recent n values
  */
 export class AverageWindow {
-  private maxSize: number;
   private currentAverage: number;
   private currentCount: number;
   private inputValues: (number | undefined)[];
   private totalItemsAdded: number = 0;
   constructor(size: number, startValue?: number) {
-    this.maxSize = Math.max(1, size);
-    this.inputValues = new Array<number>(this.maxSize);
+    this.inputValues = new Array<number>(Math.max(1, size));
     this.currentAverage = startValue ?? 0;
     this.currentCount = startValue === undefined ? 0 : 1;
     this.totalItemsAdded = this.currentCount;
@@ -43,6 +41,7 @@ export class AverageWindow {
   }
 
   private getNextIndex(): number {
-    return this.totalItemsAdded++ % this.maxSize;
+    // starts from 0 once we reach end of the array
+    return this.totalItemsAdded++ % this.inputValues.length;
   }
 }
