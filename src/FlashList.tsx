@@ -195,26 +195,32 @@ class FlashList<T> extends React.PureComponent<
       this.props.onViewableItemsChanged !== null &&
       this.props.onViewableItemsChanged !== undefined
     ) {
-      this.viewabilityHelper = new ViewabilityHelper((indices) => {
-        this.props.onViewableItemsChanged?.({
-          viewableItems: indices
-            .map((index) => {
-              if (this.props?.data === null || this.props?.data === undefined) {
-                return null;
-              }
-              const item = this.props.data[index];
-              return {
-                index,
-                isViewable: true,
-                item: this.props.data[index],
-                key: this.props.keyExtractor?.(item, index) ?? "",
-                section: "",
-              };
-            })
-            .filter((element) => element !== null) as ViewToken[],
-          changed: [],
-        });
-      });
+      const mapViewToken = (index: number, isViewable: boolean) => {
+        const item = this.props.data?.[index];
+        const key =
+          item === undefined || this.props.keyExtractor === undefined
+            ? index.toString()
+            : this.props.keyExtractor(item, index);
+        return {
+          index,
+          isViewable,
+          item: this.props.data?.[index],
+          key,
+        } as ViewToken;
+      };
+      this.viewabilityHelper = new ViewabilityHelper(
+        (indices, newlyVisibleIndices, newlyNonvisibleIndices) => {
+          this.props.onViewableItemsChanged?.({
+            viewableItems: indices.map((index) => mapViewToken(index, true)),
+            changed: [
+              ...newlyVisibleIndices.map((index) => mapViewToken(index, true)),
+              ...newlyNonvisibleIndices.map((index) =>
+                mapViewToken(index, false)
+              ),
+            ],
+          });
+        }
+      );
     }
   }
 
@@ -859,10 +865,21 @@ class ViewabilityHelper {
   viewableIndices: number[] = [];
   lastReportedViewableIndices: number[] = [];
 
-  private viewableIndicesChanged: (indices: number[]) => void;
+  private viewableIndicesChanged: (
+    indices: number[],
+    newlyVisibleIndicies: number[],
+    newlyNonvisibleIndices: number[]
+  ) => void;
+
   private timers: Set<NodeJS.Timeout> = new Set();
 
-  constructor(viewableIndicesChanged: (indices: number[]) => void) {
+  constructor(
+    viewableIndicesChanged: (
+      indices: number[],
+      newlyVisibleIndicies: number[],
+      newlyNonvisibleIndices: number[]
+    ) => void
+  ) {
     this.viewableIndicesChanged = viewableIndicesChanged;
   }
 
@@ -915,7 +932,23 @@ class ViewabilityHelper {
 
     if (newlyVisibleItems.length > 0 || newlyNonvisibleItems.length > 0) {
       this.lastReportedViewableIndices = currentlyNewViewableIndices;
-      this.viewableIndicesChanged(currentlyNewViewableIndices);
+      this.viewableIndicesChanged(
+        currentlyNewViewableIndices,
+        newlyVisibleItems,
+        newlyNonvisibleItems
+      );
+      // requestIdleCallback currently does not work on iOS
+      // https://github.com/facebook/react-native/issues/28602
+      // if (Platform.OS === "ios") {
+      //   this.viewableIndicesChanged(currentlyNewViewableIndices);
+      // } else {
+      //   requestIdleCallback(
+      //     () => {
+      //       this.viewableIndicesChanged(currentlyNewViewableIndices);
+      //     },
+      //     { timeout: 1000 }
+      //   );
+      // }
     }
   }
 
@@ -951,7 +984,6 @@ class ViewabilityHelper {
         return pixelsVisible > 0;
       }
     }
-    // if (this.distanceFromWindow)
     return true;
   }
 }
