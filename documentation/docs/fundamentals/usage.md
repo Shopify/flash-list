@@ -335,7 +335,7 @@ overrideItemLayout?: (
 This method can be used to provide explicit size estimates or change column span of an item.
 
 Providing specific estimates is a good idea when you can calculate sizes reliably. FlashList will prefer this value over `estimatedItemSize` for that specific item.
-Precise estimates will also improve precision of `scrollToIndex` method and `initialScrollIndex` prop. If you have a `separator` below your items you can include its size in the estimate.
+Precise estimates will also improve precision of `scrollToIndex` method and `initialScrollIndex` prop. If you have a `separator` below your items, you can include its size in the estimate.
 
 Changing item span is useful when you have grid layouts (numColumns > 1) and you want few items to be bigger than the rest.
 
