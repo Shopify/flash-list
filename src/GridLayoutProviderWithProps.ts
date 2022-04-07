@@ -81,14 +81,17 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     cachedLayouts?: Layout[]
   ): LayoutManager {
     // Average window is updated whenever a new layout manager is created. This is because old values are not relevant anymore.
-    const estimatedItemCount = Math.round(
-      (this.props.horizontal
-        ? renderWindowSize.width
-        : renderWindowSize.height) / this.props.estimatedItemSize
+    const estimatedItemCount = Math.max(
+      3,
+      Math.round(
+        (this.props.horizontal
+          ? renderWindowSize.width
+          : renderWindowSize.height) / this.props.estimatedItemSize
+      )
     );
     this.averageWindow = new AverageWindow(
       2 * (this.props.numColumns || 1) * estimatedItemCount,
-      this.props.estimatedItemSize
+      this.averageWindow.currentValue
     );
 
     // Cached layouts lead to some visible resizing on orientation change when Grid Layout Provider is used. Ignoring caches.

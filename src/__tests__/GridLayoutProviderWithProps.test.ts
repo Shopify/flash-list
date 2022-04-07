@@ -40,6 +40,17 @@ describe("GridLayoutProviderWithProps", () => {
     ).toBe(20);
     flashList.unmount();
   });
+  it("average window should not be less than 6 in size", () => {
+    const flashList = mountFlashList();
+    flashList.find(ScrollView)?.trigger("onLayout", {
+      nativeEvent: { layout: { height: 100, width: 100 } },
+    });
+    expect(
+      flashList.instance.state.layoutProvider.averageWindow.getStoredValues()
+        .length
+    ).toBe(6);
+    flashList.unmount();
+  });
   it("vertical list: average should not update when widths change", () => {
     const flashList = mountFlashList();
     const layoutProvider = flashList.instance.state.layoutProvider;
