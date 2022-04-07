@@ -1,5 +1,5 @@
 /**
- * Helper class to calculate running average of most recent n values
+ * Helper class to calculate running average of the most recent n values
  */
 export class AverageWindow {
   private maxSize: number;
