@@ -339,7 +339,7 @@ Precise estimates will also improve precision of `scrollToIndex` method and `ini
 
 Changing item span is useful when you have grid layouts (numColumns > 1) and you want few items to be bigger than the rest.
 
-Modify the given layout. Do not return. FlashList will fallback to default values if this is ignored.
+Modify the given layout. Do not return any value from the method. FlashList will fallback to default values if this is ignored.
 
 :::warning Performance
 This method is called very frequently. Keep it fast.
