@@ -1,6 +1,10 @@
 import { ViewabilityConfig } from "react-native";
 import { Dimension, Layout } from "recyclerlistview";
 
+/**
+ * Helper class for computing viewable items based on the passed `viewabilityConfig`.
+ * Note methods in this class will be invoked on every scroll and should be optimized for performance.
+ */
 class ViewabilityHelper {
   /**
    * Viewable indices regardless of the viewability config
@@ -12,6 +16,7 @@ class ViewabilityHelper {
   private viewableIndices: number[] = [];
   private lastReportedViewableIndices: number[] = [];
 
+  private viewabilityConfig: ViewabilityConfig | null | undefined;
   private viewableIndicesChanged: (
     indices: number[],
     newlyVisibleIndicies: number[],
@@ -21,12 +26,14 @@ class ViewabilityHelper {
   private timers: Set<NodeJS.Timeout> = new Set();
 
   constructor(
+    viewabilityConfig: ViewabilityConfig | null | undefined,
     viewableIndicesChanged: (
       indices: number[],
       newlyVisibleIndicies: number[],
       newlyNonvisibleIndices: number[]
     ) => void
   ) {
+    this.viewabilityConfig = viewabilityConfig;
     this.viewableIndicesChanged = viewableIndicesChanged;
   }
 
@@ -39,11 +46,10 @@ class ViewabilityHelper {
     horizontal: boolean,
     scrollOffset: number,
     listSize: Dimension,
-    viewabilityConfig: ViewabilityConfig | null | undefined,
     getLayout: (index: number) => Layout | undefined
   ) {
     if (
-      (viewabilityConfig?.waitForInteraction ?? false) &&
+      (this.viewabilityConfig?.waitForInteraction ?? false) &&
       !this.hasInteracted
     ) {
       return;
@@ -54,18 +60,18 @@ class ViewabilityHelper {
         horizontal,
         scrollOffset,
         listSize,
-        viewabilityConfig?.viewAreaCoveragePercentThreshold,
-        viewabilityConfig?.itemVisiblePercentThreshold,
+        this.viewabilityConfig?.viewAreaCoveragePercentThreshold,
+        this.viewabilityConfig?.itemVisiblePercentThreshold,
         getLayout
       )
     );
     this.viewableIndices = newViewableIndices;
-    if ((viewabilityConfig?.minimumViewTime ?? 0) > 0) {
+    if ((this.viewabilityConfig?.minimumViewTime ?? 0) > 0) {
       const timeoutId = setTimeout(() => {
         this.timers.delete(timeoutId);
         this.checkViewableIndicesChanges(newViewableIndices);
         this.timers.add(timeoutId);
-      }, viewabilityConfig?.minimumViewTime);
+      }, this.viewabilityConfig?.minimumViewTime);
     } else {
       this.checkViewableIndicesChanges(newViewableIndices);
     }

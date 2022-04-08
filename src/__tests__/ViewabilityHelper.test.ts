@@ -5,13 +5,15 @@ import ViewabilityHelper from "../ViewabilityHelper";
 
 describe("ViewabilityHelper", () => {
   const viewableIndicesChanged = jest.fn();
-  let viewabilityHelper: ViewabilityHelper;
   beforeEach(() => {
     jest.resetAllMocks();
-    viewabilityHelper = new ViewabilityHelper(viewableIndicesChanged);
   });
 
   it("does not report any changes when indices have not changed", () => {
+    const viewabilityHelper = new ViewabilityHelper(
+      null,
+      viewableIndicesChanged
+    );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2];
     updateViewableItems({ viewabilityHelper });
     // Initial call
@@ -28,6 +30,10 @@ describe("ViewabilityHelper", () => {
   });
 
   it("reports only viewable indices", () => {
+    const viewabilityHelper = new ViewabilityHelper(
+      null,
+      viewableIndicesChanged
+    );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
     updateViewableItems({ viewabilityHelper });
     expect(viewableIndicesChanged).toHaveBeenCalledWith(
@@ -44,6 +50,10 @@ describe("ViewabilityHelper", () => {
   });
 
   it("reports only viewable indices when horizontal", () => {
+    const viewabilityHelper = new ViewabilityHelper(
+      null,
+      viewableIndicesChanged
+    );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
     const getLayout = (index: number) => {
       return { x: index * 100, y: 0, height: 300, width: 100 } as Layout;
@@ -73,10 +83,13 @@ describe("ViewabilityHelper", () => {
   });
 
   it("reports items that only satisfy itemVisiblePercentThreshold", () => {
+    const viewabilityHelper = new ViewabilityHelper(
+      { itemVisiblePercentThreshold: 0.5 },
+      viewableIndicesChanged
+    );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
     updateViewableItems({
       viewabilityHelper,
-      viewabilityConfig: { itemVisiblePercentThreshold: 0.5 },
     });
     expect(viewableIndicesChanged).toHaveBeenCalledWith(
       [0, 1, 2],
@@ -89,7 +102,6 @@ describe("ViewabilityHelper", () => {
     updateViewableItems({
       viewabilityHelper,
       scrollOffset: 50,
-      viewabilityConfig: { itemVisiblePercentThreshold: 0.5 },
     });
     expect(viewableIndicesChanged).toHaveBeenCalledWith([0, 1, 2, 3], [3], []);
     viewableIndicesChanged.mockReset();
@@ -98,7 +110,6 @@ describe("ViewabilityHelper", () => {
     updateViewableItems({
       viewabilityHelper,
       scrollOffset: 55,
-      viewabilityConfig: { itemVisiblePercentThreshold: 0.5 },
     });
     expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3], [], [0]);
   });
@@ -110,13 +121,13 @@ describe("ViewabilityHelper", () => {
       }
       return { x: 0, y: index * 100, height: 100, width: 300 } as Layout;
     };
-    const viewabilityConfig: ViewabilityConfig = {
-      viewAreaCoveragePercentThreshold: 0.25,
-    };
+    const viewabilityHelper = new ViewabilityHelper(
+      { viewAreaCoveragePercentThreshold: 0.25 },
+      viewableIndicesChanged
+    );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
     updateViewableItems({
       viewabilityHelper,
-      viewabilityConfig,
       getLayout,
     });
     expect(viewableIndicesChanged).toHaveBeenCalledWith(
@@ -132,7 +143,6 @@ describe("ViewabilityHelper", () => {
     updateViewableItems({
       viewabilityHelper,
       scrollOffset: 75,
-      viewabilityConfig,
       getLayout,
     });
     expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3], [3], [0]);
@@ -143,7 +153,6 @@ describe("ViewabilityHelper", () => {
     updateViewableItems({
       viewabilityHelper,
       scrollOffset: 110,
-      viewabilityConfig,
       getLayout,
     });
     expect(viewableIndicesChanged).not.toHaveBeenCalled();
@@ -153,25 +162,25 @@ describe("ViewabilityHelper", () => {
     updateViewableItems({
       viewabilityHelper,
       scrollOffset: 125,
-      viewabilityConfig,
       getLayout,
     });
     expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3, 4], [4], []);
   });
 
   it("reposts viewable items only after interaction if waitForInteraction is set to true", () => {
+    const viewabilityHelper = new ViewabilityHelper(
+      { waitForInteraction: true },
+      viewableIndicesChanged
+    );
     // Even when elements are visible, viewableIndicesChanged will not be called since interaction has not been recorded, yet
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
-    const viewabilityConfig: ViewabilityConfig = { waitForInteraction: true };
     updateViewableItems({
       viewabilityHelper,
-      viewabilityConfig,
     });
     // View is scrolled but programatically - not resulting in an interaction
     updateViewableItems({
       viewabilityHelper,
       scrollOffset: 50,
-      viewabilityConfig,
     });
     expect(viewableIndicesChanged).not.toHaveBeenCalled();
 
@@ -180,7 +189,6 @@ describe("ViewabilityHelper", () => {
     updateViewableItems({
       viewabilityHelper,
       scrollOffset: 50,
-      viewabilityConfig,
     });
     expect(viewableIndicesChanged).toHaveBeenCalledWith(
       [0, 1, 2, 3],
@@ -194,21 +202,18 @@ describe("ViewabilityHelper", () => {
     horizontal,
     scrollOffset,
     listSize,
-    viewabilityConfig,
     getLayout,
   }: {
     viewabilityHelper: ViewabilityHelper;
     horizontal?: boolean;
     scrollOffset?: number;
     listSize?: Dimension;
-    viewabilityConfig?: ViewabilityConfig;
     getLayout?: (index: number) => Layout | undefined;
   }) => {
     viewabilityHelper.updateViewableItems(
       horizontal ?? false,
       scrollOffset ?? 0,
       listSize ?? { height: 300, width: 300 },
-      viewabilityConfig,
       getLayout ??
         ((index) => {
           return { x: 0, y: index * 100, height: 100, width: 300 } as Layout;
