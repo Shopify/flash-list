@@ -1,3 +1,4 @@
+import { ViewabilityConfig } from "react-native";
 import { Dimension, Layout } from "recyclerlistview";
 
 class ViewabilityHelper {
@@ -6,9 +7,6 @@ class ViewabilityHelper {
    */
   possiblyViewableIndices: number[] = [];
 
-  /**
-   * Indicates whether view has been interacted with.
-   */
   hasInteracted: boolean = false;
 
   private viewableIndices: number[] = [];
@@ -40,12 +38,13 @@ class ViewabilityHelper {
     horizontal: boolean,
     scrollOffset: number,
     listSize: Dimension,
-    waitForInteraction: boolean,
-    minimumViewTime: number,
-    viewAreaCoveragePercentThreshold: number | null | undefined,
+    viewabilityConfig: ViewabilityConfig | null | undefined,
     getLayout: (index: number) => Layout | undefined
   ) {
-    if (waitForInteraction && !this.hasInteracted) {
+    if (
+      (viewabilityConfig?.waitForInteraction ?? false) &&
+      !this.hasInteracted
+    ) {
       return;
     }
     const newViewableIndices = this.possiblyViewableIndices.filter((index) =>
@@ -54,17 +53,18 @@ class ViewabilityHelper {
         horizontal,
         scrollOffset,
         listSize,
-        viewAreaCoveragePercentThreshold,
+        viewabilityConfig?.viewAreaCoveragePercentThreshold,
+        viewabilityConfig?.itemVisiblePercentThreshold,
         getLayout
       )
     );
     this.viewableIndices = newViewableIndices;
-    if (minimumViewTime > 0) {
+    if ((viewabilityConfig?.minimumViewTime ?? 0) > 0) {
       const timeoutId = setTimeout(() => {
         this.timers.delete(timeoutId);
         this.checkViewableIndicesChanges(newViewableIndices);
-      }, minimumViewTime);
-      this.timers.add(timeoutId);
+        this.timers.add(timeoutId);
+      }, viewabilityConfig?.minimumViewTime);
     } else {
       this.checkViewableIndicesChanges(newViewableIndices);
     }
@@ -111,6 +111,7 @@ class ViewabilityHelper {
     scrollOffset: number,
     listSize: Dimension,
     viewAreaCoveragePercentThreshold: number | null | undefined,
+    itemVisiblePercentThreshold: number | null | undefined,
     getLayout: (index: number) => Layout | undefined
   ) {
     const itemLayout = getLayout(index);
@@ -125,17 +126,24 @@ class ViewabilityHelper {
       pixelsVisible =
         Math.min(itemTop + itemLayout.height, listSize.height) -
         Math.max(itemTop, 0);
-      if (
-        viewAreaCoveragePercentThreshold !== null &&
-        viewAreaCoveragePercentThreshold !== undefined
-      ) {
-        return (
-          pixelsVisible / itemLayout.height >=
-          viewAreaCoveragePercentThreshold / 100
-        );
-      } else {
-        return pixelsVisible > 0;
+      // Always consider item fully viewable if it is fully visible, regardless of the `viewAreaCoveragePercentThreshold`
+      if (pixelsVisible === itemLayout.height) {
+        return true;
       }
+      if (pixelsVisible === 0) {
+        return false;
+      }
+      const viewAreaMode =
+        viewAreaCoveragePercentThreshold !== null &&
+        viewAreaCoveragePercentThreshold !== undefined;
+      const percent = viewAreaMode
+        ? pixelsVisible / listSize.height
+        : pixelsVisible / itemLayout.height;
+      const viewableAreaPercentThreshold = viewAreaMode
+        ? viewAreaCoveragePercentThreshold
+        : itemVisiblePercentThreshold;
+      console.log(percent);
+      return percent >= (viewableAreaPercentThreshold ?? 0);
     }
     return true;
   }

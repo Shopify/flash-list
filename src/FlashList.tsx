@@ -451,9 +451,7 @@ class FlashList<T> extends React.PureComponent<
           }
           initialOffset={initialOffset}
           onItemLayout={this.onItemLayout}
-          onScroll={() => {
-            this.updateViewableItems();
-          }}
+          onScroll={this.updateViewableItems}
           onVisibleIndicesChanged={(all) => {
             if (this.viewabilityHelper === undefined) {
               return;
@@ -481,10 +479,8 @@ class FlashList<T> extends React.PureComponent<
       this.props.horizontal ?? false,
       this.rlvRef?.getCurrentScrollOffset() || 0,
       listSize,
-      this.props.viewabilityConfig?.waitForInteraction ?? false,
-      this.props.viewabilityConfig?.minimumViewTime ?? 0,
-      this.props.viewabilityConfig?.viewAreaCoveragePercentThreshold ?? 0,
-      (index) => this.rlvRef?.getLayout(index)
+      this.props.viewabilityConfig,
+      (index: number) => this.rlvRef?.getLayout(index)
     );
   }
 
