@@ -71,8 +71,15 @@ export interface FlashListProps<T> extends FlatListProps<T> {
   ) => string | number | undefined;
 
   /**
-   * with numColumns > 1 you can choose to increase span of some of the items. You can also modify estimated height for some items.
-   * Modify the given layout. Do not return.
+   * This method can be used to provide explicit size estimates or change column span of an item.
+   *
+   * Providing specific estimates is a good idea when you can calculate sizes reliably. FlashList will prefer this value over `estimatedItemSize` for that specific item.
+   * Precise estimates will also improve precision of `scrollToIndex` method and `initialScrollIndex` prop. If you have a `separator` below your items you can include its size in the estimate.
+   *
+   * Changing item span is useful when you have grid layouts (numColumns > 1) and you want few items to be bigger than the rest.
+   *
+   * Modify the given layout. Do not return. FlashList will fallback to default values if this is ignored.
+   *
    * Performance: This method is called very frequently. Keep it fast.
    */
   overrideItemLayout?: (
@@ -118,7 +125,7 @@ export interface FlashListProps<T> extends FlatListProps<T> {
 export interface FlashListState<T> {
   dataProvider: DataProvider;
   numColumns: number;
-  layoutProvider: GridLayoutProviderWithProps<FlashListProps<T>>;
+  layoutProvider: GridLayoutProviderWithProps<T>;
   data?: ReadonlyArray<T> | null;
   extraData?: ExtraData<unknown>;
 }
@@ -269,7 +276,7 @@ class FlashList<T> extends React.PureComponent<
     numColumns: number,
     props: FlashListProps<T>
   ) {
-    return new GridLayoutProviderWithProps<FlashListProps<T>>(
+    return new GridLayoutProviderWithProps<T>(
       // max span or, total columns
       numColumns,
       (index, props) => {
@@ -290,7 +297,7 @@ class FlashList<T> extends React.PureComponent<
           numColumns,
           props.extraData
         );
-        return mutableLayout?.span || 1;
+        return mutableLayout?.span ?? 1;
       },
       (index, props, mutableLayout) => {
         // estimated size of the item an given index
@@ -301,7 +308,7 @@ class FlashList<T> extends React.PureComponent<
           numColumns,
           props.extraData
         );
-        return mutableLayout?.size || props.estimatedItemSize;
+        return mutableLayout?.size;
       },
       props
     );
@@ -406,7 +413,7 @@ class FlashList<T> extends React.PureComponent<
             undefined
           }
           initialOffset={initialOffset}
-          onItemLayout={this.raiseOnLoadEventIfNeeded}
+          onItemLayout={this.onItemLayout}
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>
@@ -697,6 +704,12 @@ class FlashList<T> extends React.PureComponent<
     const currentOffset = this.rlvRef?.getCurrentScrollOffset() || 0;
     return currentOffset >= this.distanceFromWindow;
   }
+
+  private onItemLayout = (index: number) => {
+    // Informing the layout provider about change to an item's layout. It already knows the dimensions so there's not need to pass them.
+    this.state.layoutProvider.reportItemLayout(index);
+    this.raiseOnLoadEventIfNeeded();
+  };
 
   private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
