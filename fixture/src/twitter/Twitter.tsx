@@ -57,7 +57,7 @@ const Twitter = () => {
         data={tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
         viewabilityConfig={{
-          // waitForInteraction: true,
+          waitForInteraction: true,
           viewAreaCoveragePercentThreshold: 50,
           minimumViewTime: 1000,
         }}

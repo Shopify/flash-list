@@ -420,6 +420,7 @@ class FlashList<T> extends React.PureComponent<
           canChangeSize
           isHorizontal={Boolean(horizontal)}
           scrollViewProps={{
+            onScrollBeginDrag: this.recordInteraction,
             onLayout: this.handleSizeChange,
             refreshControl:
               this.props.refreshControl || this.getRefreshControl(),
@@ -481,6 +482,7 @@ class FlashList<T> extends React.PureComponent<
       this.props.horizontal ?? false,
       this.rlvRef?.getCurrentScrollOffset() || 0,
       listSize,
+      this.props.viewabilityConfig?.waitForInteraction ?? false,
       this.props.viewabilityConfig?.minimumViewTime ?? 0,
       this.props.viewabilityConfig?.viewAreaCoveragePercentThreshold ?? 0,
       (index) => this.rlvRef?.getLayout(index)
@@ -854,6 +856,17 @@ class FlashList<T> extends React.PureComponent<
   public get firstItemOffset() {
     return this.distanceFromWindow;
   }
+
+  /**
+   * Tells the list an interaction has occurred, which should trigger viewability calculations, e.g. if waitForInteractions is true and the user has not scrolled.
+   * This is typically called by taps on items or by navigation actions.
+   */
+  public recordInteraction = () => {
+    if (this.viewabilityHelper === undefined) {
+      return;
+    }
+    this.viewabilityHelper.hasInteracted = true;
+  };
 }
 
 class ViewabilityHelper {
@@ -862,8 +875,10 @@ class ViewabilityHelper {
    */
   possiblyViewableIndices: number[] = [];
 
-  viewableIndices: number[] = [];
-  lastReportedViewableIndices: number[] = [];
+  hasInteracted: boolean = false;
+
+  private viewableIndices: number[] = [];
+  private lastReportedViewableIndices: number[] = [];
 
   private viewableIndicesChanged: (
     indices: number[],
@@ -891,10 +906,14 @@ class ViewabilityHelper {
     horizontal: boolean,
     scrollOffset: number,
     listSize: Dimension,
+    waitForInteraction: boolean,
     minimumViewTime: number,
     viewAreaCoveragePercentThreshold: number | null | undefined,
     getLayout: (index: number) => Layout | undefined
   ) {
+    if (waitForInteraction && !this.hasInteracted) {
+      return;
+    }
     const newViewableIndices = this.possiblyViewableIndices.filter((index) =>
       this.isItemViewable(
         index,
