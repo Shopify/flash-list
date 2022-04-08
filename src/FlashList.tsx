@@ -372,6 +372,10 @@ class FlashList<T> extends React.PureComponent<
     }
   }
 
+  componentWillUnmount() {
+    this.viewabilityHelper?.dispose();
+  }
+
   render() {
     if (this.state.dataProvider.getSize() === 0) {
       return (

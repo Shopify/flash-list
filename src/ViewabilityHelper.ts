@@ -31,7 +31,8 @@ class ViewabilityHelper {
   }
 
   dispose() {
-    // Clean up on dismount (clear timers)
+    // Clean up on dismount
+    this.timers.forEach(clearTimeout);
   }
 
   updateViewableItems(
@@ -90,18 +91,6 @@ class ViewabilityHelper {
         newlyVisibleItems,
         newlyNonvisibleItems
       );
-      // requestIdleCallback currently does not work on iOS
-      // https://github.com/facebook/react-native/issues/28602
-      // if (Platform.OS === "ios") {
-      //   this.viewableIndicesChanged(currentlyNewViewableIndices);
-      // } else {
-      //   requestIdleCallback(
-      //     () => {
-      //       this.viewableIndicesChanged(currentlyNewViewableIndices);
-      //     },
-      //     { timeout: 1000 }
-      //   );
-      // }
     }
   }
 
