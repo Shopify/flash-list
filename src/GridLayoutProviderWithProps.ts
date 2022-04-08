@@ -67,6 +67,9 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
   public reportItemLayout(index: number) {
     const layout = this.getLayoutManager()?.getLayouts()[index];
     if (layout) {
+      // For the same index we can now return different estimates because average is updated in realtime
+      // Marking the layout as overriden will help layout manager avoid using the average after initial measurement
+      layout.isOverridden = true;
       this.averageWindow.addValue(
         this.props.horizontal ? layout.width : layout.height
       );
