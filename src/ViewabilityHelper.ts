@@ -118,34 +118,31 @@ class ViewabilityHelper {
     if (itemLayout === undefined) {
       return false;
     }
-    let pixelsVisible = 0;
-    if (horizontal) {
-      // TODO: Implmement
-    } else {
-      const itemTop = itemLayout.y - scrollOffset;
-      pixelsVisible =
-        Math.min(itemTop + itemLayout.height, listSize.height) -
-        Math.max(itemTop, 0);
-      // Always consider item fully viewable if it is fully visible, regardless of the `viewAreaCoveragePercentThreshold`
-      if (pixelsVisible === itemLayout.height) {
-        return true;
-      }
-      if (pixelsVisible === 0) {
-        return false;
-      }
-      const viewAreaMode =
-        viewAreaCoveragePercentThreshold !== null &&
-        viewAreaCoveragePercentThreshold !== undefined;
-      const percent = viewAreaMode
-        ? pixelsVisible / listSize.height
-        : pixelsVisible / itemLayout.height;
-      const viewableAreaPercentThreshold = viewAreaMode
-        ? viewAreaCoveragePercentThreshold
-        : itemVisiblePercentThreshold;
-      console.log(percent);
-      return percent >= (viewableAreaPercentThreshold ?? 0);
+    const itemTop = (horizontal ? itemLayout.x : itemLayout.y) - scrollOffset;
+    const itemSize = horizontal ? itemLayout.width : itemLayout.height;
+    const listMainSize = horizontal ? listSize.width : listSize.height;
+    const pixelsVisible =
+      Math.min(itemTop + itemSize, listMainSize) - Math.max(itemTop, 0);
+
+    // Always consider item fully viewable if it is fully visible, regardless of the `viewAreaCoveragePercentThreshold`
+    if (pixelsVisible === itemSize) {
+      return true;
     }
-    return true;
+    // Skip checking item if it's not visible at all
+    if (pixelsVisible === 0) {
+      return false;
+    }
+    const viewAreaMode =
+      viewAreaCoveragePercentThreshold !== null &&
+      viewAreaCoveragePercentThreshold !== undefined;
+    const percent = viewAreaMode
+      ? pixelsVisible / listMainSize
+      : pixelsVisible / itemSize;
+    const viewableAreaPercentThreshold = viewAreaMode
+      ? viewAreaCoveragePercentThreshold
+      : itemVisiblePercentThreshold;
+
+    return percent >= (viewableAreaPercentThreshold ?? 0);
   }
 }
 

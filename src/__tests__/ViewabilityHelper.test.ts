@@ -35,6 +35,41 @@ describe("ViewabilityHelper", () => {
       [0, 1, 2],
       []
     );
+
+    updateViewableItems({ viewabilityHelper, scrollOffset: 50 });
+    expect(viewableIndicesChanged).toHaveBeenCalledWith([0, 1, 2, 3], [3], []);
+
+    updateViewableItems({ viewabilityHelper, scrollOffset: 100 });
+    expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3], [], [0]);
+  });
+
+  it("reports only viewable indices when horizontal", () => {
+    viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
+    const getLayout = (index: number) => {
+      return { x: index * 100, y: 0, height: 300, width: 100 } as Layout;
+    };
+    updateViewableItems({ viewabilityHelper, horizontal: true, getLayout });
+    expect(viewableIndicesChanged).toHaveBeenCalledWith(
+      [0, 1, 2],
+      [0, 1, 2],
+      []
+    );
+
+    updateViewableItems({
+      viewabilityHelper,
+      horizontal: true,
+      scrollOffset: 50,
+      getLayout,
+    });
+    expect(viewableIndicesChanged).toHaveBeenCalledWith([0, 1, 2, 3], [3], []);
+
+    updateViewableItems({
+      viewabilityHelper,
+      horizontal: true,
+      scrollOffset: 100,
+      getLayout,
+    });
+    expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3], [], [0]);
   });
 
   it("reports items that only satisfy itemVisiblePercentThreshold", () => {
