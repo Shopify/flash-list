@@ -66,4 +66,15 @@ describe("AverageWindow", () => {
     averageWindow.addValue(20);
     expect(averageWindow.currentValue).toBe(15);
   });
+  it("increments next index correctly", () => {
+    const size = 30;
+    const averageWindow = new AverageWindow(size);
+    for (let i = 0; i < 300; i++) {
+      expect(averageWindow["getNextIndex"]()).toBe(i % size);
+    }
+    const averageWindow2 = new AverageWindow(size, 1);
+    for (let i = 1; i < 300; i++) {
+      expect(averageWindow2["getNextIndex"]()).toBe(i % size);
+    }
+  });
 });

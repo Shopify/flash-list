@@ -5,12 +5,12 @@ export class AverageWindow {
   private currentAverage: number;
   private currentCount: number;
   private inputValues: (number | undefined)[];
-  private totalItemsAdded: number = 0;
+  private nextIndex: number = 0;
   constructor(size: number, startValue?: number) {
     this.inputValues = new Array<number>(Math.max(1, size));
     this.currentAverage = startValue ?? 0;
     this.currentCount = startValue === undefined ? 0 : 1;
-    this.totalItemsAdded = this.currentCount;
+    this.nextIndex = this.currentCount;
     this.inputValues[0] = startValue;
   }
 
@@ -42,6 +42,8 @@ export class AverageWindow {
 
   private getNextIndex(): number {
     // starts from 0 once we reach end of the array
-    return this.totalItemsAdded++ % this.inputValues.length;
+    const newTarget = this.nextIndex;
+    this.nextIndex = (this.nextIndex + 1) % this.inputValues.length;
+    return newTarget;
   }
 }
