@@ -205,7 +205,7 @@ describe("ViewabilityHelper", () => {
     expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3, 4], [4], []);
   });
 
-  it("reposts viewable items only after interaction if waitForInteraction is set to true", () => {
+  it("reports viewable items only after interaction if waitForInteraction is set to true", () => {
     const viewabilityHelper = new ViewabilityHelper(
       { waitForInteraction: true },
       viewableIndicesChanged

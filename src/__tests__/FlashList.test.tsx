@@ -253,7 +253,10 @@ describe("FlashList", () => {
         {
           onViewableItemsChanged:
             onViewableItemsChangedForItemVisiblePercentThreshold,
-          viewabilityConfig: { itemVisiblePercentThreshold: 50 },
+          viewabilityConfig: {
+            itemVisiblePercentThreshold: 50,
+            waitForInteraction: true,
+          },
         },
       ],
       onViewableItemsChanged,
@@ -276,6 +279,13 @@ describe("FlashList", () => {
         { index: 2, isViewable: true, item: "Three", key: "2" },
       ],
     });
+    expect(
+      onViewableItemsChangedForItemVisiblePercentThreshold
+    ).not.toHaveBeenCalled();
+
+    // onViewableItemsChangedForItemVisiblePercentThreshold waits for interaction before reporting viewable items
+    flashList.instance.recordInteraction();
+    jest.advanceTimersByTime(250);
     expect(
       onViewableItemsChangedForItemVisiblePercentThreshold
     ).toHaveBeenCalledWith({
