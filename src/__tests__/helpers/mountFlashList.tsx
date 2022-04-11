@@ -39,6 +39,8 @@ export const mountFlashList = (props?: {
   ) => void;
   estimatedItemSize?: number;
   ListEmptyComponent?: FlashListProps<string>["ListEmptyComponent"];
+  ListHeaderComponent?: FlashListProps<string>["ListHeaderComponent"];
+  ListFooterComponent?: FlashListProps<string>["ListFooterComponent"];
 }) => {
   const flashList = mount(
     <FlashList
@@ -53,6 +55,8 @@ export const mountFlashList = (props?: {
       onLoad={props?.onLoad}
       overrideItemLayout={props?.overrideItemLayout}
       ListEmptyComponent={props?.ListEmptyComponent}
+      ListHeaderComponent={props?.ListHeaderComponent}
+      ListFooterComponent={props?.ListFooterComponent}
     />
   ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
     instance: FlashList<string>;

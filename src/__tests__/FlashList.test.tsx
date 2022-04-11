@@ -165,6 +165,21 @@ describe("FlashList", () => {
     });
     expect(flashList).toContainReactComponent(EmptyComponent);
   });
+  it("loads header and footer in empty state", () => {
+    const HeaderComponent = () => {
+      return <Text>Empty</Text>;
+    };
+    const FooterComponent = () => {
+      return <Text>Empty</Text>;
+    };
+    const flashList = mountFlashList({
+      data: [],
+      ListHeaderComponent: HeaderComponent,
+      ListFooterComponent: FooterComponent,
+    });
+    expect(flashList).toContainReactComponent(HeaderComponent);
+    expect(flashList).toContainReactComponent(FooterComponent);
+  });
   it("reports layout changes to the layout provider", () => {
     const flashList = mountFlashList();
     const reportItemLayoutMock = jest.spyOn(
