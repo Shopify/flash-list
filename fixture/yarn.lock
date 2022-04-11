@@ -2540,10 +2540,10 @@ detect-newline@^3.0.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-3.1.0.tgz#576f5dfc63ae1a192ff192d8ad3af6308991b651"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
 
-detox@^19.5.7:
-  version "19.5.7"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-19.5.7.tgz#81179f3d1f75088c2eb9bf52d7e21fa72a1c2c3a"
-  integrity sha512-vLd5eySM/zjaWLJGgbtx4g7qA3JZLCZHVz4n/AphNFFW3T3qiyh7HfIYeoBoZanjjyC1k3iuw2UshpBRlHZuGA==
+detox@^19.6.5:
+  version "19.6.5"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-19.6.5.tgz#a4b0a5f574589762dc58eb75a8dd0df1005171bd"
+  integrity sha512-4r0fU65cvUzLcvrfZUbVNO8UrG0iqRI3m+v/QN8nLOw/jRVViI222az+LcWhDRE2bUwsyQ690k+W4F3wc21wjA==
   dependencies:
     ajv "^8.6.3"
     bunyan "^1.8.12"
@@ -6112,12 +6112,7 @@ shell-quote@^1.6.1, shell-quote@^1.7.2, shell-quote@^1.7.3:
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.3.tgz#aa40edac170445b9a431e17bb62c0b881b9c4123"
   integrity sha512-Vpfqwm4EnqGdlsBFNmHhxhElJYrdfcxPThu+ryKS5J8L/fhAwLazFZtq+S+TWZ9ANj2piSQLGj6NQg+lKPmxrw==
 
-signal-exit@^3.0.0, signal-exit@^3.0.2:
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.6.tgz#24e630c4b0f03fea446a2bd299e62b4a6ca8d0af"
-  integrity sha512-sDl4qMFpijcGw22U5w63KmD3cZJfBuFlVNbVMKje2keoKML7X2UzWbc4XrmEbDwg0NXJc3yv4/ox7b+JWb57kQ==
-
-signal-exit@^3.0.3:
+signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
