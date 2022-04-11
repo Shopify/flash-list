@@ -243,12 +243,19 @@ describe("FlashList", () => {
 
   it("reports onViewableItemsChanged for viewable items", () => {
     const onViewableItemsChanged = jest.fn();
+    const onViewableItemsChangedForItemVisiblePercentThreshold = jest.fn();
     const flashList = mountFlashList({
       estimatedItemSize: 300,
       viewabilityConfig: {
-        itemVisiblePercentThreshold: 50,
         minimumViewTime: 250,
       },
+      viewabilityConfigCallbackPairs: [
+        {
+          onViewableItemsChanged:
+            onViewableItemsChangedForItemVisiblePercentThreshold,
+          viewabilityConfig: { itemVisiblePercentThreshold: 50 },
+        },
+      ],
       onViewableItemsChanged,
     });
 
@@ -269,27 +276,53 @@ describe("FlashList", () => {
         { index: 2, isViewable: true, item: "Three", key: "2" },
       ],
     });
+    expect(
+      onViewableItemsChangedForItemVisiblePercentThreshold
+    ).toHaveBeenCalledWith({
+      changed: [
+        { index: 0, isViewable: true, item: "One", key: "0" },
+        { index: 1, isViewable: true, item: "Two", key: "1" },
+        { index: 2, isViewable: true, item: "Three", key: "2" },
+      ],
+      viewableItems: [
+        { index: 0, isViewable: true, item: "One", key: "0" },
+        { index: 1, isViewable: true, item: "Two", key: "1" },
+        { index: 2, isViewable: true, item: "Three", key: "2" },
+      ],
+    });
 
     onViewableItemsChanged.mockReset();
+    onViewableItemsChangedForItemVisiblePercentThreshold.mockReset();
     // Mocking a scroll that will make the first item not visible and the last item visible
     jest
       .spyOn(
         flashList.instance!.recyclerlistview_unsafe!,
         "getCurrentScrollOffset"
       )
-      .mockReturnValueOnce(300);
+      .mockReturnValue(200);
     flashList.instance!.recyclerlistview_unsafe!.props.onVisibleIndicesChanged?.(
       [0, 1, 2, 3],
       [],
       []
     );
     flashList.instance!.recyclerlistview_unsafe!.props.onScroll?.(
-      { nativeEvent: { contentOffset: { x: 0, y: 300 } } },
+      { nativeEvent: { contentOffset: { x: 0, y: 200 } } },
       0,
-      300
+      200
     );
     jest.advanceTimersByTime(250);
     expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [{ index: 3, isViewable: true, item: "Four", key: "3" }],
+      viewableItems: [
+        { index: 0, isViewable: true, item: "One", key: "0" },
+        { index: 1, isViewable: true, item: "Two", key: "1" },
+        { index: 2, isViewable: true, item: "Three", key: "2" },
+        { index: 3, isViewable: true, item: "Four", key: "3" },
+      ],
+    });
+    expect(
+      onViewableItemsChangedForItemVisiblePercentThreshold
+    ).toHaveBeenCalledWith({
       changed: [
         { index: 3, isViewable: true, item: "Four", key: "3" },
         { index: 0, isViewable: false, item: "One", key: "0" },

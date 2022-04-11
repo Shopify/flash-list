@@ -3,6 +3,7 @@ import {
   ListRenderItem,
   Text,
   ViewabilityConfig,
+  ViewabilityConfigCallbackPairs,
   ViewToken,
 } from "react-native";
 import "@quilted/react-testing/matchers";
@@ -49,6 +50,7 @@ export const mountFlashList = (props?: {
     | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
     | null
     | undefined;
+  viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs;
 }) => {
   const flashList = mount(
     <FlashList
@@ -65,6 +67,7 @@ export const mountFlashList = (props?: {
       ListEmptyComponent={props?.ListEmptyComponent}
       viewabilityConfig={props?.viewabilityConfig}
       onViewableItemsChanged={props?.onViewableItemsChanged}
+      viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
     />
   ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
     instance: FlashList<string>;
