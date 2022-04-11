@@ -240,7 +240,7 @@ class FlashList<T> extends React.PureComponent<
       return {
         index,
         isViewable,
-        item: this.props.data?.[index],
+        item,
         key,
       } as ViewToken;
     };
@@ -510,18 +510,13 @@ class FlashList<T> extends React.PureComponent<
 
   private updateViewableItems() {
     const listSize = this.rlvRef?.getRenderedSize();
-    if (
-      this.rlvRef === null ||
-      this.rlvRef === undefined ||
-      listSize === undefined ||
-      this.rlvRef.getLayout === undefined
-    ) {
+    if (listSize === undefined) {
       return;
     }
     this.viewabilityHelpers.forEach((viewabilityHelper) => {
       viewabilityHelper.updateViewableItems(
         this.props.horizontal ?? false,
-        this.rlvRef?.getCurrentScrollOffset() || 0,
+        this.rlvRef?.getCurrentScrollOffset() ?? 0,
         listSize,
         (index: number) => this.rlvRef?.getLayout(index)
       );

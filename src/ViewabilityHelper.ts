@@ -66,13 +66,14 @@ class ViewabilityHelper {
       )
     );
     this.viewableIndices = newViewableIndices;
+    const minimumViewTime = this.viewabilityConfig?.minimumViewTime ?? 250;
     // Setting default to 250. Default of 0 can impact performance when user scrolls fast.
-    if ((this.viewabilityConfig?.minimumViewTime ?? 250) > 0) {
+    if (minimumViewTime > 0) {
       const timeoutId = setTimeout(() => {
         this.timers.delete(timeoutId);
         this.checkViewableIndicesChanges(newViewableIndices);
         this.timers.add(timeoutId);
-      }, this.viewabilityConfig?.minimumViewTime);
+      }, minimumViewTime);
     } else {
       this.checkViewableIndicesChanges(newViewableIndices);
     }
@@ -83,7 +84,6 @@ class ViewabilityHelper {
     const currentlyNewViewableIndices = newViewableIndices.filter((index) =>
       this.viewableIndices.includes(index)
     );
-    // These can be done faster (for inspiration, look at rlv)
     const newlyVisibleItems = currentlyNewViewableIndices.filter(
       (index) => !this.lastReportedViewableIndices.includes(index)
     );
@@ -138,7 +138,7 @@ class ViewabilityHelper {
       ? viewAreaCoveragePercentThreshold * 0.01
       : (itemVisiblePercentThreshold ?? 0) * 0.01;
 
-    return percent >= (viewableAreaPercentThreshold ?? 0);
+    return percent >= viewableAreaPercentThreshold;
   }
 }
 
