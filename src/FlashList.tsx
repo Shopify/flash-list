@@ -495,20 +495,21 @@ class FlashList<T> extends React.PureComponent<
           initialOffset={initialOffset}
           onItemLayout={this.onItemLayout}
           onScroll={this.updateViewableItems}
-          onVisibleIndicesChanged={(all) => {
-            this.viewabilityHelpers.forEach(
-              (viewabilityHelper) =>
-                (viewabilityHelper.possiblyViewableIndices = all)
-            );
-            this.updateViewableItems();
-          }}
+          onVisibleIndicesChanged={this.onVisibleIndicesChanged}
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>
     );
   }
 
-  private updateViewableItems() {
+  private onVisibleIndicesChanged = (all: number[]) => {
+    this.viewabilityHelpers.forEach(
+      (viewabilityHelper) => (viewabilityHelper.possiblyViewableIndices = all)
+    );
+    this.updateViewableItems();
+  };
+
+  private updateViewableItems = () => {
     const listSize = this.rlvRef?.getRenderedSize();
     if (listSize === undefined) {
       return;
@@ -521,7 +522,7 @@ class FlashList<T> extends React.PureComponent<
         (index: number) => this.rlvRef?.getLayout(index)
       );
     });
-  }
+  };
 
   private getUpdatedWindowCorrectionConfig() {
     // If the initial scroll index is in the first row then we're forcing RLV to use initialOffset and thus we need to disable window correction
