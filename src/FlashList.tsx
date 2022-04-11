@@ -6,7 +6,6 @@ import {
   LayoutChangeEvent,
   ViewStyle,
   ColorValue,
-  ViewToken,
   ViewabilityConfig,
 } from "react-native";
 import {
@@ -32,6 +31,14 @@ interface StickyProps extends StickyContainerProps {
 }
 const StickyHeaderContainer =
   StickyContainer as React.ComponentClass<StickyProps>;
+
+export interface ViewToken {
+  item: any;
+  key: string;
+  index: number | null;
+  isViewable: boolean;
+  timestamp: number;
+}
 
 export interface FlashListProps<T> extends FlatListProps<T> {
   // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
@@ -123,6 +130,14 @@ export interface FlashListProps<T> extends FlatListProps<T> {
    * If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
    */
   onLoad?: (info: { elapsedTimeInMs: number }) => void;
+
+  /**
+   * Called when the viewability of rows changes, as defined by the viewablePercentThreshold prop.
+   */
+  onViewableItemsChanged?:
+    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+    | null
+    | undefined;
 }
 
 export interface FlashListState<T> {
@@ -231,7 +246,10 @@ class FlashList<T> extends React.PureComponent<
       | null
       | undefined
   ) => {
-    const mapViewToken = (index: number, isViewable: boolean) => {
+    const mapViewToken: (index: number, isViewable: boolean) => ViewToken = (
+      index: number,
+      isViewable: boolean
+    ) => {
       const item = this.props.data?.[index];
       const key =
         item === undefined || this.props.keyExtractor === undefined
@@ -242,7 +260,8 @@ class FlashList<T> extends React.PureComponent<
         isViewable,
         item,
         key,
-      } as ViewToken;
+        timestamp: Date.now(),
+      };
     };
     return new ViewabilityHelper(
       viewabilityConfig,

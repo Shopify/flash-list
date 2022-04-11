@@ -312,6 +312,7 @@ interface ViewToken {
   isViewable: boolean;
   item: string;
   key: string;
+  timestamp: number;
 }
 
 onViewableItemsChanged?: ((info: {
@@ -321,6 +322,10 @@ onViewableItemsChanged?: ((info: {
 ```
 
 Called when the viewability of rows changes, as defined by the `viewabilityConfig` prop. Array of `changed` includes `ViewToken`s that both visible and non-visible items. You can use the `isViewable` flag to filter the items.
+
+:::note
+If you are tracking the time a view becomes (non-)visible, use the `timestamp` property.
+:::
 
 ### `overrideItemType`
 

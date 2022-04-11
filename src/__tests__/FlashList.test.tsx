@@ -269,14 +269,50 @@ describe("FlashList", () => {
     // Initial viewable items
     expect(onViewableItemsChanged).toHaveBeenCalledWith({
       changed: [
-        { index: 0, isViewable: true, item: "One", key: "0" },
-        { index: 1, isViewable: true, item: "Two", key: "1" },
-        { index: 2, isViewable: true, item: "Three", key: "2" },
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
       ],
       viewableItems: [
-        { index: 0, isViewable: true, item: "One", key: "0" },
-        { index: 1, isViewable: true, item: "Two", key: "1" },
-        { index: 2, isViewable: true, item: "Three", key: "2" },
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
       ],
     });
     expect(
@@ -290,14 +326,50 @@ describe("FlashList", () => {
       onViewableItemsChangedForItemVisiblePercentThreshold
     ).toHaveBeenCalledWith({
       changed: [
-        { index: 0, isViewable: true, item: "One", key: "0" },
-        { index: 1, isViewable: true, item: "Two", key: "1" },
-        { index: 2, isViewable: true, item: "Three", key: "2" },
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
       ],
       viewableItems: [
-        { index: 0, isViewable: true, item: "One", key: "0" },
-        { index: 1, isViewable: true, item: "Two", key: "1" },
-        { index: 2, isViewable: true, item: "Three", key: "2" },
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
       ],
     });
 
@@ -322,25 +394,87 @@ describe("FlashList", () => {
     );
     jest.advanceTimersByTime(250);
     expect(onViewableItemsChanged).toHaveBeenCalledWith({
-      changed: [{ index: 3, isViewable: true, item: "Four", key: "3" }],
+      changed: [
+        {
+          index: 3,
+          isViewable: true,
+          item: "Four",
+          key: "3",
+          timestamp: expect.any(Number),
+        },
+      ],
       viewableItems: [
-        { index: 0, isViewable: true, item: "One", key: "0" },
-        { index: 1, isViewable: true, item: "Two", key: "1" },
-        { index: 2, isViewable: true, item: "Three", key: "2" },
-        { index: 3, isViewable: true, item: "Four", key: "3" },
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 3,
+          isViewable: true,
+          item: "Four",
+          key: "3",
+          timestamp: expect.any(Number),
+        },
       ],
     });
     expect(
       onViewableItemsChangedForItemVisiblePercentThreshold
     ).toHaveBeenCalledWith({
       changed: [
-        { index: 3, isViewable: true, item: "Four", key: "3" },
-        { index: 0, isViewable: false, item: "One", key: "0" },
+        {
+          index: 3,
+          isViewable: true,
+          item: "Four",
+          key: "3",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 0,
+          isViewable: false,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
       ],
       viewableItems: [
-        { index: 1, isViewable: true, item: "Two", key: "1" },
-        { index: 2, isViewable: true, item: "Three", key: "2" },
-        { index: 3, isViewable: true, item: "Four", key: "3" },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 3,
+          isViewable: true,
+          item: "Four",
+          key: "3",
+          timestamp: expect.any(Number),
+        },
       ],
     });
   });
