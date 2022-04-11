@@ -170,7 +170,7 @@ class FlashList<T> extends React.PureComponent<
     applyToInitialOffset: true,
   };
 
-  private viewabilityHelpers: ViewabilityHelper[];
+  private viewabilityHelpers: ViewabilityHelper[] = [];
 
   static defaultProps = {
     data: [],
@@ -901,9 +901,10 @@ class FlashList<T> extends React.PureComponent<
    * This is typically called by taps on items or by navigation actions.
    */
   public recordInteraction = () => {
-    this.viewabilityHelpers.forEach(
-      (viewabilityHelper) => (viewabilityHelper.hasInteracted = true)
-    );
+    this.viewabilityHelpers.forEach((viewabilityHelper) => {
+      viewabilityHelper.hasInteracted = true;
+    });
+    this.updateViewableItems();
   };
 }
 

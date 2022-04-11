@@ -58,7 +58,7 @@ const Twitter = () => {
         initialScrollIndex={debugContext.initialScrollIndex}
         viewabilityConfig={{
           waitForInteraction: true,
-          viewAreaCoveragePercentThreshold: 50,
+          itemVisiblePercentThreshold: 50,
           minimumViewTime: 1000,
         }}
         onViewableItemsChanged={(info) => {

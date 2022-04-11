@@ -1,4 +1,3 @@
-import { ViewabilityConfig } from "react-native";
 import { Dimension, Layout } from "recyclerlistview";
 
 import ViewabilityHelper from "../ViewabilityHelper";
@@ -7,6 +6,7 @@ describe("ViewabilityHelper", () => {
   const viewableIndicesChanged = jest.fn();
   beforeEach(() => {
     jest.resetAllMocks();
+    jest.useFakeTimers();
   });
 
   it("does not report any changes when indices have not changed", () => {
@@ -82,9 +82,47 @@ describe("ViewabilityHelper", () => {
     expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3], [], [0]);
   });
 
+  it("reports items only after minimumViewTime has elapsed", () => {
+    const viewabilityHelper = new ViewabilityHelper(
+      { minimumViewTime: 500 },
+      viewableIndicesChanged
+    );
+    viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
+    updateViewableItems({ viewabilityHelper, runAllTimers: false });
+    expect(viewableIndicesChanged).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(400);
+    expect(viewableIndicesChanged).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(100);
+    expect(viewableIndicesChanged).toHaveBeenCalledWith(
+      [0, 1, 2],
+      [0, 1, 2],
+      []
+    );
+
+    viewableIndicesChanged.mockReset();
+    updateViewableItems({
+      viewabilityHelper,
+      scrollOffset: 50,
+      runAllTimers: false,
+    });
+    expect(viewableIndicesChanged).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(500);
+    expect(viewableIndicesChanged).toHaveBeenCalledWith([0, 1, 2, 3], [3], []);
+
+    viewableIndicesChanged.mockReset();
+    updateViewableItems({
+      viewabilityHelper,
+      scrollOffset: 100,
+      runAllTimers: false,
+    });
+    expect(viewableIndicesChanged).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(500);
+    expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3], [], [0]);
+  });
+
   it("reports items that only satisfy itemVisiblePercentThreshold", () => {
     const viewabilityHelper = new ViewabilityHelper(
-      { itemVisiblePercentThreshold: 0.5 },
+      { itemVisiblePercentThreshold: 50 },
       viewableIndicesChanged
     );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
@@ -122,7 +160,7 @@ describe("ViewabilityHelper", () => {
       return { x: 0, y: index * 100, height: 100, width: 300 } as Layout;
     };
     const viewabilityHelper = new ViewabilityHelper(
-      { viewAreaCoveragePercentThreshold: 0.25 },
+      { viewAreaCoveragePercentThreshold: 25 },
       viewableIndicesChanged
     );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
@@ -203,12 +241,14 @@ describe("ViewabilityHelper", () => {
     scrollOffset,
     listSize,
     getLayout,
+    runAllTimers,
   }: {
     viewabilityHelper: ViewabilityHelper;
     horizontal?: boolean;
     scrollOffset?: number;
     listSize?: Dimension;
     getLayout?: (index: number) => Layout | undefined;
+    runAllTimers?: boolean;
   }) => {
     viewabilityHelper.updateViewableItems(
       horizontal ?? false,
@@ -219,5 +259,8 @@ describe("ViewabilityHelper", () => {
           return { x: 0, y: index * 100, height: 100, width: 300 } as Layout;
         })
     );
+    if (runAllTimers ?? true) {
+      jest.runAllTimers();
+    }
   };
 });

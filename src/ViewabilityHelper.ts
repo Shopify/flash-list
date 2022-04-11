@@ -66,7 +66,8 @@ class ViewabilityHelper {
       )
     );
     this.viewableIndices = newViewableIndices;
-    if ((this.viewabilityConfig?.minimumViewTime ?? 0) > 0) {
+    // Setting default to 250. Default of 0 can impact performance when user scrolls fast.
+    if ((this.viewabilityConfig?.minimumViewTime ?? 250) > 0) {
       const timeoutId = setTimeout(() => {
         this.timers.delete(timeoutId);
         this.checkViewableIndicesChanges(newViewableIndices);
@@ -134,8 +135,8 @@ class ViewabilityHelper {
       ? pixelsVisible / listMainSize
       : pixelsVisible / itemSize;
     const viewableAreaPercentThreshold = viewAreaMode
-      ? viewAreaCoveragePercentThreshold
-      : itemVisiblePercentThreshold;
+      ? viewAreaCoveragePercentThreshold * 0.01
+      : (itemVisiblePercentThreshold ?? 0) * 0.01;
 
     return percent >= (viewableAreaPercentThreshold ?? 0);
   }

@@ -1,5 +1,10 @@
 import React from "react";
-import { ListRenderItem, Text } from "react-native";
+import {
+  ListRenderItem,
+  Text,
+  ViewabilityConfig,
+  ViewToken,
+} from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount, RootNode } from "@quilted/react-testing";
 
@@ -39,6 +44,11 @@ export const mountFlashList = (props?: {
   ) => void;
   estimatedItemSize?: number;
   ListEmptyComponent?: FlashListProps<string>["ListEmptyComponent"];
+  viewabilityConfig?: ViewabilityConfig | null;
+  onViewableItemsChanged?:
+    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+    | null
+    | undefined;
 }) => {
   const flashList = mount(
     <FlashList
@@ -53,6 +63,8 @@ export const mountFlashList = (props?: {
       onLoad={props?.onLoad}
       overrideItemLayout={props?.overrideItemLayout}
       ListEmptyComponent={props?.ListEmptyComponent}
+      viewabilityConfig={props?.viewabilityConfig}
+      onViewableItemsChanged={props?.onViewableItemsChanged}
     />
   ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
     instance: FlashList<string>;
