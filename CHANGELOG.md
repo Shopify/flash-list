@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add viewability callbacks
+  - https://github.com/Shopify/flash-list/pull/301
+
 - Calculate average item sizes automatically
   - https://github.com/Shopify/flash-list/pull/296
 
