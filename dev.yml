@@ -55,14 +55,20 @@ up:
       name: Install cocoapods dependencies
       met?: cd fixture/ios && bundle exec pod check --ignore-dev-pods
       meet: cd fixture/ios && bundle exec pod install
+  - custom:
+      name: Build package
+      met?: yarn build --dry | grep non-dry; [ $? -eq 1 ]
+      meet: yarn build
 commands:
   run-ios:
     aliases: [ri]
-    run: cd fixture && yarn react-native run-ios
+    run: cd fixture && yarn react-native run-ios && yarn build --watch
   run-android:
     aliases: [ra]
-    run: cd fixture && yarn react-native run-android
+    run: cd fixture && yarn react-native run-android && yarn build --watch
   run-e2e-ios:
+    aliases: [rei]
     run: cd fixture && yarn e2e:build:ios && yarn e2e:test:ios
   run-e2e-android:
+    aliases: [rea]
     run: cd fixture && yarn e2e:build:android && yarn e2e:test:android

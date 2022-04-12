@@ -1,6 +1,6 @@
 {
   "name": "@shopify/flash-list",
-  "version": "0.3.3",
+  "version": "0.4.4",
   "keywords": [
     "react-native"
   ],
@@ -25,36 +25,33 @@
   "peerDependencies": {
     "@babel/runtime": "*",
     "react": "*",
-    "react-native": "*",
-    "recyclerlistview": "3.1.0-beta.6"
+    "react-native": "*"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
-    "@babel/runtime": "^7.17.2",
+    "@babel/core": "^7.17.9",
+    "@babel/runtime": "^7.17.9",
+    "@quilted/react-testing": "^0.3.10",
     "@react-native-community/eslint-config": "^3.0.0",
-    "@shopify/eslint-plugin": "^41.2.0",
-    "@types/react-native": "0.67.3",
+    "@shopify/eslint-plugin": "^41.2.1",
+    "@types/jest": "^27.4.1",
+    "@types/react-native": "0.67.4",
     "babel-jest": "^27.5.1",
-    "eslint": "8.11.0",
+    "eslint": "8.12.0",
     "jest": "^27.5.1",
-    "metro-react-native-babel-preset": "^0.69.0",
+    "metro-react-native-babel-preset": "^0.70.1",
     "react": "17.0.2",
-    "react-native": "0.67.3",
-    "recyclerlistview": "3.1.0-beta.6",
-    "typescript": "^4.6.2"
-  },
-  "jest": {
-    "preset": "react-native"
+    "react-native": "0.68.0",
+    "typescript": "^4.6.3"
   },
   "files": [
     "android",
     "ios",
     "dist",
     "RNFlashList.podspec",
-    "src"
+    "src",
+    "jestSetup.js"
   ],
   "dependencies": {
-    "invariant": "^2.2.4",
-    "react-native-reanimated": "^2.4.1"
+    "recyclerlistview": "3.2.0-beta.2"
   }
 }

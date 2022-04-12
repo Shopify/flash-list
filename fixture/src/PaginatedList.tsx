@@ -7,6 +7,8 @@ import { View, Text, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
 export interface PaginatedListState {
+  // This property is used but eslint fails to find its usage.
+  /* eslint-disable react/no-unused-prop-types */
   elems: any[];
 }
 
@@ -51,8 +53,7 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
             return { elems };
           });
         }}
-        // known issue: Flatlist uses fraction of visible window while RLV wants pixels. Will fix later
-        onEndReachedThreshold={100}
+        onEndReachedThreshold={0.2}
         data={this.state.elems}
       />
     );

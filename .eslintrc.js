@@ -39,8 +39,16 @@ module.exports = {
     "require-atomic-updates": "off",
     "@typescript-eslint/member-ordering": "off",
     "@typescript-eslint/consistent-indexed-object-style": "off",
-    "jsx-a11y/no-autofocus": "off"
+    "jsx-a11y/no-autofocus": "off",
   },
+  overrides: [
+    {
+      files: ["*.test.ts", "*.test.tsx"],
+      rules: {
+        "dot-notation": "off",
+      },
+    },
+  ],
   ignorePatterns: ["node_modules", "coverage", "dist", "build", "lib"],
   env: {
     jest: true,

@@ -10,6 +10,10 @@
 # Files for the ART/Dalvik VM
 *.dex
 
+# Jekyll generated files
+docs/.jekyll-cache
+docs/_site
+
 # Java class files
 *.class
 
@@ -208,3 +212,8 @@ fixture/ios/**/xcshareddata/WorkspaceSettings.xcsettings
 # Android
 
 fixture/android/*.hprof
+
+# e2e
+
+fixture/e2e/artifacts/ios/diff
+fixture/e2e/artifacts/android/diff

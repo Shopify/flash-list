@@ -22,3 +22,4 @@ export {
 } from "./benchmark/useFlatListBenchmark";
 export { JSFpsMonitor, JSFPSResult } from "./benchmark/JSFpsMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
+export { default as ViewToken } from "./ViewToken";

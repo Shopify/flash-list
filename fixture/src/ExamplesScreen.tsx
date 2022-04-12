@@ -1,28 +1,48 @@
 import React from "react";
-import {
-  StatusBar,
-  StyleSheet,
-  FlatList,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { StatusBar, StyleSheet, FlatList, Text, Pressable } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 
-import { NavigationKeys, RootStackParamList } from "./constants";
+import { DebugButton } from "./Debug";
+import { RootStackParamList } from "./constants";
+
+interface ExampleItem {
+  title: string;
+  destination: keyof RootStackParamList;
+}
 
 export const ExamplesScreen = () => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Examples">>();
 
-  const data = [
-    { title: "List", destination: NavigationKeys.LIST },
-    { title: "PaginatedList", destination: NavigationKeys.PAGINATED_LIST },
-    { title: "Reminders", destination: NavigationKeys.REMINDERS },
-    { title: "Twitter Timeline", destination: NavigationKeys.TWITTER },
+  const onDebugButton = () => {
+    navigate("Debug");
+  };
+
+  const data: ExampleItem[] = [
+    { title: "List", destination: "List" },
+    { title: "PaginatedList", destination: "PaginatedList" },
+    { title: "Reminders", destination: "Reminders" },
+    { title: "Twitter Timeline", destination: "Twitter" },
     {
       title: "Twitter FlatList Timeline",
-      destination: NavigationKeys.TWITTER_FLAT_LIST,
+      destination: "TwitterFlatList",
+    },
+    {
+      title: "Contacts",
+      destination: "Contacts",
+    },
+    {
+      title: "Contacts SectionList",
+      destination: "ContactsSectionList",
+    },
+    {
+      title: "Messages",
+      destination: "Messages",
+    },
+    {
+      title: "Messages FlatList",
+      destination: "MessagesFlatList",
     },
   ];
   return (
@@ -33,16 +53,18 @@ export const ExamplesScreen = () => {
         keyExtractor={(item) => item.destination}
         data={data}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <Pressable
             style={styles.row}
             onPress={() => {
               navigate(item.destination);
             }}
+            testID={item.title}
           >
             <Text style={styles.rowTitle}>{item.title}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       />
+      <DebugButton onPress={onDebugButton} />
     </>
   );
 };

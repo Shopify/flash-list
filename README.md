@@ -1,23 +1,54 @@
-# @shopify/flash-list
+[![Build status](./FlashList.png)](https://buildkite.com/shopify/flash-list)
 
-[![Build status](https://badge.buildkite.com/33f17b0b03601f35f90c0a9534410876f8920559821bf4dafe.svg)](https://buildkite.com/shopify/flash-list)
+<div align="center">
+  <a href="https://shopify.github.io/flash-list/">Website</a> • 
+  <a href="https://flash-list.docs.shopify.io/">Getting started</a> • 
+  <a href="https://flash-list.docs.shopify.io/usage">Usage</a> • 
+  <a href="https://flash-list.docs.shopify.io/performance-troubleshooting">Performance</a> • 
+  <a href="https://flash-list.docs.shopify.io/known-issues">Known Issues</a>
+<br><br>
+  
+**Fast & performant React Native list. No more blank cells.**
 
-A better list for React Native - more performant, with the same API. Built with [`recyclerlistview`](https://github.com/Flipkart/recyclerlistview) ⚡️
+  Swap from FlatList in seconds. Get instant performance.
 
-Check out [the Vault project](https://vault.shopify.io/projects/22845) to learn more about this project.
+</div>
 
----
+## Installation
 
-[Documentation 📚](https://flash-list.docs.shopify.io/)
+Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
 
-## How to use this repo
+## Usage
 
-### Adding a package to your project
+If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` just by changing the component name and adding `estimatedItemSize` or refer to the example below:
 
-Add the package to your project via `yarn add @shopify/flash-list recyclerlistview@3.1.0-beta.6`, and run pod install in the `ios` directory.
+```jsx
+import React from "react";
+import { View, Text } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 
-Note that [`recyclerlistview`](https://github.com/Flipkart/recyclerlistview) is a peer dependency of `@shopify/flash-list`
+const DATA = [
+  {
+    title: "First Item",
+  },
+  {
+    title: "Second Item",
+  },
+];
 
-### App / Playground
+const MyList = () => {
+  return (
+    <FlashList
+      data={DATA}
+      renderItem={({ item }) => <Text>{item.title}</Text>}
+      estimatedItemSize={200}
+    />
+  );
+};
+```
+
+See [full usage documentation](https://flash-list.docs.shopify.io/usage) to know better how to use FlashList.
+
+## App / Playground
 
 The [fixture](https://github.com/Shopify/flash-list/tree/main/fixture) is an example app showing how to use the library.

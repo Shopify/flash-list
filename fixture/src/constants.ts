@@ -1,14 +1,18 @@
-export const NavigationKeys = {
-  EXAMPLES: "Examples" as const,
-  LIST: "List" as const,
-  REMINDERS: "Reminders" as const,
-  PAGINATED_LIST: "PaginatedList" as const,
-  TWITTER: "Twitter" as const,
-  TWITTER_FLAT_LIST: "TwitterFlatList" as const,
-};
+import { TweetContentProps } from "./twitter/TweetContent";
 
-type ValueOf<T> = T[keyof T];
-
+// `react-navigation` expects to work with type instead of interface
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 export type RootStackParamList = {
-  [key in ValueOf<typeof NavigationKeys>]: undefined;
+  Examples: undefined;
+  List: undefined;
+  Reminders: undefined;
+  PaginatedList: undefined;
+  Twitter: undefined;
+  TwitterFlatList: undefined;
+  TweetDetailScreen: TweetContentProps;
+  Debug: undefined;
+  Contacts: undefined;
+  ContactsSectionList: undefined;
+  Messages: undefined;
+  MessagesFlatList: undefined;
 };

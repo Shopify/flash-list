@@ -7,8 +7,60 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add viewability callbacks
+
+  - https://github.com/Shopify/flash-list/pull/301
+
+- Calculate average item sizes automatically
+  - https://github.com/Shopify/flash-list/pull/296
+
+## [0.4.4] - 2022-04-06
+
+- Fix `FlashList` mock when no data is provided
+  - https://github.com/Shopify/flash-list/pull/295
+
+## [0.4.3] - 2022-04-04
+
+- Reduce number of render item calls
+
+  - https://github.com/Shopify/flash-list/pull/253
+
+- Upgrade recyclerlistview to v3.2.0-beta.2
+  - https://github.com/Shopify/flash-list/pull/284
+
+## [0.4.2] - 2022-04-04
+
+- Minor changes
+
+## [0.4.1] - 2022-03-29
+
+- Crash fix for android activity switching (#256)
+
+  - https://github.com/Shopify/flash-list/pull/257
+
+- initialScrollIndex, scrollTo methods will now account for size of header
+
+  - https://github.com/Shopify/flash-list/pull/194
+
+- Added a new mock for easier testing of components with `FlashList`
+  - https://github.com/Shopify/flash-list/pull/236
+
+## [0.4.0] - 2022-03-23
+
+- Add support for layout animations
+
+  - https://github.com/Shopify/flash-list/pull/183
+
 - Suppress recyclerlistview's bounded size exception for some missing cases.
+
   - https://github.com/Shopify/flash-list/pull/192
+
+- Expose reference to recyclerlistview and firstItemOffset
+
+  - https://github.com/Shopify/flash-list/pull/217
+
+- recyclerlistview upgraded to v3.1.0-alpha.9
+  - https://github.com/Shopify/flash-list/pull/227
 
 ## [0.3.3] - 2022-03-16
 

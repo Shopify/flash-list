@@ -1,7 +1,6 @@
 #include "shared/containers.yml"
 
 steps:
-  # TODO: Add steps for iOS, Android, linting...
   - label: "Build Typescript :typescript:"
     timeout: 20m
     run:
@@ -21,6 +20,12 @@ steps:
     run:
       - yarn
       - yarn lint
+
+  - label: "Test Typescript :jest:"
+    timeout: 20m
+    run:
+      - yarn
+      - yarn test
 
   - label: "Metro bundling for iOS :metro: :ios:"
     container: macos
@@ -70,3 +75,21 @@ steps:
       - yarn
       - cd android
       - ./gradlew assembleDebug
+
+  - label: "Run e2e tests iOS :ios:"
+    container: macos
+    timeout: 30m
+    run:
+      - bundle: ~
+      - yarn
+      - brew tap wix/brew
+      - brew install applesimutils
+      - yarn build
+      - cd fixture
+      - yarn
+      - cd ios
+      - bundle exec pod install
+      - yarn e2e:build:ios
+      - yarn e2e:test:ios
+    artifact_paths:
+      - fixture/e2e/artifacts/ios/diff/*.png
