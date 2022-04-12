@@ -6,6 +6,8 @@ import {
   LayoutChangeEvent,
   ViewStyle,
   ColorValue,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import {
   DataProvider,
@@ -23,6 +25,8 @@ import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
+import ViewToken from "./ViewToken";
+import ViewabilityManager from "./ViewabilityManager";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
@@ -120,6 +124,14 @@ export interface FlashListProps<T> extends FlatListProps<T> {
    * If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
    */
   onLoad?: (info: { elapsedTimeInMs: number }) => void;
+
+  /**
+   * Called when the viewability of items changes, as defined by the viewabilityConfig.
+   */
+  onViewableItemsChanged?:
+    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+    | null
+    | undefined;
 }
 
 export interface FlashListState<T> {
@@ -168,6 +180,7 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private isEmptyList = false;
+  private viewabilityManager: ViewabilityManager<T>;
 
   static defaultProps = {
     data: [],
@@ -188,6 +201,7 @@ class FlashList<T> extends React.PureComponent<
     this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
     // eslint-disable-next-line react/state-in-constructor
     this.state = FlashList.getInitialMutableState(this);
+    this.viewabilityManager = new ViewabilityManager(this);
   }
 
   private validateProps() {
@@ -339,6 +353,10 @@ class FlashList<T> extends React.PureComponent<
     }
   }
 
+  componentWillUnmount() {
+    this.viewabilityManager.dispose();
+  }
+
   render() {
     this.isEmptyList = this.state.dataProvider.getSize() === 0;
     this.contentStyle = this.getContentContainerInfo().style;
@@ -353,6 +371,7 @@ class FlashList<T> extends React.PureComponent<
       initialScrollIndex,
       style,
       contentContainerStyle,
+      onViewableItemsChanged,
       ...restProps
     } = this.props;
 
@@ -378,6 +397,7 @@ class FlashList<T> extends React.PureComponent<
           canChangeSize
           isHorizontal={Boolean(horizontal)}
           scrollViewProps={{
+            onScrollBeginDrag: this.onScrollBeginDrag,
             onLayout: this.handleSizeChange,
             refreshControl:
               this.props.refreshControl || this.getRefreshControl(),
@@ -409,11 +429,29 @@ class FlashList<T> extends React.PureComponent<
           }
           initialOffset={initialOffset}
           onItemLayout={this.onItemLayout}
+          onScroll={this.onScroll}
+          onVisibleIndicesChanged={
+            this.viewabilityManager.shouldListenToVisibleIndices
+              ? this.viewabilityManager.onVisibleIndicesChanged
+              : undefined
+          }
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>
     );
   }
+
+  private onScrollBeginDrag = (
+    event: NativeSyntheticEvent<NativeScrollEvent>
+  ) => {
+    this.recordInteraction();
+    this.props.onScrollBeginDrag?.(event);
+  };
+
+  private onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    this.viewabilityManager.updateViewableItems();
+    this.props.onScroll?.(event);
+  };
 
   private getUpdatedWindowCorrectionConfig() {
     // If the initial scroll index is in the first row then we're forcing RLV to use initialOffset and thus we need to disable window correction
@@ -785,6 +823,14 @@ class FlashList<T> extends React.PureComponent<
   public get firstItemOffset() {
     return this.distanceFromWindow;
   }
+
+  /**
+   * Tells the list an interaction has occurred, which should trigger viewability calculations, e.g. if waitForInteractions is true and the user has not scrolled.
+   * This is typically called by taps on items or by navigation actions.
+   */
+  public recordInteraction = () => {
+    this.viewabilityManager.recordInteraction();
+  };
 }
 
 export default FlashList;

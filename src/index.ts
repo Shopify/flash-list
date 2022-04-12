@@ -9,3 +9,4 @@ export {
   BlankAreaEventHandler,
   BlankAreaEvent,
 } from "./AutoLayoutView";
+export { default as ViewToken } from "./ViewToken";
