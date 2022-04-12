@@ -38,15 +38,18 @@ describe("ViewabilityHelper", () => {
     );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
     updateViewableItems({ viewabilityHelper });
+    // Items 0, 1, 2 are initially viewable
     expect(viewableIndicesChanged).toHaveBeenCalledWith(
       [0, 1, 2],
       [0, 1, 2],
       []
     );
 
+    // After scroll, item 3 becomes viewable, too
     updateViewableItems({ viewabilityHelper, scrollOffset: 50 });
     expect(viewableIndicesChanged).toHaveBeenCalledWith([0, 1, 2, 3], [3], []);
 
+    // After additional scroll, the first item is no longer viewable
     updateViewableItems({ viewabilityHelper, scrollOffset: 100 });
     expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2, 3], [], [0]);
   });
