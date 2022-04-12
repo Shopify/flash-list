@@ -28,6 +28,8 @@ export function autoScroll(
     let startTime = Date.now();
     let startX = fromX;
     let startY = fromY;
+    // Computes the number of pixels to scroll in the given time
+    // Also invokes the scrollable to update the scroll position
     const animationLoop = () => {
       requestAnimationFrame(() => {
         if (cancellable.isCancelled()) {

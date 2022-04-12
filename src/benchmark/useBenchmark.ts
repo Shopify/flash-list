@@ -37,7 +37,7 @@ export interface BlankAreaBenchmarkResult {
  */
 
 export function useBenchmark(
-  ref: React.MutableRefObject<FlashList<any>>,
+  flashListRef: React.RefObject<FlashList<any> | null | undefined>,
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
@@ -56,8 +56,8 @@ export function useBenchmark(
   useEffect(() => {
     const cancellable = new Cancellable();
     const suggestions: string[] = [];
-    if (ref.current) {
-      if (!(Number(ref.current.props.data?.length) > 0)) {
+    if (flashListRef.current) {
+      if (!(Number(flashListRef.current.props.data?.length) > 0)) {
         throw new Error("Data is empty, cannot run benchmark");
       }
     }
@@ -65,7 +65,11 @@ export function useBenchmark(
       const jsFPSMonitor = new JSFPSMonitor();
       jsFPSMonitor.startTracking();
       for (let i = 0; i < (params.repeatCount || 1); i++) {
-        await runScrollBenchmark(ref, cancellable, params.speedMultiplier || 1);
+        await runScrollBenchmark(
+          flashListRef,
+          cancellable,
+          params.speedMultiplier || 1
+        );
       }
       const jsProfilerResponse = jsFPSMonitor.stopAndGetData();
       // TODO: Come up with a more threshold that's not arbitrary
@@ -74,7 +78,7 @@ export function useBenchmark(
       //     `Your average JS FPS is low. This can indicate that your components are doing too much work. Try to optimize your components and reduce re-renders if any`
       //   );
       // }
-      computeSuggestions(ref, suggestions);
+      computeSuggestions(flashListRef, suggestions);
       const result: BenchmarkResult = {
         js: jsProfilerResponse,
         blankArea:
@@ -125,14 +129,17 @@ export function getFormattedString(res: BenchmarkResult) {
   );
 }
 
+/**
+ * Scrolls to the end of the list and then back to the top
+ */
 async function runScrollBenchmark(
-  ref: React.MutableRefObject<FlashList<any>>,
+  flashListRef: React.RefObject<FlashList<any> | null | undefined>,
   cancellable: Cancellable,
   scrollSpeedMultiplier: number
 ): Promise<void> {
-  if (ref.current) {
-    const horizontal = ref.current.props.horizontal;
-    const rlv = ref.current.recyclerlistview_unsafe;
+  if (flashListRef.current) {
+    const horizontal = flashListRef.current.props.horizontal;
+    const rlv = flashListRef.current.recyclerlistview_unsafe;
     if (rlv) {
       const rlvSize = rlv.getRenderedSize();
       const rlvContentSize = rlv.getContentDimension();
@@ -143,7 +150,7 @@ async function runScrollBenchmark(
       const toY = rlvContentSize.height - rlvSize.height;
 
       const scrollNow = (x: number, y: number) => {
-        ref.current?.scrollToOffset({
+        flashListRef.current?.scrollToOffset({
           offset: horizontal ? x : y,
           animated: false,
         });
@@ -171,28 +178,29 @@ async function runScrollBenchmark(
   }
 }
 function computeSuggestions(
-  ref: React.MutableRefObject<FlashList<any>>,
+  flashListRef: React.RefObject<FlashList<any> | null | undefined>,
   suggestions: string[]
 ) {
-  if (ref.current) {
-    if (ref.current.props.data!!.length < 200) {
+  if (flashListRef.current) {
+    if (flashListRef.current.props.data!!.length < 200) {
       suggestions.push(
         `Data count is low. Try to increase it to a large number (e.g 200) using the 'useDataMultiplier' hook.`
       );
     }
     const distanceFromWindow = roundToDecimalPlaces(
-      ref.current.firstItemOffset,
+      flashListRef.current.firstItemOffset,
       0
     );
     if (
-      (ref.current.props.estimatedFirstItemOffset || 0) !== distanceFromWindow
+      (flashListRef.current.props.estimatedFirstItemOffset || 0) !==
+      distanceFromWindow
     ) {
       suggestions.push(
         `estimatedFirstItemOffset can be set to ${distanceFromWindow}`
       );
     }
-    const rlv = ref.current.recyclerlistview_unsafe;
-    const horizontal = ref.current.props.horizontal;
+    const rlv = flashListRef.current.recyclerlistview_unsafe;
+    const horizontal = flashListRef.current.props.horizontal;
     if (rlv) {
       const sizeArray = rlv.props.dataProvider
         .getAllData()
@@ -201,13 +209,13 @@ function computeSuggestions(
             ? rlv.getLayout?.(index)?.width || 0
             : rlv.getLayout?.(index)?.height || 0
         );
-      const sortedSizes = sizeArray.sort();
-      const median = roundToDecimalPlaces(
-        sortedSizes[Math.floor(sortedSizes.length / 2)],
-        0
+      const averageSize = Math.round(
+        sizeArray.reduce((a, b) => a + b, 0) / sizeArray.length
       );
-      if (Math.abs(median - ref.current.props.estimatedItemSize) > 5) {
-        suggestions.push(`estimatedItemSize can be set to ${median}`);
+      if (
+        Math.abs(averageSize - flashListRef.current.props.estimatedItemSize) > 5
+      ) {
+        suggestions.push(`estimatedItemSize can be set to ${averageSize}`);
       }
     }
   }

@@ -21,14 +21,14 @@ export interface FlatListBenchmarkParams extends BenchmarkParams {
  * It's recommended to remove pagination while running the benchmark. Removing the onEndReached callback is the easiest way to do that.
  */
 export function useFlatListBenchmark(
-  ref: React.MutableRefObject<FlatList<any>>,
+  flatListRef: React.RefObject<FlatList<any> | null | undefined>,
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: FlatListBenchmarkParams
 ) {
   useEffect(() => {
     const cancellable = new Cancellable();
-    if (ref.current) {
-      if (!(Number(ref.current.props.data?.length) > 0)) {
+    if (flatListRef.current) {
+      if (!(Number(flatListRef.current.props.data?.length) > 0)) {
         throw new Error("Data is empty, cannot run benchmark");
       }
     }
@@ -37,7 +37,7 @@ export function useFlatListBenchmark(
       jsFPSMonitor.startTracking();
       for (let i = 0; i < (params.repeatCount || 1); i++) {
         await runScrollBenchmark(
-          ref,
+          flatListRef,
           params.targetOffset,
           cancellable,
           params.speedMultiplier || 1
@@ -62,14 +62,17 @@ export function useFlatListBenchmark(
   return [];
 }
 
+/**
+ * Scrolls to the target offset and then back to 0
+ */
 async function runScrollBenchmark(
-  ref: React.MutableRefObject<FlatList<any>>,
+  flatListRef: React.RefObject<FlatList<any> | null | undefined>,
   targetOffset: number,
   cancellable: Cancellable,
   scrollSpeedMultiplier: number
 ): Promise<void> {
-  if (ref.current) {
-    const horizontal = ref.current.props.horizontal;
+  if (flatListRef.current) {
+    const horizontal = flatListRef.current.props.horizontal;
 
     const fromX = 0;
     const fromY = 0;
@@ -77,7 +80,7 @@ async function runScrollBenchmark(
     const toY = horizontal ? 0 : targetOffset;
 
     const scrollNow = (x: number, y: number) => {
-      ref.current?.scrollToOffset({
+      flatListRef.current?.scrollToOffset({
         offset: horizontal ? x : y,
         animated: false,
       });

@@ -167,7 +167,6 @@ class FlashList<T> extends React.PureComponent<
   private transformStyle = { transform: [{ scaleY: -1 }] };
   private distanceFromWindow = 0;
   private contentStyle: ContentStyle = {};
-  private onEndReachedDisabled = false;
   private loadStartTime = 0;
   private isListLoaded = false;
   private windowCorrectionConfig: WindowCorrectionConfig = {
@@ -331,10 +330,8 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private onEndReached = () => {
-    if (!this.onEndReachedDisabled) {
-      // known issue: RLV doesn't report distanceFromEnd
-      this.props.onEndReached?.({ distanceFromEnd: 0 });
-    }
+    // known issue: RLV doesn't report distanceFromEnd
+    this.props.onEndReached?.({ distanceFromEnd: 0 });
   };
 
   private getRefreshControl = () => {
