@@ -25,20 +25,14 @@ import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
 import ViewabilityHelper from "./ViewabilityHelper";
+import ViewToken from "./ViewToken";
+import ViewabilityManager from "./ViewabilityManager";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
 }
 const StickyHeaderContainer =
   StickyContainer as React.ComponentClass<StickyProps>;
-
-export interface ViewToken {
-  item: any;
-  key: string;
-  index: number | null;
-  isViewable: boolean;
-  timestamp: number;
-}
 
 export interface FlashListProps<T> extends FlatListProps<T> {
   // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
@@ -185,7 +179,7 @@ class FlashList<T> extends React.PureComponent<
     applyToInitialOffset: true,
   };
 
-  private viewabilityHelpers: ViewabilityHelper[] = [];
+  private viewabilityManager: ViewabilityManager<T>;
 
   static defaultProps = {
     data: [],
@@ -206,78 +200,8 @@ class FlashList<T> extends React.PureComponent<
     this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
     // eslint-disable-next-line react/state-in-constructor
     this.state = FlashList.getInitialMutableState(this);
-    this.setUpViewabilityHelpers();
+    this.viewabilityManager = new ViewabilityManager(this);
   }
-
-  /**
-   * Sets up viewability helpers based on current props.
-   * If viewability props are changed, the viewability helpers will not be updated.
-   */
-  private setUpViewabilityHelpers = () => {
-    if (
-      this.props.onViewableItemsChanged !== null &&
-      this.props.onViewableItemsChanged !== undefined
-    ) {
-      this.viewabilityHelpers.push(
-        this.createViewabilityHelper(
-          this.props.viewabilityConfig,
-          this.props.onViewableItemsChanged
-        )
-      );
-    }
-    (this.props.viewabilityConfigCallbackPairs ?? []).forEach((pair) => {
-      this.viewabilityHelpers.push(
-        this.createViewabilityHelper(
-          pair.viewabilityConfig,
-          pair.onViewableItemsChanged
-        )
-      );
-    });
-  };
-
-  /**
-   * Creates a new `ViewabilityHelper` instance with `onViewableItemsChanged` callback and `ViewabilityConfig`
-   * @returns `ViewabilityHelper` instance
-   */
-  private createViewabilityHelper = (
-    viewabilityConfig: ViewabilityConfig | null | undefined,
-    onViewableItemsChanged:
-      | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
-      | null
-      | undefined
-  ) => {
-    const mapViewToken: (index: number, isViewable: boolean) => ViewToken = (
-      index: number,
-      isViewable: boolean
-    ) => {
-      const item = this.props.data?.[index];
-      const key =
-        item === undefined || this.props.keyExtractor === undefined
-          ? index.toString()
-          : this.props.keyExtractor(item, index);
-      return {
-        index,
-        isViewable,
-        item,
-        key,
-        timestamp: Date.now(),
-      };
-    };
-    return new ViewabilityHelper(
-      viewabilityConfig,
-      (indices, newlyVisibleIndices, newlyNonvisibleIndices) => {
-        onViewableItemsChanged?.({
-          viewableItems: indices.map((index) => mapViewToken(index, true)),
-          changed: [
-            ...newlyVisibleIndices.map((index) => mapViewToken(index, true)),
-            ...newlyNonvisibleIndices.map((index) =>
-              mapViewToken(index, false)
-            ),
-          ],
-        });
-      }
-    );
-  };
 
   private validateProps() {
     if (this.props.onRefresh && typeof this.props.refreshing !== "boolean") {
@@ -429,9 +353,7 @@ class FlashList<T> extends React.PureComponent<
   }
 
   componentWillUnmount() {
-    this.viewabilityHelpers.forEach((viewabilityHelper) =>
-      viewabilityHelper.dispose()
-    );
+    this.viewabilityManager.dispose();
   }
 
   render() {
@@ -513,35 +435,15 @@ class FlashList<T> extends React.PureComponent<
           }
           initialOffset={initialOffset}
           onItemLayout={this.onItemLayout}
-          onScroll={this.updateViewableItems}
-          onVisibleIndicesChanged={this.onVisibleIndicesChanged}
+          onScroll={this.viewabilityManager.updateViewableItems}
+          onVisibleIndicesChanged={
+            this.viewabilityManager.onVisibleIndicesChanged
+          }
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
       </StickyHeaderContainer>
     );
   }
-
-  private onVisibleIndicesChanged = (all: number[]) => {
-    this.viewabilityHelpers.forEach(
-      (viewabilityHelper) => (viewabilityHelper.possiblyViewableIndices = all)
-    );
-    this.updateViewableItems();
-  };
-
-  private updateViewableItems = () => {
-    const listSize = this.rlvRef?.getRenderedSize();
-    if (listSize === undefined) {
-      return;
-    }
-    this.viewabilityHelpers.forEach((viewabilityHelper) => {
-      viewabilityHelper.updateViewableItems(
-        this.props.horizontal ?? false,
-        this.rlvRef?.getCurrentScrollOffset() ?? 0,
-        listSize,
-        (index: number) => this.rlvRef?.getLayout(index)
-      );
-    });
-  };
 
   private getUpdatedWindowCorrectionConfig() {
     // If the initial scroll index is in the first row then we're forcing RLV to use initialOffset and thus we need to disable window correction
@@ -916,10 +818,7 @@ class FlashList<T> extends React.PureComponent<
    * This is typically called by taps on items or by navigation actions.
    */
   public recordInteraction = () => {
-    this.viewabilityHelpers.forEach((viewabilityHelper) => {
-      viewabilityHelper.hasInteracted = true;
-    });
-    this.updateViewableItems();
+    this.viewabilityManager.recordInteraction();
   };
 }
 
