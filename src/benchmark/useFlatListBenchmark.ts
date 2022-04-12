@@ -35,12 +35,14 @@ export function useFlatListBenchmark(
     const cancelTimeout = setTimeout(async () => {
       const jsFPSMonitor = new JSFPSMonitor();
       jsFPSMonitor.startTracking();
-      await runScrollBenchmark(
-        ref,
-        params.targetOffset,
-        cancellable,
-        params.speedMultiplier || 1
-      );
+      for (let i = 0; i < (params.repeatCount || 1); i++) {
+        await runScrollBenchmark(
+          ref,
+          params.targetOffset,
+          cancellable,
+          params.speedMultiplier || 1
+        );
+      }
       const jsProfilerResponse = jsFPSMonitor.stopAndGetData();
       const result: BenchmarkResult = {
         js: jsProfilerResponse,
