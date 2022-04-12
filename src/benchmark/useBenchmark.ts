@@ -57,7 +57,6 @@ export function useBenchmark(
       if (!(Number(ref.current.props.data?.length) > 0)) {
         throw new Error("Data is empty, cannot run benchmark");
       }
-      ref.current.forceDisableOnEndReachedCallback();
     }
     const cancelTimeout = setTimeout(async () => {
       const jsFpsMonitor = new JSFpsMonitor();
@@ -127,7 +126,7 @@ async function runScrollBenchmark(
 ): Promise<void> {
   if (ref.current) {
     const horizontal = ref.current.props.horizontal;
-    const rlv = ref.current.getRecyclerListView();
+    const rlv = ref.current.recyclerlistview_unsafe;
     if (rlv) {
       const rlvSize = rlv.getRenderedSize();
       const rlvContentSize = rlv.getContentDimension();
@@ -176,7 +175,7 @@ function computeSuggestions(
       );
     }
     const distanceFromWindow = roundToDecimalPlaces(
-      ref.current.getFirstItemOffset(),
+      ref.current.firstItemOffset,
       0
     );
     if (
@@ -186,7 +185,7 @@ function computeSuggestions(
         `estimatedFirstItemOffset can be set to ${distanceFromWindow}`
       );
     }
-    const rlv = ref.current.getRecyclerListView();
+    const rlv = ref.current.recyclerlistview_unsafe;
     const horizontal = ref.current.props.horizontal;
     if (rlv) {
       const sizeArray = rlv.props.dataProvider

@@ -753,12 +753,6 @@ class FlashList<T> extends React.PureComponent<
     this.raiseOnLoadEventIfNeeded();
   };
 
-  public getRecyclerListView():
-    | RecyclerListView<RecyclerListViewProps, any>
-    | undefined {
-    return this.rlvRef;
-  }
-
   private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
       this.isListLoaded = true;
