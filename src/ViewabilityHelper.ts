@@ -40,12 +40,12 @@ class ViewabilityHelper {
     this.viewableIndicesChanged = viewableIndicesChanged;
   }
 
-  dispose() {
+  public dispose() {
     // Clean up on dismount
     this.timers.forEach(clearTimeout);
   }
 
-  updateViewableItems(
+  public updateViewableItems(
     horizontal: boolean,
     scrollOffset: number,
     listSize: Dimension,
@@ -96,7 +96,7 @@ class ViewabilityHelper {
     }
   }
 
-  checkViewableIndicesChanges(newViewableIndices: number[]) {
+  public checkViewableIndicesChanges(newViewableIndices: number[]) {
     // Check if all viewable indices are still available (applicable if minimumViewTime > 0)
     const currentlyNewViewableIndices = newViewableIndices.filter((index) =>
       this.viewableIndices.includes(index)
