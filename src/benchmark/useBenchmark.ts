@@ -210,7 +210,8 @@ function computeSuggestions(
             : rlv.getLayout?.(index)?.height || 0
         );
       const averageSize = Math.round(
-        sizeArray.reduce((a, b) => a + b, 0) / sizeArray.length
+        sizeArray.reduce((prev, current) => prev + current, 0) /
+          sizeArray.length
       );
       if (
         Math.abs(averageSize - flashListRef.current.props.estimatedItemSize) > 5
