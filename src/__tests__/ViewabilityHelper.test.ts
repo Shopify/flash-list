@@ -1,5 +1,7 @@
 import { Dimension, Layout } from "recyclerlistview";
 
+import CustomError from "../errors/CustomError";
+import ExceptionList from "../errors/ExceptionList";
 import ViewabilityHelper from "../ViewabilityHelper";
 
 describe("ViewabilityHelper", () => {
@@ -232,6 +234,18 @@ describe("ViewabilityHelper", () => {
       [0, 1, 2, 3],
       [0, 1, 2, 3],
       []
+    );
+  });
+
+  it("throws multipleViewabilityThresholdTypesNotSupported exception when both viewAreaCoveragePercentThreshold and itemVisiblePercentThreshold are defined", () => {
+    const viewabilityHelper = new ViewabilityHelper(
+      { viewAreaCoveragePercentThreshold: 1, itemVisiblePercentThreshold: 1 },
+      viewableIndicesChanged
+    );
+    expect(() => updateViewableItems({ viewabilityHelper })).toThrow(
+      new CustomError(
+        ExceptionList.multipleViewabilityThresholdTypesNotSupported
+      )
     );
   });
 

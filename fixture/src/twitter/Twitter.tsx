@@ -1,5 +1,11 @@
 import React, { useContext, useRef, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ViewabilityConfig,
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
@@ -15,6 +21,11 @@ const Twitter = () => {
   const [tweets, setTweets] = useState(
     debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData
   );
+  const viewabilityConfig = useRef<ViewabilityConfig>({
+    waitForInteraction: true,
+    itemVisiblePercentThreshold: 50,
+    minimumViewTime: 1000,
+  }).current;
 
   return (
     <FlashListPerformanceView listName="Twitter">
@@ -56,11 +67,7 @@ const Twitter = () => {
         ItemSeparatorComponent={Divider}
         data={tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
-        viewabilityConfig={{
-          waitForInteraction: true,
-          itemVisiblePercentThreshold: 50,
-          minimumViewTime: 1000,
-        }}
+        viewabilityConfig={viewabilityConfig}
         onViewableItemsChanged={(info) => {
           console.log(info);
         }}

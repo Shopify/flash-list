@@ -1,6 +1,9 @@
 import { ViewabilityConfig } from "react-native";
 import { Dimension, Layout } from "recyclerlistview";
 
+import CustomError from "./errors/CustomError";
+import ExceptionList from "./errors/ExceptionList";
+
 /**
  * Helper class for computing viewable items based on the passed `viewabilityConfig`.
  * Note methods in this class will be invoked on every scroll and should be optimized for performance.
@@ -48,6 +51,16 @@ class ViewabilityHelper {
     listSize: Dimension,
     getLayout: (index: number) => Layout | undefined
   ) {
+    if (
+      this.viewabilityConfig?.itemVisiblePercentThreshold !== null &&
+      this.viewabilityConfig?.itemVisiblePercentThreshold !== undefined &&
+      this.viewabilityConfig?.viewAreaCoveragePercentThreshold !== null &&
+      this.viewabilityConfig?.viewAreaCoveragePercentThreshold !== undefined
+    ) {
+      throw new CustomError(
+        ExceptionList.multipleViewabilityThresholdTypesNotSupported
+      );
+    }
     if (
       (this.viewabilityConfig?.waitForInteraction ?? false) &&
       !this.hasInteracted

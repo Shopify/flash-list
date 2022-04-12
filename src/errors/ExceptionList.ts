@@ -19,5 +19,10 @@ const ExceptionList = {
       "numColumns is not supported when list is in horizontal mode. Please remove or set numColumns to 1.",
     type: "NotSupportedException",
   },
+  multipleViewabilityThresholdTypesNotSupported: {
+    message:
+      "You can set exactly one of itemVisiblePercentThreshold or viewAreaCoveragePercentThreshold. Specifying both is not supported.",
+    type: "MultipleViewabilityThresholdTypesException",
+  },
 };
 export default ExceptionList;

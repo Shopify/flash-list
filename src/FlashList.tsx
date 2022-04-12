@@ -132,7 +132,7 @@ export interface FlashListProps<T> extends FlatListProps<T> {
   onLoad?: (info: { elapsedTimeInMs: number }) => void;
 
   /**
-   * Called when the viewability of rows changes, as defined by the viewablePercentThreshold prop.
+   * Called when the viewability of items changes, as defined by the viewabilityConfig.
    */
   onViewableItemsChanged?:
     | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)

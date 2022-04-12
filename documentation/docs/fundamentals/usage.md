@@ -324,7 +324,7 @@ onViewableItemsChanged?: ((info: {
 Called when the viewability of rows changes, as defined by the `viewabilityConfig` prop. Array of `changed` includes `ViewToken`s that both visible and non-visible items. You can use the `isViewable` flag to filter the items.
 
 :::note
-If you are tracking the time a view becomes (non-)visible, use the `timestamp` property.
+If you are tracking the time a view becomes (non-)visible, use the `timestamp` property. We make no guarantees that in the future viewability callbacks will be invoked as soon as they happen - for example, they might be deferred until JS thread is less busy.
 :::
 
 ### `overrideItemType`
@@ -484,7 +484,7 @@ Avoid using this when making large changes to the data as the list might draw to
 recordInteraction();
 ```
 
-Tells the list an interaction has occurred, which should trigger viewability calculations, e.g. if `waitForInteractions` is true and the user has not scrolled. This is typically called by taps on items or by navigation actions.
+Tells the list an interaction has occurred, which should trigger viewability calculations, e.g. if `waitForInteractions` is true and the user has not scrolled. You should typically call `recordInteraction()` when user for example taps on an item or invokes a navigation action.
 
 ### `scrollToEnd()`
 
