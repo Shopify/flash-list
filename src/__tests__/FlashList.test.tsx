@@ -478,4 +478,54 @@ describe("FlashList", () => {
       ],
     });
   });
+
+  it("viewability reports take into account estimatedFirstItemOffset", () => {
+    const onViewableItemsChanged = jest.fn();
+    mountFlashList({
+      estimatedFirstItemOffset: 200,
+      estimatedItemSize: 300,
+      onViewableItemsChanged,
+      viewabilityConfig: { itemVisiblePercentThreshold: 50 },
+    });
+
+    // onViewableItemsChanged is not called before 250 ms have elapsed
+    expect(onViewableItemsChanged).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(250);
+    // Initial viewable items
+    expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+  });
 });

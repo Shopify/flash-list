@@ -6,7 +6,8 @@ import {
   LayoutChangeEvent,
   ViewStyle,
   ColorValue,
-  ViewabilityConfig,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import {
   DataProvider,
@@ -24,7 +25,6 @@ import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
-import ViewabilityHelper from "./ViewabilityHelper";
 import ViewToken from "./ViewToken";
 import ViewabilityManager from "./ViewabilityManager";
 
@@ -403,7 +403,7 @@ class FlashList<T> extends React.PureComponent<
           canChangeSize
           isHorizontal={Boolean(horizontal)}
           scrollViewProps={{
-            onScrollBeginDrag: this.recordInteraction,
+            onScrollBeginDrag: this.onScrollBeginDrag,
             onLayout: this.handleSizeChange,
             refreshControl:
               this.props.refreshControl || this.getRefreshControl(),
@@ -444,6 +444,13 @@ class FlashList<T> extends React.PureComponent<
       </StickyHeaderContainer>
     );
   }
+
+  private onScrollBeginDrag = (
+    event: NativeSyntheticEvent<NativeScrollEvent>
+  ) => {
+    this.recordInteraction();
+    this.props.onScrollBeginDrag?.(event);
+  };
 
   private onScroll = () => {
     this.viewabilityManager.updateViewableItems();
