@@ -4,7 +4,7 @@ import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
  * Can be used to monitor JS thread performance
  * Use startTracking() and stopAndGetData() to start and stop tracking
  */
-export class JSFpsMonitor {
+export class JSFPSMonitor {
   private startTime = 0;
   private frameCount = 0;
   private timeWindow = {
@@ -12,30 +12,30 @@ export class JSFpsMonitor {
     startTime: 0,
   };
 
-  private minFps = Number.MAX_SAFE_INTEGER;
-  private maxFps = 0;
-  private averageFps = 0;
+  private minFPS = Number.MAX_SAFE_INTEGER;
+  private maxFPS = 0;
+  private averageFPS = 0;
 
-  private clearAnimationNum = 0;
+  private clearAnimationNumber = 0;
 
   private measureLoop() {
     // This looks weird but I'm avoiding a new closure
-    this.clearAnimationNum = requestAnimationFrame(this.updateLoopCompute);
+    this.clearAnimationNumber = requestAnimationFrame(this.updateLoopCompute);
   }
 
   private updateLoopCompute = () => {
     this.frameCount++;
-    const elaspedTime = (Date.now() - this.startTime) / 1000;
-    this.averageFps = elaspedTime > 0 ? this.frameCount / elaspedTime : 0;
+    const elapsedTime = (Date.now() - this.startTime) / 1000;
+    this.averageFPS = elapsedTime > 0 ? this.frameCount / elapsedTime : 0;
 
     this.timeWindow.frameCount++;
-    const timeWindowElaspedTime =
+    const timeWindowElapsedTime =
       (Date.now() - this.timeWindow.startTime) / 1000;
-    if (timeWindowElaspedTime >= 1) {
-      const timeWindowAverageFps =
-        this.timeWindow.frameCount / timeWindowElaspedTime;
-      this.minFps = Math.min(this.minFps, timeWindowAverageFps);
-      this.maxFps = Math.max(this.maxFps, timeWindowAverageFps);
+    if (timeWindowElapsedTime >= 1) {
+      const timeWindowAverageFPS =
+        this.timeWindow.frameCount / timeWindowElapsedTime;
+      this.minFPS = Math.min(this.minFPS, timeWindowAverageFPS);
+      this.maxFPS = Math.max(this.maxFPS, timeWindowAverageFPS);
       this.timeWindow.frameCount = 0;
       this.timeWindow.startTime = Date.now();
     }
@@ -54,17 +54,17 @@ export class JSFpsMonitor {
   }
 
   public stopAndGetData(): JSFPSResult {
-    cancelAnimationFrame(this.clearAnimationNum);
+    cancelAnimationFrame(this.clearAnimationNumber);
     return {
-      minFps: roundToDecimalPlaces(this.minFps, 1),
-      maxFps: roundToDecimalPlaces(this.maxFps, 1),
-      averageFps: roundToDecimalPlaces(this.averageFps, 1),
+      minFPS: roundToDecimalPlaces(this.minFPS, 1),
+      maxFPS: roundToDecimalPlaces(this.maxFPS, 1),
+      averageFPS: roundToDecimalPlaces(this.averageFPS, 1),
     };
   }
 }
 
 export interface JSFPSResult {
-  minFps: number;
-  maxFps: number;
-  averageFps: number;
+  minFPS: number;
+  maxFPS: number;
+  averageFPS: number;
 }

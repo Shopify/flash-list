@@ -4,7 +4,7 @@ import { FlatList } from "react-native";
 import { autoScroll } from "..";
 
 import { Cancellable } from "./AutoScrollHelper";
-import { JSFpsMonitor } from "./JSFpsMonitor";
+import { JSFPSMonitor } from "./JSFPSMonitor";
 import {
   BenchmarkParams,
   BenchmarkResult,
@@ -22,7 +22,7 @@ export interface FlatListBenchmarkParams extends BenchmarkParams {
  */
 export function useFlatListBenchmark(
   ref: React.MutableRefObject<FlatList<any>>,
-  callback: (profilerResponse: BenchmarkResult) => void,
+  callback: (benchmarkResult: BenchmarkResult) => void,
   params: FlatListBenchmarkParams
 ) {
   useEffect(() => {
@@ -33,15 +33,15 @@ export function useFlatListBenchmark(
       }
     }
     const cancelTimeout = setTimeout(async () => {
-      const jsFpsMonitor = new JSFpsMonitor();
-      jsFpsMonitor.startTracking();
+      const jsFPSMonitor = new JSFPSMonitor();
+      jsFPSMonitor.startTracking();
       await runScrollBenchmark(
         ref,
         params.targetOffset,
         cancellable,
         params.speedMultiplier || 1
       );
-      const jsProfilerResponse = jsFpsMonitor.stopAndGetData();
+      const jsProfilerResponse = jsFPSMonitor.stopAndGetData();
       const result: BenchmarkResult = {
         js: jsProfilerResponse,
         suggestions: [],

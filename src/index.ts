@@ -20,6 +20,6 @@ export {
   useFlatListBenchmark,
   FlatListBenchmarkParams,
 } from "./benchmark/useFlatListBenchmark";
-export { JSFpsMonitor, JSFPSResult } from "./benchmark/JSFpsMonitor";
+export { JSFPSMonitor, JSFPSResult } from "./benchmark/JSFPSMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
 export { default as ViewToken } from "./ViewToken";

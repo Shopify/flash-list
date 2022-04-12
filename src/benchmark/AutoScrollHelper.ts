@@ -7,7 +7,7 @@
  * @param toY the y offset to end scroll at
  * @param speedMultiplier  the speed multiplier to use
  * @param cancellable can be used to cancel the scroll
- * @returns
+ * @returns Promise that resolves when the scroll is complete
  */
 export function autoScroll(
   scrollable: (x: number, y: number, animated: boolean) => void,
@@ -21,8 +21,8 @@ export function autoScroll(
   return new Promise((resolve) => {
     scrollable(fromX, fromY, false);
     const incrementPerMs = 7 * speedMultiplier;
-    const directionMultiplerX = toX > fromX ? 1 : -1;
-    const directionMultiplerY = toY > fromY ? 1 : -1;
+    const directionMultiplierX = toX > fromX ? 1 : -1;
+    const directionMultiplierY = toY > fromY ? 1 : -1;
     const comparatorX = toX > fromX ? Math.min : Math.max;
     const comparatorY = toY > fromY ? Math.min : Math.max;
     let startTime = Date.now();
@@ -37,8 +37,8 @@ export function autoScroll(
         const currentTime = Date.now();
         const timeElapsed = currentTime - startTime;
         const distanceToCover = incrementPerMs * timeElapsed;
-        startX += distanceToCover * directionMultiplerX;
-        startY += distanceToCover * directionMultiplerY;
+        startX += distanceToCover * directionMultiplierX;
+        startY += distanceToCover * directionMultiplierY;
         scrollable(comparatorX(toX, startX), comparatorY(toY, startY), false);
         startTime = currentTime;
         if (

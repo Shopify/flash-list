@@ -3,7 +3,7 @@
  * If you're using this with FlatList then make sure you remove `keyExtractor` because this method might duplicate ids that might be in the data.
  * @param data The data to duplicate
  * @param count Final count of data to be returned from this hook
- * @returns
+ * @returns Multiplied data.
  */
 export function useDataMultiplier<T>(data: T[], count: number): [T[]] {
   const len = data.length;

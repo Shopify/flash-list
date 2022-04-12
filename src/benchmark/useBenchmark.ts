@@ -4,7 +4,7 @@ import { BlankAreaEvent } from "../AutoLayoutView";
 import FlashList from "../FlashList";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
-import { JSFpsMonitor, JSFPSResult } from "./JSFpsMonitor";
+import { JSFPSMonitor, JSFPSResult } from "./JSFPSMonitor";
 import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
 
 export interface BenchmarkParams {
@@ -29,13 +29,13 @@ export interface BlankAreaBenchmarkResult {
 
 /**
  * Runs the benchmark on FlashList.
- * Response object has a formatted string that can be printed to the console or, shown as an alert.
+ * Response object has a formatted string that can be printed to the console or shown as an alert.
  * Result is posted to the callback method passed to the hook.
  */
 
 export function useBenchmark(
   ref: React.MutableRefObject<FlashList<any>>,
-  callback: (profilerResponse: BenchmarkResult) => void,
+  callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
   const blankAreaResult = {
@@ -59,15 +59,16 @@ export function useBenchmark(
       }
     }
     const cancelTimeout = setTimeout(async () => {
-      const jsFpsMonitor = new JSFpsMonitor();
-      jsFpsMonitor.startTracking();
+      const jsFPSMonitor = new JSFPSMonitor();
+      jsFPSMonitor.startTracking();
       await runScrollBenchmark(ref, cancellable, params.speedMultiplier || 1);
-      const jsProfilerResponse = jsFpsMonitor.stopAndGetData();
-      if (jsProfilerResponse.averageFps < 35) {
-        suggestions.push(
-          `Your average JS FPS is low. This can indicate that your components are doing too much work. Try to optimize your components and reduce re-renders if any`
-        );
-      }
+      const jsProfilerResponse = jsFPSMonitor.stopAndGetData();
+      // TODO: Come up with a more threshold that's not arbitrary
+      // if (jsProfilerResponse.averageFPS < 35) {
+      //   suggestions.push(
+      //     `Your average JS FPS is low. This can indicate that your components are doing too much work. Try to optimize your components and reduce re-renders if any`
+      //   );
+      // }
       computeSuggestions(ref, suggestions);
       const result: BenchmarkResult = {
         js: jsProfilerResponse,
@@ -103,7 +104,7 @@ export function useBenchmark(
 export function getFormattedString(res: BenchmarkResult) {
   return (
     `Results:\n\n` +
-    `JS FPS: Avg: ${res.js?.averageFps} | Min: ${res.js?.minFps} | Max: ${res.js?.maxFps}\n\n` +
+    `JS FPS: Avg: ${res.js?.averageFPS} | Min: ${res.js?.minFPS} | Max: ${res.js?.maxFPS}\n\n` +
     `${
       res.blankArea
         ? `Blank Area: Max: ${res.blankArea?.maxBlankArea} Cumulative: ${res.blankArea?.cumulativeBlankArea}\n\n`
@@ -171,7 +172,7 @@ function computeSuggestions(
   if (ref.current) {
     if (ref.current.props.data!!.length < 200) {
       suggestions.push(
-        `Data count is low. Try to increase it to a large number (e.g, 200) using the 'useDataMultiplier' hook.`
+        `Data count is low. Try to increase it to a large number (e.g 200) using the 'useDataMultiplier' hook.`
       );
     }
     const distanceFromWindow = roundToDecimalPlaces(
