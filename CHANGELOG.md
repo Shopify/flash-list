@@ -11,7 +11,6 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/301
 
 - Calculate average item sizes automatically
-
   - https://github.com/Shopify/flash-list/pull/296
 
 - Match FlashList's empty list behavior with FlatList
