@@ -63,9 +63,10 @@ const Twitter = () => {
             />
           );
         }}
+        ListEmptyComponent={Empty()}
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
-        data={tweets}
+        data={debugContext.emptyListEnabled ? [] : tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
         viewabilityConfig={viewabilityConfig}
         onViewableItemsChanged={(info) => {
@@ -105,6 +106,18 @@ export const Footer = ({ isLoading, isPagingEnabled }: FooterProps) => {
   );
 };
 
+export const Empty = () => {
+  return (
+    <View style={styles.emptyComponent} testID="EmptyComponent">
+      <Text style={styles.emptyComponentTitle}>Welcome to your timeline</Text>
+      <Text style={styles.emptyComponentSubtitle}>
+        It's empty now but it won't be for long. Start following peopled you'll
+        see Tweets show up here
+      </Text>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   divider: {
     width: "100%",
@@ -132,6 +145,22 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 12,
     fontSize: 12,
+  },
+  emptyComponentTitle: {
+    color: "black",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  emptyComponentSubtitle: {
+    color: "#808080",
+    padding: 8,
+    fontSize: 14,
+    textAlign: "center",
+  },
+  emptyComponent: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
   },
 });
 

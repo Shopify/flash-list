@@ -6,7 +6,7 @@ import { DebugContext } from "../Debug";
 
 import { tweets } from "./data/tweets";
 import TweetCell from "./TweetCell";
-import { Header, Footer, Divider } from "./Twitter";
+import { Header, Footer, Divider, Empty } from "./Twitter";
 
 const TwitterFlatList = () => {
   const debugContext = useContext(DebugContext);
@@ -25,7 +25,8 @@ const TwitterFlatList = () => {
         ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
         ListFooterComponent={Footer}
         ItemSeparatorComponent={Divider}
-        data={tweets}
+        ListEmptyComponent={Empty()}
+        data={debugContext.emptyListEnabled ? [] : tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
         viewabilityConfig={{
           waitForInteraction: true,
