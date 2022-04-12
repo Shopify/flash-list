@@ -10,6 +10,7 @@ import ViewToken from "./ViewToken";
 export default class ViewabilityManager<T> {
   private flashListRef: FlashList<T>;
   private viewabilityHelpers: ViewabilityHelper[] = [];
+  private hasInteracted = false;
 
   constructor(flashListRef: FlashList<T>) {
     this.flashListRef = flashListRef;
@@ -36,6 +37,13 @@ export default class ViewabilityManager<T> {
     );
   }
 
+  /**
+   * @returns true if the viewability manager has any viewability callback pairs registered.
+   */
+  public get shouldListenToVisibleIndices() {
+    return this.viewabilityHelpers.length > 0;
+  }
+
   public dispose = () => {
     this.viewabilityHelpers.forEach((viewabilityHelper) =>
       viewabilityHelper.dispose()
@@ -47,6 +55,10 @@ export default class ViewabilityManager<T> {
   };
 
   public recordInteraction = () => {
+    if (this.hasInteracted) {
+      return;
+    }
+    this.hasInteracted = true;
     this.viewabilityHelpers.forEach((viewabilityHelper) => {
       viewabilityHelper.hasInteracted = true;
     });
@@ -56,7 +68,7 @@ export default class ViewabilityManager<T> {
   public updateViewableItems = (newViewableIndices?: number[]) => {
     const listSize =
       this.flashListRef.recyclerlistview_unsafe?.getRenderedSize();
-    if (listSize === undefined) {
+    if (listSize === undefined || !this.shouldListenToVisibleIndices) {
       return;
     }
     const scrollOffset =

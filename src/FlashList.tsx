@@ -437,7 +437,9 @@ class FlashList<T> extends React.PureComponent<
           onItemLayout={this.onItemLayout}
           onScroll={this.onScroll}
           onVisibleIndicesChanged={
-            this.viewabilityManager.onVisibleIndicesChanged
+            this.viewabilityManager.shouldListenToVisibleIndices
+              ? this.viewabilityManager.onVisibleIndicesChanged
+              : undefined
           }
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
         />
@@ -452,8 +454,9 @@ class FlashList<T> extends React.PureComponent<
     this.props.onScrollBeginDrag?.(event);
   };
 
-  private onScroll = () => {
+  private onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     this.viewabilityManager.updateViewableItems();
+    this.props.onScroll?.(event);
   };
 
   private getUpdatedWindowCorrectionConfig() {
