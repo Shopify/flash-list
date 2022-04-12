@@ -28,7 +28,7 @@
     "react-native": "*"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.8",
+    "@babel/core": "^7.17.9",
     "@babel/runtime": "^7.17.9",
     "@quilted/react-testing": "^0.3.10",
     "@react-native-community/eslint-config": "^3.0.0",
