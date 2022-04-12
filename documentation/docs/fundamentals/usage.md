@@ -304,6 +304,29 @@ refreshing?: boolean;
 
 Set this true while waiting for new data from a refresh.
 
+### `onViewableItemsChanged`
+
+```ts
+interface ViewToken {
+  index: number;
+  isViewable: boolean;
+  item: string;
+  key: string;
+  timestamp: number;
+}
+
+onViewableItemsChanged?: ((info: {
+    viewableItems: ViewToken[];
+    changed: ViewToken[];
+}) => void) | null | undefined
+```
+
+Called when the viewability of rows changes, as defined by the `viewabilityConfig` prop. Array of `changed` includes `ViewToken`s that both visible and non-visible items. You can use the `isViewable` flag to filter the items.
+
+:::note
+If you are tracking the time a view becomes (non-)visible, use the `timestamp` property. We make no guarantees that in the future viewability callbacks will be invoked as soon as they happen - for example, they might be deferred until JS thread is less busy.
+:::
+
 ### `overrideItemType`
 
 ```ts
@@ -377,9 +400,73 @@ refreshing?: boolean;
 
 Set this true while waiting for new data from a refresh.
 
+### `viewabilityConfig`
+
+```ts
+interface ViewabilityConfig: {
+  minimumViewTime: number;
+  viewAreaCoveragePercentThreshold: number;
+  itemVisiblePercentThreshold: number;
+  waitForInteraction: boolean;
+}
+
+viewabilityConfig?: ViewabilityConfig;
+```
+
+`viewabilityConfig` is a default configuration for determining whether items are viewable.
+
+:::warning
+Changing viewabilityConfig on the fly is not supported
+:::
+
+Example:
+
+```tsx
+<FlashList
+    viewabilityConfig={{
+      waitForInteraction: true,
+      itemVisiblePercentThreshold: 50,
+      minimumViewTime: 1000,
+    }}
+  ...
+```
+
+#### minimumViewTime
+
+Minimum amount of time (in milliseconds) that an item must be physically viewable before the viewability callback will be fired. A high number means that scrolling through content without stopping will not mark the content as viewable. The default value is 250. We do not recommend setting much lower values to preserve performance when quickly scrolling.
+
+#### viewAreaCoveragePercentThreshold
+
+Percent of viewport that must be covered for a partially occluded item to count as "viewable", 0-100. Fully visible items are always considered viewable. A value of 0 means that a single pixel in the viewport makes the item viewable, and a value of 100 means that an item must be either entirely visible or cover the entire viewport to count as viewable.
+
+#### itemVisiblePercentThreshold
+
+Similar to `viewAreaCoveragePercentThreshold`, but considers the percent of the item that is visible, rather than the fraction of the viewable area it covers.
+
+#### waitForInteraction
+
+Nothing is considered viewable until the user scrolls or `recordInteraction` is called after render.
+
+### `viewabilityConfigCallbackPairs`
+
+```ts
+type ViewabilityConfigCallbackPairs = ViewabilityConfigCallbackPair[];
+
+interface ViewabilityConfigCallbackPair {
+  viewabilityConfig: ViewabilityConfig;
+  onViewableItemsChanged:
+    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+    | null;
+}
+
+viewabilityConfigCallbackPairs: ViewabilityConfigCallbackPairs | undefined;
+```
+
+List of `ViewabilityConfig`/`onViewableItemsChanged` pairs. A specific `onViewableItemsChanged` will be called when its corresponding `ViewabilityConfig`'s conditions are met.
+
 # FlashList methods
 
-### `prepareForLayoutAnimationRender`
+### `prepareForLayoutAnimationRender()`
 
 ```ts
 prepareForLayoutAnimationRender(): void;
@@ -390,6 +477,14 @@ Run this method before running layout animations, such as when animating an elem
 :::warning
 Avoid using this when making large changes to the data as the list might draw too much to run animations since the method disables recycling temporarily. Single item insertions or deletions should animate smoothly. The render after animation will enable recycling again and you can stop avoiding making large data changes.
 :::
+
+### `recordInteraction()`
+
+```tsx
+recordInteraction();
+```
+
+Tells the list an interaction has occurred, which should trigger viewability calculations, e.g. if `waitForInteractions` is true and the user has not scrolled. You should typically call `recordInteraction()` when user for example taps on an item or invokes a navigation action.
 
 ### `scrollToEnd()`
 
@@ -452,10 +547,7 @@ The following props from `FlatList` are currently not implemented:
 - [`debug`](https://reactnative.dev/docs/virtualizedlist#debug)
 - [`listKey`](https://reactnative.dev/docs/virtualizedlist#listkey)
 - [`onScrollToIndexFailed`](https://reactnative.dev/docs/virtualizedlist#onscrolltoindexfailed)
-- [`onViewableItemsChanged`](https://reactnative.dev/docs/flatlist#onviewableitemschanged)
 - [`renderScrollComponent`](https://reactnative.dev/docs/virtualizedlist#renderscrollcomponent)
-- [`viewabilityConfig`](https://reactnative.dev/docs/flatlist#viewabilityconfig)
-- [`viewabilityConfigCallbackPairs`](https://reactnative.dev/docs/flatlist#viewabilityconfigcallbackpairs)
 - [`windowSize`](https://reactnative.dev/docs/virtualizedlist#windowsize)
 
 Unsupported methods:
@@ -467,7 +559,6 @@ Unsupported methods:
 - [`getScrollableNode`](https://reactnative.dev/docs/virtualizedlist#getscrollablenode)
 - [`getScrollRef`](https://reactnative.dev/docs/virtualizedlist#getscrollref)
 - [`getScrollResponder()`](https://reactnative.dev/docs/flatlist#getscrollresponder)
-- [`recordInteraction()`](https://reactnative.dev/docs/flatlist#recordinteraction)
 
 There are also `FlatList` props that would bring no value if ported to `FlashList` due to the differences in their underlying implementation:
 

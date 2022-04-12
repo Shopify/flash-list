@@ -11,6 +11,7 @@ import { mountFlashList } from "./helpers/mountFlashList";
 describe("FlashList", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
   });
 
   it("renders items", () => {
@@ -137,6 +138,7 @@ describe("FlashList", () => {
     flashList.setProps({ data: ["One", "Two", "Three", "Six"] });
     expect(unmountMock).toHaveBeenCalledTimes(1);
   });
+
   it("fires onLoad event", () => {
     const onLoadMock = jest.fn();
 
@@ -155,6 +157,7 @@ describe("FlashList", () => {
       elapsedTimeInMs: expect.any(Number),
     });
   });
+
   it("loads an empty state", () => {
     const EmptyComponent = () => {
       return <Text>Empty</Text>;
@@ -165,6 +168,7 @@ describe("FlashList", () => {
     });
     expect(flashList).toContainReactComponent(EmptyComponent);
   });
+
   it("reports layout changes to the layout provider", () => {
     const flashList = mountFlashList();
     const reportItemLayoutMock = jest.spyOn(
@@ -175,6 +179,7 @@ describe("FlashList", () => {
     expect(reportItemLayoutMock).toHaveBeenCalledWith(0);
     flashList.unmount();
   });
+
   it("should prefer overrideItemLayout over estimate and average", () => {
     const flashList = mountFlashList({
       overrideItemLayout: (layout) => {
@@ -188,6 +193,7 @@ describe("FlashList", () => {
         .getLayouts()[0].height
     ).toBe(50);
   });
+
   it("should override span with overrideItemLayout", () => {
     const renderItemMock = jest.fn(({ item }) => {
       return <Text>{item}</Text>;
@@ -217,6 +223,7 @@ describe("FlashList", () => {
 
     expect(renderItemMock).toHaveBeenCalledTimes(11);
   });
+
   it("overrideItemLayout should consider 0 as a valid span", () => {
     const renderItemMock = jest.fn(({ item }) => {
       return <Text>{item}</Text>;
@@ -232,5 +239,293 @@ describe("FlashList", () => {
       renderItem: renderItemMock,
     });
     expect(renderItemMock).toHaveBeenCalledTimes(14);
+  });
+
+  it("reports onViewableItemsChanged for viewable items", () => {
+    const onViewableItemsChanged = jest.fn();
+    const onViewableItemsChangedForItemVisiblePercentThreshold = jest.fn();
+    const flashList = mountFlashList({
+      estimatedItemSize: 300,
+      viewabilityConfig: {
+        minimumViewTime: 250,
+      },
+      viewabilityConfigCallbackPairs: [
+        {
+          onViewableItemsChanged:
+            onViewableItemsChangedForItemVisiblePercentThreshold,
+          viewabilityConfig: {
+            itemVisiblePercentThreshold: 50,
+            waitForInteraction: true,
+          },
+        },
+      ],
+      onViewableItemsChanged,
+    });
+
+    // onViewableItemsChanged is not called before 250 ms have elapsed
+    expect(onViewableItemsChanged).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(250);
+    // Initial viewable items
+    expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+    expect(
+      onViewableItemsChangedForItemVisiblePercentThreshold
+    ).not.toHaveBeenCalled();
+
+    // onViewableItemsChangedForItemVisiblePercentThreshold waits for interaction before reporting viewable items
+    flashList.instance.recordInteraction();
+    jest.advanceTimersByTime(250);
+    expect(
+      onViewableItemsChangedForItemVisiblePercentThreshold
+    ).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+
+    onViewableItemsChanged.mockReset();
+    onViewableItemsChangedForItemVisiblePercentThreshold.mockReset();
+    // Mocking a scroll that will make the first item not visible and the last item visible
+    jest
+      .spyOn(
+        flashList.instance!.recyclerlistview_unsafe!,
+        "getCurrentScrollOffset"
+      )
+      .mockReturnValue(200);
+    flashList.instance!.recyclerlistview_unsafe!.props.onVisibleIndicesChanged?.(
+      [0, 1, 2, 3],
+      [],
+      []
+    );
+    flashList.instance!.recyclerlistview_unsafe!.props.onScroll?.(
+      { nativeEvent: { contentOffset: { x: 0, y: 200 } } },
+      0,
+      200
+    );
+    jest.advanceTimersByTime(250);
+    expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 3,
+          isViewable: true,
+          item: "Four",
+          key: "3",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 3,
+          isViewable: true,
+          item: "Four",
+          key: "3",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+    expect(
+      onViewableItemsChangedForItemVisiblePercentThreshold
+    ).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 3,
+          isViewable: true,
+          item: "Four",
+          key: "3",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 0,
+          isViewable: false,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 3,
+          isViewable: true,
+          item: "Four",
+          key: "3",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+  });
+
+  it("viewability reports take into account estimatedFirstItemOffset", () => {
+    const onViewableItemsChanged = jest.fn();
+    mountFlashList({
+      estimatedFirstItemOffset: 200,
+      estimatedItemSize: 300,
+      onViewableItemsChanged,
+      viewabilityConfig: { itemVisiblePercentThreshold: 50 },
+    });
+
+    // onViewableItemsChanged is not called before 250 ms have elapsed
+    expect(onViewableItemsChanged).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(250);
+    // Initial viewable items
+    expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
   });
 });

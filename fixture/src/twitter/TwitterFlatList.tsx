@@ -27,6 +27,14 @@ const TwitterFlatList = () => {
         ItemSeparatorComponent={Divider}
         data={tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
+        viewabilityConfig={{
+          waitForInteraction: true,
+          itemVisiblePercentThreshold: 50,
+          minimumViewTime: 1000,
+        }}
+        onViewableItemsChanged={(info) => {
+          console.log(info);
+        }}
       />
     </FlatListPerformanceView>
   );
