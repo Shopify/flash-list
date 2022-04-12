@@ -43,10 +43,7 @@ export default class ViewabilityManager<T> {
   };
 
   public onVisibleIndicesChanged = (all: number[]) => {
-    this.viewabilityHelpers.forEach(
-      (viewabilityHelper) => (viewabilityHelper.possiblyViewableIndices = all)
-    );
-    this.updateViewableItems();
+    this.updateViewableItems(all);
   };
 
   public recordInteraction = () => {
@@ -56,7 +53,7 @@ export default class ViewabilityManager<T> {
     this.updateViewableItems();
   };
 
-  public updateViewableItems = () => {
+  public updateViewableItems = (newViewableIndices?: number[]) => {
     const listSize =
       this.flashListRef.recyclerlistview_unsafe?.getRenderedSize();
     if (listSize === undefined) {
@@ -69,7 +66,8 @@ export default class ViewabilityManager<T> {
           0,
         listSize,
         (index: number) =>
-          this.flashListRef.recyclerlistview_unsafe?.getLayout(index)
+          this.flashListRef.recyclerlistview_unsafe?.getLayout(index),
+        newViewableIndices
       );
     });
   };
