@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import { FlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import { DebugContext } from "../Debug";
@@ -12,7 +12,7 @@ const TwitterFlatList = () => {
   const debugContext = useContext(DebugContext);
 
   return (
-    <FlatListPerformanceView listName="TwitterFlatList">
+    <View style={{ flex: 1 }}>
       <FlatList
         testID="FlatList"
         keyExtractor={(item) => {
@@ -37,7 +37,7 @@ const TwitterFlatList = () => {
           console.log(info);
         }}
       />
-    </FlatListPerformanceView>
+    </View>
   );
 };
 
