@@ -45,6 +45,8 @@ export const mountFlashList = (props?: {
   ) => void;
   estimatedItemSize?: number;
   ListEmptyComponent?: FlashListProps<string>["ListEmptyComponent"];
+  ListHeaderComponent?: FlashListProps<string>["ListHeaderComponent"];
+  ListFooterComponent?: FlashListProps<string>["ListFooterComponent"];
   viewabilityConfig?: ViewabilityConfig | null;
   onViewableItemsChanged?:
     | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
@@ -65,6 +67,8 @@ export const mountFlashList = (props?: {
       onLoad={props?.onLoad}
       overrideItemLayout={props?.overrideItemLayout}
       ListEmptyComponent={props?.ListEmptyComponent}
+      ListHeaderComponent={props?.ListHeaderComponent}
+      ListFooterComponent={props?.ListFooterComponent}
       viewabilityConfig={props?.viewabilityConfig}
       onViewableItemsChanged={props?.onViewableItemsChanged}
       viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
