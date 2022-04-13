@@ -7,7 +7,19 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.6] - 2022-04-13
+
+- Match FlashList's empty list behavior with FlatList
+  - https://github.com/Shopify/flash-list/pull/312
+
+## [0.4.5] - 2022-04-13
+
+- Upgrade recyclerlistview to v3.2.0-beta.4
+
+  - https://github.com/Shopify/flash-list/pull/315
+
 - Add viewability callbacks
+
   - https://github.com/Shopify/flash-list/pull/301
 
 - Calculate average item sizes automatically
