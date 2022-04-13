@@ -71,9 +71,10 @@ const Twitter = ({ instance, blankAreaTracker }: TwitterProps) => {
             />
           );
         }}
+        ListEmptyComponent={Empty()}
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
-        data={tweets}
+        data={debugContext.emptyListEnabled ? [] : tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
         viewabilityConfig={viewabilityConfig}
         onViewableItemsChanged={(info) => {
@@ -113,6 +114,18 @@ export const Footer = ({ isLoading, isPagingEnabled }: FooterProps) => {
   );
 };
 
+export const Empty = () => {
+  const title = "Welcome to your timeline";
+  const subTitle =
+    "It's empty now but it won't be for long. Start following peopled you'll see Tweets show up here";
+  return (
+    <View style={styles.emptyComponent} testID="EmptyComponent">
+      <Text style={styles.emptyComponentTitle}>{title}</Text>
+      <Text style={styles.emptyComponentSubtitle}>{subTitle}</Text>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   divider: {
     width: "100%",
@@ -140,6 +153,22 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 12,
     fontSize: 12,
+  },
+  emptyComponentTitle: {
+    color: "black",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  emptyComponentSubtitle: {
+    color: "#808080",
+    padding: 8,
+    fontSize: 14,
+    textAlign: "center",
+  },
+  emptyComponent: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
   },
 });
 

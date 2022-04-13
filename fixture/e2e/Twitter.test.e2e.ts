@@ -122,6 +122,39 @@ describe("Twitter", () => {
 
     assertSnapshot(tweetDetailScreenshotPath, testName);
   });
+
+  it("with empty list looks the same as FlatList", async () => {
+    await device.setOrientation("portrait");
+    const testName = "Twitter_with_empty_list_looks_the_same";
+    const flatListTestName = `with_FlatList_${testName}`;
+
+    await enableDebugOption(DebugOption.EmptyList);
+
+    await element(by.id("Twitter Timeline")).tap();
+
+    const flashListScreenshotPath = await element(
+      by.id("FlashList")
+    ).takeScreenshot(testName);
+
+    assertSnapshot(flashListScreenshotPath, testName);
+
+    // Go to Twitter with FlatList screen
+    await goBack();
+    await element(by.id("Twitter FlatList Timeline")).tap();
+    await device.setOrientation("portrait");
+
+    const flatListScreenshotPath = await element(
+      by.id("FlatList")
+    ).takeScreenshot(flatListTestName);
+
+    assertSnapshot(flatListScreenshotPath, flatListTestName);
+
+    assertSnapshotsEqual(
+      flashListScreenshotPath,
+      flatListScreenshotPath,
+      flatListTestName
+    );
+  });
 });
 
 const scrollAndRotate = async (id: string) => {

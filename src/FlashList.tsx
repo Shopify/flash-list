@@ -179,6 +179,7 @@ class FlashList<T> extends React.PureComponent<
     applyToInitialOffset: true,
   };
 
+  private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
 
   static defaultProps = {
@@ -357,14 +358,7 @@ class FlashList<T> extends React.PureComponent<
   }
 
   render() {
-    if (this.state.dataProvider.getSize() === 0) {
-      return (
-        <View style={{ flex: 1 }}>
-          {this.header()}
-          {this.getValidComponent(this.props.ListEmptyComponent)}
-        </View>
-      );
-    }
+    this.isEmptyList = this.state.dataProvider.getSize() === 0;
     this.contentStyle = this.getContentContainerInfo().style;
 
     const {
@@ -507,7 +501,7 @@ class FlashList<T> extends React.PureComponent<
     return (
       <>
         <PureComponentWrapper
-          enabled={children.length > 0}
+          enabled={children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}
           horizontal={this.props.horizontal}
           header={this.props.ListHeaderComponent}
@@ -523,8 +517,11 @@ class FlashList<T> extends React.PureComponent<
         >
           {children}
         </AutoLayoutView>
+        {this.isEmptyList
+          ? this.getValidComponent(this.props.ListEmptyComponent)
+          : null}
         <PureComponentWrapper
-          enabled={children.length > 0}
+          enabled={children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}
           horizontal={this.props.horizontal}
           header={this.props.ListFooterComponent}
