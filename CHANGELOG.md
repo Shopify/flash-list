@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.5] - 2022-04-13
+
 - Upgrade recyclerlistview to v3.2.0-beta.4
   - https://github.com/Shopify/flash-list/pull/315
 
