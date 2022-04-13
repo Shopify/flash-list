@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Upgrade recyclerlistview to v3.2.0-beta.4
+  - https://github.com/Shopify/flash-list/pull/315
+
 - Add viewability callbacks
   - https://github.com/Shopify/flash-list/pull/301
 
