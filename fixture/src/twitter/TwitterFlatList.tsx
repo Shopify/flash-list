@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { FlatList, View } from "react-native";
-import { FlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import { DebugContext } from "../Debug";
 
