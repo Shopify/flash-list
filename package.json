@@ -52,6 +52,6 @@
     "jestSetup.js"
   ],
   "dependencies": {
-    "recyclerlistview": "3.2.0-beta.2"
+    "recyclerlistview": "3.2.0-beta.4"
   }
 }
