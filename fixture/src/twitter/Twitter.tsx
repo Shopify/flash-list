@@ -107,13 +107,13 @@ export const Footer = ({ isLoading, isPagingEnabled }: FooterProps) => {
 };
 
 export const Empty = () => {
+  const title = "Welcome to your timeline";
+  const subTitle =
+    "It's empty now but it won't be for long. Start following peopled you'll see Tweets show up here";
   return (
     <View style={styles.emptyComponent} testID="EmptyComponent">
-      <Text style={styles.emptyComponentTitle}>Welcome to your timeline</Text>
-      <Text style={styles.emptyComponentSubtitle}>
-        It's empty now but it won't be for long. Start following peopled you'll
-        see Tweets show up here
-      </Text>
+      <Text style={styles.emptyComponentTitle}>{title}</Text>
+      <Text style={styles.emptyComponentSubtitle}>{subTitle}</Text>
     </View>
   );
 };
