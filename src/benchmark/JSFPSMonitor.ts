@@ -55,6 +55,10 @@ export class JSFPSMonitor {
 
   public stopAndGetData(): JSFPSResult {
     cancelAnimationFrame(this.clearAnimationNumber);
+    if (this.minFPS === Number.MAX_SAFE_INTEGER) {
+      this.minFPS = this.averageFPS;
+      this.maxFPS = this.averageFPS;
+    }
     return {
       minFPS: roundToDecimalPlaces(this.minFPS, 1),
       maxFPS: roundToDecimalPlaces(this.maxFPS, 1),

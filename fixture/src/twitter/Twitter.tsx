@@ -6,15 +6,21 @@ import {
   ActivityIndicator,
   ViewabilityConfig,
 } from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import { BlankAreaEventHandler, FlashList } from "@shopify/flash-list";
 import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
 import { DebugContext } from "../Debug";
 
 import TweetCell from "./TweetCell";
 import { tweets as tweetsData } from "./data/tweets";
+import Tweet from "./models/Tweet";
 
-const Twitter = () => {
+export interface TwitterProps {
+  instance: React.RefObject<FlashList<Tweet> | null | undefined>;
+  blankAreaTracker: BlankAreaEventHandler;
+}
+
+const Twitter = ({ instance, blankAreaTracker }: TwitterProps) => {
   const debugContext = useContext(DebugContext);
   const [refreshing, setRefreshing] = useState(false);
   const remainingTweets = useRef([...tweetsData].splice(10, tweetsData.length));
@@ -30,6 +36,8 @@ const Twitter = () => {
   return (
     <FlashListPerformanceView listName="Twitter">
       <FlashList
+        ref={instance as any}
+        onBlankArea={blankAreaTracker}
         testID="FlashList"
         keyExtractor={(item) => {
           return item.id;

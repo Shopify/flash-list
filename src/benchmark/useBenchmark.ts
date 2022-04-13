@@ -41,18 +41,7 @@ export function useBenchmark(
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
-  const blankAreaResult = {
-    maxBlankArea: -1,
-    cumulativeBlankArea: 0,
-  };
-  const blankAreaTracker = (event: BlankAreaEvent) => {
-    blankAreaResult.maxBlankArea = Math.max(
-      blankAreaResult.maxBlankArea,
-      event.blankArea,
-      0
-    );
-    blankAreaResult.cumulativeBlankArea += Math.max(event.blankArea, 0);
-  };
+  const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker();
   useEffect(() => {
     const cancellable = new Cancellable();
     const suggestions: string[] = [];
@@ -79,24 +68,12 @@ export function useBenchmark(
       //   );
       // }
       computeSuggestions(flashListRef, suggestions);
-      const result: BenchmarkResult = {
-        js: jsProfilerResponse,
-        blankArea:
-          blankAreaResult.maxBlankArea >= 0
-            ? {
-                maxBlankArea: roundToDecimalPlaces(
-                  blankAreaResult.maxBlankArea,
-                  0
-                ),
-                cumulativeBlankArea: roundToDecimalPlaces(
-                  blankAreaResult.cumulativeBlankArea,
-                  0
-                ),
-              }
-            : undefined,
+      const result: BenchmarkResult = generateResult(
+        jsProfilerResponse,
+        blankAreaResult,
         suggestions,
-        interrupted: cancellable.isCancelled(),
-      };
+        cancellable
+      );
       if (!cancellable.isCancelled()) {
         result.formattedString = getFormattedString(result);
       }
@@ -127,6 +104,48 @@ export function getFormattedString(res: BenchmarkResult) {
         : ``
     }`
   );
+}
+
+function useBlankAreaTracker(): [
+  BlankAreaBenchmarkResult,
+  (event: BlankAreaEvent) => void
+] {
+  const blankAreaResult = {
+    maxBlankArea: -1,
+    cumulativeBlankArea: 0,
+  };
+  const blankAreaTracker = (event: BlankAreaEvent) => {
+    blankAreaResult.maxBlankArea = Math.max(
+      blankAreaResult.maxBlankArea,
+      event.blankArea,
+      0
+    );
+    blankAreaResult.cumulativeBlankArea += Math.max(event.blankArea, 0);
+  };
+  return [blankAreaResult, blankAreaTracker];
+}
+
+function generateResult(
+  jsProfilerResponse: JSFPSResult,
+  blankAreaResult: BlankAreaBenchmarkResult,
+  suggestions: string[],
+  cancellable: Cancellable
+) {
+  return {
+    js: jsProfilerResponse,
+    blankArea:
+      blankAreaResult.maxBlankArea >= 0
+        ? {
+            maxBlankArea: roundToDecimalPlaces(blankAreaResult.maxBlankArea, 0),
+            cumulativeBlankArea: roundToDecimalPlaces(
+              blankAreaResult.cumulativeBlankArea,
+              0
+            ),
+          }
+        : undefined,
+    suggestions,
+    interrupted: cancellable.isCancelled(),
+  };
 }
 
 /**
