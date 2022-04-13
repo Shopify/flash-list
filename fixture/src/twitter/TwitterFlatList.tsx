@@ -1,18 +1,17 @@
 import React, { useContext } from "react";
-import { FlatList } from "react-native";
-import { FlatListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
+import { FlatList, View } from "react-native";
 
 import { DebugContext } from "../Debug";
 
 import { tweets } from "./data/tweets";
 import TweetCell from "./TweetCell";
-import { Header, Footer, Divider } from "./Twitter";
+import { Header, Footer, Divider, Empty } from "./Twitter";
 
 const TwitterFlatList = () => {
   const debugContext = useContext(DebugContext);
 
   return (
-    <FlatListPerformanceView listName="TwitterFlatList">
+    <View style={{ flex: 1 }}>
       <FlatList
         testID="FlatList"
         keyExtractor={(item) => {
@@ -25,7 +24,8 @@ const TwitterFlatList = () => {
         ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
         ListFooterComponent={Footer}
         ItemSeparatorComponent={Divider}
-        data={tweets}
+        ListEmptyComponent={Empty()}
+        data={debugContext.emptyListEnabled ? [] : tweets}
         initialScrollIndex={debugContext.initialScrollIndex}
         viewabilityConfig={{
           waitForInteraction: true,
@@ -36,7 +36,7 @@ const TwitterFlatList = () => {
           console.log(info);
         }}
       />
-    </FlatListPerformanceView>
+    </View>
   );
 };
 
