@@ -5,6 +5,7 @@ import { ProgressiveListView } from "recyclerlistview";
 
 import Warnings from "../errors/Warnings";
 import AutoLayoutView from "../AutoLayoutView";
+import CellContainer from "../CellContainer";
 
 import { mountFlashList } from "./helpers/mountFlashList";
 
@@ -589,6 +590,11 @@ describe("FlashList", () => {
     // resetting count
     countMounts = 0;
 
+    // items widths before layout manager change should be 400
+    flashList.findAll(CellContainer).forEach((cell) => {
+      expect(cell.instance.props.style.width).toBe(400);
+    });
+
     // This will cause a layout manager change
     flashList.find(ScrollView)?.trigger("onLayout", {
       nativeEvent: { layout: { height: 400, width: 900 } },
@@ -596,5 +602,12 @@ describe("FlashList", () => {
 
     // If counts match, then all components were updated
     expect(countMounts).toBe(currentComponentCount);
+
+    // items widths after layout manager change should be 900
+    flashList.findAll(CellContainer).forEach((cell) => {
+      expect(cell.instance.props.style.width).toBe(900);
+    });
+
+    flashList.unmount();
   });
 });
