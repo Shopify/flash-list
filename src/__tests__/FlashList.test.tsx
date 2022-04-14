@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Text } from "react-native";
+import { ScrollView, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { ProgressiveListView } from "recyclerlistview";
 
@@ -542,5 +542,59 @@ describe("FlashList", () => {
         },
       ],
     });
+  });
+  it("rerenders all items on a layout manager change", () => {
+    let countMounts = 0;
+    let currentId = 0;
+
+    // Effect will be triggered once per mount
+    const RenderComponent = ({ id }: { id?: string }) => {
+      useEffect(() => {
+        countMounts++;
+      }, [id]);
+      return <Text>Test</Text>;
+    };
+    const renderItem = () => {
+      return <RenderComponent id={currentId} />;
+    };
+    const flashList = mountFlashList({
+      data: new Array(100).fill("1"),
+      estimatedItemSize: 70,
+      renderItem,
+    });
+
+    // Mocking some scrolls
+    flashList.find(ScrollView)?.trigger("onScroll", {
+      nativeEvent: { contentOffset: { x: 0, y: 200 } },
+    });
+    flashList.find(ScrollView)?.trigger("onScroll", {
+      nativeEvent: { contentOffset: { x: 0, y: 400 } },
+    });
+    flashList.find(ScrollView)?.trigger("onScroll", {
+      nativeEvent: { contentOffset: { x: 0, y: 600 } },
+    });
+    flashList.find(ScrollView)?.trigger("onScroll", {
+      nativeEvent: { contentOffset: { x: 0, y: 3000 } },
+    });
+    flashList.find(ScrollView)?.trigger("onScroll", {
+      nativeEvent: { contentOffset: { x: 0, y: 2000 } },
+    });
+
+    // changing id will trigger effects if components rerender
+    currentId = 1;
+
+    // capturing current component count to check later
+    const currentComponentCount = countMounts;
+
+    // resetting count
+    countMounts = 0;
+
+    // This will cause a layout manager change
+    flashList.find(ScrollView)?.trigger("onLayout", {
+      nativeEvent: { layout: { height: 400, width: 900 } },
+    });
+
+    // If counts match, then all components were updated
+    expect(countMounts).toBe(currentComponentCount);
   });
 });
