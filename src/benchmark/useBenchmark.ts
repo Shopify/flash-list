@@ -19,7 +19,7 @@ export interface BenchmarkParams {
 
 export interface BenchmarkResult {
   js?: JSFPSResult;
-  interrupted?: boolean;
+  interrupted: boolean;
   suggestions: string[];
   blankArea?: BlankAreaBenchmarkResult;
   formattedString?: string;
