@@ -44,6 +44,9 @@ const Contacts = () => {
           return <ContactCell contact={item as Contact} />;
         }
       }}
+      overrideItemType={(item) => {
+        return typeof item === "string" ? "sectionHeader" : "row";
+      }}
       ItemSeparatorComponent={ContactDivider}
       stickyHeaderIndices={stickyHeaderIndices}
       ListHeaderComponent={ContactHeader}
