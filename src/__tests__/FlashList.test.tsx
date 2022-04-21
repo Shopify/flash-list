@@ -610,4 +610,15 @@ describe("FlashList", () => {
 
     flashList.unmount();
   });
+  it("should not overlap header with sitcky index 0", () => {
+    const HeaderComponent = () => {
+      return <Text>Empty</Text>;
+    };
+    const flashList = mountFlashList({
+      ListHeaderComponent: HeaderComponent,
+      stickyHeaderIndices: [0],
+    });
+    // If sticky renders there'll be 6
+    expect(flashList.findAll(Text).length).toBe(5);
+  });
 });
