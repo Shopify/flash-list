@@ -30,7 +30,7 @@
   "devDependencies": {
     "babel-jest": "^27.5.1",
     "babel-plugin-module-resolver": "^4.1.0",
-    "glob": "^7.1.6",
+    "glob": "^8.0.1",
     "jest": "^27.5.1",
     "metro-config": "^0.70.1",
     "metro-react-native-babel-preset": "^0.70.1",
