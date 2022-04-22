@@ -15,6 +15,7 @@ describe("Twitter", () => {
 
   beforeEach(async () => {
     await device.reloadReactNative();
+    await device.setOrientation("portrait");
   });
 
   it("with FlashList looks the same", async () => {
@@ -77,9 +78,6 @@ describe("Twitter", () => {
       flatListScreenshotPath,
       flatListTestName
     );
-
-    // Return device to the original state
-    await device.setOrientation("portrait");
   });
 
   it("is updated after refreshed", async () => {
