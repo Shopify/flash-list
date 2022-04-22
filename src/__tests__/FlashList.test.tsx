@@ -549,7 +549,7 @@ describe("FlashList", () => {
     let currentId = 0;
 
     // Effect will be triggered once per mount
-    const RenderComponent = ({ id }: { id?: string }) => {
+    const RenderComponent = ({ id }: { id?: number }) => {
       useEffect(() => {
         countMounts++;
       }, [id]);
