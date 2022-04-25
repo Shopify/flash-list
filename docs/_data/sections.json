@@ -6,17 +6,17 @@
   },
   {
     "title": "Developer friendly",
-    "description": "Using FlatList's API makes FlashList a really easy-to-use component. Simply change the name of your component, add the estimated size of the items, and you are good to go.",
+    "description": "FlashList is especially easy-to-use thanks to FlatList's API. Simply change the name of your component and you are good to go.",
     "image": "img/tezos-wPN1xnccGPw-unsplash.jpg"
   },
   {
     "title": "Snappy on all platforms",
-    "description": "Other lists show good-enough performance on iOS, but where they lack performance is on Android devices. FlashList performs well even on low-end Android devices.",
+    "description": "On iOS, other lists perform well, but on Android, they fall short. FlashList performs well even on low-end Android devices.",
     "image": "img/noelle-rebekah-trZZdb_3jQo-unsplash.jpg"
   },
   {
     "title": "Extra configuration for even better performance.",
-    "description": "Apart from FlatList props, FlashList offers a set of extra props to tweak the performance even more.Apart from FlatList props, FlashList offers a set of extra props to even tweak the performance even more.",
+    "description": "Apart from FlatList props, FlashList offers a set of extra props to tweak the performance even more.",
     "code": "snippet2.js"
   }
 ]

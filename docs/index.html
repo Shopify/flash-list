@@ -20,17 +20,19 @@ appname: FlashList
 
 <body>
     <div class="content">
-        <div class="header">
+        <div class="topbar">
             <h1>⚡️ {{page.appname}}</h1>
+            <!-- Place this tag where you want the button to render. -->
+            <a class="github-button" href="https://github.com/shopify/flash-list"
+                data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
+                data-show-count="true" aria-label="Github shopify/flash-list on GitHub">Github</a>
+        </div>
+        <div class="header">
             <h2>Fast & Performant <br> React Native List</h2>
             <p class="subtitle">No more blank cells</p>
             <p class="claim">
                 Swap from FlatList in seconds. Get instant performance.
             </p>
-            <!-- Place this tag where you want the button to render. -->
-            <a class="github-button" href="https://github.com/shopify/flash-list"
-                data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
-                data-show-count="true" aria-label="Star shopify/flash-list on GitHub">Star</a>
             <div class="row eight">
                 <a class="button primary" href="#install">Install {{page.appname}}</a>
                 <a class="button secondary" target="_blank" href="https://flash-list.docs.shopify.io/">Read the docs</a>
@@ -43,14 +45,13 @@ appname: FlashList
                     Same props.<br />2x performance.
                 </h1>
                 <p>
-                    Even if using the same props as FlatList, {{page.appname}} uses the recycling concept under the hood
-                    to be<br>
-                    faster and more efficient.
+                    Even with the same props as FlatList, {{page.appname}} utilizes a recycling concept under the hood
+                    to maximize performance.
                 </p>
             </div>
         </div>
         <div class="section half">
-            <h1>Crazy performance on low-end devices</h1>
+            <h1>Exceptional performance on low-end devices</h1>
             <div>
                 <div class="metric-section">
                     <h2>FPS in UI Thread</h2>
@@ -153,7 +154,7 @@ appname: FlashList
         <div class="section fullwidth" id="install">
             <div class="info">
                 <h1>Install now</h1>
-                <p>Add it to your project now and try it out:</p>
+                <p>Try it in your project now:</p>
             </div>
             {% highlight bash linedivs %}{% include install.sh %}{% endhighlight %}
         </div>
