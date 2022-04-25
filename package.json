@@ -41,6 +41,7 @@
     "metro-react-native-babel-preset": "^0.70.1",
     "react": "17.0.2",
     "react-native": "0.68.0",
+    "react-native-codegen": "^0.0.14",
     "typescript": "^4.6.3"
   },
   "files": [
@@ -53,5 +54,14 @@
   ],
   "dependencies": {
     "recyclerlistview": "3.2.0-beta.4"
+  },
+  "codegenConfig": {
+    "libraries": [
+      {
+        "name": "rnflashlist",
+        "type": "components",
+        "jsSrcsDir": "./src/fabric"
+      }
+    ]
   }
 }

@@ -6604,7 +6604,7 @@ react-is@^16.13.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-native-codegen@*:
+react-native-codegen@*, react-native-codegen@^0.0.14:
   version "0.0.14"
   resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.0.14.tgz#1c8a9d39935e611a22765aefb06c2d81b2341672"
   integrity sha512-i3TtOB7IWIhaKZCg7EMBcXmNtaxEMFyzGQ4Zf6ZR1esj6gs36OWpYj357nSqeqzPKUqb8P1pUvmhoLIK4uVNeQ==

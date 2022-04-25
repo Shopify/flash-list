@@ -11,7 +11,7 @@ import {
   Pressable,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import Animated, { FadeOut, Layout } from "react-native-reanimated";
+// import Animated, { FadeOut, Layout } from "react-native-reanimated";
 
 interface Reminder {
   id: string;
@@ -63,12 +63,13 @@ const ReminderCell = ({
   }, [checked, item, onCompleted]);
 
   return (
-    <Animated.View
-      onLayout={onLayout}
-      style={styles.cell}
-      layout={Layout}
-      exiting={FadeOut}
-    >
+    // <Animated.View
+    //   onLayout={onLayout}
+    //   style={styles.cell}
+    //   layout={Layout}
+    //   exiting={FadeOut}
+    // >
+    <>
       <View style={styles.checkbox}>
         <Pressable onPress={toggle}>
           <Checkbox checked={checked} />
@@ -96,7 +97,8 @@ const ReminderCell = ({
           }
         }}
       />
-    </Animated.View>
+    </>
+    // </Animated.View>
   );
 };
 
@@ -241,11 +243,11 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     padding: 18,
   },
-  cell: {
-    backgroundColor: "white",
-    paddingHorizontal: 8,
-    flexDirection: "row",
-  },
+  // cell: {
+  //   backgroundColor: "white",
+  //   paddingHorizontal: 8,
+  //   flexDirection: "row",
+  // },
   checkbox: {
     padding: 6,
     height: 40,

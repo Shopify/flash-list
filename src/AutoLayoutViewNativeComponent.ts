@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { requireNativeComponent } from "react-native";
 
 export interface OnBlankAreaEvent {
@@ -14,6 +15,10 @@ interface AutoLayoutViewNativeComponentProps {
   enableInstrumentation: boolean;
 }
 
-const AutoLayoutViewNativeComponent =
-  requireNativeComponent<AutoLayoutViewNativeComponentProps>("AutoLayoutView");
+const AutoLayoutViewNativeComponent = (global as any)?.nativeFabricUIManager
+  ? require("fabric/AutoLayoutViewNativeComponent").default
+  : requireNativeComponent<AutoLayoutViewNativeComponentProps>(
+      "AutoLayoutView"
+    );
+
 export default AutoLayoutViewNativeComponent;

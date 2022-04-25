@@ -28,52 +28,52 @@ const Twitter = () => {
   }).current;
 
   return (
-    <FlashListPerformanceView listName="Twitter">
-      <FlashList
-        testID="FlashList"
-        keyExtractor={(item) => {
-          return item.id;
-        }}
-        renderItem={({ item }) => {
-          return <TweetCell tweet={item} />;
-        }}
-        refreshing={refreshing}
-        onRefresh={() => {
-          setRefreshing(true);
-          setTimeout(() => {
-            setRefreshing(false);
-            setTweets([...tweets.reverse()]);
-          }, 500);
-        }}
-        onEndReached={() => {
-          if (!debugContext.pagingEnabled) {
-            return;
-          }
-          setTimeout(() => {
-            setTweets([...tweets, ...remainingTweets.current.splice(0, 10)]);
-          }, 1000);
-        }}
-        ListHeaderComponent={Header}
-        ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
-        ListFooterComponent={() => {
-          return (
-            <Footer
-              isLoading={tweets.length !== tweetsData.length}
-              isPagingEnabled={debugContext.pagingEnabled}
-            />
-          );
-        }}
-        ListEmptyComponent={Empty()}
-        estimatedItemSize={150}
-        ItemSeparatorComponent={Divider}
-        data={debugContext.emptyListEnabled ? [] : tweets}
-        initialScrollIndex={debugContext.initialScrollIndex}
-        viewabilityConfig={viewabilityConfig}
-        onViewableItemsChanged={(info) => {
-          console.log(info);
-        }}
-      />
-    </FlashListPerformanceView>
+    // <FlashListPerformanceView listName="Twitter">
+    <FlashList
+      testID="FlashList"
+      keyExtractor={(item) => {
+        return item.id;
+      }}
+      renderItem={({ item }) => {
+        return <TweetCell tweet={item} />;
+      }}
+      refreshing={refreshing}
+      onRefresh={() => {
+        setRefreshing(true);
+        setTimeout(() => {
+          setRefreshing(false);
+          setTweets([...tweets.reverse()]);
+        }, 500);
+      }}
+      onEndReached={() => {
+        if (!debugContext.pagingEnabled) {
+          return;
+        }
+        setTimeout(() => {
+          setTweets([...tweets, ...remainingTweets.current.splice(0, 10)]);
+        }, 1000);
+      }}
+      ListHeaderComponent={Header}
+      ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
+      ListFooterComponent={() => {
+        return (
+          <Footer
+            isLoading={tweets.length !== tweetsData.length}
+            isPagingEnabled={debugContext.pagingEnabled}
+          />
+        );
+      }}
+      ListEmptyComponent={Empty()}
+      estimatedItemSize={150}
+      ItemSeparatorComponent={Divider}
+      data={debugContext.emptyListEnabled ? [] : tweets}
+      initialScrollIndex={debugContext.initialScrollIndex}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={(info) => {
+        console.log(info);
+      }}
+    />
+    // </FlashListPerformanceView>
   );
 };
 

@@ -1,45 +1,25 @@
 import Foundation
 import UIKit
-
+import React
 
 /// Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.
 /// Note: This cannot work for masonry layouts i.e, pinterest like layout
-@objc class AutoLayoutView: UIView {
+@objc public class AutoLayoutView: UIView {
     @objc(onBlankAreaEvent)
     var onBlankAreaEvent: RCTDirectEventBlock?
 
-    @objc func setHorizontal(_ horizontal: Bool) {
-        self.horizontal = horizontal
-    }
-
-    @objc func setScrollOffset(_ scrollOffset: Int) {
-        self.scrollOffset = CGFloat(scrollOffset)
-    }
-
-    @objc func setWindowSize(_ windowSize: Int) {
-        self.windowSize = CGFloat(windowSize)
-    }
-
-    @objc func setRenderAheadOffset(_ renderAheadOffset: Int) {
-        self.renderAheadOffset = CGFloat(renderAheadOffset)
-    }
-
-    @objc func setEnableInstrumentation(_ enableInstrumentation: Bool) {
-        self.enableInstrumentation = enableInstrumentation
-    }
-
-    private var horizontal = false
-    private var scrollOffset: CGFloat = 0
-    private var windowSize: CGFloat = 0
-    private var renderAheadOffset: CGFloat = 0
-    private var enableInstrumentation = false
+    @objc public var horizontal = false
+    @objc public var scrollOffset: CGFloat = 0
+    @objc public var windowSize: CGFloat = 0
+    @objc public var renderAheadOffset: CGFloat = 0
+    @objc public var enableInstrumentation = false
 
     /// Tracks where the last pixel is drawn in the visible window
     private var lastMaxBound: CGFloat = 0
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
 
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         fixLayout()
         super.layoutSubviews()
 
@@ -63,6 +43,7 @@ import UIKit
             distanceFromWindowEnd: distanceFromWindowEnd
         )
 
+        // TODO: Fabric support
         onBlankAreaEvent?(
             [
                 "offsetStart": blankOffsetStart,
@@ -75,6 +56,7 @@ import UIKit
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
         guard
+            // TODO: Fabric support (AutoLayoutView itself does not have any subviews)
             subviews.count > 1,
             // Fixing layout during animation can interfere with it.
             layer.animationKeys()?.isEmpty == true

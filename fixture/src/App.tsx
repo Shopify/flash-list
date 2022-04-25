@@ -6,7 +6,6 @@
  * @flow strict-local
  */
 
-import "react-native-gesture-handler";
 import React from "react";
 import { ListsProfiler } from "@shopify/react-native-performance-lists-profiler";
 import { Platform, UIManager } from "react-native";
