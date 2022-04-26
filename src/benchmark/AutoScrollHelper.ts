@@ -1,6 +1,6 @@
 /**
  * This method can be used to trigger scroll events that can be forwarded to an element. Anything that implements scrollable can leverage this.
- * @param scrollable The scrollable element
+ * @param scroll The scrollable element
  * @param fromX The x offset to start from
  * @param fromY The y offset to start from
  * @param toX the x offset to end scroll at
@@ -10,7 +10,7 @@
  * @returns Promise that resolves when the scroll is complete
  */
 export function autoScroll(
-  scrollable: (x: number, y: number, animated: boolean) => void,
+  scroll: (x: number, y: number, animated: boolean) => void,
   fromX: number,
   fromY: number,
   toX: number,
@@ -19,7 +19,8 @@ export function autoScroll(
   cancellable: Cancellable = new Cancellable()
 ): Promise<boolean> {
   return new Promise((resolve) => {
-    scrollable(fromX, fromY, false);
+    scroll(fromX, fromY, false);
+    // Very fast scrolls on Android/iOS typically move content 7px every millisecond.
     const incrementPerMs = 7 * speedMultiplier;
     const directionMultiplierX = toX > fromX ? 1 : -1;
     const directionMultiplierY = toY > fromY ? 1 : -1;
@@ -41,7 +42,7 @@ export function autoScroll(
         const distanceToCover = incrementPerMs * timeElapsed;
         startX += distanceToCover * directionMultiplierX;
         startY += distanceToCover * directionMultiplierY;
-        scrollable(comparatorX(toX, startX), comparatorY(toY, startY), false);
+        scroll(comparatorX(toX, startX), comparatorY(toY, startY), false);
         startTime = currentTime;
         if (
           comparatorX(toX, startX) !== toX ||

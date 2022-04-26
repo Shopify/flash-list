@@ -10,10 +10,14 @@ import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
 export interface BenchmarkParams {
   startDelayInMs?: number;
 
-  // Can be used to increase or decrease speed of scrolling
+  /**
+   * Can be used to increase or decrease speed of scrolling
+   */
   speedMultiplier?: number;
 
-  // Specify the number of times benchmark should repeat itself
+  /**
+   * Specify the number of times benchmark should repeat itself
+   */
   repeatCount?: number;
 }
 
@@ -61,12 +65,11 @@ export function useBenchmark(
         );
       }
       const jsProfilerResponse = jsFPSMonitor.stopAndGetData();
-      // TODO: Come up with a more threshold that's not arbitrary
-      // if (jsProfilerResponse.averageFPS < 35) {
-      //   suggestions.push(
-      //     `Your average JS FPS is low. This can indicate that your components are doing too much work. Try to optimize your components and reduce re-renders if any`
-      //   );
-      // }
+      if (jsProfilerResponse.averageFPS < 35) {
+        suggestions.push(
+          `Your average JS FPS is low. This can indicate that your components are doing too much work. Try to optimize your components and reduce re-renders if any`
+        );
+      }
       computeSuggestions(flashListRef, suggestions);
       const result: BenchmarkResult = generateResult(
         jsProfilerResponse,

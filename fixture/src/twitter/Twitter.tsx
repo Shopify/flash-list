@@ -16,7 +16,7 @@ import { tweets as tweetsData } from "./data/tweets";
 import Tweet from "./models/Tweet";
 
 export interface TwitterProps {
-  instance: React.RefObject<FlashList<Tweet> | null | undefined>;
+  instance: React.RefObject<FlashList<Tweet>>;
   blankAreaTracker: BlankAreaEventHandler;
 }
 
@@ -36,7 +36,7 @@ const Twitter = ({ instance, blankAreaTracker }: TwitterProps) => {
   return (
     <FlashListPerformanceView listName="Twitter">
       <FlashList
-        ref={instance as any}
+        ref={instance}
         onBlankArea={blankAreaTracker}
         testID="FlashList"
         keyExtractor={(item) => {
