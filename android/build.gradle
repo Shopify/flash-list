@@ -85,13 +85,13 @@ android {
         }
     }
 
-    if (isNewArchitectureEnabled()) {
-        externalNativeBuild {
-            ndkBuild {
-                path "src/main/jni/Android.mk"
-            }
-        }
-    }
+     if (isNewArchitectureEnabled()) {
+         externalNativeBuild {
+             ndkBuild {
+                 path "src/main/jni/Android.mk"
+             }
+         }
+     }
 
     packagingOptions {
         // For some reason gradle only complains about the duplicated version of libreact_render libraries
@@ -99,6 +99,7 @@ android {
         // only the ones that make the build fail (ideally we should only include librngesturehandler_modules but we
         // are only allowed to specify exclude patterns)
         exclude "**/libreact_render*.so"
+    }
 
     lintOptions {
         abortOnError false
@@ -120,6 +121,12 @@ dependencies {
     androidTestImplementation("androidx.test:rules:${_androidTestRunnerVersion}")
 }
 
-react {
-    jsRootDir = rootProject.file("../src/fabric")
+if (isNewArchitectureEnabled()) {
+    react {
+        reactRoot = rootProject.file("../node_modules/react-native/")
+        jsRootDir = file("../src/fabric/")
+        codegenDir = rootProject.file("../node_modules/react-native-codegen/")
+        libraryName = "rnflashlist"
+        codegenJavaPackageName = "com.shopify.reactnative.flash_list"
+    }
 }

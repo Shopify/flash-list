@@ -19,7 +19,7 @@ import {
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
 import { BlankAreaEventHandler } from "./AutoLayoutView";
-// import ItemContainer from "./CellContainer";
+import ItemContainer from "./CellContainer";
 import { PureComponentWrapper } from "./PureComponentWrapper";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
@@ -537,24 +537,24 @@ class FlashList<T> extends React.PureComponent<
 
   private itemContainer = (props: any, parentProps: any) => {
     return (
-      // <ItemContainer
-      //   {...props}
-      //   style={{
-      //     ...props.style,
-      //     flexDirection: this.props.horizontal ? "row" : "column",
-      //     alignItems: "stretch",
-      //     ...this.getTransform(),
-      //   }}
-      //   index={parentProps.index}
-      // >
-      <PureComponentWrapper
-        extendedState={parentProps.extendedState}
-        internalSnapshot={parentProps.internalSnapshot}
-        data={parentProps.data}
-        arg={parentProps.index}
-        renderer={this.getCellContainerChild}
-      />
-      // </ItemContainer>
+      <ItemContainer
+        {...props}
+        style={{
+          ...props.style,
+          flexDirection: this.props.horizontal ? "row" : "column",
+          alignItems: "stretch",
+          ...this.getTransform(),
+        }}
+        index={parentProps.index}
+      >
+        <PureComponentWrapper
+          extendedState={parentProps.extendedState}
+          internalSnapshot={parentProps.internalSnapshot}
+          data={parentProps.data}
+          arg={parentProps.index}
+          renderer={this.getCellContainerChild}
+        />
+      </ItemContainer>
     );
   };
 
