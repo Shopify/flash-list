@@ -18,8 +18,8 @@ import {
 } from "recyclerlistview";
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
-import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
-import ItemContainer from "./CellContainer";
+import { BlankAreaEventHandler } from "./AutoLayoutView";
+// import ItemContainer from "./CellContainer";
 import { PureComponentWrapper } from "./PureComponentWrapper";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
@@ -511,13 +511,13 @@ class FlashList<T> extends React.PureComponent<
           inverted={this.props.inverted}
           renderer={this.header}
         />
-        <AutoLayoutView
+        {/* <AutoLayoutView
           {...props}
           onBlankAreaEvent={this.props.onBlankArea}
           onLayout={this.updateDistanceFromWindow}
-        >
-          {children}
-        </AutoLayoutView>
+        > */}
+        {children}
+        {/* </AutoLayoutView> */}
         {this.isEmptyList
           ? this.getValidComponent(this.props.ListEmptyComponent)
           : null}
@@ -537,33 +537,33 @@ class FlashList<T> extends React.PureComponent<
 
   private itemContainer = (props: any, parentProps: any) => {
     return (
-      <ItemContainer
-        {...props}
-        style={{
-          ...props.style,
-          flexDirection: this.props.horizontal ? "row" : "column",
-          alignItems: "stretch",
-          ...this.getTransform(),
-        }}
-        index={parentProps.index}
-      >
-        <PureComponentWrapper
-          extendedState={parentProps.extendedState}
-          internalSnapshot={parentProps.internalSnapshot}
-          data={parentProps.data}
-          arg={parentProps.index}
-          renderer={this.getCellContainerChild}
-        />
-      </ItemContainer>
+      // <ItemContainer
+      //   {...props}
+      //   style={{
+      //     ...props.style,
+      //     flexDirection: this.props.horizontal ? "row" : "column",
+      //     alignItems: "stretch",
+      //     ...this.getTransform(),
+      //   }}
+      //   index={parentProps.index}
+      // >
+      <PureComponentWrapper
+        extendedState={parentProps.extendedState}
+        internalSnapshot={parentProps.internalSnapshot}
+        data={parentProps.data}
+        arg={parentProps.index}
+        renderer={this.getCellContainerChild}
+      />
+      // </ItemContainer>
     );
   };
 
-  private updateDistanceFromWindow = (event: LayoutChangeEvent) => {
-    this.distanceFromWindow = this.props.horizontal
-      ? event.nativeEvent.layout.x
-      : event.nativeEvent.layout.y;
-    this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
-  };
+  // private updateDistanceFromWindow = (event: LayoutChangeEvent) => {
+  //   this.distanceFromWindow = this.props.horizontal
+  //     ? event.nativeEvent.layout.x
+  //     : event.nativeEvent.layout.y;
+  //   this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
+  // };
 
   private getTransform() {
     return (this.props.inverted && this.transformStyle) || undefined;

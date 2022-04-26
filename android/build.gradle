@@ -2,6 +2,18 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
+def isNewArchitectureEnabled() {
+    // To opt-in for the New Architecture, you can either:
+    // - Set `newArchEnabled` to true inside the `gradle.properties` file
+    // - Invoke gradle with `-newArchEnabled=true`
+    // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
+    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}
+
+if (isNewArchitectureEnabled()) {
+    apply plugin: 'com.facebook.react'
+}
+
 def _ext = rootProject.ext
 
 def _reactNativeVersion = _ext.has('reactNative') ? _ext.reactNative : '+'
@@ -16,6 +28,14 @@ def _androidTestRunnerVersion = _ext.has('androidTestRunnerVersion') ? _ext.andr
 
 android {
     compileSdkVersion _compileSdkVersion
+    // Used to override the NDK path/version on internal CI or by allowing
+    // users to customize the NDK path/version from their root project (e.g. for M1 support)
+    if (rootProject.hasProperty("ndkPath")) {
+        ndkPath rootProject.ext.ndkPath
+    }
+    if (rootProject.hasProperty("ndkVersion")) {
+        ndkVersion rootProject.ext.ndkVersion
+    }
     buildToolsVersion _buildToolsVersion
 
     compileOptions {
@@ -28,6 +48,15 @@ android {
         debug.java.srcDirs += 'src/debug/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
+
+        if (isNewArchitectureEnabled()) {
+            main.java.srcDirs += 'src/fabric/java'
+        } else {
+            // this folder also includes files from codegen so the library can compile with
+            // codegen turned off
+            // TODO: This won't work for now!!!!
+            main.java.srcDirs += 'src/paper/java'
+        }
     }
 
     defaultConfig {
@@ -36,7 +65,40 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+        if (isNewArchitectureEnabled()) {
+            var appProject = rootProject.allprojects.find {it.plugins.hasPlugin('com.android.application')}
+            externalNativeBuild {
+                ndkBuild {
+                    arguments "APP_PLATFORM=android-21",
+                            "APP_STL=c++_shared",
+                            "NDK_TOOLCHAIN_VERSION=clang",
+                            "GENERATED_SRC_DIR=${appProject.buildDir}/generated/source",
+                            "PROJECT_BUILD_DIR=${appProject.buildDir}",
+                            "REACT_ANDROID_DIR=${appProject.rootDir}/../node_modules/react-native/ReactAndroid",
+                            "REACT_ANDROID_BUILD_DIR=${appProject.rootDir}/../node_modules/react-native/ReactAndroid/build"
+                    cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
+                    cppFlags "-std=c++17"
+                    targets "rnflashlist_modules"
+                }
+            }
+        }
     }
+
+    if (isNewArchitectureEnabled()) {
+        externalNativeBuild {
+            ndkBuild {
+                path "src/main/jni/Android.mk"
+            }
+        }
+    }
+
+    packagingOptions {
+        // For some reason gradle only complains about the duplicated version of libreact_render libraries
+        // while there are more libraries copied in intermediates folder of the lib build directory, we exclude
+        // only the ones that make the build fail (ideally we should only include librngesturehandler_modules but we
+        // are only allowed to specify exclude patterns)
+        exclude "**/libreact_render*.so"
 
     lintOptions {
         abortOnError false
@@ -56,4 +118,8 @@ dependencies {
     testImplementation 'com.google.code.gson:gson:2.8.9'
     androidTestImplementation("androidx.test:runner:${_androidTestRunnerVersion}")
     androidTestImplementation("androidx.test:rules:${_androidTestRunnerVersion}")
+}
+
+react {
+    jsRootDir = rootProject.file("../src/fabric")
 }
