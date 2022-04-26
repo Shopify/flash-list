@@ -53,6 +53,7 @@ export const mountFlashList = (props?: {
     | null
     | undefined;
   viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs;
+  stickyHeaderIndices?: number[];
 }) => {
   const flashList = mount(
     <FlashList
@@ -72,6 +73,7 @@ export const mountFlashList = (props?: {
       viewabilityConfig={props?.viewabilityConfig}
       onViewableItemsChanged={props?.onViewableItemsChanged}
       viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
+      stickyHeaderIndices={props?.stickyHeaderIndices}
     />
   ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
     instance: FlashList<string>;

@@ -198,7 +198,8 @@ class FlashList<T> extends React.PureComponent<
         this.listFixedDimensionSize = props.estimatedListSize.width;
       }
     }
-    this.distanceFromWindow = props.estimatedFirstItemOffset || 0;
+    this.distanceFromWindow =
+      props.estimatedFirstItemOffset ?? ((props.ListHeaderComponent && 1) || 0);
     // eslint-disable-next-line react/state-in-constructor
     this.state = FlashList.getInitialMutableState(this);
     this.viewabilityManager = new ViewabilityManager(this);
