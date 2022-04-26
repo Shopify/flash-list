@@ -10,7 +10,7 @@ $dark-sienna: #27110aff;
 $persian-orange: #ea9451ff;
 $eerie-black: #222221ff;
 $umber: #6c5d4fff;
-
+$gray: #828282ff;
 $desert-sand: rgb(177, 61, 2);
 $beaver: #a58877ff;
 $jet: #2c2c2aff;
@@ -230,23 +230,25 @@ pre {
 .row.center {
   align-items: center;
 }
-.red {
+.row.end {
+  align-items: flex-end;
+}
+.gray {
   .bar {
-    background: -webkit-linear-gradient(
-      0deg,
-      $secondary-title-color,
-      lighten($secondary-title-color, 30%)
-    );
+    background: -webkit-linear-gradient(0deg, $gray, lighten($gray, 30%));
   }
   h2 {
-    background: -webkit-linear-gradient(
-      0deg,
-      $secondary-title-color,
-      lighten($secondary-title-color, 30%)
-    );
+    background: -webkit-linear-gradient(0deg, $gray, lighten($gray, 30%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+}
+h3.gray {
+  color: $gray;
+}
+.column {
+  display: flex;
+  flex-direction: column;
 }
 .bar {
   text-align: center;
@@ -267,21 +269,40 @@ pre {
   &.zero-seventy-five {
     --c: 0.48%;
   }
-  &.hundred-seven {
-    --c: 80%;
-  }
   &.twelve-five {
     --c: 10%;
   }
   &.fifty-four {
     --c: 80%;
   }
+  &.fifty {
+    --c: 50%;
+  }
+  &.one {
+    --c: 1%;
+  }
+  &.twenty {
+    --c: 20%;
+  }
   &.hundred {
-    --c: 80%;
+    --c: 100%;
   }
 }
-.row.graph {
-  column-gap: 10px;
+.metric-section {
+  margin-bottom: 20px;
+}
+.graph {
+  .row {
+    column-gap: 10px;
+    h3 {
+      margin-bottom: 0;
+    }
+  }
+  h2 {
+    margin-bottom: -10px;
+    font-size: 18px;
+    font-weight: normal;
+  }
 }
 p.note {
   font-size: 13px;

@@ -7,12 +7,14 @@
   {
     "title": "Developer friendly",
     "description": "FlashList is especially easy-to-use thanks to FlatList's API. Simply change the name of your component and you are good to go.",
-    "image": "img/tezos-wPN1xnccGPw-unsplash.jpg"
+    "image": "img/tezos-wPN1xnccGPw-unsplash.jpg",
+    "alt": "Developer using React Native FlashList in their laptop."
   },
   {
     "title": "Snappy on all platforms",
     "description": "On iOS, other lists perform well, but on Android, they fall short. FlashList performs well even on low-end Android devices.",
-    "image": "img/noelle-rebekah-trZZdb_3jQo-unsplash.jpg"
+    "image": "img/noelle-rebekah-trZZdb_3jQo-unsplash.jpg",
+    "alt": "Girl enjoying a list created using FlashList on a phone"
   },
   {
     "title": "Extra configuration for even better performance.",

@@ -1,5 +1,6 @@
 {% assign code = include.code %}
 {% assign image = include.image %}
+{% assign alt = include.alt %}
 {% assign video = include.video %}
 {% assign isPairClass = "" %}
 {% if include.isEven == 0 %}
@@ -7,7 +8,7 @@
 {% endif %}
 <div class="section {{isPairClass}}">
     {% if include.isEven == 0 %}
-    {% include code_or_image.html code=code image=image video=video %}
+    {% include code_or_image.html code=code image=image video=video alt=alt %}
     {% endif %}
     <div class="info">
         <h1>{{include.title}}</h1>
@@ -16,6 +17,6 @@
         </p>
     </div>
     {% if include.isEven == 1 %}
-    {% include code_or_image.html code=code image=image video=video %}
+    {% include code_or_image.html code=code image=image video=video alt=alt %}
     {% endif %}
 </div>
