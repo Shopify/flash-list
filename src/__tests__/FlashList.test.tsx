@@ -564,22 +564,18 @@ describe("FlashList", () => {
       renderItem,
     });
 
+    const scrollTo = (y: number) => {
+      flashList.find(ScrollView)?.trigger("onScroll", {
+        nativeEvent: { contentOffset: { x: 0, y } },
+      });
+    };
+
     // Mocking some scrolls
-    flashList.find(ScrollView)?.trigger("onScroll", {
-      nativeEvent: { contentOffset: { x: 0, y: 200 } },
-    });
-    flashList.find(ScrollView)?.trigger("onScroll", {
-      nativeEvent: { contentOffset: { x: 0, y: 400 } },
-    });
-    flashList.find(ScrollView)?.trigger("onScroll", {
-      nativeEvent: { contentOffset: { x: 0, y: 600 } },
-    });
-    flashList.find(ScrollView)?.trigger("onScroll", {
-      nativeEvent: { contentOffset: { x: 0, y: 3000 } },
-    });
-    flashList.find(ScrollView)?.trigger("onScroll", {
-      nativeEvent: { contentOffset: { x: 0, y: 2000 } },
-    });
+    scrollTo(200);
+    scrollTo(400);
+    scrollTo(600);
+    scrollTo(3000);
+    scrollTo(2000);
 
     // changing id will trigger effects if components rerender
     currentId = 1;
