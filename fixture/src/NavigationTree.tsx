@@ -12,6 +12,7 @@ import { RootStackParamList } from "./constants";
 import { ExamplesScreen } from "./ExamplesScreen";
 import { DebugScreen } from "./Debug";
 import { Messages, MessagesFlatList } from "./Messages";
+import TwitterBenchmark from "./twitter/TwitterBenchmark";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -42,6 +43,7 @@ const NavigationTree = () => {
           />
           <Stack.Screen name="Messages" component={Messages} />
           <Stack.Screen name="MessagesFlatList" component={MessagesFlatList} />
+          <Stack.Screen name="TwitterBenchmark" component={TwitterBenchmark} />
         </Stack.Group>
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />
