@@ -15,4 +15,5 @@ export type RootStackParamList = {
   ContactsSectionList: undefined;
   Messages: undefined;
   MessagesFlatList: undefined;
+  TwitterBenchmark: undefined;
 };
