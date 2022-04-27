@@ -98,14 +98,30 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
       2 * (this.props.numColumns || 1) * estimatedItemCount,
       this.averageWindow.currentValue
     );
-
-    // Cached layouts lead to some visible resizing on orientation change when Grid Layout Provider is used. Ignoring caches.
-    // This won't hurt performance much and is only used while resizing.
-    return super.newLayoutManager(
+    const newLayoutManager = super.newLayoutManager(
       renderWindowSize,
       isHorizontal,
       cachedLayouts
     );
+    if (cachedLayouts) {
+      this.updateCachedDimensions(cachedLayouts, newLayoutManager);
+    }
+    return newLayoutManager;
+  }
+
+  private updateCachedDimensions(
+    cachedLayouts: Layout[],
+    layoutManager: LayoutManager
+  ) {
+    const layoutCount = cachedLayouts.length;
+    for (let i = 0; i < layoutCount; i++) {
+      cachedLayouts[i] = {
+        ...cachedLayouts[i],
+        // helps in updating the fixed dimension of layouts e.g, width in case of horizontal list
+        // updating them in advance will make sure layout manager won't try to fit more items in the same row or column
+        ...layoutManager.getStyleOverridesForIndex(i),
+      };
+    }
   }
 
   private getCleanLayoutObj() {
