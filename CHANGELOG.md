@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Reuse cached layouts on orientation change
+  - https://github.com/Shopify/flash-list/pull/319
+
 ## [0.4.6] - 2022-04-13
 
 - Match FlashList's empty list behavior with FlatList
