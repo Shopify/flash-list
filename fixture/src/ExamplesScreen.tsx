@@ -44,6 +44,10 @@ export const ExamplesScreen = () => {
       title: "Messages FlatList",
       destination: "MessagesFlatList",
     },
+    {
+      title: "Twitter Benchmark",
+      destination: "TwitterBenchmark",
+    },
   ];
   return (
     <>
