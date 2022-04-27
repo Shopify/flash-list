@@ -556,7 +556,7 @@ describe("FlashList", () => {
     // If sticky renders there'll be 6
     expect(flashList.findAll(Text).length).toBe(5);
   });
-  it("rerenders all items on a layout manager change", () => {
+  it("rerenders all items when layout manager changes", () => {
     let countMounts = 0;
     let currentId = 0;
 
