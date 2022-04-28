@@ -1,7 +1,6 @@
 ci:
   require:
     - buildkite/flash-list
-    - buildkite/flash-list-docs
 
 dependencies:
   override:

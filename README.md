@@ -1,16 +1,16 @@
 [![Build status](./FlashList.png)](https://buildkite.com/shopify/flash-list)
 
 <div align="center">
-  <a href="https://shopify.github.io/flash-list/">Website</a> • 
-  <a href="https://flash-list.docs.shopify.io/">Getting started</a> • 
-  <a href="https://flash-list.docs.shopify.io/usage">Usage</a> • 
-  <a href="https://flash-list.docs.shopify.io/performance-troubleshooting">Performance</a> • 
-  <a href="https://flash-list.docs.shopify.io/known-issues">Known Issues</a>
+  <a href="https://shopify.github.io/flash-list/">Website</a> •
+  <a href="https://shopify.github.io/flash-list/docs/">Getting started</a> •
+  <a href="https://shopify.github.io/flash-list/docs/usage">Usage</a> •
+  <a href="https://shopify.github.io/flash-list/docs/performance-troubleshooting">Performance</a> •
+  <a href="https://shopify.github.io/flash-list/docs/known-issues">Known Issues</a>
 <br><br>
-  
+
 **Fast & performant React Native list. No more blank cells.**
 
-  Swap from FlatList in seconds. Get instant performance.
+Swap from FlatList in seconds. Get instant performance.
 
 </div>
 
@@ -47,7 +47,7 @@ const MyList = () => {
 };
 ```
 
-See [full usage documentation](https://flash-list.docs.shopify.io/usage) to know better how to use FlashList.
+See [full usage documentation](https://shopify.github.io/flash-list/docs/usage) to know better how to use FlashList.
 
 ## App / Playground
 
