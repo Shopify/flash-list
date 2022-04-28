@@ -1,11 +1,15 @@
+---
+appname: FlashList
+---
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>FlashList – fast and performant React Native list</title>
-    <link rel="stylesheet" href="css/styles.css?1651136897" />
+    <title>{{page.appname}} – fast and performant React Native list</title>
+    <link rel="stylesheet" href="css/styles.css?{{site.time | date: '%s'}}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
@@ -17,7 +21,7 @@
 <body>
     <div class="content">
         <div class="header">
-            <h1>⚡️ FlashList</h1>
+            <h1>⚡️ {{page.appname}}</h1>
             <h2>Fast & Performant <br> React Native List</h2>
             <p class="subtitle">No more blank cells</p>
             <p class="claim">
@@ -28,25 +32,18 @@
                 data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
                 data-show-count="true" aria-label="Star shopify/flash-list on GitHub">Star</a>
             <div class="row eight">
-                <a class="button primary" href="#install">Install FlashList</a>
+                <a class="button primary" href="#install">Install {{page.appname}}</a>
                 <a class="button secondary" target="_blank" href="https://flash-list.docs.shopify.io/">Read the docs</a>
             </div>
         </div>
         <div class="section black">
-            <figure class="highlight"><pre><code class="language-tsx" data-lang="tsx"><span class="p">&lt;</span><span class="nc">FlashList</span>
-  <span class="na">renderItem</span><span class="p">=</span><span class="si">{</span><span class="p">({</span> <span class="nx">item</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="o">&lt;</span><span class="nx">TweetCell</span> <span class="nx">item</span><span class="o">=</span><span class="p">{</span><span class="nx">item</span><span class="p">}</span> <span class="sr">/&gt;</span><span class="err">;
-</span>  <span class="p">}</span><span class="si">}</span>
-  <span class="na">estimatedItemSize</span><span class="p">=</span><span class="si">{</span><span class="mi">50</span><span class="si">}</span>
-  <span class="na">data</span><span class="p">=</span><span class="si">{</span><span class="nx">tweets</span><span class="si">}</span>
-<span class="p">/&gt;;</span>
- </code></pre></figure>
+            {% highlight tsx %}{% include snippet1.js %} {% endhighlight %}
             <div class="info">
                 <h1>
                     Same props.<br />2x performance.
                 </h1>
                 <p>
-                    Even if using the same props as FlatList, FlashList uses the recycling concept under the hood
+                    Even if using the same props as FlatList, {{page.appname}} uses the recycling concept under the hood
                     to be<br>
                     faster and more efficient.
                 </p>
@@ -70,7 +67,7 @@
                                 <span class="progress bar fifty-seven"></span>
                                 <h2>57 FPS</h2>
                             </div>
-                            <h3>FlashList</h3>
+                            <h3>{{page.appname}}</h3>
                         </div>
                     </div>
                 </div>
@@ -89,7 +86,7 @@
                                 <span class="progress bar fifty-four"></span>
                                 <h2>50.4 FPS</h2>
                             </div>
-                            <h3>FlashList</h3>
+                            <h3>{{page.appname}}</h3>
                         </div>
                     </div>
                     <p class="note">* Average FPS on a 60FPS screen Android Moto G10 device. (Higher is better) </p>
@@ -111,7 +108,7 @@
                                 <span class="progress bar zero-seventy-five"></span>
                                 <h2>0.75 dp*</h2>
                             </div>
-                            <h3>FlashList</h3>
+                            <h3>{{page.appname}}</h3>
                         </div>
                     </div>
                     <p class="note">*number of points in screen showing blank cells. (lower is better)</p>
@@ -131,127 +128,22 @@
                                 <span class="progress bar hundred"></span>
                                 <h2>296ms</h2>
                             </div>
-                            <h3>FlashList</h3>
+                            <h3>{{page.appname}}</h3>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        
-        
-        
-
-
-
-
-<div class="section ">
-    
-    <div class="info">
-        <h1>Memory efficient scrolling</h1>
-        <p>
-            Some libraries allocate more items in memory to achieve good performance. FlashList does not recreate items as a user scrolls, making it noticeably more memory efficient. 
-        </p>
-    </div>
-    
-    
-
-<video src="img/scroll.mp4" autoplay muted></video>
-
-
-
-
-    
-</div>
-
-        
-        
-        
-
-
-
-
-<div class="section pair">
-    
-    
-
-
-<img src="img/tezos-wPN1xnccGPw-unsplash.jpg" alt="" />
-
-
-
-    
-    <div class="info">
-        <h1>Developer friendly</h1>
-        <p>
-            Using FlatList's API makes FlashList a really easy-to-use component. Simply change the name of your component, add the estimated size of the items, and you are good to go.
-        </p>
-    </div>
-    
-</div>
-
-        
-        
-        
-
-
-
-
-<div class="section ">
-    
-    <div class="info">
-        <h1>Snappy on all platforms</h1>
-        <p>
-            Other lists show good-enough performance on iOS, but where they lack performance is on Android devices. FlashList performs well even on low-end Android devices.
-        </p>
-    </div>
-    
-    
-
-
-<img src="img/noelle-rebekah-trZZdb_3jQo-unsplash.jpg" alt="" />
-
-
-
-    
-</div>
-
-        
-        
-        
-
-
-
-
-<div class="section pair">
-    
-    
-<figure class="highlight"><pre><code class="language-tsx" data-lang="tsx"><span class="p">&lt;</span><span class="nc">FlashList</span>
-  <span class="na">renderItem</span><span class="p">=</span><span class="si">{</span><span class="p">({</span> <span class="nx">item</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="o">&lt;</span><span class="nx">TweetCell</span> <span class="nx">item</span><span class="o">=</span><span class="p">{</span><span class="nx">item</span><span class="p">}</span> <span class="sr">/&gt;</span><span class="err">;
-</span>  <span class="p">}</span><span class="si">}</span>
-  <span class="na">overrideItemType</span><span class="p">=</span><span class="si">{</span><span class="p">({</span> <span class="nx">item</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">item</span><span class="p">.</span><span class="kd">type</span><span class="p">;</span>
-  <span class="p">}</span><span class="si">}</span>
-  <span class="na">data</span><span class="p">=</span><span class="si">{</span><span class="nx">tweets</span><span class="si">}</span>
-<span class="p">/&gt;;</span></code></pre></figure>
-
-
-    
-    <div class="info">
-        <h1>Extra configuration for even better performance.</h1>
-        <p>
-            Apart from FlatList props, FlashList offers a set of extra props to tweak the performance even more.Apart from FlatList props, FlashList offers a set of extra props to even tweak the performance even more.
-        </p>
-    </div>
-    
-</div>
-
-        
+        {% for section in site.data.sections %}
+        {% assign isEven = forloop.index | modulo: 2 | contains: 1 %}
+        {% include section.html title=section.title description=section.description image=section.image
+        video=section.video isEven=isEven code=section.code %}
+        {% endfor %}
 
         <!-- <div class="section casestudy">
             <div class="info">
-                <h2>See how <span class="shopify">Shopify</span> uses FlashList to make commerce better for
+                <h2>See how <span class="shopify">Shopify</span> uses {{page.appname}} to make commerce better for
                     everyone</h2>
                 <a href="">Read case study</a>
             </div>
@@ -263,8 +155,7 @@
                 <h1>Install now</h1>
                 <p>Add it to your project now and try it out:</p>
             </div>
-            <figure class="highlight"><pre><code class="language-bash" data-lang="bash">yarn add @shopify/flash-list
-<span class="nb">cd </span>ios <span class="o">&amp;&amp;</span> pod <span class="nb">install</span></code></pre></figure>
+            {% highlight bash linedivs %}{% include install.sh %}{% endhighlight %}
         </div>
     </div>
     <div id="footer">
