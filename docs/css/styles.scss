@@ -97,8 +97,6 @@ h1 {
 h2 {
   margin: 0;
   font-size: 38px;
-  animation: gradient-rotate;
-  animation-duration: 10s;
   background: -webkit-linear-gradient(
     45deg,
     $title-color,
@@ -202,7 +200,7 @@ pre {
   }
 }
 .progress {
-  animation: progressBar 3s ease-out;
+  animation: progressBar 2s ease-out;
   animation-fill-mode: both;
 }
 
@@ -284,9 +282,16 @@ h3.gray {
   &.twenty {
     --c: 20%;
   }
+  &.ten {
+    --c: 10%;
+  }
   &.hundred {
     --c: 100%;
   }
+}
+h2.metric-explanation {
+  font-size: 30px;
+  text-align: center;
 }
 .metric-section {
   margin-bottom: 20px;
