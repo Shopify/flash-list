@@ -156,7 +156,7 @@ describe("Twitter", () => {
 });
 
 const scrollAndRotate = async (id: string) => {
-  await element(by.id(id)).scroll(500, "down");
+  await element(by.id(id)).scroll(240, "down");
 
   await device.setOrientation("landscape");
 };

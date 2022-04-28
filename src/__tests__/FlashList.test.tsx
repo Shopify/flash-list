@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
-import { Text } from "react-native";
+import { ScrollView, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { ProgressiveListView } from "recyclerlistview";
 
 import Warnings from "../errors/Warnings";
 import AutoLayoutView from "../AutoLayoutView";
+import CellContainer from "../CellContainer";
 
 import { mountFlashList } from "./helpers/mountFlashList";
 
@@ -543,6 +544,7 @@ describe("FlashList", () => {
       ],
     });
   });
+
   it("should not overlap header with sitcky index 0", () => {
     const HeaderComponent = () => {
       return <Text>Empty</Text>;
@@ -553,5 +555,67 @@ describe("FlashList", () => {
     });
     // If sticky renders there'll be 6
     expect(flashList.findAll(Text).length).toBe(5);
+  });
+  it("rerenders all items when layout manager changes", () => {
+    let countMounts = 0;
+    let currentId = 0;
+
+    // Effect will be triggered once per mount
+    const RenderComponent = ({ id }: { id?: number }) => {
+      useEffect(() => {
+        countMounts++;
+      }, [id]);
+      return <Text>Test</Text>;
+    };
+    const renderItem = () => {
+      return <RenderComponent id={currentId} />;
+    };
+    const flashList = mountFlashList({
+      data: new Array(100).fill("1"),
+      estimatedItemSize: 70,
+      renderItem,
+    });
+
+    const scrollTo = (y: number) => {
+      flashList.find(ScrollView)?.trigger("onScroll", {
+        nativeEvent: { contentOffset: { x: 0, y } },
+      });
+    };
+
+    // Mocking some scrolls
+    scrollTo(200);
+    scrollTo(400);
+    scrollTo(600);
+    scrollTo(3000);
+    scrollTo(2000);
+
+    // changing id will trigger effects if components rerender
+    currentId = 1;
+
+    // capturing current component count to check later
+    const currentComponentCount = countMounts;
+
+    // resetting count
+    countMounts = 0;
+
+    // items widths before layout manager change should be 400
+    flashList.findAll(CellContainer).forEach((cell) => {
+      expect(cell.instance.props.style.width).toBe(400);
+    });
+
+    // This will cause a layout manager change
+    flashList.find(ScrollView)?.trigger("onLayout", {
+      nativeEvent: { layout: { height: 400, width: 900 } },
+    });
+
+    // If counts match, then all components were updated
+    expect(countMounts).toBe(currentComponentCount);
+
+    // items widths after layout manager change should be 900
+    flashList.findAll(CellContainer).forEach((cell) => {
+      expect(cell.instance.props.style.width).toBe(900);
+    });
+
+    flashList.unmount();
   });
 });
