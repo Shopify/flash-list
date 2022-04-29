@@ -62,6 +62,14 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   estimatedItemSize: number;
 
   /**
+   * Each cell is rendered using this element.
+   * Can be a React Component Class, or a render function.
+   * The root component should always be a `CellContainer` which is also the default component used.
+   * Ensure that the original `props` are passed to the returned `CellContainer`.
+   */
+  CellRendererComponent?: React.ComponentType<any> | undefined;
+
+  /**
    * Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
    */
   ItemSeparatorComponent?: React.ComponentType<any> | null | undefined;

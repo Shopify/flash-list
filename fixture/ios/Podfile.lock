@@ -360,7 +360,7 @@ PODS:
     - React-jsi (= 0.68.1)
     - React-logger (= 0.68.1)
     - React-perflogger (= 0.68.1)
-  - ReactNativePerformanceListsProfiler (0.0.10):
+  - ReactNativePerformanceListsProfiler (0.0.11):
     - React-Core
   - RNFastImage (8.5.11):
     - React-Core
@@ -628,7 +628,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 9e344c840176b0af9c84d5019eb4fed8b3c105a1
   React-runtimeexecutor: 7285b499d0339104b2813a1f58ad1ada4adbd6c0
   ReactCommon: bf2888a826ceedf54b99ad1b6182d1bc4a8a3984
-  ReactNativePerformanceListsProfiler: 3f9453c24a90c4f77db568d984c48f380968fa0d
+  ReactNativePerformanceListsProfiler: 7e61653bdfaae62dcec563198df85e2d443c217a
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNFlashList: b9b9cad15a69ed4f853315eea89cd73dcc466567
   RNGestureHandler: 6e757e487a4834e7280e98e9bac66d2d9c575e9c

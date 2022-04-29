@@ -93,6 +93,29 @@ estimatedItemSize: number;
 
 ---
 
+### `CellRendererComponent`
+
+Each cell is rendered using this element. Can be a React Component Class, or a render function. The root component should always be a `CellContainer` which is also the default component used. Ensure that the original `props` are passed to the returned `CellContainer`.
+
+When using with `react-native-reanimated`, you can wrap `CellContainer` in `Animated.createAnimatedComponent` (this is similar to using `Animated.View`):
+
+```ts
+const AnimatedCellContainer = Animated.createAnimatedComponent(CellContainer);
+return (
+  <FlashList
+    CellRendererComponent={(props) => {
+      return (
+          <AnimatedCellContainer {...props} style={...}>
+      );
+    }}
+  />
+);
+```
+
+```ts
+CellRendererComponent?: React.ComponentType<any> | undefined;
+```
+
 ### `ItemSeparatorComponent`
 
 Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
@@ -530,7 +553,6 @@ Param `animated` (`true` by default) defines whether the list should do an anima
 
 The following props from `FlatList` are currently not implemented:
 
-- [`CellRendererComponent`](https://reactnative.dev/docs/virtualizedlist#cellrenderercomponent)
 - [`columnWrapperStyle`](https://reactnative.dev/docs/flatlist#columnwrapperstyle)
 - [`debug`](https://reactnative.dev/docs/virtualizedlist#debug)
 - [`listKey`](https://reactnative.dev/docs/virtualizedlist#listkey)

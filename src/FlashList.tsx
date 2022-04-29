@@ -17,7 +17,7 @@ import {
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
 import AutoLayoutView from "./AutoLayoutView";
-import ItemContainer from "./CellContainer";
+import CellContainer from "./CellContainer";
 import { PureComponentWrapper } from "./PureComponentWrapper";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
@@ -421,8 +421,10 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private itemContainer = (props: any, parentProps: any) => {
+    const CellRendererComponent =
+      this.props.CellRendererComponent ?? CellContainer;
     return (
-      <ItemContainer
+      <CellRendererComponent
         {...props}
         style={{
           ...props.style,
@@ -439,7 +441,7 @@ class FlashList<T> extends React.PureComponent<
           arg={parentProps.index}
           renderer={this.getCellContainerChild}
         />
-      </ItemContainer>
+      </CellRendererComponent>
     );
   };
 
