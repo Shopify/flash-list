@@ -372,7 +372,6 @@ class FlashList<T> extends React.PureComponent<
       initialScrollIndex,
       style,
       contentContainerStyle,
-      onViewableItemsChanged,
       ...restProps
     } = this.props;
 
