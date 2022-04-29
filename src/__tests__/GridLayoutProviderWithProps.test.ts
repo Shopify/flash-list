@@ -97,4 +97,54 @@ describe("GridLayoutProviderWithProps", () => {
     expect(layoutProvider.averageItemSize).toBe(240);
     flashList.unmount();
   });
+  it("updates all cached widths for vertical list and heights for horizontal list when orientation changes", () => {
+    const runCacheUpdateTest = (horizontal: boolean) => {
+      const flashList = mountFlashList({
+        data: new Array(20).fill("1"),
+        horizontal,
+      });
+      const progressiveListView = flashList.find(ProgressiveListView);
+      const layoutProvider = flashList.instance.state.layoutProvider;
+
+      layoutProvider
+        .getLayoutManager()!
+        .getLayouts()
+        .forEach((layout, index) => {
+          // marking layouts as if they're actual rendered sizes
+          progressiveListView?.instance.onItemLayout(index);
+
+          // checking size
+          if (horizontal) {
+            expect(layout.height).toBe(900);
+          } else {
+            expect(layout.width).toBe(400);
+          }
+        });
+
+      // simulates orientation change
+      flashList.find(ScrollView)?.trigger("onLayout", {
+        nativeEvent: { layout: { height: 400, width: 900 } },
+      });
+
+      layoutProvider
+        .getLayoutManager()!
+        .getLayouts()
+        .forEach((layout) => {
+          // making sure all widths or heights are updated
+          if (horizontal) {
+            expect(layout.height).toBe(400);
+          } else {
+            expect(layout.width).toBe(900);
+          }
+
+          // making sure extra keys don't make their way to layout unnecessarily
+          expect(Object.keys(layout).length).toBe(6);
+        });
+      flashList.unmount();
+    };
+    // vertical list
+    runCacheUpdateTest(false);
+    // horizontal list
+    runCacheUpdateTest(true);
+  });
 });
