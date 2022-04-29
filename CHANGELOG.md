@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix finding props with testId
+  - https://github.com/Shopify/flash-list/pull/357
 - Reuse cached layouts on orientation change
   - https://github.com/Shopify/flash-list/pull/319
 
