@@ -221,7 +221,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * If you don't want to change for an indexes just return undefined.
    * Performance: This method is called very frequently. Keep it fast.
    */
-  overrideItemType?: (
+  getItemType?: (
     item: TItem,
     index: number,
     extraData?: any

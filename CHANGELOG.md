@@ -9,6 +9,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Define `FlashList` props previously inherited from `VirtualizedList` and `FlatList` explicitly
   - https://github.com/Shopify/flash-list/pull/386
+- Change `overrideItemType` prop name to `getItemType`
+  - https://github.com/Shopify/flash-list/pull/369
 
 ## [0.5.0] - 2022-04-29
 

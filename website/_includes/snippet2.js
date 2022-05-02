@@ -2,7 +2,7 @@
   renderItem={({ item }) => {
     <TweetCell item={item} />;
   }}
-  overrideItemType={({ item }) => {
+  getItemType={({ item }) => {
     item.type;
   }}
   data={tweets}

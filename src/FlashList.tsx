@@ -185,7 +185,7 @@ class FlashList<T> extends React.PureComponent<
       numColumns,
       (index, props) => {
         // type of the item for given index
-        const type = props.overrideItemType?.(
+        const type = props.getItemType?.(
           props.data!![index],
           index,
           props.extraData

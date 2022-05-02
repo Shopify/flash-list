@@ -94,7 +94,7 @@ const ContactsFlashList = () => {
           return <Text>{item.firstName}</Text>;
         }
       }}
-      overrideItemType={(item) => {
+      getItemType={(item) => {
         // To achieve better performance, specify the type based on the item
         return typeof item === "string" ? "sectionHeader" : "row";
       }}
@@ -164,7 +164,7 @@ const ContactsFlashList = () => {
         }
       }}
       stickyHeaderIndices={stickyHeaderIndices}
-      overrideItemType={(item) => {
+      getItemType={(item) => {
         // To achieve better performance, specify the type based on the item
         return typeof item === "string" ? "sectionHeader" : "row";
       }}

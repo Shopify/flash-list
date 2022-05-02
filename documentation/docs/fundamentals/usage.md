@@ -315,17 +315,17 @@ onRefresh?: () => void;
 
 If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the `refreshing` prop correctly.
 
-### `overrideItemType`
+### `getItemType`
 
 ```ts
-overrideItemType?: (
+getItemType?: (
     item: T,
     index: number,
     extraData?: any
 ) => string | number | undefined;
 ```
 
-Allows developers to override type of items. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined.
+Allows developers to specify item types. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined.
 
 :::warning Performance
 This method is called very frequently. Keep it fast.
