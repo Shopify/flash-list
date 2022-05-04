@@ -618,4 +618,19 @@ describe("FlashList", () => {
 
     flashList.unmount();
   });
+
+  it("sends a warning when estimatedItemSize is not set", () => {
+    const warn = jest.fn();
+    console.warn = warn;
+
+    const flashList = mountFlashList({
+      shouldSetDefaultEstimatedItemSize: false,
+      renderItem: ({ item }) => <Text style={{ height: 200 }}>{item}</Text>,
+    });
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    expect(warn).toHaveBeenCalledWith(
+      "estimatedItemSize FlashList prop is not defined - set it to 100 to avoid this warning"
+    );
+    expect(flashList.instance.state.layoutProvider.averageItemSize).toBe(200);
+  });
 });

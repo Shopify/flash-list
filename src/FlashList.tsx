@@ -96,9 +96,6 @@ class FlashList<T> extends React.PureComponent<
     if (this.props.onRefresh && typeof this.props.refreshing !== "boolean") {
       throw new CustomError(ExceptionList.refreshBooleanMissing);
     }
-    if (!(this.props.estimatedItemSize > 0)) {
-      throw new CustomError(ExceptionList.estimatedItemSizeMissing);
-    }
     if (
       Number(this.props.stickyHeaderIndices?.length) > 0 &&
       this.props.horizontal
@@ -636,6 +633,14 @@ class FlashList<T> extends React.PureComponent<
   private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
       this.isListLoaded = true;
+      if (this.props.estimatedItemSize === undefined) {
+        const averageItemSize = Math.floor(
+          this.state.layoutProvider.averageItemSize
+        );
+        console.warn(
+          `estimatedItemSize FlashList prop is not defined - set it to ${averageItemSize} to avoid this warning`
+        );
+      }
       this.props.onLoad?.({
         elapsedTimeInMs: Date.now() - this.loadStartTime,
       });

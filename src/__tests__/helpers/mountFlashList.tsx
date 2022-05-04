@@ -45,6 +45,7 @@ export const mountFlashList = (props?: {
     extraData?: any
   ) => void;
   estimatedItemSize?: number;
+  shouldSetDefaultEstimatedItemSize?: boolean;
   ListEmptyComponent?: FlashListProps<string>["ListEmptyComponent"];
   ListHeaderComponent?: FlashListProps<string>["ListHeaderComponent"];
   ListFooterComponent?: FlashListProps<string>["ListFooterComponent"];
@@ -56,12 +57,14 @@ export const mountFlashList = (props?: {
   viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs;
   stickyHeaderIndices?: number[];
 }) => {
+  const defaultEstimatedItemSize =
+    props?.shouldSetDefaultEstimatedItemSize === false ? undefined : 200;
   const flashList = mount(
     <FlashList
       horizontal={props?.horizontal}
       keyExtractor={props?.keyExtractor}
       renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
-      estimatedItemSize={props?.estimatedItemSize ?? 200}
+      estimatedItemSize={props?.estimatedItemSize ?? defaultEstimatedItemSize}
       data={props?.data || ["One", "Two", "Three", "Four"]}
       initialScrollIndex={props?.initialScrollIndex}
       numColumns={props?.numColumns}

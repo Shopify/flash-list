@@ -237,7 +237,12 @@ function computeSuggestions(
           sizeArray.length
       );
       if (
-        Math.abs(averageSize - flashListRef.current.props.estimatedItemSize) > 5
+        Math.abs(
+          averageSize -
+            (flashListRef.current.props.estimatedItemSize ??
+              flashListRef.current.state.layoutProvider
+                .defaultEstimatedItemSize)
+        ) > 5
       ) {
         suggestions.push(`estimatedItemSize can be set to ${averageSize}`);
       }

@@ -59,7 +59,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * For vertical lists provide average height and for horizontal average width.
    * Read more about it here: https://shopify.github.io/flash-list/docs/estimated-item-size
    */
-  estimatedItemSize: number;
+  estimatedItemSize?: number;
 
   /**
    * Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.

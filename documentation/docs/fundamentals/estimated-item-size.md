@@ -11,6 +11,7 @@ sidebar_position: 2
 
 ### How to calculate
 
+- Use the average item size from the first render - this will be a part of the warning if you don't specify `estimatedItemSize`.
 - If most items are of **similar heights** or **widths** (if horizontal), just open up element inspector from `react-native's` dev menu, check the size of one of the items, and use it. Don't worry about different devices. We have enough tolerance to work around it.
 - If the items **have a lot of different sizes**, choose a few that are pretty different, use element inspector, read their sizes, and calculate an average. This average will work great, don't worry about solving for different devices sizes. There's enough tolerance internally.
 - If you run into a situation where more than one value seems like a good fit, pick the smaller one.
@@ -25,9 +26,9 @@ sidebar_position: 2
 
 - **Render a fixed number of items:** A default number of items to render on load may not be right for all devices and it should ideally depend on screen size. Drawing smaller number of items will show up blank space on load and drawing too many will increase load time.
 - **Use a default value for `estimatedItemSize`:** If we use a default size for items on launch, we still run into problems. Let's say we use `50px` as the default, without you being aware of this, and you're rendering a list with large items like a news feed where items are complex. Let's say the actual rendered size is around `500px`. Based on this assumption, we will draw `20` items on load if the screen size is `1000px` while we should only draw 2. This result is not optimal, and you may not even realize how much faster loads can be.
-- **Take `estimatedItemSize` from developers:** We leaned towards this option - instead of trying to hide away this requirement, we're letting you make the decision. We have decided to use a size estimate and not an initial count to render because size is a more stable value across device sizes.
+- **Take `estimatedItemSize` from developers:** Instead of trying to hide away this requirement, we're letting you make the decision. We have decided to use a size estimate and not an initial count to render because size is a more stable value across device sizes.
 
-We're thinking of ways to make this an optional prop but for now we think that learning about this and providing a good value is better than providing suboptimal results.
+We currently keep `estimatedItemSize` optional but **strongly** recommend you to set it. If you don't, you will get a warning with suggestion to set it to a value equal to the average item size from the first render.
 
 ### Impact on scroll
 

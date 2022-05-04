@@ -81,15 +81,11 @@ data: ItemT[];
 
 ### **`estimatedItemSize`**
 
-:::note
-Required
-:::
-
 ```ts
-estimatedItemSize: number;
+estimatedItemSize?: number;
 ```
 
-`estimatedItemSize` is a single numeric value that hints `FlashList` about the approximate size of the items before they're rendered. `FlashList` can then use this information to decide how many items it needs to draw on the screen before initial load and while scrolling. If most of the items are of **different sizes**, you can think of an average or median value and if most items are of **the same size**, just use that number. A quick look at `Element Inspector` can help you determine this. If you're confused between two values, the smaller value is a better choice.
+`estimatedItemSize` is a single numeric value that hints `FlashList` about the approximate size of the items before they're rendered. `FlashList` can then use this information to decide how many items it needs to draw on the screen before initial load and while scrolling. If most of the items are of **different sizes**, you can think of an average or median value and if most items are of **the same size**, just use that number. A quick look at `Element Inspector` can help you determine this. If you're confused between two values, the smaller value is a better choice. If you don't specify this prop, you will get a warning with a value you can use. We recommend not ignoring that warning and defining `estimatedItemSize` before the list gets to your users.
 
 ---
 
