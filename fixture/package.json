@@ -42,7 +42,7 @@
     "detox": "^19.6.7",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
-    "@types/jest": "^27.4.1"
+    "@types/jest": "^27.5.0"
   },
   "jest": {
     "preset": "react-native"
