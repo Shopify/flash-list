@@ -466,6 +466,30 @@ List of `ViewabilityConfig`/`onViewableItemsChanged` pairs. A specific `onViewab
 
 # FlashList methods
 
+### `getNativeScrollRef()`
+
+```ts
+getNativeScrollRef(): View | ScrollViewComponent | null | undefined;
+```
+
+Provides a reference to the underlying scroll component
+
+### `getScrollResponder()`
+
+```jsx
+getScrollResponder(): JSX.Element | null | undefined;
+```
+
+Provides a handle to the underlying scroll responder.
+
+### `getScrollableNode()`
+
+```jsx
+getScrollableNode(): number | null;
+```
+
+Provides a handle to the underlying scroll node.
+
 ### `prepareForLayoutAnimationRender()`
 
 ```ts
@@ -555,10 +579,6 @@ Unsupported methods:
 - [`flashScrollIndicators()`](https://reactnative.dev/docs/flatlist#flashscrollindicators)
 - [`hasMore`](https://reactnative.dev/docs/virtualizedlist#hasmore)
 - [`getChildContext`](https://reactnative.dev/docs/virtualizedlist#getchildcontext)
-- [`getNativeScrollRef()`​](https://reactnative.dev/docs/flatlist#getnativescrollref)
-- [`getScrollableNode`](https://reactnative.dev/docs/virtualizedlist#getscrollablenode)
-- [`getScrollRef`](https://reactnative.dev/docs/virtualizedlist#getscrollref)
-- [`getScrollResponder()`](https://reactnative.dev/docs/flatlist#getscrollresponder)
 
 There are also `FlatList` props that would bring no value if ported to `FlashList` due to the differences in their underlying implementation:
 
