@@ -466,6 +466,14 @@ List of `ViewabilityConfig`/`onViewableItemsChanged` pairs. A specific `onViewab
 
 # FlashList methods
 
+### `flashScrollIndicators()`
+
+```ts
+flashScrollIndicators(): void;
+```
+
+Flashes the scroll indicators.
+
 ### `getNativeScrollRef()`
 
 ```ts
@@ -576,7 +584,6 @@ The following props from `FlatList` are currently not implemented:
 
 Unsupported methods:
 
-- [`flashScrollIndicators()`](https://reactnative.dev/docs/flatlist#flashscrollindicators)
 - [`hasMore`](https://reactnative.dev/docs/virtualizedlist#hasmore)
 - [`getChildContext`](https://reactnative.dev/docs/virtualizedlist#getchildcontext)
 

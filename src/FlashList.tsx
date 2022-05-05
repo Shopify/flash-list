@@ -11,7 +11,6 @@ import {
   ScrollViewComponent,
 } from "react-native";
 import {
-  BaseScrollView,
   DataProvider,
   ProgressiveListView,
   RecyclerListView,
@@ -827,6 +826,14 @@ class FlashList<T> extends React.PureComponent<
   public getScrollResponder(): JSX.Element | null | undefined {
     // @ts-ignore
     return this.rlvRef?._scrollComponent?._scrollViewRef?.getScrollResponder();
+  }
+
+  /**
+   * Flashes the scroll indicators.
+   */
+  public flashScrollIndicators() {
+    // @ts-ignore
+    this.rlvRef?._scrollComponent?._scrollViewRef?.flashScrollIndicators();
   }
 
   /**
