@@ -836,6 +836,11 @@ class FlashList<T> extends React.PureComponent<
     this.rlvRef?._scrollComponent?._scrollViewRef?.flashScrollIndicators();
   }
 
+  public setNativeProps(props: { [key: string]: unknown }) {
+    // @ts-ignore
+    this.rlvRef?._scrollComponent?._scrollViewRef?.setNativeProps(props);
+  }
+
   /**
    * Allows access to internal recyclerlistview. This is useful for enabling access to its public APIs.
    * Warning: We may swap recyclerlistview for something else in the future. Use with caution.

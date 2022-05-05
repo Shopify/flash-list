@@ -484,7 +484,7 @@ Provides a reference to the underlying scroll component
 
 ### `getScrollResponder()`
 
-```jsx
+```ts
 getScrollResponder(): JSX.Element | null | undefined;
 ```
 
@@ -492,7 +492,7 @@ Provides a handle to the underlying scroll responder.
 
 ### `getScrollableNode()`
 
-```jsx
+```ts
 getScrollableNode(): number | null;
 ```
 
@@ -565,6 +565,14 @@ Scroll to a specific content pixel offset in the list.
 Param `offset` expects the offset to scroll to. In case of `horizontal` is true, the offset is the x-value, in any other case the offset is the y-value.
 
 Param `animated` (`true` by default) defines whether the list should do an animation while scrolling.
+
+### `setNativeProps()`
+
+```ts
+setNativeProps(props: { [key: string]: unknown }): void;
+```
+
+Sets native props of the underlying native view.
 
 # ScrollView props
 
