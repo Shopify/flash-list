@@ -50,7 +50,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: |
           yarn
-          yarn test
+          yarn test --forceExit
   metro-ios:
     name: "Metro bundling for iOS"
     runs-on: macos-latest
