@@ -11,7 +11,7 @@ React Native has a convenience component on top of `FlatList`, called [`SectionL
 - [`SectionSeparatorComponent`](https://reactnative.dev/docs/sectionlist#sectionseparatorcomponent)
 - [`stickySectionHeadersEnabled`](https://reactnative.dev/docs/sectionlist#stickysectionheadersenabled)
 
-`FlashList` offers none of these props but all of them are replaceable with existing props.
+**`FlashList` offers none of these props but all of them are replaceable with existing props.**
 
 The difficulty of migrating from `SectionList` to `FlashList` will depend on the data you have at hand - the data may be more suitable for `SectionList`, requiring you to massage the data, but the opposite can be true as well. In that case, using `FlashList` instead of `SectionList` might even result in less code.
 
