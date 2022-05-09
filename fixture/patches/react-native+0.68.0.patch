@@ -1,0 +1,59 @@
+diff --git a/node_modules/react-native/React/React-RCTFabric.podspec b/node_modules/react-native/React/React-RCTFabric.podspec
+index 9ea86d4..cf3d5e9 100644
+--- a/node_modules/react-native/React/React-RCTFabric.podspec
++++ b/node_modules/react-native/React/React-RCTFabric.podspec
+@@ -35,6 +35,7 @@ Pod::Spec.new do |s|
+                              "**/android/*",
+   s.compiler_flags         = folly_compiler_flags + ' ' + boost_compiler_flags
+   s.header_dir             = "React"
++  s.module_name            = "RCTFabric"
+   s.framework              = "JavaScriptCore"
+   s.pod_target_xcconfig    = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/boost\" \"$(PODS_ROOT)/DoubleConversion\" \"$(PODS_ROOT)/RCT-Folly\" \"$(PODS_ROOT)/Headers/Private/React-Core\" \"$(PODS_ROOT)/Headers/Public/React-Codegen\" \"${PODS_CONFIGURATION_BUILD_DIR}/React-Codegen/React_Codegen.framework/Headers\"" }
+   s.xcconfig               = { "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\" \"$(PODS_ROOT)/glog\" \"$(PODS_ROOT)/RCT-Folly\"",
+diff --git a/node_modules/react-native/scripts/react_native_pods.rb b/node_modules/react-native/scripts/react_native_pods.rb
+index f2ceeda..3e5fccb 100644
+--- a/node_modules/react-native/scripts/react_native_pods.rb
++++ b/node_modules/react-native/scripts/react_native_pods.rb
+@@ -44,7 +44,7 @@ def use_react_native! (options={})
+   pod 'FBLazyVector', :path => "#{prefix}/Libraries/FBLazyVector"
+   pod 'FBReactNativeSpec', :path => "#{prefix}/React/FBReactNativeSpec"
+   pod 'RCTRequired', :path => "#{prefix}/Libraries/RCTRequired"
+-  pod 'RCTTypeSafety', :path => "#{prefix}/Libraries/TypeSafety"
++  pod 'RCTTypeSafety', :path => "#{prefix}/Libraries/TypeSafety", :modular_headers => true
+   pod 'React', :path => "#{prefix}/"
+   pod 'React-Core', :path => "#{prefix}/"
+   pod 'React-CoreModules', :path => "#{prefix}/React/CoreModules"
+@@ -71,13 +71,13 @@ def use_react_native! (options={})
+   pod 'React-runtimeexecutor', :path => "#{prefix}/ReactCommon/runtimeexecutor"
+   pod 'React-perflogger', :path => "#{prefix}/ReactCommon/reactperflogger"
+   pod 'React-logger', :path => "#{prefix}/ReactCommon/logger"
+-  pod 'ReactCommon/turbomodule/core', :path => "#{prefix}/ReactCommon"
++  pod 'ReactCommon/turbomodule/core', :path => "#{prefix}/ReactCommon", :modular_headers => true
+   pod 'Yoga', :path => "#{prefix}/ReactCommon/yoga", :modular_headers => true
+ 
+   pod 'DoubleConversion', :podspec => "#{prefix}/third-party-podspecs/DoubleConversion.podspec"
+   pod 'glog', :podspec => "#{prefix}/third-party-podspecs/glog.podspec"
+   pod 'boost', :podspec => "#{prefix}/third-party-podspecs/boost.podspec"
+-  pod 'RCT-Folly', :podspec => "#{prefix}/third-party-podspecs/RCT-Folly.podspec"
++  pod 'RCT-Folly', :podspec => "#{prefix}/third-party-podspecs/RCT-Folly.podspec", :modular_headers => true
+ 
+   if ENV['USE_CODEGEN_DISCOVERY'] == '1'
+     app_path = options[:app_path]
+@@ -95,7 +95,7 @@ def use_react_native! (options={})
+     generate_react_codegen_podspec!(react_codegen_spec)
+   end
+ 
+-  pod 'React-Codegen', :path => $CODEGEN_OUTPUT_DIR
++  pod 'React-Codegen', :path => $CODEGEN_OUTPUT_DIR, :modular_headers => true
+ 
+   if fabric_enabled
+     checkAndGenerateEmptyThirdPartyProvider!(prefix)
+@@ -103,7 +103,7 @@ def use_react_native! (options={})
+     pod 'React-rncore', :path => "#{prefix}/ReactCommon"
+     pod 'React-graphics', :path => "#{prefix}/ReactCommon/react/renderer/graphics"
+     pod 'React-jsi/Fabric', :path => "#{prefix}/ReactCommon/jsi"
+-    pod 'React-RCTFabric', :path => "#{prefix}/React"
++    pod 'React-RCTFabric', :path => "#{prefix}/React", :modular_headers => true
+     pod 'RCT-Folly/Fabric', :podspec => "#{prefix}/third-party-podspecs/RCT-Folly.podspec"
+   end
+ 
