@@ -79,7 +79,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -132,6 +132,14 @@ def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitect
 def reactNativeArchitectures() {
     def value = project.getProperties().get("reactNativeArchitectures")
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
+if(isNewArchitectureEnabled()) {
+    apply plugin: "com.facebook.react"
+    react {
+        reactRoot = rootProject.file("../node_modules/react-native/")
+        codegenDir = rootProject.file("../node_modules/react-native-codegen/")
+    }
 }
 
 android {
@@ -206,20 +214,11 @@ android {
             // preBuild.dependsOn("generateCodegenArtifactsFromSchema")
             preDebugBuild.dependsOn(packageReactNdkDebugLibs)
             preReleaseBuild.dependsOn(packageReactNdkReleaseLibs)
+        }
 
-            // Due to a bug inside AGP, we have to explicitly set a dependency
-            // between configureNdkBuild* tasks and the preBuild tasks.
-            // This can be removed once this is solved: https://issuetracker.google.com/issues/207403732
-            configureNdkBuildRelease.dependsOn(preReleaseBuild)
-            configureNdkBuildDebug.dependsOn(preDebugBuild)
-            reactNativeArchitectures().each { architecture ->
-                tasks.findByName("configureNdkBuildDebug[${architecture}]")?.configure {
-                    dependsOn("preDebugBuild")
-                }
-                tasks.findByName("configureNdkBuildRelease[${architecture}]")?.configure {
-                    dependsOn("preReleaseBuild")
-                }
-            }
+        packagingOptions {
+            pickFirst '**/libhermes.so'
+            pickFirst '**/libjsc.so'
         }
     }
 

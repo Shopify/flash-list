@@ -111,7 +111,11 @@ android {
 }
 
 dependencies {
-    compileOnly "com.facebook.react:react-native:${_reactNativeVersion}"
+    if (isNewArchitectureEnabled()) {
+        implementation project(':ReactAndroid')
+    } else {
+        compileOnly "com.facebook.react:react-native:${_reactNativeVersion}"
+    }
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${_kotlinVersion}"
     testImplementation "junit:junit:${_junitVersion}"
     testImplementation "org.mockito.kotlin:mockito-kotlin:${_mockitoVersion}"
