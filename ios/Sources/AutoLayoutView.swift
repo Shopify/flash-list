@@ -55,21 +55,32 @@ import React
     /// Sorts views by index and then invokes clearGaps which does the correction.
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
-        guard
-            // TODO: Fabric support (AutoLayoutView itself does not have any subviews)
-            subviews.count > 1,
-            // Fixing layout during animation can interfere with it.
-            layer.animationKeys()?.isEmpty == true
-        else { return }
+        #if RCT_NEW_ARCH_ENABLED
+        let cellContainers = superview?
+            .subviews.flatMap(\.subviews)
+            .compactMap { $0 as? CellContainer }
+            .sorted(by: { $0.index < $1.index })
+            .compactMap(\.superview) ?? []
+        #else
         let cellContainers = subviews
             .compactMap { $0 as? CellContainer }
             .sorted(by: { $0.index < $1.index })
+        #endif
+        print(cellContainers)
+        print(layer.animationKeys())
+        print(superview?.layer.animationKeys())
+        guard
+            cellContainers.count > 1,
+            // Fixing layout during animation can interfere with it.
+            layer.animationKeys()?.isEmpty == true
+        else { return }
+        print(cellContainers)
         clearGaps(for: cellContainers)
     }
 
     /// Checks for overlaps or gaps between adjacent items and then applies a correction.
     /// Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on the iOS side.
-    private func clearGaps(for cellContainers: [CellContainer]) {
+    private func clearGaps(for cellContainers: [UIView]) {
         var maxBound: CGFloat = 0
         var minBound: CGFloat = CGFloat(Int.max)
         var maxBoundNextCell: CGFloat = 0
@@ -168,7 +179,7 @@ import React
 
     /// It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
     func isWithinBounds(
-        _ cellContainer: CellContainer,
+        _ cellContainer: UIView,
         scrollOffset: CGFloat,
         renderAheadOffset: CGFloat,
         windowSize: CGFloat,

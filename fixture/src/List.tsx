@@ -42,6 +42,7 @@ const List = () => {
     return (
       <Pressable
         onPress={() => {
+          console.log("Presssed!");
           removeItem(item);
         }}
       >

@@ -22,36 +22,44 @@ using namespace facebook::react;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-  if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const CellContainerProps>();
-    _props = defaultProps;
-      _cellContainerView = [[CellContainer alloc] initWithFrame:self.bounds];
+    if (self = [super initWithFrame:frame]) {
+        static const auto defaultProps = std::make_shared<const CellContainerProps>();
+        _props = defaultProps;
+        _cellContainerView = [[CellContainer alloc] initWithFrame:self.bounds];
+        self.superview.userInteractionEnabled = false;
+        
+//        self.contentView = _cellContainerView;
+        self.userInteractionEnabled = true;
+//        self.contentView.userInteractionEnabled = false;
+    }
+    
+    return self;
+}
 
-    self.contentView = _cellContainerView;
-  }
-
-  return self;
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    NSLog(@"Passing all touches to the next view (if any), in the view stack.");
+    return NO;
 }
 
 #pragma mark - RCTComponentViewProtocol
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return concreteComponentDescriptorProvider<CellContainerComponentDescriptor>();
+    return concreteComponentDescriptorProvider<CellContainerComponentDescriptor>();
 }
 
 - (void)updateProps:(const Props::Shared &)props oldProps:(const Props::Shared &)oldProps
 {
     const auto &newProps = *std::static_pointer_cast<const CellContainerProps>(props);
-
+    
     _cellContainerView.index = newProps.index;
-
+    
     [super updateProps:props oldProps:oldProps];
 }
 @end
 
 Class<RCTComponentViewProtocol> CellContainerCls(void)
 {
-  return CellContainerComponentView.class;
+    return CellContainerComponentView.class;
 }
 #endif /* RN_FABRIC_ENABLED */

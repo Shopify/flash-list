@@ -986,7 +986,7 @@ SPEC CHECKSUMS:
   Flipper-RSocket: d9d9ade67cbecf6ac10730304bf5607266dd2541
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
+  glog: 476ee3e89abb49e07f822b48323c51c57124b572
   hermes-engine: 84e3af1ea01dd7351ac5d8689cbbea1f9903ffc3
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
@@ -1013,7 +1013,7 @@ SPEC CHECKSUMS:
   React-RCTActionSheet: ea9099db0597bd769430db1e2d011fd5fdb7fc5e
   React-RCTAnimation: 252df4749866f2654f37612f839522cac91c1165
   React-RCTBlob: ae9ea73c6f84685ad9cd8ba2275cce6eaa26699d
-  React-RCTFabric: 1841caf08db263671ccc7608eeb3705df725cc0e
+  React-RCTFabric: e94001f28664513fb61336428585fb5b146c2f01
   React-RCTImage: 99ae69c73d31e7937cb250a4f470ae6a3f5d16e4
   React-RCTLinking: cff4ca5547612607ae29a5859b466410a58a920d
   React-RCTNetwork: 2783868d750a000d33a63bc3c3a140e6f812a735
@@ -1025,7 +1025,7 @@ SPEC CHECKSUMS:
   ReactCommon: fab89a13b52f1ac42b59a0e4b4f76f21aea9eebe
   ReactNativePerformanceListsProfiler: 3f9453c24a90c4f77db568d984c48f380968fa0d
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
-  RNFlashList: c3595f98a58413e5847ec76cbbd22b730d78d241
+  RNFlashList: 76228e930becce186c435f05c5b0b1a38069c128
   RNGestureHandler: 8a225c1225054a526c981bbc9b0ce312f51ba35e
   RNScreens: 9c1dfa815b0e70f24453f6acd1fb26090ddd38cb
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d

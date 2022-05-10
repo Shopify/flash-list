@@ -26,6 +26,7 @@ Pod::Spec.new do |s|
     s.pod_target_xcconfig = {
       'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost" "$(PODS_ROOT)/boost-for-react-native" "$(PODS_ROOT)/RCT-Folly"',
       'CLANG_CXX_LANGUAGE_STANDARD' => 'c++17',
+      'OTHER_SWIFT_FLAGS' => '-D RCT_NEW_ARCH_ENABLED',
     }
     s.platforms       = { ios: '11.0', tvos: '11.0' }
     s.compiler_flags  = folly_compiler_flags

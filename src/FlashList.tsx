@@ -511,13 +511,7 @@ class FlashList<T> extends React.PureComponent<
           inverted={this.props.inverted}
           renderer={this.header}
         />
-        <AutoLayoutView
-          {...props}
-          onBlankAreaEvent={this.props.onBlankArea}
-          onLayout={this.updateDistanceFromWindow}
-        >
-          {children}
-        </AutoLayoutView>
+        {children}
         {this.isEmptyList
           ? this.getValidComponent(this.props.ListEmptyComponent)
           : null}
@@ -532,6 +526,16 @@ class FlashList<T> extends React.PureComponent<
           renderer={this.footer}
         />
       </>
+    );
+
+    return (
+      <AutoLayoutView
+        {...props}
+        onBlankAreaEvent={this.props.onBlankArea}
+        onLayout={this.updateDistanceFromWindow}
+      >
+        {children}
+      </AutoLayoutView>
     );
   };
 
