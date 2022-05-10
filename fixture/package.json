@@ -20,7 +20,7 @@
     "@shopify/flash-list": "link:../",
     "@shopify/react-native-performance-lists-profiler": "^0.0.10",
     "react": "17.0.2",
-    "react-native": "0.0.0-20220201-2008-79975d146",
+    "react-native": "0.68.1",
     "react-native-codegen": "^0.0.14",
     "react-native-fast-image": "^8.5.11",
     "react-native-flipper": "^0.142.0",
