@@ -18,7 +18,7 @@ import {
 } from "recyclerlistview";
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
-import { BlankAreaEventHandler } from "./AutoLayoutView";
+import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import { PureComponentWrapper } from "./PureComponentWrapper";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
@@ -511,13 +511,13 @@ class FlashList<T> extends React.PureComponent<
           inverted={this.props.inverted}
           renderer={this.header}
         />
-        {/* <AutoLayoutView
+        <AutoLayoutView
           {...props}
           onBlankAreaEvent={this.props.onBlankArea}
           onLayout={this.updateDistanceFromWindow}
-        > */}
-        {children}
-        {/* </AutoLayoutView> */}
+        >
+          {children}
+        </AutoLayoutView>
         {this.isEmptyList
           ? this.getValidComponent(this.props.ListEmptyComponent)
           : null}
@@ -536,11 +536,12 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private itemContainer = (props: any, parentProps: any) => {
+    console.log(props.style);
     return (
       <ItemContainer
         {...props}
         style={{
-          ...props.style,
+          // ...props.style,
           flexDirection: this.props.horizontal ? "row" : "column",
           alignItems: "stretch",
           ...this.getTransform(),
@@ -558,12 +559,12 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
-  // private updateDistanceFromWindow = (event: LayoutChangeEvent) => {
-  //   this.distanceFromWindow = this.props.horizontal
-  //     ? event.nativeEvent.layout.x
-  //     : event.nativeEvent.layout.y;
-  //   this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
-  // };
+  private updateDistanceFromWindow = (event: LayoutChangeEvent) => {
+    this.distanceFromWindow = this.props.horizontal
+      ? event.nativeEvent.layout.x
+      : event.nativeEvent.layout.y;
+    this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
+  };
 
   private getTransform() {
     return (this.props.inverted && this.transformStyle) || undefined;

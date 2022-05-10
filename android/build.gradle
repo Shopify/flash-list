@@ -51,6 +51,7 @@ android {
 
         if (isNewArchitectureEnabled()) {
             main.java.srcDirs += 'src/fabric/java'
+            main.java.srcDirs += "${project.buildDir}/generated/source/codegen/java"
         } else {
             // this folder also includes files from codegen so the library can compile with
             // codegen turned off
