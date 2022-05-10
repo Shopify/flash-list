@@ -32,6 +32,7 @@ LOCAL_SHARED_LIBRARIES := \
   libfolly_json \
   libglog \
   libjsi \
+  libreact_render_mapbuffer \
   libreact_codegen_rncore \
   libreact_debug \
   libreact_nativemodule_core \
