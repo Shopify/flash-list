@@ -540,11 +540,12 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private itemContainer = (props: any, parentProps: any) => {
+    console.log(props.style);
     return (
       <ItemContainer
         {...props}
         style={{
-          ...props.style,
+          // ...props.style,
           flexDirection: this.props.horizontal ? "row" : "column",
           alignItems: "stretch",
           ...this.getTransform(),

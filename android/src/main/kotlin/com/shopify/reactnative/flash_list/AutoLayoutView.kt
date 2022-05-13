@@ -2,7 +2,6 @@ package com.shopify.reactnative.flash_list
 
 import android.content.Context
 import android.graphics.Canvas
-import android.util.DisplayMetrics
 import android.view.View
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext

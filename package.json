@@ -53,6 +53,7 @@
     "jestSetup.js"
   ],
   "dependencies": {
+    "react-native-gradle-plugin": "^0.0.7",
     "recyclerlistview": "3.2.0-beta.4"
   },
   "codegenConfig": {

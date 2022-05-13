@@ -6631,6 +6631,11 @@ react-native-gradle-plugin@^0.0.5:
   dependencies:
     react-native-codegen "*"
 
+react-native-gradle-plugin@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.0.7.tgz#96602f909745239deab7b589443f14fce5da2056"
+  integrity sha512-+4JpbIx42zGTONhBTIXSyfyHICHC29VTvhkkoUOJAh/XHPEixpuBduYgf6Y4y9wsN1ARlQhBBoptTvXvAFQf5g==
+
 react-native@0.68.0:
   version "0.68.0"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.68.0.tgz#00204818c7fa5a9802ee73f3905a6d9b1c945a31"
