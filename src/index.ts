@@ -1,8 +1,5 @@
-export {
-  default as FlashList,
-  FlashListProps,
-  ContentStyle,
-} from "./FlashList";
+export { default as FlashList } from "./FlashList";
+export { FlashListProps, ContentStyle } from "./FlashListProps";
 export { default as AnimatedFlashList } from "./AnimatedFlashList";
 export {
   useOnNativeBlankAreaEvents,

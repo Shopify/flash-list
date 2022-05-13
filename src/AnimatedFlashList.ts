@@ -1,6 +1,7 @@
 import { Animated } from "react-native";
 
-import FlashList, { FlashListProps } from "./FlashList";
+import FlashList from "./FlashList";
+import { FlashListProps } from "./FlashListProps";
 
 const AnimatedFlashList =
   Animated.createAnimatedComponent<React.ComponentType<FlashListProps<any>>>(
