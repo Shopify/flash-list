@@ -9,6 +9,8 @@ appname: FlashList
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>{{page.appname}} – fast and performant React Native list</title>
+    <meta name="description"
+        content="Creating a performant list in React Native is not easy. But with FlashList, you get incredible performance using the familiar React Native FlatList's API." />
     <link rel="stylesheet" href="css/styles.css?{{site.time | date: '%s'}}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,17 +22,19 @@ appname: FlashList
 
 <body>
     <div class="content">
-        <div class="header">
+        <div class="topbar">
             <h1>⚡️ {{page.appname}}</h1>
+            <!-- Place this tag where you want the button to render. -->
+            <a class="github-button" href="https://github.com/shopify/flash-list"
+                data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
+                data-show-count="true" aria-label="Github shopify/flash-list on GitHub">Github</a>
+        </div>
+        <div class="header">
             <h2>Fast & Performant <br> React Native List</h2>
             <p class="subtitle">No more blank cells</p>
             <p class="claim">
                 Swap from FlatList in seconds. Get instant performance.
             </p>
-            <!-- Place this tag where you want the button to render. -->
-            <a class="github-button" href="https://github.com/shopify/flash-list"
-                data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
-                data-show-count="true" aria-label="Star shopify/flash-list on GitHub">Star</a>
             <div class="row eight">
                 <a class="button primary" href="#install">Install {{page.appname}}</a>
                 <a class="button secondary" target="_blank" href="https://flash-list.docs.shopify.io/">Read the docs</a>
@@ -43,94 +47,51 @@ appname: FlashList
                     Same props.<br />2x performance.
                 </h1>
                 <p>
-                    Even if using the same props as FlatList, {{page.appname}} uses the recycling concept under the hood
-                    to be<br>
-                    faster and more efficient.
+                    Even with the same props as the React Native FlatList, {{page.appname}} recycles components
+                    under the hood
+                    to maximize performance.
                 </p>
             </div>
         </div>
         <div class="section half">
-            <h1>Crazy performance on low-end devices</h1>
+            <h1>Exceptional performance on low-end devices</h1>
             <div>
                 <div class="metric-section">
-                    <h2>FPS in UI Thread</h2>
+                    <h2>FPS* in UI Thread</h2>
                     <div class="column full">
-                        <div>
-                            <div class="row graph red center">
-                                <span class="progress bar thirty-seven"></span>
-                                <h2>37 FPS</h2>
-                            </div>
-                            <h3>FlatList</h3>
-                        </div>
-                        <div>
-                            <div class="row graph center">
-                                <span class="progress bar fifty-seven"></span>
-                                <h2>57 FPS</h2>
+                        <div class="graph">
+                            <div class="row end">
+                                <span class="progress bar hundred"></span>
+                                <h2>up to 5x</h2>
                             </div>
                             <h3>{{page.appname}}</h3>
+                        </div>
+                        <div class="graph">
+                            <div class="row gray center">
+                                <span class="progress bar twenty"></span>
+                            </div>
+                            <h3 class="gray">React Native FlatList</h3>
                         </div>
                     </div>
                 </div>
                 <div class="metric-section">
-                    <h2>FPS in JS Thread</h2>
+                    <h2>FPS* in JS Thread</h2>
                     <div class="column full">
-                        <div>
-                            <div class="row graph red center">
-                                <span class="progress bar twelve-five"></span>
-                                <h2>12.5 FPS</h2>
-                            </div>
-                            <h3>FlatList</h3>
-                        </div>
-                        <div>
-                            <div class="row graph center">
-                                <span class="progress bar fifty-four"></span>
-                                <h2>50.4 FPS</h2>
+                        <div class="graph">
+                            <div class="row end">
+                                <span class="progress bar hundred"></span>
+                                <h2>up to 10x</h2>
                             </div>
                             <h3>{{page.appname}}</h3>
+                        </div>
+                        <div>
+                            <div class="row graph gray end">
+                                <span class="progress bar ten"></span>
+                            </div>
+                            <h3 class="gray">React Native FlatList</h3>
                         </div>
                     </div>
                     <p class="note">* Average FPS on a 60FPS screen Android Moto G10 device. (Higher is better) </p>
-                </div>
-            </div>
-            <div>
-                <div class="metric-section">
-                    <h2>Blanks cells</h2>
-                    <div class="column full">
-                        <div>
-                            <div class="row graph red center">
-                                <span class="progress bar hundred-seven"></span>
-                                <h2>107 dp*</h2>
-                            </div>
-                            <h3>FlatList</h3>
-                        </div>
-                        <div>
-                            <div class="row graph center">
-                                <span class="progress bar zero-seventy-five"></span>
-                                <h2>0.75 dp*</h2>
-                            </div>
-                            <h3>{{page.appname}}</h3>
-                        </div>
-                    </div>
-                    <p class="note">*number of points in screen showing blank cells. (lower is better)</p>
-                </div>
-                <div class="metric-section">
-                    <h2>Time to interactive</h2>
-                    <div class="column full">
-                        <div>
-                            <div class="row graph red center">
-                                <span class="progress bar hundred"></span>
-                                <h2>290ms</h2>
-                            </div>
-                            <h3>FlatList</h3>
-                        </div>
-                        <div>
-                            <div class="row graph center">
-                                <span class="progress bar hundred"></span>
-                                <h2>296ms</h2>
-                            </div>
-                            <h3>{{page.appname}}</h3>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -138,7 +99,7 @@ appname: FlashList
         {% for section in site.data.sections %}
         {% assign isEven = forloop.index | modulo: 2 | contains: 1 %}
         {% include section.html title=section.title description=section.description image=section.image
-        video=section.video isEven=isEven code=section.code %}
+        video=section.video isEven=isEven code=section.code alt=section.alt %}
         {% endfor %}
 
         <!-- <div class="section casestudy">
@@ -153,7 +114,7 @@ appname: FlashList
         <div class="section fullwidth" id="install">
             <div class="info">
                 <h1>Install now</h1>
-                <p>Add it to your project now and try it out:</p>
+                <p>Try it in your project now:</p>
             </div>
             {% highlight bash linedivs %}{% include install.sh %}{% endhighlight %}
         </div>
