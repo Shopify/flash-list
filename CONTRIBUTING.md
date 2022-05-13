@@ -4,9 +4,12 @@ We want this community to be **friendly and respectful** to each other. Please f
 
 ## Development workflow
 
-To get started with the project, run `yarn up` in the root directory to install the required dependencies for `flash-list` and our fixture app:
+To get started with the project, run `dev up` and `yarn up` in the root directory to install the required dependencies for `flash-list` and our fixture app:
+
+`dev up` is necessary to be able to install Shopify's private dependencies and `yarn up` takes care of the rest.
 
 ```sh
+dev up
 yarn up
 ```
 
