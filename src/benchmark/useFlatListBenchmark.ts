@@ -58,7 +58,8 @@ export function useFlatListBenchmark(
       clearTimeout(cancelTimeout);
       cancellable.cancel();
     };
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return [];
 }
 
