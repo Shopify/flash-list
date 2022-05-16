@@ -9,7 +9,8 @@ import {
 import "@quilted/react-testing/matchers";
 import { mount, RootNode } from "@quilted/react-testing";
 
-import FlashList, { FlashListProps } from "../../FlashList";
+import FlashList from "../../FlashList";
+import { FlashListProps } from "../../FlashListProps";
 
 jest.mock("../../FlashList", () => {
   const ActualFlashList = jest.requireActual("../../FlashList").default;

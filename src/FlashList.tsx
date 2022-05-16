@@ -2,10 +2,8 @@ import React from "react";
 import {
   View,
   RefreshControl,
-  FlatListProps,
   LayoutChangeEvent,
   ViewStyle,
-  ColorValue,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from "react-native";
@@ -18,121 +16,21 @@ import {
 } from "recyclerlistview";
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
-import AutoLayoutView, { BlankAreaEventHandler } from "./AutoLayoutView";
+import AutoLayoutView from "./AutoLayoutView";
 import ItemContainer from "./CellContainer";
 import { PureComponentWrapper } from "./PureComponentWrapper";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
-import ViewToken from "./ViewToken";
 import ViewabilityManager from "./ViewabilityManager";
+import { FlashListProps, ContentStyle } from "./FlashListProps";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
 }
 const StickyHeaderContainer =
   StickyContainer as React.ComponentClass<StickyProps>;
-
-export interface FlashListProps<T> extends FlatListProps<T> {
-  // TODO: This is to make eslint silent. Out prettier and lint rules are conflicting.
-  /**
-   * Average or median size for elements in the list. Doesn't have to be very accurate but a good estimate can improve performance.
-   * A quick look at `Element Inspector` can help you determine this. If you're confused between two values, the smaller value is a better choice.
-   * For vertical lists provide average height and for horizontal average width.
-   * Read more about it here: https://shopify.github.io/flash-list/docs/estimated-item-size
-   */
-  estimatedItemSize: number;
-
-  /**
-   * Visible height and width of the list. This is not the scroll content size.
-   */
-  estimatedListSize?: { height: number; width: number };
-
-  /**
-   * Specifies how far the first item is drawn from start of the list window or, offset of the first item of the list (not the header).
-   * Needed if you're using initialScrollIndex prop. Before the initial draw the list cannot figure out the size of header or, any special margin/padding that might have been applied
-   * using header styles etc.
-   * If this isn't provided initialScrollIndex might not scroll to the provided index.
-   */
-  estimatedFirstItemOffset?: number;
-
-  /**
-   * Draw distance for advanced rendering (in dp/px)
-   */
-  drawDistance?: number;
-
-  /**
-   * Allows developers to override type of items. This will improve recycling if you have different types of items in the list
-   * Right type will be used for the right item. Default type is 0
-   * If you don't want to change for an indexes just return undefined.
-   * Performance: This method is called very frequently. Keep it fast.
-   */
-  overrideItemType?: (
-    item: T,
-    index: number,
-    extraData?: any
-  ) => string | number | undefined;
-
-  /**
-   * This method can be used to provide explicit size estimates or change column span of an item.
-   *
-   * Providing specific estimates is a good idea when you can calculate sizes reliably. FlashList will prefer this value over `estimatedItemSize` for that specific item.
-   * Precise estimates will also improve precision of `scrollToIndex` method and `initialScrollIndex` prop. If you have a `separator` below your items you can include its size in the estimate.
-   *
-   * Changing item span is useful when you have grid layouts (numColumns > 1) and you want few items to be bigger than the rest.
-   *
-   * Modify the given layout. Do not return. FlashList will fallback to default values if this is ignored.
-   *
-   * Performance: This method is called very frequently. Keep it fast.
-   */
-  overrideItemLayout?: (
-    layout: { span?: number; size?: number },
-    item: T,
-    index: number,
-    maxColumns: number,
-    extraData?: any
-  ) => void;
-
-  /**
-   * For debugging and exception use cases, internal props will be overriden with these values if used
-   */
-  overrideProps?: object;
-
-  /**
-   * Computes blank space that is visible to the user during scroll or list load. If list doesn't have enough items to fill the screen even then this will be raised.
-   * Values reported: {
-   *    offsetStart -> visible blank space on top of the screen (while going up). If value is greater than 0 then it's visible to user.
-   *    offsetEnd -> visible blank space at the end of the screen (while going down). If value is greater than 0 then it's visible to user.
-   *    blankArea -> max(offsetStart, offsetEnd) use this directly and look for values > 0
-   * }
-   * Please note that this event isn't synced with onScroll event but works with native onDraw/layoutSubviews. Events with values > 0 are blanks.
-   * This event is raised even when there is no visible blank with negative values for extensibility however, for most use cases check blankArea > 0 and use the value.
-   */
-  onBlankArea?: BlankAreaEventHandler;
-
-  /**
-   * You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself.
-   * For example, you can apply this padding, so that all of your items have leading and trailing space.
-   * Note: horizontal padding is ignored on vertical lists and vertical padding on horizontal ones.
-   */
-  contentContainerStyle?: ContentStyle;
-
-  /**
-   * This event is raised once the list has drawn items on the screen. It also reports @param elapsedTimeInMs which is the time it took to draw the items.
-   * This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render.
-   * If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
-   */
-  onLoad?: (info: { elapsedTimeInMs: number }) => void;
-
-  /**
-   * Called when the viewability of items changes, as defined by the viewabilityConfig.
-   */
-  onViewableItemsChanged?:
-    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
-    | null
-    | undefined;
-}
 
 export interface FlashListState<T> {
   dataProvider: DataProvider;
@@ -144,17 +42,6 @@ export interface FlashListState<T> {
 
 interface ExtraData<T> {
   value?: T;
-}
-
-export interface ContentStyle {
-  backgroundColor?: ColorValue;
-  paddingTop?: string | number;
-  paddingLeft?: string | number;
-  paddingRight?: string | number;
-  paddingBottom?: string | number;
-  padding?: string | number;
-  paddingVertical?: string | number;
-  paddingHorizontal?: string | number;
 }
 
 class FlashList<T> extends React.PureComponent<
@@ -332,8 +219,7 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private onEndReached = () => {
-    // known issue: RLV doesn't report distanceFromEnd
-    this.props.onEndReached?.({ distanceFromEnd: 0 });
+    this.props.onEndReached?.();
   };
 
   private getRefreshControl = () => {

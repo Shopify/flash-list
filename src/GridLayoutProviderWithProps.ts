@@ -5,7 +5,7 @@ import {
   LayoutManager,
 } from "recyclerlistview";
 
-import { FlashListProps } from "./FlashList";
+import { FlashListProps } from "./FlashListProps";
 import { AverageWindow } from "./utils/AverageWindow";
 
 export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
