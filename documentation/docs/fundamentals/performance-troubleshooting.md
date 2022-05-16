@@ -24,6 +24,6 @@ If the numbers indicate that the performance is not good enough, you should act.
 
 ### Tips:
 
-1. To make your list more performant, ensure [`estimatedItemSize`](/usage#estimateditemsize) is as close as possible to the real median value. And if you have different types of items, you can improve recycling by using the [`overrideItemType`](/usage#overrideitemtype) prop.
+1. To make your list more performant, ensure [`estimatedItemSize`](/usage#estimateditemsize) is as close as possible to the real median value. And if you have different types of items, you can improve recycling by using the [`getItemType`](/usage#getitemtype) prop.
 
 2. Make sure your cell components don't have a `key` prop. Using this prop will lead to `FlashList` not being able to recycle views, losing all the benefits of using it over `FlatList`.
