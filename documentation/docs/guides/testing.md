@@ -10,7 +10,7 @@ Since `FlashList` does not immediately render but waits for the size of the unde
 
 Add the following line to your `jest-setup.js` file:
 
-```tsx
+```js
 require("@shopify/flash-list/jestSetup");
 ```
 
