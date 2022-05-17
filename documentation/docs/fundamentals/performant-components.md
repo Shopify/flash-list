@@ -31,7 +31,7 @@ Make sure your **item components and their nested components don't have a `key` 
 
 For example, if we had a following item component:
 
-```ts
+```tsx
 const MyNestedComponent = ({ item }) => {
   return <Text key={item.id}>I am nested!</Text>;
 };
@@ -48,7 +48,7 @@ const MyItem = ({ item }) => {
 
 Then the `key` prop should be removed from both `MyItem` and `MyNestedComponent`:
 
-```ts
+```tsx
 const MyNestedComponent = ({ item }) => {
   return <Text>I am nested!</Text>;
 };
@@ -67,7 +67,7 @@ There might be cases where React forces you to use `key` prop, such as when usin
 
 Let's imagine we want to display names of users:
 
-```ts
+```tsx
 const MyItem = ({ item }: { item: any }) => {
   return (
     <>
@@ -81,7 +81,7 @@ const MyItem = ({ item }: { item: any }) => {
 
 If we wrote our item component like this, the `Text` component would need to be re-created. Instead, we can do the following:
 
-```ts
+```tsx
 const MyItem = ({ item }) => {
   return (
     <>
@@ -104,7 +104,7 @@ If you do any calculations that might take a lot of resources, consider memoizin
 
 **If you have different types of cell components and these are vastly different, consider leveraging the [`getItemType` prop](/usage#getitemtype)**. For example, if we were building a messages list, we could write it like this:
 
-```ts
+```tsx
 // A message can be either a text or an image
 enum MessageType {
   Text,
@@ -140,7 +140,7 @@ const MessageList = () => {
 
 However, this implementation has one performance drawback. When the list recycles items and the `MessageType` changes from `Text` to `Image` or vice versa, React won't be able to optimize the re-render since the whole render tree of the item component changes. We can fix this by changing the `MessageList` to this:
 
-```ts
+```tsx
 const MessageList = () => {
   return (
     <FlashList
@@ -160,7 +160,7 @@ const MessageList = () => {
 
 Let's consider the following example:
 
-```ts
+```tsx
 const MyHeavyComponent = () => {
   return ...;
 };
@@ -177,7 +177,7 @@ const MyItem = ({ item }) => {
 
 Since `MyHeavyComponent` does not directly depend on the `item` prop, `useMemo` can be used to skip re-rending `MyHeavyComponent` when the item is recycled and thus re-rendered:
 
-```ts
+```tsx
 const MyHeavyComponent = () => {
   return ...;
 };
