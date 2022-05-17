@@ -421,6 +421,8 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private itemContainer = (props: any, parentProps: any) => {
+    console.log(props);
+    console.log(parentProps);
     const CellRendererComponent =
       this.props.CellRendererComponent ?? CellContainer;
     return (
