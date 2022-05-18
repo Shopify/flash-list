@@ -7,7 +7,7 @@ sidebar_position: 0
 
 If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` just by changing the component name and adding `estimatedItemSize` or refer to the example below:
 
-```ts
+```tsx
 import React from "react";
 import { View, Text, StatusBar } from "react-native";
 import { FlashList } from "@shopify/flash-list";
@@ -48,20 +48,24 @@ Most of the props from `FlatList` are available in `FlashList`, too. This docume
 Required
 :::
 
-```ts
+```tsx
 renderItem: ({ item, index }) => void;
 ```
 
-Takes an item from `data` and renders it into the list.
+Takes an item from `data` and renders it into the list. Typical usage:
+
+```tsx
+renderItem = ({item}) => (
+  <Text>{item.title}</Text>
+);
+...
+<FlashList data={[{title: 'Title Text', key: 'item1'}]} renderItem={renderItem} />
+```
 
 Provides additional metadata like `index`
 
 - `item` (`Object`): The item from `data` being rendered.
 - `index` (`number`): The index corresponding to this item in the `data` array.
-
-:::note
-`FlatList` also passes `separators` prop in the `renderItem` method which we currently don't support.
-:::
 
 ### **`data`**
 
@@ -71,7 +75,7 @@ Required
 
 For simplicity, data is a plain array of items of a given type.
 
-```ts
+```tsx
 data: ItemT[];
 ```
 
@@ -81,7 +85,7 @@ data: ItemT[];
 Required
 :::
 
-```ts
+```tsx
 estimatedItemSize: number;
 ```
 
@@ -93,7 +97,7 @@ estimatedItemSize: number;
 
 Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
 
-```ts
+```tsx
 ItemSeparatorComponent?: React.ComponentType<any>;
 ```
 
@@ -101,7 +105,7 @@ ItemSeparatorComponent?: React.ComponentType<any>;
 
 Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
 
-```ts
+```tsx
 ListEmptyComponent?: React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 ```
 
@@ -109,7 +113,7 @@ ListEmptyComponent?: React.ComponentType<any> | React.ReactElement<any, string |
 
 Rendered at the bottom of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
 
-```ts
+```tsx
 ListFooterComponent?: React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 ```
 
@@ -117,7 +121,7 @@ ListFooterComponent?: React.ComponentType<any> | React.ReactElement<any, string 
 
 Styling for internal View for `ListFooterComponent`.
 
-```ts
+```tsx
 ListFooterComponentStyle?: StyleProp<ViewStyle>;
 ```
 
@@ -125,7 +129,7 @@ ListFooterComponentStyle?: StyleProp<ViewStyle>;
 
 Rendered at the top of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
 
-```ts
+```tsx
 ListHeaderComponent?: React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 ```
 
@@ -133,13 +137,13 @@ ListHeaderComponent?: React.ComponentType<any> | React.ReactElement<any, string 
 
 Styling for internal View for `ListHeaderComponent`.
 
-```ts
+```tsx
 ListHeaderComponentStyle?: StyleProp<ViewStyle>;
 ```
 
 ### `contentContainerStyle`
 
-```ts
+```tsx
 contentContainerStyle?: ContentStyle;
 
 interface ContentStyle {
@@ -162,7 +166,7 @@ Horizontal padding is ignored on vertical lists and vertical padding on horizont
 
 ### `drawDistance`
 
-```ts
+```tsx
 drawDistance?: number;
 ```
 
@@ -170,7 +174,7 @@ Draw distance for advanced rendering (in `dp`/`px`).
 
 ### `estimatedFirstItemOffset`
 
-```ts
+```tsx
 estimatedFirstItemOffset?: number;
 ```
 
@@ -178,7 +182,7 @@ estimatedFirstItemOffset?: number;
 
 ### `estimatedListSize`
 
-```ts
+```tsx
 estimatedListSize?: { height: number; width: number }
 ```
 
@@ -188,7 +192,7 @@ Estimated visible height and width of the list. It is not the scroll content siz
 
 A marker property for telling the list to re-render (since it implements `PureComponent`). If any of your `renderItem`, Header, Footer, etc. functions depend on anything outside of the `data` prop, stick it here and treat it immutably.
 
-```ts
+```tsx
 extraData?: any;
 ```
 
@@ -196,15 +200,15 @@ extraData?: any;
 
 If `true`, renders items next to each other horizontally instead of stacked vertically. Default is `false`.
 
-```ts
+```tsx
 horizontal?: boolean;
 ```
 
 ### `initialScrollIndex`
 
-Instead of starting at the top with the first item, start at `initialScrollIndex`. This disables the "scroll to top" optimization that keeps the first `initialNumToRender` items always rendered and immediately renders the items starting at this initial index. Requires `getItemLayout` to be implemented.
+Instead of starting at the top with the first item, start at `initialScrollIndex`.
 
-```ts
+```tsx
 initialScrollIndex?: number;
 ```
 
@@ -212,13 +216,13 @@ initialScrollIndex?: number;
 
 Reverses the direction of scroll. Uses scale transforms of `-1`.
 
-```ts
+```tsx
 inverted?: boolean;
 ```
 
 ### `keyExtractor`
 
-```ts
+```tsx
 keyExtractor?: (item: object, index: number) => string;
 ```
 
@@ -230,25 +234,9 @@ Multiple columns can only be rendered with `horizontal={false}` and will zig-zag
 
 `numColumns?: number;`
 
-### `onEndReached`
-
-```ts
-onEndReached?: (info: {distanceFromEnd: number}) => void;
-```
-
-Called once when the scroll position gets within `onEndReachedThreshold` of the rendered content.
-
-### `onEndReachedThreshold`
-
-```ts
-onEndReachedThreshold?: number;
-```
-
-How far from the end (in units of visible length of the list) the bottom edge of the list must be from the end of the content to trigger the `onEndReached` callback. Thus a value of 0.5 will trigger `onEndReached` when the end of the content is within half the visible length of the list.
-
 ### `onBlankArea`
 
-```ts
+```tsx
 onBlankArea?: (blankAreaEvent: {
     offsetStart: number;
     offsetEnd: number;
@@ -272,41 +260,33 @@ This callback will be triggered even if the blanks are excepted - for example, w
 This event isn't synced with `onScroll` event from the JS layer but works with native methods `onDraw` (Android) and `layoutSubviews` (iOS).
 :::
 
+### `onEndReached`
+
+```tsx
+onEndReached?: () => void;
+```
+
+Called once when the scroll position gets within `onEndReachedThreshold` of the rendered content.
+
+### `onEndReachedThreshold`
+
+```tsx
+onEndReachedThreshold?: number;
+```
+
+How far from the end (in units of visible length of the list) the bottom edge of the list must be from the end of the content to trigger the `onEndReached` callback. Thus a value of 0.5 will trigger `onEndReached` when the end of the content is within half the visible length of the list.
+
 ### `onLoad`
 
-```ts
+```tsx
 onLoad: (info: { elapsedTimeInMs: number }) => void;
 ```
 
 This event is raised once the list has drawn items on the screen. It also reports elapsedTimeInMs which is the time it took to draw the items. This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render. If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
 
-### `onRefresh`
-
-```ts
-onRefresh?: () => void;
-```
-
-If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the `refreshing` prop correctly.
-
-### `progressViewOffset`
-
-```ts
-progressViewOffset?: number;
-```
-
-Set this when offset is needed for the loading indicator to show correctly.
-
-### `refreshing`
-
-```ts
-refreshing?: boolean;
-```
-
-Set this true while waiting for new data from a refresh.
-
 ### `onViewableItemsChanged`
 
-```ts
+```tsx
 interface ViewToken {
   index: number;
   isViewable: boolean;
@@ -327,17 +307,25 @@ Called when the viewability of rows changes, as defined by the `viewabilityConfi
 If you are tracking the time a view becomes (non-)visible, use the `timestamp` property. We make no guarantees that in the future viewability callbacks will be invoked as soon as they happen - for example, they might be deferred until JS thread is less busy.
 :::
 
-### `overrideItemType`
+### `onRefresh`
 
-```ts
-overrideItemType?: (
+```tsx
+onRefresh?: () => void;
+```
+
+If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the `refreshing` prop correctly.
+
+### `getItemType`
+
+```tsx
+getItemType?: (
     item: T,
     index: number,
     extraData?: any
 ) => string | number | undefined;
 ```
 
-Allows developers to override type of items. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined.
+Allows developers to specify item types. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined. You can see example of how to use this prop [here](/guides/performant-components#getitemtype).
 
 :::warning Performance
 This method is called very frequently. Keep it fast.
@@ -345,7 +333,7 @@ This method is called very frequently. Keep it fast.
 
 ### `overrideItemLayout`
 
-```ts
+```tsx
 overrideItemLayout?: (
     layout: { span?: number; size?: number },
     item: T,
@@ -370,7 +358,7 @@ This method is called very frequently. Keep it fast.
 
 ### `overrideProps`
 
-```ts
+```tsx
 overrideProps?: object;
 ```
 
@@ -378,7 +366,7 @@ We do not recommend using this prop for anything else than debugging. Internal p
 
 ### `progressViewOffset`
 
-```ts
+```tsx
 progressViewOffset?: number;
 ```
 
@@ -386,7 +374,7 @@ Set this when offset is needed for the loading indicator to show correctly.
 
 ### `refreshControl`
 
-```ts
+```tsx
 refreshControl?: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 ```
 
@@ -394,7 +382,7 @@ A custom refresh control element. When set, it overrides the default `<RefreshCo
 
 ### `refreshing`
 
-```ts
+```tsx
 refreshing?: boolean;
 ```
 
@@ -402,7 +390,7 @@ Set this true while waiting for new data from a refresh.
 
 ### `viewabilityConfig`
 
-```ts
+```tsx
 interface ViewabilityConfig: {
   minimumViewTime: number;
   viewAreaCoveragePercentThreshold: number;
@@ -449,7 +437,7 @@ Nothing is considered viewable until the user scrolls or `recordInteraction` is 
 
 ### `viewabilityConfigCallbackPairs`
 
-```ts
+```tsx
 type ViewabilityConfigCallbackPairs = ViewabilityConfigCallbackPair[];
 
 interface ViewabilityConfigCallbackPair {
@@ -468,7 +456,7 @@ List of `ViewabilityConfig`/`onViewableItemsChanged` pairs. A specific `onViewab
 
 ### `prepareForLayoutAnimationRender()`
 
-```ts
+```tsx
 prepareForLayoutAnimationRender(): void;
 ```
 
@@ -488,7 +476,7 @@ Tells the list an interaction has occurred, which should trigger viewability cal
 
 ### `scrollToEnd()`
 
-```ts
+```tsx
 scrollToEnd?: (params?: { animated?: boolean | null | undefined });
 ```
 
@@ -496,7 +484,7 @@ Scrolls to the end of the content.
 
 ### `scrollToIndex()`
 
-```ts
+```tsx
 scrollToIndex(params: {
   animated?: boolean | null | undefined;
   index: number;
@@ -509,7 +497,7 @@ Scroll to a given index.
 
 ### `scrollToItem()`
 
-```ts
+```tsx
 scrollToItem(params: {
   animated?: boolean | null | undefined;
   item: any;
@@ -521,7 +509,7 @@ Scroll to a given item.
 
 ### `scrollToOffset()`
 
-```ts
+```tsx
 scrollToOffset(params: {
   animated?: boolean | null | undefined;
   offset: number;

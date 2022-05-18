@@ -2,11 +2,12 @@ module.exports = {
   title: "FlashList",
   tagline:
     "FlashList is a more performant replacement of the FlatList component.",
-  url: "https://flash-list.docs.shopify.io",
-  baseUrl: "/",
+  url: "https://shopify.github.io/flash-list/docs",
+  baseUrl: "/docs/",
   onBrokenLinks: "error",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
+  favicon:
+    "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡️</text></svg>",
   organizationName: "Shopify",
   projectName: "flash-list",
   themeConfig: {
@@ -17,7 +18,14 @@ module.exports = {
       additionalLanguages: ["ruby", "sql"],
     },
     navbar: {
-      title: "FlashList",
+      style: "dark",
+      logo: {
+        alt: "FlashList",
+        src: "img/FlashList.png",
+        srcDark: "img/FlashList.png",
+        href: "/",
+        target: "_self",
+      },
       items: [
         {
           href: "https://github.com/shopify/flash-list",
@@ -30,11 +38,11 @@ module.exports = {
       style: "dark",
       links: [
         {
-          title: "Microsite Docs",
+          title: "Website",
           items: [
             {
-              label: "Microsite Docs",
-              to: "https://development.shopify.io/engineering/keytech/apidocs/microsites",
+              label: "⚡️ FlashList",
+              to: "/",
             },
           ],
         },
@@ -61,7 +69,6 @@ module.exports = {
       },
     ],
   ],
-  themes: ["@shopify/docusaurus-shopify-theme"],
   presets: [
     [
       "@docusaurus/preset-classic",
@@ -78,6 +85,9 @@ module.exports = {
         blog: false,
         pages: false,
         sitemap: false,
+        theme: {
+          customCss: require.resolve("./src/css/custom.css"),
+        },
       },
     ],
   ],

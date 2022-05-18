@@ -17,7 +17,7 @@ For layout animations, similarly to the React Native API, you need to call [`pre
 
 You can use hooks such as [`useSharedValue`](https://docs.swmansion.com/react-native-reanimated/docs/api/hooks/useSharedValue) as you would in a normal view. The difference is that since views get recycled, a value can transfer to an unrelated component. You will need to reset such values when a view is recycled - for this, you can pass a prop that uniquely identifies the cell (such as `id` of an item) and run a callback via `useEffect`. You can take inspiration from the following example:
 
-```ts
+```tsx
 import React, { useEffect } from "react";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { FlashList } from "@shopify/flash-list";
