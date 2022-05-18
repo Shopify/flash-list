@@ -452,6 +452,14 @@ viewabilityConfigCallbackPairs: ViewabilityConfigCallbackPairs | undefined;
 
 List of `ViewabilityConfig`/`onViewableItemsChanged` pairs. A specific `onViewableItemsChanged` will be called when its corresponding `ViewabilityConfig`'s conditions are met.
 
+### `disableHorizontalListHeightMeasurement`
+
+```tsx
+disableHorizontalListHeightMeasurement?: boolean;
+```
+
+FlashList attempts to measure size of horizontal lists by drawing an extra list item in advance. This can sometimes cause issues when used with `initialScrollIndex` in lists with very little content. You might see some amount of over scroll. When set to true the list's size needs to be deterministic as FlashList will skip rendering extra item for measurement.
+
 # FlashList methods
 
 ### `prepareForLayoutAnimationRender()`

@@ -555,6 +555,7 @@ class FlashList<T> extends React.PureComponent<
 
   private getComponentForHeightMeasurement = () => {
     return this.props.horizontal &&
+      !this.props.disableHorizontalListHeightMeasurement &&
       !this.isListLoaded &&
       this.state.dataProvider.getSize() > 0 ? (
       <View style={{ opacity: 0 }} pointerEvents="none">
