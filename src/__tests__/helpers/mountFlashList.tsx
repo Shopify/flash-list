@@ -24,40 +24,37 @@ jest.mock("../../FlashList", () => {
   }
   return MockFlashList;
 });
-
+type MockFlashListProps = Omit<
+  FlashListProps<string>,
+  "estimatedItemSize" | "data" | "renderItem"
+> & {
+  estimatedItemSize?: number;
+  data?: string[];
+  renderItem?: ListRenderItem<string>;
+};
 /**
  * Helper to mount FlashList for testing.
  */
-export const mountFlashList = (props?: {
-  horizontal?: boolean;
-  keyExtractor?: (item: string, index: number) => string;
-  initialScrollIndex?: number;
-  numColumns?: number;
-  estimatedFirstItemOffset?: number;
-  data?: string[];
-  renderItem?: ListRenderItem<string>;
-  onLoad?: (info: { elapsedTimeInMs: number }) => void;
-  overrideItemLayout?: (
-    layout: { span?: number; size?: number },
-    item: string,
-    index: number,
-    maxColumns: number,
-    extraData?: any
-  ) => void;
-  estimatedItemSize?: number;
-  ListEmptyComponent?: FlashListProps<string>["ListEmptyComponent"];
-  ListHeaderComponent?: FlashListProps<string>["ListHeaderComponent"];
-  ListFooterComponent?: FlashListProps<string>["ListFooterComponent"];
-  viewabilityConfig?: ViewabilityConfig | null;
-  onViewableItemsChanged?:
-    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
-    | null
-    | undefined;
-  viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs;
-  stickyHeaderIndices?: number[];
-}) => {
-  const flashList = mount(
+export const mountFlashList = (
+  props?: MockFlashListProps,
+  ref?: React.RefObject<FlashList<string>>
+) => {
+  const flashList = mount(renderMockFlashList(props)) as Omit<
+    RootNode<FlashListProps<string>>,
+    "instance"
+  > & {
+    instance: FlashList<string>;
+  };
+  return flashList;
+};
+
+export const renderMockFlashList = (
+  props?: MockFlashListProps,
+  ref?: React.RefObject<FlashList<string>>
+) => {
+  return (
     <FlashList
+      ref={ref}
       horizontal={props?.horizontal}
       keyExtractor={props?.keyExtractor}
       renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
@@ -76,8 +73,5 @@ export const mountFlashList = (props?: {
       viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
       stickyHeaderIndices={props?.stickyHeaderIndices}
     />
-  ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
-    instance: FlashList<string>;
-  };
-  return flashList;
+  );
 };
