@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports = {
   verbose: true,
   preset: "react-native",
@@ -6,4 +8,5 @@ module.exports = {
   transformIgnorePatterns: [
     "<rootDir>/node_modules/(?!((jest-)?react-native|@react-native(-community)?)/)",
   ],
+  resolver: path.join(__dirname, "./shared/testing/resolver.js"),
 };

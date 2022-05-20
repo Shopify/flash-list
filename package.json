@@ -40,7 +40,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.10",
     "@babel/runtime": "^7.17.9",
-    "@quilted/react-testing": "^0.3.10",
+    "@quilted/react-testing": "^0.5.11",
     "@react-native-community/eslint-config": "^3.0.0",
     "@shopify/eslint-plugin": "^41.2.1",
     "@types/jest": "^27.5.0",
@@ -52,7 +52,8 @@
     "gh-pages": "^3.2.3",
     "react": "17.0.2",
     "react-native": "0.68.1",
-    "typescript": "^4.6.4"
+    "typescript": "^4.6.4",
+    "enhanced-resolve": "^5.9.3"
   },
   "files": [
     "android",
