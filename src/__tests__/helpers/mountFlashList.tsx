@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  ListRenderItem,
-  Text,
-  ViewabilityConfig,
-  ViewabilityConfigCallbackPairs,
-  ViewToken,
-} from "react-native";
+import { ListRenderItem, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount, RootNode } from "@quilted/react-testing";
 
@@ -39,26 +33,15 @@ export const mountFlashList = (
   props?: MockFlashListProps,
   ref?: React.RefObject<FlashList<string>>
 ) => {
-  const flashList = mount(renderMockFlashList(props)) as Omit<
-    RootNode<FlashListProps<string>>,
-    "instance"
-  > & {
-    instance: FlashList<string>;
-  };
-  return flashList;
-};
-
-export const renderMockFlashList = (
-  props?: MockFlashListProps,
-  ref?: React.RefObject<FlashList<string>>
-) => {
-  return (
+  const flashList = mount(
     <FlashList
       {...props}
-      ref={ref}
       renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
       estimatedItemSize={props?.estimatedItemSize ?? 200}
       data={props?.data || ["One", "Two", "Three", "Four"]}
     />
-  );
+  ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
+    instance: FlashList<string>;
+  };
+  return flashList;
 };

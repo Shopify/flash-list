@@ -23,7 +23,7 @@ export function useBlankAreaTracker(
   onBlankAreaChange?: (value: BlankAreaTrackerResult) => void,
   config?: BlankAreaTrackerConfig
 ): [BlankAreaTrackerResult, (event: BlankAreaEvent) => void] {
-  const startDelay = config?.startDelayInMs ?? 100;
+  const startDelay = config?.startDelayInMs ?? 500;
   const blankAreaResult = useRef({
     maxBlankArea: 0,
     cumulativeBlankArea: 0,
