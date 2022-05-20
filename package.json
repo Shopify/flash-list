@@ -46,7 +46,7 @@
     "@types/jest": "^27.5.0",
     "@types/react-native": "0.67.6",
     "babel-jest": "^28.1.0",
-    "eslint": "8.14.0",
+    "eslint": "8.15.0",
     "jest": "^28.0.3",
     "metro-react-native-babel-preset": "^0.70.3",
     "gh-pages": "^3.2.3",
