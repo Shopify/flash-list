@@ -22,6 +22,11 @@ export interface BenchmarkParams {
    * Specify the number of times benchmark should repeat itself
    */
   repeatCount?: number;
+
+  /**
+   * When set to true, cumulative blank area will include sum of negative blank area values
+   */
+  sumNegativeBlankAreaValues?: boolean;
 }
 
 export interface BenchmarkResult {
@@ -43,7 +48,11 @@ export function useBenchmark(
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
-  const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker(flashListRef);
+  const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker(
+    flashListRef,
+    undefined,
+    { sumNegativeValues: params.sumNegativeBlankAreaValues }
+  );
   useEffect(() => {
     const cancellable = new Cancellable();
     const suggestions: string[] = [];
