@@ -7,7 +7,7 @@ import {
   ViewToken,
 } from "react-native";
 import "@quilted/react-testing/matchers";
-import { mount, RootNode } from "@quilted/react-testing";
+import { mount, Root } from "@quilted/react-testing";
 
 import FlashList from "../../FlashList";
 import { FlashListProps } from "../../FlashListProps";
@@ -76,7 +76,7 @@ export const mountFlashList = (props?: {
       viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
       stickyHeaderIndices={props?.stickyHeaderIndices}
     />
-  ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
+  ) as Omit<Root<FlashListProps<string>>, "instance"> & {
     instance: FlashList<string>;
   };
   return flashList;
