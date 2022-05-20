@@ -4,11 +4,25 @@ import { BlankAreaEvent } from "../AutoLayoutView";
 import FlashList from "../FlashList";
 
 export interface BlankAreaTrackerResult {
+  /**
+   * Max blank area displayed
+   */
   maxBlankArea: number;
+  /**
+   * Sum all of blank area values across all frames
+   */
   cumulativeBlankArea: number;
 }
 export interface BlankAreaTrackerConfig {
+  /**
+   * When set to true the hook will also sum all negative blank area values.
+   * Blank area is negative when list is able to draw faster than the scroll speed.
+   */
   sumNegativeValues?: boolean;
+  /**
+   * By default, the hook ignores blank events for 1s after the list load. This value can be changed using this parameter.
+   * Please note that this duration kicks in after the list has loaded and not after the first scroll.
+   */
   startDelayInMs?: number;
 }
 
@@ -24,7 +38,7 @@ export function useBlankAreaTracker(
   onBlankAreaChange?: (value: BlankAreaTrackerResult) => void,
   config?: BlankAreaTrackerConfig
 ): [BlankAreaTrackerResult, (event: BlankAreaEvent) => void] {
-  const startDelay = config?.startDelayInMs ?? 500;
+  const startDelay = config?.startDelayInMs ?? 1000;
   const blankAreaResult = useRef({
     maxBlankArea: 0,
     cumulativeBlankArea: 0,
@@ -35,6 +49,8 @@ export function useBlankAreaTracker(
 
   const blankAreaTracker = useCallback(
     (event: BlankAreaEvent) => {
+      // we're ignoring some of the events that will be fired on list load
+      // initial events are fired on mount and thus, this won't lead to missing events during scroll
       if (!waitOps.complete) {
         if (!waitOps.inProgress) {
           waitOps.inProgress = true;
@@ -53,6 +69,8 @@ export function useBlankAreaTracker(
         const contentSize = horizontal
           ? rlv.getContentDimension().width
           : rlv.getContentDimension().height;
+
+        // ignores blank events when there isn't enough content to fill the list
         if (contentSize > listSize) {
           const lastMaxBlankArea = blankAreaResult.maxBlankArea;
           const lastCumulativeBlankArea = blankAreaResult.cumulativeBlankArea;
