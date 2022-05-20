@@ -19,6 +19,7 @@ export {
 export {
   useBlankAreaTracker,
   BlankAreaTrackerResult,
+  BlankAreaTrackerConfig,
 } from "./benchmark/useBlankAreaTracker";
 export { JSFPSMonitor, JSFPSResult } from "./benchmark/JSFPSMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
