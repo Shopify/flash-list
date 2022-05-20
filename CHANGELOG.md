@@ -11,6 +11,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/386
 - Change `overrideItemType` prop name to `getItemType`
   - https://github.com/Shopify/flash-list/pull/369
+- Added `useBlankAreaTracker` hook for tracking blank area in production
+  - https://github.com/Shopify/flash-list/pull/411
 
 ## [0.5.0] - 2022-04-29
 
