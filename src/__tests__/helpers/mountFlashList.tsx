@@ -24,7 +24,7 @@ jest.mock("../../FlashList", () => {
   }
   return MockFlashList;
 });
-type MockFlashListProps = Omit<
+export type MockFlashListProps = Omit<
   FlashListProps<string>,
   "estimatedItemSize" | "data" | "renderItem"
 > & {
@@ -54,24 +54,11 @@ export const renderMockFlashList = (
 ) => {
   return (
     <FlashList
+      {...props}
       ref={ref}
-      horizontal={props?.horizontal}
-      keyExtractor={props?.keyExtractor}
       renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
       estimatedItemSize={props?.estimatedItemSize ?? 200}
       data={props?.data || ["One", "Two", "Three", "Four"]}
-      initialScrollIndex={props?.initialScrollIndex}
-      numColumns={props?.numColumns}
-      estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
-      onLoad={props?.onLoad}
-      overrideItemLayout={props?.overrideItemLayout}
-      ListEmptyComponent={props?.ListEmptyComponent}
-      ListHeaderComponent={props?.ListHeaderComponent}
-      ListFooterComponent={props?.ListFooterComponent}
-      viewabilityConfig={props?.viewabilityConfig}
-      onViewableItemsChanged={props?.onViewableItemsChanged}
-      viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
-      stickyHeaderIndices={props?.stickyHeaderIndices}
     />
   );
 };

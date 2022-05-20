@@ -6,6 +6,10 @@ export interface BlankAreaTrackerResult {
   maxBlankArea: number;
   cumulativeBlankArea: number;
 }
+export interface BlankAreaTrackerConfig {
+  sumNegativeValues?: boolean;
+  startDelayInMs?: number;
+}
 
 /**
  * Can be used to track visible blank area in production
@@ -17,7 +21,7 @@ export interface BlankAreaTrackerResult {
 export function useBlankAreaTracker(
   flashListRef: React.RefObject<FlashList<any>>,
   onBlankAreaChange?: (value: BlankAreaTrackerResult) => void,
-  config?: { sumNegativeValues?: boolean; startDelayInMs?: number }
+  config?: BlankAreaTrackerConfig
 ): [BlankAreaTrackerResult, (event: BlankAreaEvent) => void] {
   const startDelay = config?.startDelayInMs ?? 100;
   const blankAreaResult = useRef({
