@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from "react";
+import { mount } from "@quilted/react-testing";
+import { Text } from "react-native";
+
 import {
   BlankAreaTrackerConfig,
   BlankAreaTrackerResult,
   useBlankAreaTracker,
 } from "../benchmark/useBlankAreaTracker";
 import FlashList from "../FlashList";
+
 import { MockFlashListProps } from "./helpers/mountFlashList";
-import { mount } from "@quilted/react-testing";
-import { Text } from "react-native";
 
 jest.mock("../FlashList", () => {
   const ActualFlashList = jest.requireActual("../FlashList").default;
@@ -43,6 +45,7 @@ describe("useBlankAreaTracker Hook", () => {
       return () => {
         props?.onCumulativeBlankAreaResult?.(blankAreaTrackerResult);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
       <FlashList

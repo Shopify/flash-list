@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from "react";
+
 import { BlankAreaEvent } from "../AutoLayoutView";
 import FlashList from "../FlashList";
 
@@ -72,6 +73,7 @@ export function useBlankAreaTracker(
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [flashListRef]
   );
   return [blankAreaResult, blankAreaTracker];
