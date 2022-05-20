@@ -19,6 +19,8 @@ Swap from FlatList in seconds. Get instant performance.
 
 Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
 
+On Android if you get the error `Plugin with id 'kotlin-android' not found` go to `android/build.gradle` and add `classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.0")` inside your `dependencies` block. Please change the plugin version as per your need.
+
 ## Usage
 
 If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` just by changing the component name and adding `estimatedItemSize` or refer to the example below:
