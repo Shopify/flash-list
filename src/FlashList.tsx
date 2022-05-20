@@ -65,6 +65,7 @@ class FlashList<T> extends React.PureComponent<
     applyToItemScroll: true,
     applyToInitialOffset: true,
   };
+
   private emptyObject = {};
   private postLoadTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
