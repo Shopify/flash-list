@@ -39,7 +39,11 @@ describe("useBlankAreaTracker Hook", () => {
     const [blankAreaTrackerResult, onBlankArea] = useBlankAreaTracker(
       ref,
       props?.onCumulativeBlankAreaChange,
-      props?.blankAreaTrackerConfig
+      {
+        startDelayInMs: props?.blankAreaTrackerConfig?.startDelayInMs ?? 500,
+        sumNegativeValues:
+          props?.blankAreaTrackerConfig?.sumNegativeValues ?? false,
+      }
     );
     useEffect(() => {
       return () => {
