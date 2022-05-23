@@ -19,7 +19,7 @@ Swap from FlatList in seconds. Get instant performance.
 
 Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
 
-On Android if you get the error `Plugin with id 'kotlin-android' not found` while building go to `android/build.gradle` and add `classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.0")` inside your `dependencies` block. Please change the plugin version as per your needs.
+If you get the error `Plugin with id 'kotlin-android' not found` while building on Android, go to `android/build.gradle` and add `classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.0")` inside your `dependencies` block. Please change the plugin version as per your needs.
 
 ## Usage
 
