@@ -19,6 +19,9 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+      day: monday
+      time: "10:00"
+      timezone: Europe/Berlin
     open-pull-requests-limit: 100
     insecure-external-code-execution: allow
     registries: "*"
@@ -26,12 +29,18 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+      day: monday
+      time: "10:00"
+      timezone: Europe/Berlin
     open-pull-requests-limit: 100
     registries: "*"
   - package-ecosystem: bundler
     directory: "/fixture"
     schedule:
       interval: weekly
+      day: monday
+      time: "10:00"
+      timezone: Europe/Berlin
     open-pull-requests-limit: 100
     insecure-external-code-execution: allow
     registries: "*"
@@ -39,5 +48,8 @@ updates:
     directory: "/fixture"
     schedule:
       interval: weekly
+      day: monday
+      time: "10:00"
+      timezone: Europe/Berlin
     open-pull-requests-limit: 100
     registries: "*"
