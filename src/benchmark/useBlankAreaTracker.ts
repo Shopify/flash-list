@@ -9,7 +9,7 @@ export interface BlankAreaTrackerResult {
    */
   maxBlankArea: number;
   /**
-   * Sum all of blank area values across all frames
+   * Sum of all blank area values across all frames
    */
   cumulativeBlankArea: number;
 }
