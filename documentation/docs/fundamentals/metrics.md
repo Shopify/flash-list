@@ -15,6 +15,7 @@ FlashList comes with a hook that can track cumulative and maximum blank space th
 
 ```tsx
 const MyComponent = () => {
+  // `any` is the type of data. You can mention the type of data that you're using with your FlashList implementation.
   const ref = useRef<FlashList<any>>(null);
 
   // The tracking will happen for the entire lifecycle of the list and the result object will always have the latest values.

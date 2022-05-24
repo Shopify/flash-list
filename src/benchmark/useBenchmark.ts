@@ -25,6 +25,7 @@ export interface BenchmarkParams {
 
   /**
    * When set to true, cumulative blank area will include sum of negative blank area values
+   * Blank area is negative when list is able to draw faster than the scroll speed.
    */
   sumNegativeBlankAreaValues?: boolean;
 }
@@ -51,7 +52,7 @@ export function useBenchmark(
   const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker(
     flashListRef,
     undefined,
-    { sumNegativeValues: params.sumNegativeBlankAreaValues }
+    { sumNegativeValues: params.sumNegativeBlankAreaValues, startDelayInMs: 0 }
   );
   useEffect(() => {
     const cancellable = new Cancellable();

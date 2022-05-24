@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from "react";
+import { RecyclerListView, RecyclerListViewProps } from "recyclerlistview";
 
 import { BlankAreaEvent } from "../AutoLayoutView";
 import FlashList from "../FlashList";
@@ -43,7 +44,7 @@ export function useBlankAreaTracker(
     maxBlankArea: 0,
     cumulativeBlankArea: 0,
   }).current;
-  const waitOps = useRef({ inProgress: false, complete: false }).current;
+  const waitOperations = useRef({ inProgress: false, complete: false }).current;
   const onBlankAreaChangeRef = useRef(onBlankAreaChange);
   onBlankAreaChangeRef.current = onBlankAreaChange;
 
@@ -51,48 +52,66 @@ export function useBlankAreaTracker(
     (event: BlankAreaEvent) => {
       // we're ignoring some of the events that will be fired on list load
       // initial events are fired on mount and thus, this won't lead to missing events during scroll
-      if (!waitOps.complete) {
-        if (!waitOps.inProgress) {
-          waitOps.inProgress = true;
+      if (!waitOperations.complete && startDelay > 0) {
+        if (!waitOperations.inProgress) {
+          waitOperations.inProgress = true;
           setTimeout(() => {
-            waitOps.complete = true;
+            waitOperations.complete = true;
           }, startDelay);
         }
         return;
       }
       const rlv = flashListRef.current?.recyclerlistview_unsafe;
-      const horizontal = flashListRef.current?.props.horizontal;
+      const horizontal = Boolean(flashListRef.current?.props.horizontal);
       if (rlv) {
-        const listSize = horizontal
-          ? rlv.getRenderedSize().width
-          : rlv.getRenderedSize().height;
-        const contentSize = horizontal
-          ? rlv.getContentDimension().width
-          : rlv.getContentDimension().height;
-
-        // ignores blank events when there isn't enough content to fill the list
-        if (contentSize > listSize) {
-          const lastMaxBlankArea = blankAreaResult.maxBlankArea;
-          const lastCumulativeBlankArea = blankAreaResult.cumulativeBlankArea;
-          blankAreaResult.maxBlankArea = Math.max(
-            blankAreaResult.maxBlankArea,
-            event.blankArea,
-            0
-          );
-          blankAreaResult.cumulativeBlankArea += config?.sumNegativeValues
-            ? event.blankArea
-            : Math.max(event.blankArea, 0);
-          if (
-            lastCumulativeBlankArea !== blankAreaResult.cumulativeBlankArea ||
-            lastMaxBlankArea !== blankAreaResult.maxBlankArea
-          ) {
-            onBlankAreaChangeRef.current?.(blankAreaResult);
-          }
-        }
+        processBlankAreaChange(
+          rlv,
+          horizontal,
+          blankAreaResult,
+          event,
+          onBlankAreaChangeRef.current,
+          config
+        );
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [flashListRef]
   );
   return [blankAreaResult, blankAreaTracker];
+}
+
+function processBlankAreaChange(
+  rlv: RecyclerListView<RecyclerListViewProps, any>,
+  horizontal: boolean,
+  blankAreaResult: BlankAreaTrackerResult,
+  event: BlankAreaEvent,
+  onBlankAreaChange?: (value: BlankAreaTrackerResult) => void,
+  config?: BlankAreaTrackerConfig
+) {
+  const listSize = horizontal
+    ? rlv.getRenderedSize().width
+    : rlv.getRenderedSize().height;
+  const contentSize = horizontal
+    ? rlv.getContentDimension().width
+    : rlv.getContentDimension().height;
+
+  // ignores blank events when there isn't enough content to fill the list
+  if (contentSize > listSize) {
+    const lastMaxBlankArea = blankAreaResult.maxBlankArea;
+    const lastCumulativeBlankArea = blankAreaResult.cumulativeBlankArea;
+    blankAreaResult.maxBlankArea = Math.max(
+      blankAreaResult.maxBlankArea,
+      event.blankArea,
+      0
+    );
+    blankAreaResult.cumulativeBlankArea += config?.sumNegativeValues
+      ? event.blankArea
+      : Math.max(event.blankArea, 0);
+    if (
+      lastCumulativeBlankArea !== blankAreaResult.cumulativeBlankArea ||
+      lastMaxBlankArea !== blankAreaResult.maxBlankArea
+    ) {
+      onBlankAreaChange?.(blankAreaResult);
+    }
+  }
 }

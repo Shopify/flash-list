@@ -29,46 +29,50 @@ type BlankTrackingFlashListProps = MockFlashListProps & {
   onCumulativeBlankAreaChange?: (updatedResult: BlankAreaTrackerResult) => void;
   blankAreaTrackerConfig?: BlankAreaTrackerConfig;
 };
+
+const BlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
+  const ref = useRef<FlashList<string>>(null);
+  const [blankAreaTrackerResult, onBlankArea] = useBlankAreaTracker(
+    ref,
+    props?.onCumulativeBlankAreaChange,
+    {
+      startDelayInMs: props?.blankAreaTrackerConfig?.startDelayInMs ?? 500,
+      sumNegativeValues:
+        props?.blankAreaTrackerConfig?.sumNegativeValues ?? false,
+    }
+  );
+  useEffect(() => {
+    return () => {
+      props?.onCumulativeBlankAreaResult?.(blankAreaTrackerResult);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <FlashList
+      {...props}
+      ref={ref}
+      onBlankArea={onBlankArea}
+      renderItem={({ item }) => <Text>{item}</Text>}
+      estimatedItemSize={400}
+      data={props?.data || ["One", "Two", "Three", "Four"]}
+    />
+  );
+};
+
+const mountBlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
+  const blankTrackingFlashList = mount(<BlankTrackingFlashList {...props} />);
+  return {
+    root: blankTrackingFlashList,
+    instance: blankTrackingFlashList.find(FlashList)!,
+  };
+};
+
 describe("useBlankAreaTracker Hook", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
   });
-  const BlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
-    const ref = useRef<FlashList<string>>(null);
-    const [blankAreaTrackerResult, onBlankArea] = useBlankAreaTracker(
-      ref,
-      props?.onCumulativeBlankAreaChange,
-      {
-        startDelayInMs: props?.blankAreaTrackerConfig?.startDelayInMs ?? 500,
-        sumNegativeValues:
-          props?.blankAreaTrackerConfig?.sumNegativeValues ?? false,
-      }
-    );
-    useEffect(() => {
-      return () => {
-        props?.onCumulativeBlankAreaResult?.(blankAreaTrackerResult);
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    return (
-      <FlashList
-        {...props}
-        ref={ref}
-        onBlankArea={onBlankArea}
-        renderItem={({ item }) => <Text>{item}</Text>}
-        estimatedItemSize={400}
-        data={props?.data || ["One", "Two", "Three", "Four"]}
-      />
-    );
-  };
-  const mountBlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
-    const blankTrackingFlashList = mount(<BlankTrackingFlashList {...props} />);
-    return {
-      root: blankTrackingFlashList,
-      instance: blankTrackingFlashList.find(FlashList)!,
-    };
-  };
+
   it("ignores blank events for 500ms on mount and if content is not enough to fill the list", () => {
     const onCumulativeBlankAreaChange = jest.fn();
     const flashList = mountBlankTrackingFlashList({
