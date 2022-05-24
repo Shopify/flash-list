@@ -1,7 +1,7 @@
 import React from "react";
 import { ListRenderItem, Text } from "react-native";
 import "@quilted/react-testing/matchers";
-import { mount, RootNode } from "@quilted/react-testing";
+import { mount, Root } from "@quilted/react-testing";
 
 import FlashList from "../../FlashList";
 import { FlashListProps } from "../../FlashListProps";
@@ -40,7 +40,7 @@ export const mountFlashList = (
       estimatedItemSize={props?.estimatedItemSize ?? 200}
       data={props?.data || ["One", "Two", "Three", "Four"]}
     />
-  ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
+  ) as Omit<Root<FlashListProps<string>>, "instance"> & {
     instance: FlashList<string>;
   };
   return flashList;
