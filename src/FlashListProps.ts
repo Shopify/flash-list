@@ -278,8 +278,8 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
 
   /**
    * FlashList attempts to measure size of horizontal lists by drawing an extra list item in advance. This can sometimes cause issues when used with `initialScrollIndex` in lists
-   * with very little content. You might see some amount of over scroll. When set to true the list's size needs to be deterministic as FlashList will skip rendering extra item for
-   * measurement.
+   * with very little content. You might see some amount of over scroll. When set to true the list's rendered size needs to be deterministic (i.e., height and width greater than 0)
+   * as FlashList will skip rendering the extra item for measurement. Default value is `false`.
    */
   disableHorizontalListHeightMeasurement?: boolean;
 }
