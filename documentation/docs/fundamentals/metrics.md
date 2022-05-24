@@ -23,7 +23,7 @@ const MyComponent = () => {
   useEffect(() => {
     return () => {
       // When component is being cleaned up you can ingest the result into your analytics system.
-      // blankAreaTrackerResult has two fields - `cumulativeBlankArea` and `maxBlankArea`. cumulativeBlankArea is the total blank area that the user has seen while scrolling the list.
+      // blankAreaTrackerResult has two fields - `cumulativeBlankArea` and `maxBlankArea`. `cumulativeBlankArea` is the total blank area that the user has seen while scrolling the list.
       // maxBlankArea is the maximum blank area that the user has seen while scrolling the list.
       ingestData(blankAreaTrackerResult);
     };
