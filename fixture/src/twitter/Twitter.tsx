@@ -50,7 +50,9 @@ const Twitter = ({ instance, blankAreaTracker }: TwitterProps) => {
           setRefreshing(true);
           setTimeout(() => {
             setRefreshing(false);
-            setTweets([...tweets.reverse()]);
+            const reversedTweets = [...tweets];
+            reversedTweets.reverse();
+            setTweets(reversedTweets);
           }, 500);
         }}
         onEndReached={() => {
