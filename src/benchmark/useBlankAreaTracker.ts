@@ -31,7 +31,7 @@ export interface BlankAreaTrackerConfig {
  * @param flashListRef Ref to the FlashList component
  * @param onBlankAreaChange This event handler will be called when the blank area changes
  * @param config additional configuration for the blank area tracker
- * @returns blankAreaTrackerResult - maxBlankArea, cumulativeBlankArea this object is mutated and kept upto date. Also returns a callback that needs to be forwarded to FlashList.
+ * @returns blankAreaTrackerResult - maxBlankArea, cumulativeBlankArea this object is mutated and kept up to date. Also returns a callback that needs to be forwarded to FlashList.
  */
 export function useBlankAreaTracker(
   flashListRef: React.RefObject<FlashList<any>>,
