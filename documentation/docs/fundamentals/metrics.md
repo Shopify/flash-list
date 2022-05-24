@@ -34,7 +34,7 @@ const MyComponent = () => {
 };
 ```
 
-You can rest assured when you see close to zero blank space in production. If you're not happy with the numbers please refer to our [performance troubleshooting guide](./performance-troubleshooting.md) which can help you optimize your list's performance.
+You can rest assured when you see close to zero blank space in production. If you're not happy with the numbers, please refer to our [performance troubleshooting guide](./performance-troubleshooting.md) which can help you optimize your list's performance.
 
 ### Load time
 
