@@ -11,7 +11,7 @@ FlashList enables you to track metrics in production that can give you more insi
 
 ### Visible blank area
 
-FlashList comes with a hook that can track cumulative and maximum blank space that the user experienced while scrolling the list. It's very simple to implement and cost of tracking this metric is minimal. Here's how you can do it
+FlashList comes with a hook that can track cumulative and maximum blank space that the user experienced while scrolling the list. The cost of tracking this metric is minimal and you can implement it in the following way:
 
 ```tsx
 const MyComponent = () => {
