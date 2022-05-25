@@ -660,7 +660,11 @@ class FlashList<T> extends React.PureComponent<
         elapsedTimeInMs: Date.now() - this.loadStartTime,
       });
       this.postLoadTimeoutId = setTimeout(() => {
-        this.forceUpdate();
+        // This force update is required to remove dummy element rendered to measure horizontal list height when  the list doesn't update on its own.
+        // In most cases this timeout will never be triggered because list usually updates atleast once and this timeout is cleared on update.
+        if (this.props.horizontal) {
+          this.forceUpdate();
+        }
       }, 500);
     }
   };
