@@ -5408,12 +5408,12 @@ pirates@^4.0.4, pirates@^4.0.5:
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.5.tgz#feec352ea5c3268fb23a37c702ab1699f35a5f3b"
   integrity sha512-8V9+HQPupnaXMA23c5hvl69zXvTwTzyAYasnkb0Tts4XvO4CliqONMOnvlq26rkhLC3nWDFBJf73LU1e1VZLaQ==
 
-pixelmatch@^5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/pixelmatch/-/pixelmatch-5.2.1.tgz#9e4e4f4aa59648208a31310306a5bed5522b0d65"
-  integrity sha512-WjcAdYSnKrrdDdqTcVEY7aB7UhhwjYQKYhHiBXdJef0MOaQeYpUdQ+iVyBLa5YBKS8MPVPPMX7rpOByISLpeEQ==
+pixelmatch@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/pixelmatch/-/pixelmatch-5.3.0.tgz#5e5321a7abedfb7962d60dbf345deda87cb9560a"
+  integrity sha512-o8mkY4E/+LNUf6LzX96ht6k6CEDi65k9G2rjMtBe9Oo+VPKSvl+0GKHuH/AlG+GA5LPG/i5hrekkxUc3s2HU+Q==
   dependencies:
-    pngjs "^4.0.1"
+    pngjs "^6.0.0"
 
 pkg-dir@^3.0.0:
   version "3.0.0"
@@ -5443,11 +5443,6 @@ plist@^3.0.2, plist@^3.0.5:
   dependencies:
     base64-js "^1.5.1"
     xmlbuilder "^9.0.7"
-
-pngjs@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-4.0.1.tgz#f803869bb2fc1bfe1bf99aa4ec21c108117cfdbe"
-  integrity sha512-rf5+2/ioHeQxR6IxuYNYGFytUyG3lma/WW1nsmjeHlWwtb2aByla6dkVc8pmJ9nplzkTA0q2xx7mMWrOTqT4Gg==
 
 pngjs@^6.0.0:
   version "6.0.0"
