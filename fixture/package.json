@@ -39,7 +39,7 @@
     "typescript": "^4.7.2",
     "@types/pixelmatch": "^5.2.4",
     "@types/pngjs": "^6.0.1",
-    "detox": "^19.6.7",
+    "detox": "^19.6.9",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
     "@types/jest": "^27.5.0"
