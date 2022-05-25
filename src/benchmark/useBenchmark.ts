@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 
-import { BlankAreaEvent } from "../AutoLayoutView";
 import FlashList from "../FlashList";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor, JSFPSResult } from "./JSFPSMonitor";
 import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
+import {
+  BlankAreaTrackerResult,
+  useBlankAreaTracker,
+} from "./useBlankAreaTracker";
 
 export interface BenchmarkParams {
   startDelayInMs?: number;
@@ -19,19 +22,20 @@ export interface BenchmarkParams {
    * Specify the number of times benchmark should repeat itself
    */
   repeatCount?: number;
+
+  /**
+   * When set to true, cumulative blank area will include sum of negative blank area values
+   * Blank area is negative when list is able to draw faster than the scroll speed.
+   */
+  sumNegativeBlankAreaValues?: boolean;
 }
 
 export interface BenchmarkResult {
   js?: JSFPSResult;
   interrupted: boolean;
   suggestions: string[];
-  blankArea?: BlankAreaBenchmarkResult;
+  blankArea?: BlankAreaTrackerResult;
   formattedString?: string;
-}
-
-export interface BlankAreaBenchmarkResult {
-  maxBlankArea: number;
-  cumulativeBlankArea: number;
 }
 
 /**
@@ -41,11 +45,15 @@ export interface BlankAreaBenchmarkResult {
  */
 
 export function useBenchmark(
-  flashListRef: React.RefObject<FlashList<any> | null | undefined>,
+  flashListRef: React.RefObject<FlashList<any>>,
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
-  const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker();
+  const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker(
+    flashListRef,
+    undefined,
+    { sumNegativeValues: params.sumNegativeBlankAreaValues, startDelayInMs: 0 }
+  );
   useEffect(() => {
     const cancellable = new Cancellable();
     const suggestions: string[] = [];
@@ -110,28 +118,9 @@ export function getFormattedString(res: BenchmarkResult) {
   );
 }
 
-function useBlankAreaTracker(): [
-  BlankAreaBenchmarkResult,
-  (event: BlankAreaEvent) => void
-] {
-  const blankAreaResult = {
-    maxBlankArea: -1,
-    cumulativeBlankArea: 0,
-  };
-  const blankAreaTracker = (event: BlankAreaEvent) => {
-    blankAreaResult.maxBlankArea = Math.max(
-      blankAreaResult.maxBlankArea,
-      event.blankArea,
-      0
-    );
-    blankAreaResult.cumulativeBlankArea += Math.max(event.blankArea, 0);
-  };
-  return [blankAreaResult, blankAreaTracker];
-}
-
 function generateResult(
   jsProfilerResponse: JSFPSResult,
-  blankAreaResult: BlankAreaBenchmarkResult,
+  blankAreaResult: BlankAreaTrackerResult,
   suggestions: string[],
   cancellable: Cancellable
 ) {
