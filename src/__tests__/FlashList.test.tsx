@@ -618,4 +618,47 @@ describe("FlashList", () => {
 
     flashList.unmount();
   });
+  it("measure size of horizontal list when appropriate", () => {
+    let flashList = mountFlashList({
+      data: new Array(1).fill("1"),
+      horizontal: true,
+    });
+    const forceUpdate = jest.spyOn(flashList.instance, "forceUpdate");
+    // should contain 1 actual text and 1 dummy on mount
+    expect(flashList.findAll(Text).length).toBe(2);
+
+    // Trigger onLoad
+    flashList.instance["onItemLayout"](0);
+    jest.advanceTimersByTime(600);
+
+    expect(forceUpdate).toBeCalledTimes(1);
+
+    // TODO: Investigate why forceUpdate isn't working in tests, forcing an update
+    flashList.setProps({ overrideItemLayout: () => {} });
+
+    // After update the dummy should get removed
+    expect(flashList.findAll(Text).length).toBe(1);
+
+    flashList.unmount();
+
+    flashList = mountFlashList({
+      data: new Array(1).fill("1"),
+      horizontal: true,
+      disableHorizontalListHeightMeasurement: true,
+    });
+    // should contain 1 actual text as measurement is disabled
+    expect(flashList.findAll(Text).length).toBe(1);
+    flashList.unmount();
+  });
+  it("cancels post load setTimeout on unmount", () => {
+    const flashList = mountFlashList({
+      data: new Array(1).fill("1"),
+      horizontal: true,
+    });
+    const forceUpdate = jest.spyOn(flashList.instance, "forceUpdate");
+    flashList.instance["onItemLayout"](0);
+    flashList.unmount();
+    jest.advanceTimersByTime(600);
+    expect(forceUpdate).toBeCalledTimes(0);
+  });
 });

@@ -77,7 +77,7 @@ import UIKit
         guard
             subviews.count > 1,
             // Fixing layout during animation can interfere with it.
-            (layer.animationKeys()?.isEmpty ?? true) == true
+            layer.animationKeys()?.isEmpty ?? true
         else { return }
         let cellContainers = subviews
             .compactMap { subview -> CellContainer? in

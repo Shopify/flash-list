@@ -19,7 +19,7 @@ Let's go through how to migrate from `SectionList` to `FlashList` in the followi
 
 This is how we could write such a list with `SectionList`:
 
-```ts
+```tsx
 import React from "react";
 import { SectionList, StyleSheet, Text } from "react-native";
 
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 
 To migrate to `FlashList`, we'd need to first convert the `contacts` variable to the following:
 
-```ts
+```tsx
 const contacts: (string | Contact)[] = [
   "A",
   { firstName: "John", lastName: "Aaron" },
@@ -80,7 +80,7 @@ const contacts: (string | Contact)[] = [
 
 As you can see, you can add the section item right along with the data. Then in the `renderItem`, you can distinguish what to render based on the type of the item:
 
-```ts
+```tsx
 const ContactsFlashList = () => {
   return (
     <FlashList
@@ -108,7 +108,7 @@ You can follow a similar pattern as for `renderItem` for the rest of the `Sectio
 
 If you want your section headers to be sticky, you will also need to compute the array for `stickyHeaderIndices`:
 
-```ts
+```tsx
 const stickyHeaderIndices = contacts
   .map((item, index) => {
     if (typeof item === "string") {
@@ -122,7 +122,7 @@ const stickyHeaderIndices = contacts
 
 And that's it! Below you can find the whole example for `FlashList`:
 
-```ts
+```tsx
 import React from "react";
 import { StyleSheet, Text } from "react-native";
 import { FlashList } from "@shopify/flash-list";
