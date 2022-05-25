@@ -33,15 +33,26 @@ export const mountFlashList = (
   props?: MockFlashListProps,
   ref?: React.RefObject<FlashList<string>>
 ) => {
-  const flashList = mount(
-    <FlashList
-      {...props}
-      renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
-      estimatedItemSize={props?.estimatedItemSize ?? 200}
-      data={props?.data || ["One", "Two", "Three", "Four"]}
-    />
-  ) as Omit<Root<FlashListProps<string>>, "instance"> & {
+  const flashList = mount(renderFlashList(props, ref)) as Omit<
+    Root<FlashListProps<string>>,
+    "instance"
+  > & {
     instance: FlashList<string>;
   };
   return flashList;
 };
+
+export function renderFlashList(
+  props?: MockFlashListProps,
+  ref?: React.RefObject<FlashList<string>>
+) {
+  return (
+    <FlashList
+      {...props}
+      ref={ref}
+      renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
+      estimatedItemSize={props?.estimatedItemSize ?? 200}
+      data={props?.data || ["One", "Two", "Three", "Four"]}
+    />
+  );
+}

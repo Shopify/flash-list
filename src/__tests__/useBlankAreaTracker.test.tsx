@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { mount } from "@quilted/react-testing";
-import { Text } from "react-native";
 
 import {
   BlankAreaTrackerConfig,
@@ -9,20 +8,7 @@ import {
 } from "../benchmark/useBlankAreaTracker";
 import FlashList from "../FlashList";
 
-import { MockFlashListProps } from "./helpers/mountFlashList";
-
-jest.mock("../FlashList", () => {
-  const ActualFlashList = jest.requireActual("../FlashList").default;
-  class MockFlashList extends ActualFlashList {
-    componentDidMount() {
-      super.componentDidMount();
-      this.rlvRef?._scrollComponent?._scrollViewRef?.props.onLayout({
-        nativeEvent: { layout: { height: 900, width: 400 } },
-      });
-    }
-  }
-  return MockFlashList;
-});
+import { MockFlashListProps, renderFlashList } from "./helpers/mountFlashList";
 
 type BlankTrackingFlashListProps = MockFlashListProps & {
   onCumulativeBlankAreaResult?: (result: BlankAreaTrackerResult) => void;
@@ -47,15 +33,9 @@ const BlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return (
-    <FlashList
-      {...props}
-      ref={ref}
-      onBlankArea={onBlankArea}
-      renderItem={({ item }) => <Text>{item}</Text>}
-      estimatedItemSize={400}
-      data={props?.data || ["One", "Two", "Three", "Four"]}
-    />
+  return renderFlashList(
+    { ...props, onBlankArea, estimatedItemSize: 400 },
+    ref
   );
 };
 
