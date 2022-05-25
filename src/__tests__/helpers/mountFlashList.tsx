@@ -7,7 +7,7 @@ import {
   ViewToken,
 } from "react-native";
 import "@quilted/react-testing/matchers";
-import { mount, RootNode } from "@quilted/react-testing";
+import { mount, Root } from "@quilted/react-testing";
 
 import FlashList from "../../FlashList";
 import { FlashListProps } from "../../FlashListProps";
@@ -55,6 +55,7 @@ export const mountFlashList = (props?: {
     | undefined;
   viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs;
   stickyHeaderIndices?: number[];
+  disableHorizontalListHeightMeasurement?: boolean;
 }) => {
   const flashList = mount(
     <FlashList
@@ -75,8 +76,11 @@ export const mountFlashList = (props?: {
       onViewableItemsChanged={props?.onViewableItemsChanged}
       viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
       stickyHeaderIndices={props?.stickyHeaderIndices}
+      disableHorizontalListHeightMeasurement={
+        props?.disableHorizontalListHeightMeasurement
+      }
     />
-  ) as Omit<RootNode<FlashListProps<string>>, "instance"> & {
+  ) as Omit<Root<FlashListProps<string>>, "instance"> & {
     instance: FlashList<string>;
   };
   return flashList;
