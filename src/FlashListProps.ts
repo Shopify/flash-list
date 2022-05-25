@@ -62,6 +62,23 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   estimatedItemSize: number;
 
   /**
+   * Each cell is rendered using this element.
+   * Can be a React Component Class, or a render function.
+   * The root component should always be a `CellContainer` which is also the default component used.
+   * Ensure that the original `props` are passed to the returned `CellContainer`. The `props` will include the following:
+   * - `onLayout`: Method for updating data about the real `CellContainer` layout
+   * - `index`: Index of the cell in the list, you can use this to query data if needed
+   * - `style`: Style of `CellContainer`, including:
+   *   - `flexDirection`: Depends on whether your list is horizontal or vertical
+   *   - `position`: Value of this will be `absolute` as that's how `FlashList` positions elements
+   *   - `left`: Determines position of the element on x axis
+   *   - `top`: Determines position of the element on y axis
+   *   - `width`: Determines width of the element (present when list is vertical)
+   *   - `height`: Determines height of the element (present when list is horizontal)
+   */
+  CellRendererComponent?: React.ComponentType<any> | undefined;
+
+  /**
    * Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
    */
   ItemSeparatorComponent?: React.ComponentType<any> | null | undefined;

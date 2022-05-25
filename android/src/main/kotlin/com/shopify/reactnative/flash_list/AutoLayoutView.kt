@@ -51,7 +51,14 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
      * Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.*/
     private fun fixLayout() {
         if (childCount > 1) {
-            val positionSortedViews = Array(childCount) { getChildAt(it) as CellContainer }
+            val positionSortedViews: Array<CellContainer> = Array(childCount) {
+                val child = getChildAt(it)
+                if (child is CellContainer) {
+                    child
+                } else {
+                    throw IllegalStateException("CellRendererComponent outer view should always be CellContainer. Learn more here: https://shopify.github.io/flash-list/docs/usage#cellrenderercomponent.")
+                }
+            }
             positionSortedViews.sortBy { it.index }
             alShadow.offsetFromStart = if (alShadow.horizontal) left else top
             alShadow.clearGapsAndOverlaps(positionSortedViews)
