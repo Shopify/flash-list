@@ -55,6 +55,7 @@ export const mountFlashList = (props?: {
     | undefined;
   viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs;
   stickyHeaderIndices?: number[];
+  disableHorizontalListHeightMeasurement?: boolean;
 }) => {
   const flashList = mount(
     <FlashList
@@ -75,6 +76,9 @@ export const mountFlashList = (props?: {
       onViewableItemsChanged={props?.onViewableItemsChanged}
       viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
       stickyHeaderIndices={props?.stickyHeaderIndices}
+      disableHorizontalListHeightMeasurement={
+        props?.disableHorizontalListHeightMeasurement
+      }
     />
   ) as Omit<Root<FlashListProps<string>>, "instance"> & {
     instance: FlashList<string>;
