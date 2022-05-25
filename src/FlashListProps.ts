@@ -67,6 +67,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * The root component should always be a `CellContainer` which is also the default component used.
    * Ensure that the original `props` are passed to the returned `CellContainer`. The `props` will include the following:
    * - `onLayout`: Method for updating data about the real `CellContainer` layout
+   * - `index`: Index of the cell in the list, you can use this query data if needed
    * - `style`: Style of `CellContainer`, including:
    *   - `flexDirection`: Depends on whether your list is horizontal or vertical
    *   - `position`: Value of this will be `absolute` as that's how `FlashList` positions elements
