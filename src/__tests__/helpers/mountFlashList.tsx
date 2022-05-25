@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  ListRenderItem,
-  Text,
-  ViewabilityConfig,
-  ViewabilityConfigCallbackPairs,
-  ViewToken,
-} from "react-native";
+import { ListRenderItem, Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount, Root } from "@quilted/react-testing";
 
@@ -24,67 +18,41 @@ jest.mock("../../FlashList", () => {
   }
   return MockFlashList;
 });
-
+export type MockFlashListProps = Omit<
+  FlashListProps<string>,
+  "estimatedItemSize" | "data" | "renderItem"
+> & {
+  estimatedItemSize?: number;
+  data?: string[];
+  renderItem?: ListRenderItem<string>;
+};
 /**
  * Helper to mount FlashList for testing.
  */
-export const mountFlashList = (props?: {
-  horizontal?: boolean;
-  keyExtractor?: (item: string, index: number) => string;
-  initialScrollIndex?: number;
-  numColumns?: number;
-  estimatedFirstItemOffset?: number;
-  data?: string[];
-  renderItem?: ListRenderItem<string>;
-  onLoad?: (info: { elapsedTimeInMs: number }) => void;
-  overrideItemLayout?: (
-    layout: { span?: number; size?: number },
-    item: string,
-    index: number,
-    maxColumns: number,
-    extraData?: any
-  ) => void;
-  estimatedItemSize?: number;
-  shouldSetDefaultEstimatedItemSize?: boolean;
-  ListEmptyComponent?: FlashListProps<string>["ListEmptyComponent"];
-  ListHeaderComponent?: FlashListProps<string>["ListHeaderComponent"];
-  ListFooterComponent?: FlashListProps<string>["ListFooterComponent"];
-  viewabilityConfig?: ViewabilityConfig | null;
-  onViewableItemsChanged?:
-    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
-    | null
-    | undefined;
-  viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs;
-  stickyHeaderIndices?: number[];
-  disableHorizontalListHeightMeasurement?: boolean;
-}) => {
-  const defaultEstimatedItemSize =
-    props?.shouldSetDefaultEstimatedItemSize === false ? undefined : 200;
-  const flashList = mount(
-    <FlashList
-      horizontal={props?.horizontal}
-      keyExtractor={props?.keyExtractor}
-      renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
-      estimatedItemSize={props?.estimatedItemSize ?? defaultEstimatedItemSize}
-      data={props?.data || ["One", "Two", "Three", "Four"]}
-      initialScrollIndex={props?.initialScrollIndex}
-      numColumns={props?.numColumns}
-      estimatedFirstItemOffset={props?.estimatedFirstItemOffset}
-      onLoad={props?.onLoad}
-      overrideItemLayout={props?.overrideItemLayout}
-      ListEmptyComponent={props?.ListEmptyComponent}
-      ListHeaderComponent={props?.ListHeaderComponent}
-      ListFooterComponent={props?.ListFooterComponent}
-      viewabilityConfig={props?.viewabilityConfig}
-      onViewableItemsChanged={props?.onViewableItemsChanged}
-      viewabilityConfigCallbackPairs={props?.viewabilityConfigCallbackPairs}
-      stickyHeaderIndices={props?.stickyHeaderIndices}
-      disableHorizontalListHeightMeasurement={
-        props?.disableHorizontalListHeightMeasurement
-      }
-    />
-  ) as Omit<Root<FlashListProps<string>>, "instance"> & {
+export const mountFlashList = (
+  props?: MockFlashListProps,
+  ref?: React.RefObject<FlashList<string>>
+) => {
+  const flashList = mount(renderFlashList(props, ref)) as Omit<
+    Root<FlashListProps<string>>,
+    "instance"
+  > & {
     instance: FlashList<string>;
   };
   return flashList;
 };
+
+export function renderFlashList(
+  props?: MockFlashListProps,
+  ref?: React.RefObject<FlashList<string>>
+) {
+  return (
+    <FlashList
+      {...props}
+      ref={ref}
+      renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
+      estimatedItemSize={props?.estimatedItemSize ?? defaultEstimatedItemSize}
+      data={props?.data || ["One", "Two", "Three", "Four"]}
+    />
+  );
+}
