@@ -1,9 +1,4 @@
 const ExceptionList = {
-  estimatedItemSizeMissing: {
-    message:
-      "`estimatedItemSize` is a required prop in FlashList. Please provide a value that is greater than 0.",
-    type: "InvalidPropException",
-  },
   refreshBooleanMissing: {
     message:
       "`refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `undefined`.",

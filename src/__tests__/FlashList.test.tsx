@@ -618,6 +618,46 @@ describe("FlashList", () => {
 
     flashList.unmount();
   });
+  it("sends a warning when estimatedItemSize is not set", () => {
+    const warn = jest.spyOn(console, "warn").mockReturnValue();
+
+    const flashList = mountFlashList({
+      disableDefaultEstimatedItemSize: true,
+      renderItem: ({ item }) => <Text style={{ height: 200 }}>{item}</Text>,
+    });
+    const layoutData = flashList.instance.state.layoutProvider
+      .getLayoutManager()!
+      .getLayouts();
+    layoutData[0].height = 100;
+    layoutData[1].height = 200;
+    layoutData[2].height = 300;
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    expect(flashList.instance.state.layoutProvider.averageItemSize).toBe(100);
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(1);
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(2);
+    jest.advanceTimersByTime(1000);
+    const averageItemSize =
+      flashList.instance.state.layoutProvider.averageItemSize;
+    expect(warn).toHaveBeenCalledWith(
+      Warnings.estimatedItemSizeMissingWarning.replace(
+        "@size",
+        averageItemSize.toString()
+      )
+    );
+    expect(flashList.instance.state.layoutProvider.averageItemSize).toBe(175);
+    flashList.unmount();
+  });
+  it("clears size warning timeout on unmount", () => {
+    const warn = jest.spyOn(console, "warn").mockReturnValue();
+
+    const flashList = mountFlashList({
+      disableDefaultEstimatedItemSize: true,
+    });
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    flashList.unmount();
+    jest.advanceTimersByTime(1000);
+    expect(warn).toBeCalledTimes(0);
+  });
   it("measure size of horizontal list when appropriate", () => {
     let flashList = mountFlashList({
       data: new Array(1).fill("1"),

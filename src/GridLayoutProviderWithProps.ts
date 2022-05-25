@@ -13,6 +13,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
   private layoutObject = { span: undefined, size: undefined };
 
   private averageWindow: AverageWindow;
+  public defaultEstimatedItemSize = 100;
 
   constructor(
     maxSpan: number,
@@ -52,7 +53,10 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
       acceptableRelayoutDelta
     );
     this.props = props;
-    this.averageWindow = new AverageWindow(1, props.estimatedItemSize);
+    this.averageWindow = new AverageWindow(
+      1,
+      props.estimatedItemSize ?? this.defaultEstimatedItemSize
+    );
   }
 
   public updateProps(props: FlashListProps<T>) {
@@ -91,7 +95,8 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
       Math.round(
         (this.props.horizontal
           ? renderWindowSize.width
-          : renderWindowSize.height) / this.props.estimatedItemSize
+          : renderWindowSize.height) /
+          (this.props.estimatedItemSize ?? this.defaultEstimatedItemSize)
       )
     );
     this.averageWindow = new AverageWindow(

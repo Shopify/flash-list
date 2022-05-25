@@ -25,6 +25,7 @@ export type MockFlashListProps = Omit<
   estimatedItemSize?: number;
   data?: string[];
   renderItem?: ListRenderItem<string>;
+  disableDefaultEstimatedItemSize?: boolean;
 };
 /**
  * Helper to mount FlashList for testing.
@@ -51,7 +52,10 @@ export function renderFlashList(
       {...props}
       ref={ref}
       renderItem={props?.renderItem || (({ item }) => <Text>{item}</Text>)}
-      estimatedItemSize={props?.estimatedItemSize ?? 200}
+      estimatedItemSize={
+        props?.estimatedItemSize ??
+        (props?.disableDefaultEstimatedItemSize ? undefined : 200)
+      }
       data={props?.data || ["One", "Two", "Three", "Four"]}
     />
   );
