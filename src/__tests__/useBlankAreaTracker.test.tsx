@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { mount } from "@quilted/react-testing";
 
 import {
@@ -14,10 +14,11 @@ type BlankTrackingFlashListProps = MockFlashListProps & {
   onCumulativeBlankAreaResult?: (result: BlankAreaTrackerResult) => void;
   onCumulativeBlankAreaChange?: (updatedResult: BlankAreaTrackerResult) => void;
   blankAreaTrackerConfig?: BlankAreaTrackerConfig;
+  instance?: React.RefObject<FlashList<any>>;
 };
 
 const BlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
-  const ref = useRef<FlashList<string>>(null);
+  const ref = props?.instance!;
   const [blankAreaTrackerResult, onBlankArea] = useBlankAreaTracker(
     ref,
     props?.onCumulativeBlankAreaChange,
@@ -40,10 +41,15 @@ const BlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
 };
 
 const mountBlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
-  const blankTrackingFlashList = mount(<BlankTrackingFlashList {...props} />);
+  const flashListRef: React.RefObject<FlashList<any>> = {
+    current: null,
+  };
+  const blankTrackingFlashList = mount(
+    <BlankTrackingFlashList {...props} instance={flashListRef} />
+  );
   return {
     root: blankTrackingFlashList,
-    instance: blankTrackingFlashList.find(FlashList)!,
+    instance: flashListRef.current!,
   };
 };
 
