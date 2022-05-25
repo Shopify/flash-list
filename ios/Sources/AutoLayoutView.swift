@@ -80,7 +80,14 @@ import UIKit
             layer.animationKeys()?.isEmpty ?? true
         else { return }
         let cellContainers = subviews
-            .compactMap { $0 as? CellContainer }
+            .compactMap { subview -> CellContainer? in
+                if let cellContainer = subview as? CellContainer {
+                    return cellContainer
+                } else {
+                    assertionFailure("CellRendererComponent outer view should always be CellContainer. Learn more here: https://shopify.github.io/flash-list/docs/usage#cellrenderercomponent.")
+                    return nil
+                }
+            }
             .sorted(by: { $0.index < $1.index })
         clearGaps(for: cellContainers)
     }
