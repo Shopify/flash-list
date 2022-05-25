@@ -52,7 +52,7 @@
     "gh-pages": "^3.2.3",
     "react": "17.0.2",
     "react-native": "0.68.1",
-    "typescript": "^4.6.4",
+    "typescript": "^4.7.2",
     "enhanced-resolve": "^5.9.3"
   },
   "files": [
