@@ -13,7 +13,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
   private layoutObject = { span: undefined, size: undefined };
 
   private averageWindow: AverageWindow;
-  defaultEstimatedItemSize = 100;
+  public defaultEstimatedItemSize = 100;
 
   constructor(
     maxSpan: number,
