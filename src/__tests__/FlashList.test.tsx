@@ -645,6 +645,18 @@ describe("FlashList", () => {
       )
     );
     expect(flashList.instance.state.layoutProvider.averageItemSize).toBe(175);
+    flashList.unmount();
+  });
+  it("clears size warning timeout on unmount", () => {
+    const warn = jest.spyOn(console, "warn").mockReturnValue();
+
+    const flashList = mountFlashList({
+      disableDefaultEstimatedItemSize: true,
+    });
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    flashList.unmount();
+    jest.advanceTimersByTime(1000);
+    expect(warn).toBeCalledTimes(0);
   });
   it("measure size of horizontal list when appropriate", () => {
     let flashList = mountFlashList({
