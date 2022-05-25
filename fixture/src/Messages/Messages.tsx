@@ -42,7 +42,7 @@ const Messages = () => {
               break;
           }
         }}
-        overrideItemType={(item) => {
+        getItemType={(item) => {
           return item.type;
         }}
         data={messages}

@@ -62,6 +62,23 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   estimatedItemSize?: number;
 
   /**
+   * Each cell is rendered using this element.
+   * Can be a React Component Class, or a render function.
+   * The root component should always be a `CellContainer` which is also the default component used.
+   * Ensure that the original `props` are passed to the returned `CellContainer`. The `props` will include the following:
+   * - `onLayout`: Method for updating data about the real `CellContainer` layout
+   * - `index`: Index of the cell in the list, you can use this to query data if needed
+   * - `style`: Style of `CellContainer`, including:
+   *   - `flexDirection`: Depends on whether your list is horizontal or vertical
+   *   - `position`: Value of this will be `absolute` as that's how `FlashList` positions elements
+   *   - `left`: Determines position of the element on x axis
+   *   - `top`: Determines position of the element on y axis
+   *   - `width`: Determines width of the element (present when list is vertical)
+   *   - `height`: Determines height of the element (present when list is horizontal)
+   */
+  CellRendererComponent?: React.ComponentType<any> | undefined;
+
+  /**
    * Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
    */
   ItemSeparatorComponent?: React.ComponentType<any> | null | undefined;
@@ -221,7 +238,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * If you don't want to change for an indexes just return undefined.
    * Performance: This method is called very frequently. Keep it fast.
    */
-  overrideItemType?: (
+  getItemType?: (
     item: TItem,
     index: number,
     extraData?: any
@@ -275,4 +292,11 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * A specific `onViewableItemsChanged` will be called when its corresponding `ViewabilityConfig`'s conditions are met.
    */
   viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs | undefined;
+
+  /**
+   * FlashList attempts to measure size of horizontal lists by drawing an extra list item in advance. This can sometimes cause issues when used with `initialScrollIndex` in lists
+   * with very little content. You might see some amount of over scroll. When set to true the list's rendered size needs to be deterministic (i.e., height and width greater than 0)
+   * as FlashList will skip rendering the extra item for measurement. Default value is `false`.
+   */
+  disableHorizontalListHeightMeasurement?: boolean;
 }

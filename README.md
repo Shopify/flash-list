@@ -5,6 +5,7 @@
   <a href="https://shopify.github.io/flash-list/docs/">Getting started</a> •
   <a href="https://shopify.github.io/flash-list/docs/usage">Usage</a> •
   <a href="https://shopify.github.io/flash-list/docs/performance-troubleshooting">Performance</a> •
+  <a href="https://shopify.github.io/flash-list/performant-components">Writing performant components</a> •
   <a href="https://shopify.github.io/flash-list/docs/known-issues">Known Issues</a>
 <br><br>
 
@@ -17,6 +18,8 @@ Swap from FlatList in seconds. Get instant performance.
 ## Installation
 
 Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
+
+If you get the error `Plugin with id 'kotlin-android' not found` while building on Android, go to `android/build.gradle` and add `classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.0")` inside your `dependencies` block. Please change the plugin version as per your needs.
 
 ## Usage
 

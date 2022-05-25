@@ -17,7 +17,7 @@ import {
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
 import AutoLayoutView from "./AutoLayoutView";
-import ItemContainer from "./CellContainer";
+import CellContainer from "./CellContainer";
 import { PureComponentWrapper } from "./PureComponentWrapper";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
@@ -65,6 +65,9 @@ class FlashList<T> extends React.PureComponent<
     applyToItemScroll: true,
     applyToInitialOffset: true,
   };
+
+  private emptyObject = {};
+  private postLoadTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
   private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
@@ -182,7 +185,7 @@ class FlashList<T> extends React.PureComponent<
       numColumns,
       (index, props) => {
         // type of the item for given index
-        const type = props.overrideItemType?.(
+        const type = props.getItemType?.(
           props.data!![index],
           index,
           props.extraData
@@ -239,6 +242,7 @@ class FlashList<T> extends React.PureComponent<
 
   componentWillUnmount() {
     this.viewabilityManager.dispose();
+    this.clearPostLoadTimeout();
   }
 
   render() {
@@ -270,6 +274,7 @@ class FlashList<T> extends React.PureComponent<
         overrideRowRenderer={this.stickyRowRenderer}
         applyWindowCorrection={this.applyWindowCorrection}
         stickyHeaderIndices={stickyHeaderIndices}
+        style={this.props.horizontal ? this.emptyObject : undefined}
       >
         <ProgressiveListView
           {...restProps}
@@ -381,6 +386,7 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private container = (props: object, children: React.ReactNode[]) => {
+    this.clearPostLoadTimeout();
     return (
       <>
         <PureComponentWrapper
@@ -413,13 +419,16 @@ class FlashList<T> extends React.PureComponent<
           inverted={this.props.inverted}
           renderer={this.footer}
         />
+        {this.getComponentForHeightMeasurement()}
       </>
     );
   };
 
   private itemContainer = (props: any, parentProps: any) => {
+    const CellRendererComponent =
+      this.props.CellRendererComponent ?? CellContainer;
     return (
-      <ItemContainer
+      <CellRendererComponent
         {...props}
         style={{
           ...props.style,
@@ -436,7 +445,7 @@ class FlashList<T> extends React.PureComponent<
           arg={parentProps.index}
           renderer={this.getCellContainerChild}
         />
-      </ItemContainer>
+      </CellRendererComponent>
     );
   };
 
@@ -544,6 +553,19 @@ class FlashList<T> extends React.PureComponent<
     );
   };
 
+  private getComponentForHeightMeasurement = () => {
+    return this.props.horizontal &&
+      !this.props.disableHorizontalListHeightMeasurement &&
+      !this.isListLoaded &&
+      this.state.dataProvider.getSize() > 0 ? (
+      <View style={{ opacity: 0 }} pointerEvents="none">
+        {this.rowRendererWithIndex(
+          Math.min(this.state.dataProvider.getSize() - 1, 1)
+        )}
+      </View>
+    ) : null;
+  };
+
   private getValidComponent(
     component: React.ComponentType | React.ReactElement | null | undefined
   ) {
@@ -644,6 +666,20 @@ class FlashList<T> extends React.PureComponent<
       this.props.onLoad?.({
         elapsedTimeInMs: Date.now() - this.loadStartTime,
       });
+      this.postLoadTimeoutId = setTimeout(() => {
+        // This force update is required to remove dummy element rendered to measure horizontal list height when  the list doesn't update on its own.
+        // In most cases this timeout will never be triggered because list usually updates atleast once and this timeout is cleared on update.
+        if (this.props.horizontal) {
+          this.forceUpdate();
+        }
+      }, 500);
+    }
+  };
+
+  private clearPostLoadTimeout = () => {
+    if (this.postLoadTimeoutId !== undefined) {
+      clearTimeout(this.postLoadTimeoutId);
+      this.postLoadTimeoutId = undefined;
     }
   };
 

@@ -10,7 +10,7 @@ Since `FlashList` does not immediately render but waits for the size of the unde
 
 Add the following line to your `jest-setup.js` file:
 
-```ts
+```js
 require("@shopify/flash-list/jestSetup");
 ```
 
@@ -27,7 +27,7 @@ setupFiles: ['./jest-setup.js'],
 
 Here is an example of using [`@testing-library/react-native`](https://callstack.github.io/react-native-testing-library/):
 
-```ts
+```tsx
 import React from "react";
 import { render } from "@testing-library/react-native";
 

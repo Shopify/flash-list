@@ -7,7 +7,7 @@ title: LayoutAnimation
 
 FlashList does support `LayoutAnimation`s but you need to call [`prepareLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before React Native's [`LayoutAnimation.configureNext`](https://reactnative.dev/docs/layoutanimation#configurenext). `prepareLayoutAnimationRender` is an instance method, so you have to keep a reference to your `FlashList` instance via the [`ref`](https://reactjs.org/docs/refs-and-the-dom.html) prop:
 
-```ts
+```tsx
 // This must be called before `LayoutAnimation.configureNext` in order for the animation to run properly.
 listRef.current?.prepareForLayoutAnimationRender();
 // After removing the item, we can start the animation.
@@ -22,7 +22,7 @@ For the animation to work properly, you additionally need to add [`keyExtractor`
 
 ## Example
 
-```ts
+```tsx
 import React, { useRef, useState } from "react";
 import { View, Text, Pressable, LayoutAnimation } from "react-native";
 import { FlashList } from "@shopify/flash-list";
