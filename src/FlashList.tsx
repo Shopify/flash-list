@@ -67,7 +67,8 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private emptyObject = {};
-  private postLoadTimeoutId: ReturnType<typeof setTimeout> | undefined;
+  private postLoadTimeoutId?: ReturnType<typeof setTimeout>;
+  private sizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
 
   private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
@@ -243,6 +244,9 @@ class FlashList<T> extends React.PureComponent<
   componentWillUnmount() {
     this.viewabilityManager.dispose();
     this.clearPostLoadTimeout();
+    if (this.sizeWarningTimeoutId !== undefined) {
+      clearTimeout(this.sizeWarningTimeoutId);
+    }
   }
 
   render() {
@@ -655,25 +659,34 @@ class FlashList<T> extends React.PureComponent<
   private raiseOnLoadEventIfNeeded = () => {
     if (!this.isListLoaded) {
       this.isListLoaded = true;
-      if (this.props.estimatedItemSize === undefined) {
+      this.props.onLoad?.({
+        elapsedTimeInMs: Date.now() - this.loadStartTime,
+      });
+      this.runAfterOnLoad();
+    }
+  };
+
+  private runAfterOnLoad = () => {
+    if (this.props.estimatedItemSize === undefined) {
+      this.sizeWarningTimeoutId = setTimeout(() => {
         const averageItemSize = Math.floor(
           this.state.layoutProvider.averageItemSize
         );
         console.warn(
-          `estimatedItemSize FlashList prop is not defined - set it to ${averageItemSize} to avoid this warning`
+          WarningList.estimatedItemSizeMissingWarning.replace(
+            "@size",
+            averageItemSize.toString()
+          )
         );
-      }
-      this.props.onLoad?.({
-        elapsedTimeInMs: Date.now() - this.loadStartTime,
-      });
-      this.postLoadTimeoutId = setTimeout(() => {
-        // This force update is required to remove dummy element rendered to measure horizontal list height when  the list doesn't update on its own.
-        // In most cases this timeout will never be triggered because list usually updates atleast once and this timeout is cleared on update.
-        if (this.props.horizontal) {
-          this.forceUpdate();
-        }
-      }, 500);
+      }, 1000);
     }
+    this.postLoadTimeoutId = setTimeout(() => {
+      // This force update is required to remove dummy element rendered to measure horizontal list height when  the list doesn't update on its own.
+      // In most cases this timeout will never be triggered because list usually updates atleast once and this timeout is cleared on update.
+      if (this.props.horizontal) {
+        this.forceUpdate();
+      }
+    }, 500);
   };
 
   private clearPostLoadTimeout = () => {

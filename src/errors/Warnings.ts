@@ -11,5 +11,8 @@ const WarningList = {
     "Please make sure that the parent view of the list has a valid size. FlashList will match the size of the parent.",
   missingKeyExtractor:
     "FlashList requires a keyExtractor prop to be defined when animating elements. Without it, the animations will not run as expected.",
+  estimatedItemSizeMissingWarning:
+    "estimatedItemSize FlashList prop is not defined - based on current configuration you can set it to @size to optimize list performance. " +
+    "Refer to FlashList documentation for more details.",
 };
 export default WarningList;
