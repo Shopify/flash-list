@@ -10,7 +10,7 @@
   "description": "FlashList is a more performant FlatList replacement",
   "author": "shopify",
   "license": "MIT",
-  "homepage": "ihttps://reimagined-fiesta-030d04f7.pages.github.io",
+  "homepage": "https://reimagined-fiesta-030d04f7.pages.github.io",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
