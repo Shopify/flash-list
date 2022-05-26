@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0] - 2022-05-26
+
 - Fix amending layout on iOS
   - https://github.com/Shopify/flash-list/pull/412
 - Define `FlashList` props previously inherited from `VirtualizedList` and `FlatList` explicitly
