@@ -1,8 +1,8 @@
+---
 id: metrics
 title: Metrics
 slug: /metrics
 sidebar_position: 1
-
 ---
 
 ## Metrics
