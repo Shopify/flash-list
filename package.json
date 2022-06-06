@@ -43,7 +43,7 @@
     "@quilted/react-testing": "^0.5.11",
     "@react-native-community/eslint-config": "^3.0.0",
     "@shopify/eslint-plugin": "^41.2.1",
-    "@types/jest": "^27.5.0",
+    "@types/jest": "^28.1.1",
     "@types/react-native": "0.67.6",
     "babel-jest": "^28.1.0",
     "enhanced-resolve": "^5.9.3",
