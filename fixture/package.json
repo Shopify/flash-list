@@ -31,7 +31,7 @@
     "babel-jest": "^27.5.1",
     "babel-plugin-module-resolver": "^4.1.0",
     "glob": "^8.0.3",
-    "jest": "^27.5.1",
+    "jest": "^28.1.0",
     "metro-config": "^0.71.0",
     "metro-react-native-babel-preset": "^0.71.0",
     "patch-package": "^6.4.7",
@@ -42,7 +42,7 @@
     "detox": "^19.7.0",
     "pixelmatch": "^5.3.0",
     "pngjs": "^6.0.0",
-    "@types/jest": "^27.5.0"
+    "@types/jest": "^28.1.1"
   },
   "jest": {
     "preset": "react-native"
