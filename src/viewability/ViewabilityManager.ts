@@ -1,6 +1,7 @@
 import { ViewabilityConfig } from "react-native";
 
-import FlashList from "./FlashList";
+import FlashList from "../FlashList";
+
 import ViewabilityHelper from "./ViewabilityHelper";
 import ViewToken from "./ViewToken";
 

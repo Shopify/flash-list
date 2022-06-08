@@ -4,8 +4,8 @@ import "@quilted/react-testing/matchers";
 import { ProgressiveListView } from "recyclerlistview";
 
 import Warnings from "../errors/Warnings";
-import AutoLayoutView from "../AutoLayoutView";
-import CellContainer from "../CellContainer";
+import AutoLayoutView from "../native/auto-layout/AutoLayoutView";
+import CellContainer from "../native/cell-container/CellContainer";
 
 import { mountFlashList } from "./helpers/mountFlashList";
 

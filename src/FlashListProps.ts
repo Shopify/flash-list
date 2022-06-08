@@ -7,8 +7,8 @@ import {
   ColorValue,
 } from "react-native";
 
-import { BlankAreaEventHandler } from "./AutoLayoutView";
-import ViewToken from "./ViewToken";
+import { BlankAreaEventHandler } from "./native/auto-layout/AutoLayoutView";
+import ViewToken from "./viewability/ViewToken";
 
 export interface ListRenderItemInfo<TItem> {
   item: TItem;

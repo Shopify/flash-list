@@ -6,24 +6,27 @@ import {
   ViewStyle,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  Platform,
 } from "react-native";
 import {
+  BaseItemAnimator,
   DataProvider,
   ProgressiveListView,
   RecyclerListView,
   RecyclerListViewProps,
   WindowCorrectionConfig,
 } from "recyclerlistview";
+import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platform/reactnative/itemanimators/defaultjsanimator/DefaultJSItemAnimator";
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
-import AutoLayoutView from "./AutoLayoutView";
-import CellContainer from "./CellContainer";
+import AutoLayoutView from "./native/auto-layout/AutoLayoutView";
+import CellContainer from "./native/cell-container/CellContainer";
 import { PureComponentWrapper } from "./PureComponentWrapper";
 import GridLayoutProviderWithProps from "./GridLayoutProviderWithProps";
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
-import ViewabilityManager from "./ViewabilityManager";
+import ViewabilityManager from "./viewability/ViewabilityManager";
 import { FlashListProps, ContentStyle } from "./FlashListProps";
 
 interface StickyProps extends StickyContainerProps {
@@ -73,6 +76,9 @@ class FlashList<T> extends React.PureComponent<
   private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
 
+  private isWeb = Platform.OS === "web";
+  private itemAnimator?: BaseItemAnimator;
+
   static defaultProps = {
     data: [],
     numColumns: 1,
@@ -94,6 +100,9 @@ class FlashList<T> extends React.PureComponent<
     // eslint-disable-next-line react/state-in-constructor
     this.state = FlashList.getInitialMutableState(this);
     this.viewabilityManager = new ViewabilityManager(this);
+    if (this.isWeb) {
+      this.itemAnimator = new DefaultJSItemAnimator();
+    }
   }
 
   private validateProps() {
@@ -271,7 +280,9 @@ class FlashList<T> extends React.PureComponent<
     const initialOffset =
       (this.isInitialScrollIndexInFirstRow() && this.distanceFromWindow) ||
       undefined;
-    const finalDrawDistance = drawDistance === undefined ? 250 : drawDistance;
+    const defaultDrawDistance = this.isWeb ? 2000 : 250;
+    const finalDrawDistance =
+      drawDistance === undefined ? defaultDrawDistance : drawDistance;
 
     return (
       <StickyHeaderContainer
@@ -328,6 +339,7 @@ class FlashList<T> extends React.PureComponent<
               : undefined
           }
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
+          itemAnimator={this.itemAnimator}
         />
       </StickyHeaderContainer>
     );
@@ -341,6 +353,7 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    this.recordInteraction();
     this.viewabilityManager.updateViewableItems();
     this.props.onScroll?.(event);
   };
