@@ -701,4 +701,15 @@ describe("FlashList", () => {
     jest.advanceTimersByTime(600);
     expect(forceUpdate).toBeCalledTimes(0);
   });
+  it("uses 250 as draw distance on Android/iOS", () => {
+    const flashList = mountFlashList();
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    jest.advanceTimersByTime(1000);
+    expect(
+      flashList
+        .find(ProgressiveListView)
+        ?.instance.getCurrentRenderAheadOffset()
+    ).toBe(250);
+    flashList.unmount();
+  });
 });

@@ -6,7 +6,7 @@ const PlatformConfig = {
 const getCellContainerPlatformStyles = (
   inverted: boolean,
   parentProps: { x: number; y: number }
-): object | undefined => {
+): { transform: string; WebkitTransform: string } | undefined => {
   return undefined;
 };
 
