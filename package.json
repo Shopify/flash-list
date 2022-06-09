@@ -30,7 +30,8 @@
     "run-e2e-android": "cd fixture && yarn e2e:build:android && yarn e2e:test:android",
     "rea": "yarn run-e2e-android",
     "predeploy:website": "sh ./build_website.sh",
-    "deploy:website": "gh-pages -d website/_site"
+    "deploy:website": "gh-pages -d website/_site",
+    "release:local": "tsc -b && sh scripts/release-local.sh"
   },
   "peerDependencies": {
     "@babel/runtime": "*",

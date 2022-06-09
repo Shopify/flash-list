@@ -6,7 +6,6 @@ import {
   ViewStyle,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  Platform,
 } from "react-native";
 import {
   BaseItemAnimator,
@@ -16,7 +15,6 @@ import {
   RecyclerListViewProps,
   WindowCorrectionConfig,
 } from "recyclerlistview";
-import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platform/reactnative/itemanimators/defaultjsanimator/DefaultJSItemAnimator";
 import StickyContainer, { StickyContainerProps } from "recyclerlistview/sticky";
 
 import AutoLayoutView from "./native/auto-layout/AutoLayoutView";
@@ -28,6 +26,11 @@ import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
 import ViewabilityManager from "./viewability/ViewabilityManager";
 import { FlashListProps, ContentStyle } from "./FlashListProps";
+import {
+  getCellContainerPlatformStyles,
+  getItemAnimator,
+  PlatformConfig,
+} from "./utils/PlatformHelper";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
@@ -76,7 +79,6 @@ class FlashList<T> extends React.PureComponent<
   private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
 
-  private isWeb = Platform.OS === "web";
   private itemAnimator?: BaseItemAnimator;
 
   static defaultProps = {
@@ -100,9 +102,7 @@ class FlashList<T> extends React.PureComponent<
     // eslint-disable-next-line react/state-in-constructor
     this.state = FlashList.getInitialMutableState(this);
     this.viewabilityManager = new ViewabilityManager(this);
-    if (this.isWeb) {
-      this.itemAnimator = new DefaultJSItemAnimator();
-    }
+    this.itemAnimator = getItemAnimator();
   }
 
   private validateProps() {
@@ -280,16 +280,17 @@ class FlashList<T> extends React.PureComponent<
     const initialOffset =
       (this.isInitialScrollIndexInFirstRow() && this.distanceFromWindow) ||
       undefined;
-    const defaultDrawDistance = this.isWeb ? 2000 : 250;
     const finalDrawDistance =
-      drawDistance === undefined ? defaultDrawDistance : drawDistance;
+      drawDistance === undefined
+        ? PlatformConfig.defaultDrawDistance
+        : drawDistance;
 
     return (
       <StickyHeaderContainer
         overrideRowRenderer={this.stickyRowRenderer}
         applyWindowCorrection={this.applyWindowCorrection}
         stickyHeaderIndices={stickyHeaderIndices}
-        style={this.props.horizontal ? this.emptyObject : undefined}
+        style={this.props.horizontal ? this.emptyObject : this.getTransform()}
       >
         <ProgressiveListView
           {...restProps}
@@ -306,7 +307,7 @@ class FlashList<T> extends React.PureComponent<
               this.props.refreshControl || this.getRefreshControl(),
 
             // Min values are being used to suppress RLV's bounded exception
-            style: { ...this.getTransform(), minHeight: 1, minWidth: 1 },
+            style: { minHeight: 1, minWidth: 1 },
             contentContainerStyle: {
               backgroundColor: this.contentStyle.backgroundColor,
 
@@ -452,6 +453,7 @@ class FlashList<T> extends React.PureComponent<
           flexDirection: this.props.horizontal ? "row" : "column",
           alignItems: "stretch",
           ...this.getTransform(),
+          ...getCellContainerPlatformStyles(this.props.inverted!!, parentProps),
         }}
         index={parentProps.index}
       >
