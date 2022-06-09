@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Added web support
+  - https://github.com/Shopify/flash-list/pull/444
+
 ## [0.6.1] - 2022-05-26
 
 - Fix amending layout on iOS
