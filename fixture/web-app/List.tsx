@@ -2,9 +2,8 @@
 Sample list for web
  */
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
-import { Pressable } from "react-native";
 
 const ListItem = ({ index }: { index: string }) => {
   const [height, setHeight] = useState(100);
@@ -14,13 +13,13 @@ const ListItem = ({ index }: { index: string }) => {
   return (
     <Pressable
       onPress={() => {
-        if (height !== 200) {
+        if (height === 100) {
           setHeight(200);
         } else {
           setHeight(100);
         }
       }}
-      style={{ height: height }}
+      style={{ height }}
     >
       <View
         style={{

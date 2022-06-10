@@ -1,5 +1,6 @@
 import React from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
+
 import List from "./List";
 
 export default function App() {
