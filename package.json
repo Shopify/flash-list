@@ -32,8 +32,7 @@
     "run-web": "cd fixture/web-app && yarn web",
     "rw": "yarn run-web",
     "predeploy:website": "sh ./build_website.sh",
-    "deploy:website": "gh-pages -d website/_site",
-    "release:local": "tsc -b && sh scripts/release-local.sh"
+    "deploy:website": "gh-pages -d website/_site"
   },
   "peerDependencies": {
     "@babel/runtime": "*",
