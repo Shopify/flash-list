@@ -290,7 +290,11 @@ class FlashList<T> extends React.PureComponent<
         overrideRowRenderer={this.stickyRowRenderer}
         applyWindowCorrection={this.applyWindowCorrection}
         stickyHeaderIndices={stickyHeaderIndices}
-        style={this.props.horizontal ? this.emptyObject : this.getTransform()}
+        style={
+          this.props.horizontal
+            ? this.emptyObject
+            : { flex: 1, ...this.getTransform() }
+        }
       >
         <ProgressiveListView
           {...restProps}
