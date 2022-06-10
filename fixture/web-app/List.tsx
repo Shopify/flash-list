@@ -6,39 +6,36 @@ import { View, Text } from "react-native";
 import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
 import { Pressable } from "react-native";
 
-const ListItem = ({
-  index,
-  update,
-}: {
-  index: string;
-  update?: () => void;
-}) => {
-  const [height, setHeight] = useState(120);
+const ListItem = ({ index }: { index: string }) => {
+  const [height, setHeight] = useState(100);
   useEffect(() => {
-    setHeight(120);
+    setHeight(100);
   }, [index]);
   return (
     <Pressable
       onPress={() => {
-        if (update) {
+        if (height !== 200) {
           setHeight(200);
-          // web doesn't have resize observer so this is needed to report size changes
-          // we can add resize observer in recyclerlistview and remove this
-          update();
+        } else {
+          setHeight(100);
         }
       }}
+      style={{ height: height }}
     >
       <View
         style={{
-          height: height,
+          flex: 1,
           backgroundColor: "cyan",
-          borderWidth: 5,
+          borderWidth: 2,
+
           borderColor: "white",
           alignItems: "center",
           justifyContent: "space-around",
         }}
       >
-        <Text>Web Item: {index}</Text>
+        <Text>
+          Web Item: {index}, size: {height}
+        </Text>
       </View>
     </Pressable>
   );
@@ -47,14 +44,7 @@ const ListItem = ({
 const List = () => {
   const flashListRef = useRef<FlashList<number>>(null);
   const renderItem = ({ index }: ListRenderItemInfo<number>) => {
-    return (
-      <ListItem
-        update={() => {
-          flashListRef.current?.recyclerlistview_unsafe?.forceRerender();
-        }}
-        index={index.toString()}
-      />
-    );
+    return <ListItem index={index.toString()} />;
   };
 
   return (

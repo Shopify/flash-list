@@ -16,8 +16,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
-    "react-native-web": "0.17.7",
-    "recyclerlistview": "file:../../node_modules/recyclerlistview"
+    "react-native-web": "0.17.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
