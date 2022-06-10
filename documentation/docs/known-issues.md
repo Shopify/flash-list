@@ -27,7 +27,7 @@ The list only guarantees to bring the given index in view port (as close to the 
 
 As of now we only provide relevant data and index. No plans to change this.
 
-### 5) Web support is experimental
+### 5) Web support is in beta
 
 - Layout is async so it's possible to see shift animations on list load.
 - `onBlankArea` event and `useBlankAreaTracker` hook are not supported.
