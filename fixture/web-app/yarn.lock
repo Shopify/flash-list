@@ -1678,7 +1678,7 @@
 "@shopify/flash-list@file:../..":
   version "0.6.1"
   dependencies:
-    recyclerlistview "3.2.0-beta.4"
+    recyclerlistview "3.3.0-beta.2"
 
 "@sideway/address@^4.1.3":
   version "4.1.4"
@@ -5536,17 +5536,10 @@ recast@^0.20.4:
     source-map "~0.6.1"
     tslib "^2.0.1"
 
-recyclerlistview@3.2.0-beta.4:
-  version "3.2.0-beta.4"
-  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.2.0-beta.4.tgz#2d82986dd4118fea4d9675f2d28b6d06889f658d"
-  integrity sha512-wPy64IQ9XejG0UNioXfnfaV8Ubf6y5f/WIUAWOq9FtFYSTTu+m8umMUh5cT2WQvf178HSuKrXpqefbGiGnoEqg==
-  dependencies:
-    lodash.debounce "4.0.8"
-    prop-types "15.5.8"
-    ts-object-utils "0.0.5"
-
-"recyclerlistview@file:../../node_modules/recyclerlistview":
-  version "3.2.0-beta.4"
+recyclerlistview@3.3.0-beta.2:
+  version "3.3.0-beta.2"
+  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.3.0-beta.2.tgz#c51781a0e40115ece491ef3c30620e88f27da66a"
+  integrity sha512-xrg5boxoF/IZnfsvS5jUSxOYRmir7PM78XUnj0WXSYYQTEIEDRNYcF8Bx75+RnsbamBNnqME11xV5dEnFkrMNA==
   dependencies:
     lodash.debounce "4.0.8"
     prop-types "15.5.8"
