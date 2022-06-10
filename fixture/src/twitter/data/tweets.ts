@@ -341,7 +341,7 @@ export const tweets: Tweet[] = [
       name: "Smashing Magazine",
       screenName: "smashingmag",
       avatar:
-        "https://images.unsplash.com/photo-1612256360988-8dd64dfbb782?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=48&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTY1Njk4OQ&ixlib=rb-1.2.1&q=80&w=48",
+        "https://images.unsplash.com/photo-1649562231804-f1bfadc450d2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=48&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTY1NzA5Mw&ixlib=rb-1.2.1&q=80&w=48",
     },
     id: "1480816866360766465",
     fullText:
@@ -1164,7 +1164,7 @@ export const tweets: Tweet[] = [
       name: "Smashing Magazine",
       screenName: "smashingmag",
       avatar:
-        "https://images.unsplash.com/photo-1612256360988-8dd64dfbb782?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=48&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTY1Njk4OQ&ixlib=rb-1.2.1&q=80&w=48",
+        "https://images.unsplash.com/photo-1649562231804-f1bfadc450d2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=48&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTY1NzA5Mw&ixlib=rb-1.2.1&q=80&w=48",
     },
     id: "1480824523247296514",
     fullText:
@@ -1954,7 +1954,7 @@ export const tweets: Tweet[] = [
       name: "Smashing Magazine",
       screenName: "smashingmag",
       avatar:
-        "https://images.unsplash.com/photo-1612256360988-8dd64dfbb782?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=48&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTY1Njk4OQ&ixlib=rb-1.2.1&q=80&w=48",
+        "https://images.unsplash.com/photo-1649562231804-f1bfadc450d2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=48&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTY1NzA5Mw&ixlib=rb-1.2.1&q=80&w=48",
     },
     id: "1479108107154255875",
     fullText:
