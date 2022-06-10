@@ -29,6 +29,8 @@
     "rei": "yarn run-e2e-ios",
     "run-e2e-android": "cd fixture && yarn e2e:build:android && yarn e2e:test:android",
     "rea": "yarn run-e2e-android",
+    "run-web": "cd fixture/web-app && yarn web",
+    "rw": "yarn run-web",
     "predeploy:website": "sh ./build_website.sh",
     "deploy:website": "gh-pages -d website/_site",
     "release:local": "tsc -b && sh scripts/release-local.sh"
