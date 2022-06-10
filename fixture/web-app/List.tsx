@@ -4,13 +4,19 @@ Sample list for web
 import React, { useRef, useState } from "react";
 import { View, Text } from "react-native";
 import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
+import { Pressable } from "react-native";
 
-const List = () => {
-  const renderItem = ({ index }: ListRenderItemInfo<number>) => {
-    return (
+const ListItem = ({ index }: { index: string }) => {
+  const [height, setHeight] = useState(120);
+  return (
+    <Pressable
+      onPress={() => {
+        setHeight(200);
+      }}
+    >
       <View
         style={{
-          height: 120,
+          height: height,
           backgroundColor: "cyan",
           borderWidth: 5,
           borderColor: "white",
@@ -20,7 +26,13 @@ const List = () => {
       >
         <Text>Web Item: {index}</Text>
       </View>
-    );
+    </Pressable>
+  );
+};
+
+const List = () => {
+  const renderItem = ({ index }: ListRenderItemInfo<number>) => {
+    return <ListItem index={index.toString()} />;
   };
 
   return (
@@ -29,6 +41,8 @@ const List = () => {
       estimatedItemSize={150}
       stickyHeaderIndices={[0, 3, 6, 7, 9]}
       data={new Array<number>(100)}
+      ListFooterComponent={<ListItem index="Footer" />}
+      ListHeaderComponent={<ListItem index="Header" />}
     />
   );
 };
