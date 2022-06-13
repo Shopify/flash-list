@@ -75,6 +75,8 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    *   - `top`: Determines position of the element on y axis
    *   - `width`: Determines width of the element (present when list is vertical)
    *   - `height`: Determines height of the element (present when list is horizontal)
+   *
+   * Note: Changing layout of the cell can conflict with the native layout operations. You may need to set `disableAutoLayout` to `true` to prevent this.
    */
   CellRendererComponent?: React.ComponentType<any> | undefined;
 
@@ -301,7 +303,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   disableHorizontalListHeightMeasurement?: boolean;
 
   /**
-   * FlashList auto applies some fixes to layouts of its children which can conflict with custom `CellRendererComponent`
+   * FlashList applies some fixes to layouts of its children which can conflict with custom `CellRendererComponent`
    * implementations. You can disable this behavior by setting this to `true`.
    * Recommendation: Set this to `true` while you apply special behavior to the `CellRendererComponent`. Once done set this to
    * `false` again.

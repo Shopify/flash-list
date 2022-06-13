@@ -105,6 +105,10 @@ Each cell is rendered using this element. Can be a React Component Class, or a r
 
 When using with `react-native-reanimated`, you can wrap `CellContainer` in `Animated.createAnimatedComponent` (this is similar to using `Animated.View`):
 
+:::note
+Changing layout of the cell can conflict with the native layout operations. You may need to set `disableAutoLayout` to `true` to prevent this.
+:::
+
 ```ts
 const AnimatedCellContainer = Animated.createAnimatedComponent(CellContainer);
 return (
@@ -199,7 +203,7 @@ Horizontal padding is ignored on vertical lists and vertical padding on horizont
 disableAutoLayout?: boolean;
 ```
 
-FlashList auto applies some fixes to layouts of its children which can conflict with custom `CellRendererComponent` implementations. You can disable this behavior by setting this to `true`.
+FlashList applies some fixes to layouts of its children which can conflict with custom `CellRendererComponent` implementations. You can disable this behavior by setting this to `true`.
 
 :::note
 Recommendation: Set this to `true` while you apply special behavior to the `CellRendererComponent`. Once done set this to `false` again.
