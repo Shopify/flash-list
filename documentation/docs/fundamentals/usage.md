@@ -193,6 +193,18 @@ You can use `contentContainerStyle` to apply padding that will be applied to the
 Horizontal padding is ignored on vertical lists and vertical padding on horizontal ones.
 :::
 
+### `disableAutoLayout`
+
+```tsx
+disableAutoLayout?: boolean;
+```
+
+FlashList auto applies some fixes to layouts of its children which can conflict with custom `CellRendererComponent` implementations. You can disable this behavior by setting this to `true`.
+
+:::note
+Recommendation: Set this to `true` while you apply special behavior to the `CellRendererComponent`. Once done set this to `false` again.
+:::
+
 ### `disableHorizontalListHeightMeasurement`
 
 ```tsx

@@ -299,4 +299,12 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * as FlashList will skip rendering the extra item for measurement. Default value is `false`.
    */
   disableHorizontalListHeightMeasurement?: boolean;
+
+  /**
+   * FlashList auto applies some fixes to layouts of its children which can conflict with custom `CellRendererComponent`
+   * implementations. You can disable this behavior by setting this to `true`.
+   * Recommendation: Set this to `true` while you apply special behavior to the `CellRendererComponent`. Once done set this to
+   * `false` again.
+   */
+  disableAutoLayout?: boolean;
 }

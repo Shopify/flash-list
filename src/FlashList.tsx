@@ -426,6 +426,7 @@ class FlashList<T> extends React.PureComponent<
           {...props}
           onBlankAreaEvent={this.props.onBlankArea}
           onLayout={this.updateDistanceFromWindow}
+          disableAutoLayout={this.props.disableAutoLayout}
         >
           {children}
         </AutoLayoutView>

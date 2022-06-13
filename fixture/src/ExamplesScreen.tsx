@@ -48,6 +48,10 @@ export const ExamplesScreen = () => {
       title: "Twitter Benchmark",
       destination: "TwitterBenchmark",
     },
+    {
+      title: "Twitter Custom Cell Container",
+      destination: "TwitterCustomCellContainer",
+    },
   ];
   return (
     <>

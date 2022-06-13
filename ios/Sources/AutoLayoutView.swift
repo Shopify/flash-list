@@ -28,11 +28,16 @@ import UIKit
         self.enableInstrumentation = enableInstrumentation
     }
 
+    @objc func setDisableAutoLayout(_ disableAutoLayout: Bool) {
+        self.disableAutoLayout = disableAutoLayout
+    }
+
     private var horizontal = false
     private var scrollOffset: CGFloat = 0
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
     private var enableInstrumentation = false
+    private var disableAutoLayout = false
 
     /// Tracks where the last pixel is drawn in the visible window
     private var lastMaxBound: CGFloat = 0
@@ -77,7 +82,8 @@ import UIKit
         guard
             subviews.count > 1,
             // Fixing layout during animation can interfere with it.
-            layer.animationKeys()?.isEmpty ?? true
+            layer.animationKeys()?.isEmpty ?? true,
+            !disableAutoLayout
         else { return }
         let cellContainers = subviews
             .compactMap { subview -> CellContainer? in
