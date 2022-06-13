@@ -12,7 +12,7 @@ import Twitter from "./Twitter";
 
 const AnimatedCellContainer = Animated.createAnimatedComponent(CellContainer);
 
-export const CustomCellRendererComponent = (props: any) => {
+export const CustomCellRendererComponent = React.forwardRef((props: any, _) => {
   const offset = useSharedValue(400);
   const cellContainerRef = useRef<View>(null);
   const animatedStyles = useAnimatedStyle(() => {
@@ -36,7 +36,9 @@ export const CustomCellRendererComponent = (props: any) => {
       style={[animatedStyles, { opacity: 0 }, props.style]}
     />
   );
-};
+});
+
+CustomCellRendererComponent.displayName = "CustomCellRendererComponent";
 
 const TwitterCustomCellContainer = () => {
   return (
