@@ -712,4 +712,12 @@ describe("FlashList", () => {
     ).toBe(250);
     flashList.unmount();
   });
+  it("forwards disableAutoLayout prop correctly", () => {
+    const flashList = mountFlashList();
+    expect(flashList.find(AutoLayoutView)?.props.disableAutoLayout).toBe(
+      undefined
+    );
+    flashList.setProps({ disableAutoLayout: true });
+    expect(flashList.find(AutoLayoutView)?.props.disableAutoLayout).toBe(true);
+  });
 });
