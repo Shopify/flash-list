@@ -44,6 +44,7 @@ export interface FlashListState<T> {
   layoutProvider: GridLayoutProviderWithProps<T>;
   data?: ReadonlyArray<T> | null;
   extraData?: ExtraData<unknown>;
+  renderItem?: FlashListProps<T>["renderItem"];
 }
 
 interface ExtraData<T> {
@@ -150,11 +151,14 @@ class FlashList<T> extends React.PureComponent<
       newState.dataProvider = prevState.dataProvider.cloneWithRows(
         nextProps.data as any[]
       );
-      newState.extraData = { ...prevState.extraData };
+      if (nextProps.renderItem !== prevState.renderItem) {
+        newState.extraData = { ...prevState.extraData };
+      }
     }
     if (nextProps.extraData !== prevState.extraData?.value) {
       newState.extraData = { value: nextProps.extraData };
     }
+    newState.renderItem = nextProps.renderItem;
     newState.layoutProvider.updateProps(nextProps);
     return newState;
   }

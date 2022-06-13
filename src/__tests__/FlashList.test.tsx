@@ -712,4 +712,19 @@ describe("FlashList", () => {
     ).toBe(250);
     flashList.unmount();
   });
+  it("force updates items only when renderItem change", () => {
+    const renderItem = jest.fn(() => <Text>Test</Text>);
+    const flashList = mountFlashList({
+      data: new Array(1).fill("1"),
+      renderItem,
+    });
+    flashList.setProps({ data: new Array(1).fill("1") });
+    expect(renderItem).toBeCalledTimes(1);
+    const newRenderItem = jest.fn(() => <Text>Test</Text>);
+    flashList.setProps({
+      data: new Array(1).fill("1"),
+      renderItem: newRenderItem,
+    });
+    expect(newRenderItem).toBeCalledTimes(1);
+  });
 });
