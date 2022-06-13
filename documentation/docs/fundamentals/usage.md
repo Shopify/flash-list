@@ -49,7 +49,7 @@ Required
 :::
 
 ```tsx
-renderItem: ({ item, index }) => void;
+renderItem: ({ item, index, target, extraData }) => void;
 ```
 
 Takes an item from `data` and renders it into the list. Typical usage:
@@ -66,6 +66,11 @@ Provides additional metadata like `index`
 
 - `item` (`Object`): The item from `data` being rendered.
 - `index` (`number`): The index corresponding to this item in the `data` array.
+- `target` (`string`) FlashList may render your items for multiple reasons.
+  - `Cell` - This is for your list item.
+  - `Measurement` - Might be invoked for size measurement and won't be visible. You can ignore this in analytics.
+  - `StickyHeader` - This is for your sticky header. Use this to change your item's appearance while it's being used as a sticky header.
+- `extraData` (`Object`) - This is the same `extraData` prop that was passed to `FlashList`.
 
 ### **`data`**
 

@@ -12,9 +12,24 @@ import ViewToken from "./viewability/ViewToken";
 
 export interface ListRenderItemInfo<TItem> {
   item: TItem;
-
   index: number;
+  /**
+   * FlashList may render your items for multiple reasons.
+   * Cell - This is for your list item
+   * Measurement - Might be invoked for size measurement and won't be visible. You can ignore this in analytics.
+   * StickyHeader - This is for your sticky header. Use this to change your item's appearance while it's being used as a sticky header.
+   */
+  target: RenderTarget;
+  extraData?: any;
 }
+
+export type RenderTarget = "Cell" | "StickyHeader" | "Measurement";
+
+export const RenderTargetOptions = {
+  Cell: "Cell" as RenderTarget,
+  StickyHeader: "StickyHeader" as RenderTarget,
+  Measurement: "Measurement" as RenderTarget,
+};
 
 export type ListRenderItem<TItem> = (
   info: ListRenderItemInfo<TItem>
