@@ -14,7 +14,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "up": "/opt/dev/bin/dev up && bundle install && cd fixture && yarn && cd ios && bundle exec pod install && brew tap wix/brew && brew install applesimutils && cd ../web-app && yarn && cd ../../ && yarn build",
+    "up": "/opt/dev/bin/dev up && bundle install && cd fixture && yarn && cd ios && bundle exec pod install && brew tap wix/brew && brew install applesimutils && cd ../../ && yarn build && cd fixture/web-app && yarn && cd ../../",
     "start": "cd fixture && react-native start",
     "test": "jest",
     "lint": "yarn eslint . --ext .ts,.tsx",
