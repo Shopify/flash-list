@@ -1346,9 +1346,9 @@
     warn-once "^0.1.0"
 
 "@shopify/flash-list@link:..":
-  version "0.6.0"
+  version "0.6.1"
   dependencies:
-    recyclerlistview "3.2.0-beta.4"
+    recyclerlistview "3.3.0-beta.2"
 
 "@shopify/react-native-performance-lists-profiler@^0.0.11":
   version "0.0.11"
@@ -5775,10 +5775,10 @@ recast@^0.20.4:
     source-map "~0.6.1"
     tslib "^2.0.1"
 
-recyclerlistview@3.2.0-beta.4:
-  version "3.2.0-beta.4"
-  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.2.0-beta.4.tgz#2d82986dd4118fea4d9675f2d28b6d06889f658d"
-  integrity sha512-wPy64IQ9XejG0UNioXfnfaV8Ubf6y5f/WIUAWOq9FtFYSTTu+m8umMUh5cT2WQvf178HSuKrXpqefbGiGnoEqg==
+recyclerlistview@3.3.0-beta.2:
+  version "3.3.0-beta.2"
+  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.3.0-beta.2.tgz#c51781a0e40115ece491ef3c30620e88f27da66a"
+  integrity sha512-xrg5boxoF/IZnfsvS5jUSxOYRmir7PM78XUnj0WXSYYQTEIEDRNYcF8Bx75+RnsbamBNnqME11xV5dEnFkrMNA==
   dependencies:
     lodash.debounce "4.0.8"
     prop-types "15.5.8"
@@ -6650,10 +6650,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^4.7.2:
-  version "4.7.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.2.tgz#1f9aa2ceb9af87cca227813b4310fff0b51593c4"
-  integrity sha512-Mamb1iX2FDUpcTRzltPxgWMKy3fhg0TN378ylbktPGPK/99KbDtMQ4W1hwgsbPAsG3a0xKa1vmw4VKZQbkvz5A==
+typescript@^4.7.3:
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.3.tgz#8364b502d5257b540f9de4c40be84c98e23a129d"
+  integrity sha512-WOkT3XYvrpXx4vMMqlD+8R8R37fZkjyLGlxavMc4iB8lrl8L0DeTcHbYgw/v0N/z9wAFsgBhcsF0ruoySS22mA==
 
 ua-parser-js@^0.7.30:
   version "0.7.31"
