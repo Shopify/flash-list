@@ -11,6 +11,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/445
 - Added web support
   - https://github.com/Shopify/flash-list/pull/444
+- Added `disableAutoLayout` prop to prevent conflicts with custom `CellRendererComponent`
+  - https://github.com/Shopify/flash-list/pull/452
 
 ## [0.6.1] - 2022-05-26
 
