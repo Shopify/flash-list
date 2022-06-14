@@ -26,3 +26,10 @@ The list only guarantees to bring the given index in view port (as close to the 
 ### 4) `renderItem` callback doesn't have all features
 
 As of now we only provide relevant data and index. No plans to change this.
+
+### 5) Web support is in beta
+
+- Layout is async so it's possible to see shift animations on list load.
+- `onBlankArea` event and `useBlankAreaTracker` hook are not supported.
+
+Exercise caution and make sure all changes are tested on web as there could be some differences when compared to Android/iOS.

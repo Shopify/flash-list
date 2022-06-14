@@ -4,8 +4,8 @@ import "@quilted/react-testing/matchers";
 import { ProgressiveListView } from "recyclerlistview";
 
 import Warnings from "../errors/Warnings";
-import AutoLayoutView from "../AutoLayoutView";
-import CellContainer from "../CellContainer";
+import AutoLayoutView from "../native/auto-layout/AutoLayoutView";
+import CellContainer from "../native/cell-container/CellContainer";
 
 import { mountFlashList } from "./helpers/mountFlashList";
 
@@ -700,5 +700,16 @@ describe("FlashList", () => {
     flashList.unmount();
     jest.advanceTimersByTime(600);
     expect(forceUpdate).toBeCalledTimes(0);
+  });
+  it("uses 250 as draw distance on Android/iOS", () => {
+    const flashList = mountFlashList();
+    flashList.find(ProgressiveListView)?.instance.onItemLayout(0);
+    jest.advanceTimersByTime(1000);
+    expect(
+      flashList
+        .find(ProgressiveListView)
+        ?.instance.getCurrentRenderAheadOffset()
+    ).toBe(250);
+    flashList.unmount();
   });
 });

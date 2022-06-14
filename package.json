@@ -14,7 +14,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "up": "/opt/dev/bin/dev up && bundle install && cd fixture && yarn && cd ios && bundle exec pod install && brew tap wix/brew && brew install applesimutils && cd ../../ && yarn build",
+    "up": "/opt/dev/bin/dev up && bundle install && yarn fixture-up && yarn e2e-up && yarn build && yarn fixture-web-up",
+    "fixture-web-up": "cd fixture/web-app && yarn && cd ../../",
+    "fixture-up": "cd fixture && yarn && cd ios && bundle exec pod install && cd ../../",
+    "e2e-up": "cd fixture/ios && brew tap wix/brew && brew install applesimutils && cd ../../",
     "start": "cd fixture && react-native start",
     "test": "jest",
     "lint": "yarn eslint . --ext .ts,.tsx",
@@ -29,6 +32,8 @@
     "rei": "yarn run-e2e-ios",
     "run-e2e-android": "cd fixture && yarn e2e:build:android && yarn e2e:test:android",
     "rea": "yarn run-e2e-android",
+    "run-web": "cd fixture/web-app && yarn web",
+    "rw": "yarn run-web",
     "predeploy:website": "sh ./build_website.sh",
     "deploy:website": "gh-pages -d website/_site"
   },

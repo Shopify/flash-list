@@ -10,7 +10,7 @@ export {
   useOnNativeBlankAreaEvents,
   BlankAreaEventHandler,
   BlankAreaEvent,
-} from "./AutoLayoutView";
+} from "./native/auto-layout/AutoLayoutView";
 export {
   useBenchmark,
   BenchmarkParams,
@@ -28,5 +28,5 @@ export {
 } from "./benchmark/useBlankAreaTracker";
 export { JSFPSMonitor, JSFPSResult } from "./benchmark/JSFPSMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
-export { default as ViewToken } from "./ViewToken";
-export { default as CellContainer } from "./CellContainer";
+export { default as ViewToken } from "./viewability/ViewToken";
+export { default as CellContainer } from "./native/cell-container/CellContainer";

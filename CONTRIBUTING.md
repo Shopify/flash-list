@@ -39,6 +39,12 @@ To run the example app on iOS:
 yarn run-ios
 ```
 
+To run the web sample:
+
+```sh
+yarn run-web
+```
+
 To fix possible formatting errors, run the following:
 
 ```sh

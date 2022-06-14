@@ -1,8 +1,8 @@
 import { ViewabilityConfig } from "react-native";
 import { Dimension, Layout } from "recyclerlistview";
 
-import CustomError from "./errors/CustomError";
-import ExceptionList from "./errors/ExceptionList";
+import CustomError from "../errors/CustomError";
+import ExceptionList from "../errors/ExceptionList";
 
 /**
  * Helper class for computing viewable items based on the passed `viewabilityConfig`.
