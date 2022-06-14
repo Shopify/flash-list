@@ -25,10 +25,10 @@ export interface ListRenderItemInfo<TItem> {
 
 export type RenderTarget = "Cell" | "StickyHeader" | "Measurement";
 
-export const RenderTargetOptions = {
-  Cell: "Cell" as RenderTarget,
-  StickyHeader: "StickyHeader" as RenderTarget,
-  Measurement: "Measurement" as RenderTarget,
+export const RenderTargetOptions: Record<string, RenderTarget> = {
+  Cell: "Cell",
+  StickyHeader: "StickyHeader",
+  Measurement: "Measurement",
 };
 
 export type ListRenderItem<TItem> = (
