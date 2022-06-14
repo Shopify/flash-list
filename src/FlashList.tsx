@@ -28,7 +28,6 @@ import ViewabilityManager from "./viewability/ViewabilityManager";
 import {
   FlashListProps,
   ContentStyle,
-  ListRenderItem,
   RenderTarget,
   RenderTargetOptions,
 } from "./FlashListProps";
