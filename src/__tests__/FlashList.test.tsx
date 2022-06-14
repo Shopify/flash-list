@@ -738,4 +738,27 @@ describe("FlashList", () => {
         .find(Text)?.props.children
     ).toBe("Measurement");
   });
+  it("force updates items only when renderItem change", () => {
+    const renderItem = jest.fn(() => <Text>Test</Text>);
+    const flashList = mountFlashList({
+      data: new Array(1).fill("1"),
+      renderItem,
+    });
+    flashList.setProps({ data: new Array(1).fill("1") });
+    expect(renderItem).toBeCalledTimes(1);
+    const newRenderItem = jest.fn(() => <Text>Test</Text>);
+    flashList.setProps({
+      data: new Array(1).fill("1"),
+      renderItem: newRenderItem,
+    });
+    expect(newRenderItem).toBeCalledTimes(1);
+  });
+  it("forwards disableAutoLayout prop correctly", () => {
+    const flashList = mountFlashList();
+    expect(flashList.find(AutoLayoutView)?.props.disableAutoLayout).toBe(
+      undefined
+    );
+    flashList.setProps({ disableAutoLayout: true });
+    expect(flashList.find(AutoLayoutView)?.props.disableAutoLayout).toBe(true);
+  });
 });

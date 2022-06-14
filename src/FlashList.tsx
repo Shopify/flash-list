@@ -50,7 +50,7 @@ export interface FlashListState<T> {
   layoutProvider: GridLayoutProviderWithProps<T>;
   data?: ReadonlyArray<T> | null;
   extraData?: ExtraData<unknown>;
-  renderItem?: ListRenderItem<T> | null | undefined;
+  renderItem?: FlashListProps<T>["renderItem"];
 }
 
 interface ExtraData<T> {
