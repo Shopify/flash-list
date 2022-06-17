@@ -1,6 +1,6 @@
 {
   "name": "@shopify/flash-list",
-  "version": "0.6.1",
+  "version": "1.0.0",
   "keywords": [
     "react-native"
   ],
@@ -14,7 +14,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "up": "/opt/dev/bin/dev up && bundle install && cd fixture && yarn && cd ios && bundle exec pod install && brew tap wix/brew && brew install applesimutils && cd ../../ && yarn build && cd fixture/web-app && yarn && cd ../../",
+    "up": "/opt/dev/bin/dev up && bundle install && yarn fixture-up && yarn e2e-up && yarn build && yarn fixture-web-up",
+    "fixture-web-up": "cd fixture/web-app && yarn && cd ../../",
+    "fixture-up": "cd fixture && yarn && cd ios && bundle exec pod install && cd ../../",
+    "e2e-up": "cd fixture/ios && brew tap wix/brew && brew install applesimutils && cd ../../",
     "start": "cd fixture && react-native start",
     "test": "jest",
     "lint": "yarn eslint . --ext .ts,.tsx",
@@ -40,22 +43,22 @@
     "react-native": "*"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.2",
-    "@babel/runtime": "^7.18.2",
-    "@quilted/react-testing": "^0.5.11",
+    "@babel/core": "^7.18.5",
+    "@babel/runtime": "^7.18.3",
+    "@quilted/react-testing": "^0.5.13",
     "@react-native-community/eslint-config": "^3.0.0",
-    "@shopify/eslint-plugin": "^41.2.1",
+    "@shopify/eslint-plugin": "^41.3.0",
     "@types/jest": "^27.5.0",
     "@types/react-native": "0.67.6",
-    "babel-jest": "^28.1.0",
+    "babel-jest": "^28.1.1",
     "enhanced-resolve": "^5.9.3",
     "eslint": "8.17.0",
     "gh-pages": "^3.2.3",
     "jest": "^28.1.0",
-    "metro-react-native-babel-preset": "^0.71.0",
+    "metro-react-native-babel-preset": "^0.71.1",
     "react": "17.0.2",
     "react-native": "0.68.1",
-    "typescript": "^4.7.2"
+    "typescript": "^4.7.3"
   },
   "files": [
     "android",

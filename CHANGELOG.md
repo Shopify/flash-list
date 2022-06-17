@@ -7,16 +7,19 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- `data` prop change will force update items only if `renderItem` is also updated
+  - https://github.com/Shopify/flash-list/pull/453
+- Added render target info to `renderItem` callback
+  - https://github.com/Shopify/flash-list/pull/454
+
+## [1.0.0] - 2022-06-17
+
 - Upgrade recyclerlistview to v3.3.0-beta.2
   - https://github.com/Shopify/flash-list/pull/445
 - Added web support
   - https://github.com/Shopify/flash-list/pull/444
 - Added `disableAutoLayout` prop to prevent conflicts with custom `CellRendererComponent`
   - https://github.com/Shopify/flash-list/pull/452
-- `data` prop update will force update items only if `renderItem` is also updated
-  - https://github.com/Shopify/flash-list/pull/453
-- Added render target info to `renderItem` callback
-  - https://github.com/Shopify/flash-list/pull/454
 
 ## [0.6.1] - 2022-05-26
 
