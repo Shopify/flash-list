@@ -25,7 +25,7 @@ export const CustomCellRendererComponent = React.forwardRef((props: any, _) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    // The ref is correct because we can do setNativeProps on it
+    // You can get access to animated cell container's ref. This step is just for demonstration.
     cellContainerRef.current?.setNativeProps({ opacity: 1 });
   });
 
