@@ -17,7 +17,8 @@ export const pixelDifference = (
     toMatch.data,
     diff.data,
     width,
-    height
+    height,
+    { threshold: 0.2 }
   );
 
   return numDiffPixels > 0 ? diff : null;

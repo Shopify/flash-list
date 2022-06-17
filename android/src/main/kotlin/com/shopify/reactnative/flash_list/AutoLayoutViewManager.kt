@@ -38,6 +38,11 @@ class AutoLayoutViewManager: ReactViewManager() {
         view.alShadow.horizontal = isHorizontal
     }
 
+    @ReactProp(name = "disableAutoLayout")
+    fun setDisableAutoLayout(view: AutoLayoutView, disableAutoLayout: Boolean) {
+        view.disableAutoLayout = disableAutoLayout
+    }
+
     @ReactProp(name = "scrollOffset")
     fun setScrollOffset(view: AutoLayoutView, scrollOffset: Double) {
         view.alShadow.scrollOffset = convertToPixelLayout(scrollOffset, view.pixelDensity)

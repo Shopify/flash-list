@@ -16,11 +16,18 @@ import { tweets as tweetsData } from "./data/tweets";
 import Tweet from "./models/Tweet";
 
 export interface TwitterProps {
-  instance: React.RefObject<FlashList<Tweet>>;
-  blankAreaTracker: BlankAreaEventHandler;
+  instance?: React.RefObject<FlashList<Tweet>>;
+  blankAreaTracker?: BlankAreaEventHandler;
+  CellRendererComponent?: React.ComponentType<any>;
+  disableAutoLayout?: boolean;
 }
 
-const Twitter = ({ instance, blankAreaTracker }: TwitterProps) => {
+const Twitter = ({
+  instance,
+  blankAreaTracker,
+  CellRendererComponent,
+  disableAutoLayout,
+}: TwitterProps) => {
   const debugContext = useContext(DebugContext);
   const [refreshing, setRefreshing] = useState(false);
   const remainingTweets = useRef([...tweetsData].splice(10, tweetsData.length));
@@ -55,6 +62,7 @@ const Twitter = ({ instance, blankAreaTracker }: TwitterProps) => {
             setTweets(reversedTweets);
           }, 500);
         }}
+        CellRendererComponent={CellRendererComponent}
         onEndReached={() => {
           if (!debugContext.pagingEnabled) {
             return;
@@ -82,6 +90,7 @@ const Twitter = ({ instance, blankAreaTracker }: TwitterProps) => {
         onViewableItemsChanged={(info) => {
           console.log(info);
         }}
+        disableAutoLayout={disableAutoLayout}
       />
     </FlashListPerformanceView>
   );

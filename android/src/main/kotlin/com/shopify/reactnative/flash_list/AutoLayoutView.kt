@@ -16,6 +16,7 @@ import com.facebook.react.views.view.ReactViewGroup
 class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     val alShadow = AutoLayoutShadow()
     var enableInstrumentation = false
+    var disableAutoLayout = false
 
     var pixelDensity = 1.0;
 
@@ -50,7 +51,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     /** Sorts views by index and then invokes clearGaps which does the correction.
      * Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.*/
     private fun fixLayout() {
-        if (childCount > 1) {
+        if (childCount > 1 && !disableAutoLayout) {
             val positionSortedViews: Array<CellContainer> = Array(childCount) {
                 val child = getChildAt(it)
                 if (child is CellContainer) {

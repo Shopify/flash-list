@@ -27,6 +27,7 @@ export interface BlankAreaEvent {
 export interface AutoLayoutViewProps {
   onBlankAreaEvent?: BlankAreaEventHandler;
   onLayout?: (event: LayoutChangeEvent) => void;
+  disableAutoLayout?: boolean;
 }
 
 class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
@@ -60,6 +61,7 @@ class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
         enableInstrumentation={
           listeners.length !== 0 || Boolean(this.props.onBlankAreaEvent)
         }
+        disableAutoLayout={this.props.disableAutoLayout}
       >
         {this.props.children}
       </AutoLayoutViewNativeComponent>
