@@ -22,7 +22,7 @@ export const tweets: Tweet[] = [
       name: "Gergely Orosz",
       screenName: "GergelyOrosz",
       avatar:
-        "https://images.unsplash.com/photo-1650122597661-ceccf6d50692?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=48&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTY1Njk4NQ&ixlib=rb-1.2.1&q=80&w=48",
+        "https://images.unsplash.com/photo-1649827159600-237a092f95b5?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=48&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTY1Njk5OQ&ixlib=rb-1.2.1&q=80&w=48",
     },
     id: "1480833114096214018",
     fullText:
