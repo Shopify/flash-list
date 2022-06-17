@@ -7,7 +7,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- `data` prop update will force update items only if `renderItem` is also updated
+- `data` prop change will force update items only if `renderItem` is also updated
   - https://github.com/Shopify/flash-list/pull/453
 
 ## [1.0.0] - 2022-06-17
