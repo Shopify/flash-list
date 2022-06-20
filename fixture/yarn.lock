@@ -1346,14 +1346,14 @@
     warn-once "^0.1.0"
 
 "@shopify/flash-list@link:..":
-  version "0.6.1"
+  version "1.0.0"
   dependencies:
     recyclerlistview "3.3.0-beta.2"
 
-"@shopify/react-native-performance-lists-profiler@^0.0.11":
-  version "0.0.11"
-  resolved "https://npm.shopify.io/node/@shopify/react-native-performance-lists-profiler/-/0.0.11/react-native-performance-lists-profiler-0.0.11.tgz#b1d4fe842c77a5adf6749ced0070eb9e5c0e8807"
-  integrity sha512-8f3IoaX3ZiIE3xpWqR4FyQFdRdJosCeEzIpHSCRkVQMVhp2pryOqGyMKiSbJHOyCRNVSeoitHv065kwIMqvUfQ==
+"@shopify/react-native-performance-lists-profiler@^0.0.12":
+  version "0.0.12"
+  resolved "https://npm.shopify.io/node/@shopify/react-native-performance-lists-profiler/-/0.0.12/react-native-performance-lists-profiler-0.0.12.tgz#394846142fd3e44cc4ddecf4a53911383a586624"
+  integrity sha512-WySQB3uYUXL1iJ7M5COyg7bnsbo/CFMf6wQ9TtcWyW6FvpwdVbUQ9HXFtA/Kb5HW9+yvsDq5LD/Fau7zeqFsfQ==
 
 "@sideway/address@^4.1.3":
   version "4.1.3"
