@@ -47,7 +47,7 @@
     "@babel/runtime": "^7.18.3",
     "@quilted/react-testing": "^0.5.14",
     "@react-native-community/eslint-config": "^3.0.0",
-    "@shopify/eslint-plugin": "^41.3.0",
+    "@shopify/eslint-plugin": "^41.3.1",
     "@types/jest": "^27.5.0",
     "@types/react-native": "0.67.6",
     "babel-jest": "^28.1.1",
