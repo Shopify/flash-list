@@ -1587,10 +1587,10 @@
   resolved "https://registry.yarnpkg.com/@react-native/polyfills/-/polyfills-2.0.0.tgz#4c40b74655c83982c8cf47530ee7dc13d957b6aa"
   integrity sha512-K0aGNn1TjalKj+65D7ycc1//H9roAQ51GJVk5ZJQFb2teECGmzd86bYDC0aYdbRf7gtovescq4Zt6FR0tgXiHQ==
 
-"@shopify/eslint-plugin@^41.3.0":
-  version "41.3.0"
-  resolved "https://registry.yarnpkg.com/@shopify/eslint-plugin/-/eslint-plugin-41.3.0.tgz#136e46d260786e939bb4e5765f873bf6079c4405"
-  integrity sha512-zo8RopvylvX/NVBhNnNt6BKeYI8a4RWHRs/4SmG03KGXGkUO+koJ8k92C//mY+/LGTHcnlf1gPLEy5+7LUSGwA==
+"@shopify/eslint-plugin@^41.3.1":
+  version "41.3.1"
+  resolved "https://registry.yarnpkg.com/@shopify/eslint-plugin/-/eslint-plugin-41.3.1.tgz#8fe55b13a5f5d1b9f45c55a25f5d085e1908fe5c"
+  integrity sha512-d30Ox8AW1H324rs/eFSx1GFt71vcAu4srSXWPVxkbOqTIhHTjaMBpJXFDTvtjTsLPw9YwJSta8jJnkL+lHkIPA==
   dependencies:
     "@babel/eslint-parser" "^7.16.3"
     "@babel/eslint-plugin" "^7.14.5"
