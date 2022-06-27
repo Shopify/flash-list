@@ -1369,10 +1369,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@quilted/react-testing@^0.5.13":
-  version "0.5.13"
-  resolved "https://registry.yarnpkg.com/@quilted/react-testing/-/react-testing-0.5.13.tgz#677f9ceef818bf41a90edc586c6d1a3da7052fa3"
-  integrity sha512-wwlBkdjAVJ6vkjc9AHAtRkEU5kXbsqjCVAuEB/T6Ed+NjkLewT9umb37Ze/s3aK/+7wq7YHFhO+0Fr6oJ08G0A==
+"@quilted/react-testing@^0.5.14":
+  version "0.5.14"
+  resolved "https://registry.yarnpkg.com/@quilted/react-testing/-/react-testing-0.5.14.tgz#325aaf1d698fd536677c5a75cee563915e0c3646"
+  integrity sha512-rozjqjWaXQPvdGkhRYg7GJgnKz8M29r7Ar5lMo63+4gk3zkGk58dZzGYQiVag1cJlCHshKKa5JgvgUgCGYYUQQ==
   dependencies:
     "@types/react-test-renderer" "^17.0.0"
     jest-matcher-utils "^27.0.0"
