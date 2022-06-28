@@ -113,11 +113,6 @@ jobs:
           bundle exec pod install
           mkdir -p /tmp/artifacts
           set -o pipefail && env NSUnbufferedIO=YES xcodebuild clean build -scheme FlatListPro -workspace FlatListPro.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' | tee /tmp/artifacts/ios_build.log
-      - name: Archive iOS build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ios-build-artifacts
-          path: /tmp/artifacts
   build-android:
     name: "Build Android"
     runs-on: ubuntu-latest
