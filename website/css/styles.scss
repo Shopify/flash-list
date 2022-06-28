@@ -43,6 +43,11 @@ div.topbar {
   justify-content: space-between;
   align-items: center;
 }
+div.social-buttons {
+  display: inline-flex;
+  gap: 20px;
+  align-items: center;
+}
 div.header {
   margin-top: 44px;
   padding: 16px;
