@@ -2,6 +2,7 @@
 
 <div align="center">
   <a href="https://shopify.github.io/flash-list/">Website</a> •
+  <a href="https://discord.gg/k2gzABTfav">Discord</a> •
   <a href="https://shopify.github.io/flash-list/docs/">Getting started</a> •
   <a href="https://shopify.github.io/flash-list/docs/usage">Usage</a> •
   <a href="https://shopify.github.io/flash-list/docs/performance-troubleshooting">Performance</a> •
