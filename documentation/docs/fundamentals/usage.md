@@ -378,7 +378,7 @@ getItemType?: (
 ) => string | number | undefined;
 ```
 
-Allows developers to specify item types. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined. You can see example of how to use this prop [here](/guides/performant-components#getitemtype).
+Allows developers to specify item types. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined. You can see example of how to use this prop [here](/fundamentals/performant-components#getitemtype).
 
 :::warning Performance
 This method is called very frequently. Keep it fast.
