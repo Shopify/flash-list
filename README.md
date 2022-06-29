@@ -51,7 +51,7 @@ const MyList = () => {
 };
 ```
 
-See [full usage documentation](https://shopify.github.io/flash-list/docs/usage) to know better how to use FlashList.
+See [full usage documentation](https://shopify.github.io/flash-list/docs/usage) to know better how to use FlashList. Also, read our [cheat sheet](https://shopify.github.io/flash-list/docs/cheat-sheet) to avoid common pitfalls.
 
 ## App / Playground
 
