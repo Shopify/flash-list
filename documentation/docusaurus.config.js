@@ -3,7 +3,7 @@ module.exports = {
   tagline:
     "FlashList is a more performant replacement of the FlatList component.",
   url: "https://shopify.github.io/flash-list/docs",
-  baseUrl: "/docs/",
+  baseUrl: "/flash-list/docs/",
   favicon:
     "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡️</text></svg>",
   organizationName: "Shopify",
