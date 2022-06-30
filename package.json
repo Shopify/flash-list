@@ -5,7 +5,8 @@
     "react-native"
   ],
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "@shopify:registry": "https://registry.npmjs.org/"
   },
   "description": "FlashList is a more performant FlatList replacement",
   "author": "shopify",
