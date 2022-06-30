@@ -1,4 +1,4 @@
-[![Build status](./FlashList.png)](https://buildkite.com/shopify/flash-list)
+![FlashList Image](./FlashList.png)
 
 <div align="center">
   <a href="https://shopify.github.io/flash-list/">Website</a> •
