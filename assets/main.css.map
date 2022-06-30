@@ -3,10 +3,10 @@
 	"file": "main.css",
 	"sources": [
 		"main.scss",
-		"../../../../../opt/hostedtoolcache/Ruby/3.1.2/x64/lib/ruby/gems/3.1.0/gems/minima-2.5.1/_sass/minima.scss",
-		"../../../../../opt/hostedtoolcache/Ruby/3.1.2/x64/lib/ruby/gems/3.1.0/gems/minima-2.5.1/_sass/minima/_base.scss",
-		"../../../../../opt/hostedtoolcache/Ruby/3.1.2/x64/lib/ruby/gems/3.1.0/gems/minima-2.5.1/_sass/minima/_layout.scss",
-		"../../../../../opt/hostedtoolcache/Ruby/3.1.2/x64/lib/ruby/gems/3.1.0/gems/minima-2.5.1/_sass/minima/_syntax-highlighting.scss"
+		"../../../../../../var/lib/gems/2.7.0/gems/minima-2.5.1/_sass/minima.scss",
+		"../../../../../../var/lib/gems/2.7.0/gems/minima-2.5.1/_sass/minima/_base.scss",
+		"../../../../../../var/lib/gems/2.7.0/gems/minima-2.5.1/_sass/minima/_layout.scss",
+		"../../../../../../var/lib/gems/2.7.0/gems/minima-2.5.1/_sass/minima/_syntax-highlighting.scss"
 	],
 	"sourcesContent": [
 		"@import \"minima\";\n",
