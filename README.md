@@ -6,7 +6,7 @@
   <a href="https://shopify.github.io/flash-list/docs/">Getting started</a> •
   <a href="https://shopify.github.io/flash-list/docs/usage">Usage</a> •
   <a href="https://shopify.github.io/flash-list/docs/performance-troubleshooting">Performance</a> •
-  <a href="https://shopify.github.io/flash-list/performant-components">Writing performant components</a> •
+  <a href="https://shopify.github.io/flash-list/docs/fundamentals/performant-components">Writing performant components</a> •
   <a href="https://shopify.github.io/flash-list/docs/known-issues">Known Issues</a>
 <br><br>
 
