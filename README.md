@@ -24,7 +24,9 @@ If you get the error `Plugin with id 'kotlin-android' not found` while building 
 
 ## Usage
 
-If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` just by changing the component name and adding `estimatedItemSize` or refer to the example below:
+We recommend reading the detailed documentation for using `FlashList` [here](https://shopify.github.io/flash-list/docs/usage).
+
+But if you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` by changing the component name and adding the `estimatedItemSize` prop or refer to the example below:
 
 ```jsx
 import React from "react";
@@ -51,7 +53,12 @@ const MyList = () => {
 };
 ```
 
-See [full usage documentation](https://shopify.github.io/flash-list/docs/usage) to know better how to use FlashList. Also, read our [cheat sheet](https://shopify.github.io/flash-list/docs/cheat-sheet) to avoid common pitfalls.
+To avoid common pitfalls, you can also follow these steps for migrating from `FlatList`, based on our own experiences:
+
+1. Switch from `FlatList` to `FlashList` and render the list once. You should see a warning about missing `estimatedItemSize` and a suggestion. Set this value as the prop directly.
+2. **Important**: Scan your [`renderItem`](https://shopify.github.io/flash-list/docs/usage/#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you’re doing a `.map()` use indices as keys.
+3. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](https://shopify.github.io/flash-list/docs/usage/#getitemtype) prop to improve performance.
+4. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
 
 ## App / Playground
 
