@@ -3,7 +3,7 @@
     <TweetCell item={item} />;
   }}
   getItemType={({ item }) => {
-    item.type;
+    return item.type;
   }}
   data={tweets}
 />;
