@@ -4,29 +4,24 @@ on:
     branches:
       - main
 
+env:
+  RUBY_VERSION: 3.0.3
+  NODE_VERSION: 16.13.0
+
 jobs:
   release:
     name: Deploy website
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Set up Ruby 3.0
-        uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          ruby-version: 3.0
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: Install Yarn
-        run: npm install --global yarn
-
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install dependencies
         run: yarn
       - name: Install website dependencies
         run: |
-          gem install bundler
+          sudo gem install bundler
           cd website
           bundle install
       - name: Publish website and docs

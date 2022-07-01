@@ -20,4 +20,4 @@ The following metrics can be used for profiling the list's overall performance:
 
 ## How to improve performance
 
-If the numbers indicate that the performance is not good enough, you should act - **continue [here](./performant-components) to learn more about how to optimize your list.**
+If the numbers indicate that the performance is not good enough, you should act - **continue [here](/fundamentals/performant-components) to learn more about how to optimize your list.**

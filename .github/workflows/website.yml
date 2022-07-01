@@ -1,0 +1,25 @@
+name: website
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  RUBY_VERSION: 3.0.3
+  NODE_VERSION: 16.13.0
+
+jobs:
+  build-documentation:
+    name: "Build documentation"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: |
+          cd documentation
+          yarn
+          yarn build

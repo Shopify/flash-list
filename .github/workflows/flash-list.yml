@@ -1,0 +1,168 @@
+name: flash-list
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  RUBY_VERSION: 3.0.3
+  NODE_VERSION: 16.13.0
+
+jobs:
+  build-ts:
+    name: "Build Typescript"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: |
+          yarn
+          yarn build
+  build-fixture-ts:
+    name: "Build fixture Typescript"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: |
+          yarn
+          cd fixture
+          yarn
+          yarn build
+  lint-ts:
+    name: "Lint Typescript"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: |
+          yarn
+          yarn lint
+  test-ts:
+    name: "Test Typescript"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: |
+          yarn
+          yarn test --forceExit
+  metro-ios:
+    name: "Metro bundling for iOS"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: |
+          yarn
+          yarn build
+          cd fixture
+          yarn
+          mkdir -p /tmp/artifacts
+          yarn react-native bundle --entry-file index.js --platform ios --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
+      - name: Archive iOS bundle artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-bundle-artifacts
+          path: /tmp/artifacts
+  metro-android:
+    name: "Metro bundling for Android"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: |
+          cd fixture
+          yarn
+          cd android
+          mkdir -p /tmp/artifacts
+          ./gradlew bundleDebugJsAndAssets
+      - name: Archive Android bundle artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-bundle-artifacts
+          path: /tmp/artifacts
+  build-ios:
+    name: "Build iOS"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: ruby setup
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      - run: |
+          bundle install
+          cd fixture
+          yarn
+          cd ios
+          bundle exec pod install
+          mkdir -p /tmp/artifacts
+          set -o pipefail && env NSUnbufferedIO=YES xcodebuild clean build -scheme FlatListPro -workspace FlatListPro.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' | tee /tmp/artifacts/ios_build.log
+  build-android:
+    name: "Build Android"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: ruby setup
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      - run: |
+          bundle install
+          cd fixture
+          yarn
+          cd android
+          ./gradlew assembleDebug
+  run-e2e-ios:
+    name: "Run iOS e2e tests"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: ruby setup
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      - run: |
+          bundle install
+          yarn
+          brew tap wix/brew
+          brew install applesimutils
+          yarn build
+          cd fixture
+          yarn
+          cd ios
+          bundle exec pod install
+          yarn e2e:build:ios
+          yarn e2e:test:ios
+      - name: Archive iOS e2e artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-e2e-artifacts
+          path: fixture/e2e/artifacts/ios/diff/*.png
