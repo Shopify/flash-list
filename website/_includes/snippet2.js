@@ -1,6 +1,6 @@
 <FlashList
   renderItem={({ item }) => {
-    <TweetCell item={item} />;
+    return <TweetCell item={item} />;
   }}
   getItemType={({ item }) => {
     return item.type;
