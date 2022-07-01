@@ -9,10 +9,22 @@ def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion 
 def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '30.0.2'
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 21
 def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 30
-def _kotlinVersion = _ext.has('kotlinVersion') ? _ext.kotlinVersion : '1.5.30'
 def _junitVersion = _ext.has('junitVersion') ? _ext.junitVersion : '4.13.2'
 def _mockitoVersion = _ext.has('mockitoVersion') ? _ext.mockitoVersion : '3.2.0'
 def _androidTestRunnerVersion = _ext.has('androidTestRunnerVersion') ? _ext.androidTestRunnerVersion : '1.1.0'
+
+buildscript {
+    // buildscript is evaluated before any other task is executed, so this must be defined here
+    ext._kotlinVersion = rootProject.ext.has("kotlinVersion") ?  rootProject.ext.kotlinVersion() : '1.5.30'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${_kotlinVersion}")
+    }
+}
 
 android {
     compileSdkVersion _compileSdkVersion

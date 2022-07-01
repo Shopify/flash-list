@@ -1,7 +1,3 @@
-ci:
-  require:
-    - buildkite/flash-list
-
 dependencies:
   override:
     - yarn install
