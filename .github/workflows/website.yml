@@ -1,6 +1,10 @@
 name: website
 
-on: push
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 env:
   RUBY_VERSION: 3.0.3
