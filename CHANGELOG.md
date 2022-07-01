@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.3] - 2022-07-01
+
 - Add kotlin-gradle-plugin to buildscript in project build.gradle
   - https://github.com/Shopify/flash-list/pull/481
 
