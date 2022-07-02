@@ -5,7 +5,7 @@ export class AverageWindow {
   private currentAverage: number;
   private currentCount: number;
   private inputValues: (number | undefined)[];
-  private nextIndex: number = 0;
+  private nextIndex = 0;
   constructor(size: number, startValue?: number) {
     this.inputValues = new Array<number>(Math.max(1, size));
     this.currentAverage = startValue ?? 0;
