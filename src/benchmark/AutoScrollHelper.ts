@@ -66,5 +66,5 @@ export class Cancellable {
     return this._isCancelled;
   }
 
-  public _isCancelled: boolean = false;
+  public _isCancelled = false;
 }
