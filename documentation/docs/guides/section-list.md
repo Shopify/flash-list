@@ -3,7 +3,7 @@ id: section-list
 title: SectionList
 ---
 
-React Native has a convenience component on top of `FlatList`, called [`SectionList`](https://reactnative.dev/docs/sectionlist). This component has some additional props:
+React Native has a convenience component on top of `FlashList`, called [`SectionList`](https://reactnative.dev/docs/sectionlist). This component has some additional props:
 
 - [`sections`](https://reactnative.dev/docs/sectionlist#requiredsections)
 - [`renderSectionFooter`](https://reactnative.dev/docs/sectionlist#rendersectionfooter)
