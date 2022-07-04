@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Clarify installation instructions in Expo projects
+  - https://github.com/Shopify/flash-list/pull/497
+
 ## [1.0.4] - 2022-07-02
 
 - Build fix for Android projects having `kotlinVersion` defined in `build.gradle`.
