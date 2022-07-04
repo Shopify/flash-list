@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://shopify.github.io/flash-list/docs/
+    about: Read the official documentation.
+  - name: Discussions
+    url: https://github.com/Shopify/flash-list/discussions
+    about: Discuss questions, ideas etc. and share resources related to the library.
+  - name: Shopify React Native Open Source Discord
+    url: https://discord.com/channels/928252803867107358/986654488326701116
+    about: Chat with other community members in the flash-list channel on Shopify React Native Open Source Discord.
