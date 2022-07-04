@@ -96,12 +96,12 @@ estimatedItemSize?: number;
 
 ---
 
-### `ExternalScrollViewComponent`
+### `renderScrollComponent`
 
 Rendered as the main scrollview. Its contract for the scroll event should match the native scroll event contract, i.e. `scrollEvent = { nativeEvent: { contentOffset: { x: offset, y: offset } } }`
 
 ```ts
-return <FlashList ExternalScrollViewComponent={Animated.ScrollView} />;
+return <FlashList renderScrollComponent={Animated.ScrollView} />;
 ```
 
 ### `CellRendererComponent`

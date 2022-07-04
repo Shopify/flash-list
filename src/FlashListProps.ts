@@ -128,7 +128,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * Rendered as the main scrollview. Its contract for the scroll event should match the native scroll event contract, i.e.
    * `scrollEvent = { nativeEvent: { contentOffset: { x: offset, y: offset } } }`
    */
-  ExternalScrollViewComponent?:
+  renderScrollComponent?:
     | React.ComponentType<ScrollViewDefaultProps>
     | React.FC<ScrollViewDefaultProps>;
 
