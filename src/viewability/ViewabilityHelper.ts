@@ -14,7 +14,7 @@ class ViewabilityHelper {
    */
   possiblyViewableIndices: number[] = [];
 
-  hasInteracted: boolean = false;
+  hasInteracted = false;
 
   private viewableIndices: number[] = [];
   private lastReportedViewableIndices: number[] = [];
