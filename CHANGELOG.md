@@ -11,6 +11,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/497
 - Upgrade recyclerlistview to v4.0.1
   - https://github.com/Shopify/flash-list/pull/507
+- Add tslib as a dependency
+  - https://github.com/Shopify/flash-list/pull/514
 
 ## [1.0.4] - 2022-07-02
 
