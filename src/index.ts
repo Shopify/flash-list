@@ -4,6 +4,8 @@ export {
   ContentStyle,
   ListRenderItem,
   ListRenderItemInfo,
+  RenderTarget,
+  RenderTargetOptions,
 } from "./FlashListProps";
 export { default as AnimatedFlashList } from "./AnimatedFlashList";
 export {

@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-import { ScrollView, Text } from "react-native";
+import { Animated, ScrollView, Text, View } from "react-native";
 import "@quilted/react-testing/matchers";
 import { ProgressiveListView } from "recyclerlistview";
 
 import Warnings from "../errors/Warnings";
 import AutoLayoutView from "../native/auto-layout/AutoLayoutView";
 import CellContainer from "../native/cell-container/CellContainer";
+import { ListRenderItemInfo, RenderTargetOptions } from "../FlashListProps";
 
 import { mountFlashList } from "./helpers/mountFlashList";
 
@@ -711,6 +712,31 @@ describe("FlashList", () => {
         ?.instance.getCurrentRenderAheadOffset()
     ).toBe(250);
     flashList.unmount();
+  });
+  it("forwards correct renderTarget", () => {
+    const renderItem = ({ target }: ListRenderItemInfo<string>) => {
+      return <Text>{target}</Text>;
+    };
+    const flashList = mountFlashList({
+      data: ["0"],
+      stickyHeaderIndices: [0],
+      renderItem,
+    });
+    expect(flashList.find(Animated.View)?.find(Text)?.props.children).toBe(
+      RenderTargetOptions.StickyHeader
+    );
+    expect(flashList.find(View)?.find(Text)?.props.children).toBe(
+      RenderTargetOptions.Cell
+    );
+    const flashListHorizontal = mountFlashList({
+      renderItem,
+      horizontal: true,
+    });
+    expect(
+      flashListHorizontal
+        .findAllWhere((node: any) => node?.props?.style?.opacity === 0)[0]
+        .find(Text)?.props.children
+    ).toBe("Measurement");
   });
   it("force updates items only when renderItem change", () => {
     const renderItem = jest.fn(() => <Text>Test</Text>);

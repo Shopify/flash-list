@@ -25,7 +25,12 @@ import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
 import ViewabilityManager from "./viewability/ViewabilityManager";
-import { FlashListProps, ContentStyle } from "./FlashListProps";
+import {
+  FlashListProps,
+  ContentStyle,
+  RenderTarget,
+  RenderTargetOptions,
+} from "./FlashListProps";
 import {
   getCellContainerPlatformStyles,
   getItemAnimator,
@@ -291,7 +296,7 @@ class FlashList<T> extends React.PureComponent<
 
     return (
       <StickyHeaderContainer
-        overrideRowRenderer={this.stickyRowRenderer}
+        overrideRowRenderer={this.stickyOverrideRowRenderer}
         applyWindowCorrection={this.applyWindowCorrection}
         stickyHeaderIndices={stickyHeaderIndices}
         style={
@@ -589,7 +594,8 @@ class FlashList<T> extends React.PureComponent<
       this.state.dataProvider.getSize() > 0 ? (
       <View style={{ opacity: 0 }} pointerEvents="none">
         {this.rowRendererWithIndex(
-          Math.min(this.state.dataProvider.getSize() - 1, 1)
+          Math.min(this.state.dataProvider.getSize() - 1, 1),
+          RenderTargetOptions.Measurement
         )}
       </View>
     ) : null;
@@ -615,13 +621,18 @@ class FlashList<T> extends React.PureComponent<
     this.stickyContentContainerRef?.setEnabled(this.isStickyEnabled);
   };
 
-  private rowRendererWithIndex = (index: number) => {
+  private rowRendererSticky = (index: number) => {
+    return this.rowRendererWithIndex(index, RenderTargetOptions.StickyHeader);
+  };
+
+  private rowRendererWithIndex = (index: number, target: RenderTarget) => {
     // known issue: expected to pass separators which isn't available in RLV
     return this.props.renderItem?.({
-      item: this.props.data?.[index],
+      item: this.props.data![index],
       index,
+      target,
       extraData: this.state.extraData?.value,
-    } as any) as JSX.Element;
+    }) as JSX.Element;
   };
 
   /**
@@ -644,7 +655,7 @@ class FlashList<T> extends React.PureComponent<
                 : "row",
           }}
         >
-          {this.rowRendererWithIndex(index)}
+          {this.rowRendererWithIndex(index, RenderTargetOptions.Cell)}
         </View>
         {this.separator(index)}
       </>
@@ -659,13 +670,18 @@ class FlashList<T> extends React.PureComponent<
     this.stickyContentContainerRef = ref;
   };
 
-  private stickyRowRenderer = (_: any, __: any, index: number, ___: any) => {
+  private stickyOverrideRowRenderer = (
+    _: any,
+    __: any,
+    index: number,
+    ___: any
+  ) => {
     return (
       <PureComponentWrapper
         ref={this.stickyContentRef}
         enabled={this.isStickyEnabled}
         arg={index}
-        renderer={this.rowRendererWithIndex}
+        renderer={this.rowRendererSticky}
       />
     );
   };
