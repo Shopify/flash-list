@@ -7,6 +7,29 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Clarify installation instructions in Expo projects
+  - https://github.com/Shopify/flash-list/pull/497
+
+## [1.0.4] - 2022-07-02
+
+- Build fix for Android projects having `kotlinVersion` defined in `build.gradle`.
+
+## [1.0.3] - 2022-07-01
+
+- Add kotlin-gradle-plugin to buildscript in project build.gradle
+  - https://github.com/Shopify/flash-list/pull/481
+
+## [1.0.2] - 2022-06-30
+
+- Minor changes
+
+## [1.0.1] - 2022-06-30
+
+- `data` prop change will force update items only if `renderItem` is also updated
+  - https://github.com/Shopify/flash-list/pull/453
+
+## [1.0.0] - 2022-06-17
+
 - Upgrade recyclerlistview to v3.3.0-beta.2
   - https://github.com/Shopify/flash-list/pull/445
 - Added web support

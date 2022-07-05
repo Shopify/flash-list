@@ -2,7 +2,7 @@
 Sample list for web
  */
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
 
 const ListItem = ({ index }: { index: string }) => {
@@ -21,17 +21,7 @@ const ListItem = ({ index }: { index: string }) => {
       }}
       style={{ height }}
     >
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "cyan",
-          borderWidth: 2,
-
-          borderColor: "white",
-          alignItems: "center",
-          justifyContent: "space-around",
-        }}
-      >
+      <View style={styles.container}>
         <Text>
           Web Item: {index}, size: {height}
         </Text>
@@ -60,3 +50,14 @@ const List = () => {
 };
 
 export default List;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "cyan",
+    borderWidth: 2,
+    borderColor: "white",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+});

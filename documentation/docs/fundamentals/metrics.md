@@ -5,8 +5,6 @@ slug: /metrics
 sidebar_position: 1
 ---
 
-## Metrics
-
 FlashList enables you to track metrics in production that can give you more insight into how your app is doing in terms of performance. We recommend that you track the following in production:
 
 ### Visible blank area
