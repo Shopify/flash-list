@@ -9,6 +9,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Clarify installation instructions in Expo projects
   - https://github.com/Shopify/flash-list/pull/497
+- Upgrade recyclerlistview to v4.0.1
+  - https://github.com/Shopify/flash-list/pull/507
 
 ## [1.0.4] - 2022-07-02
 
