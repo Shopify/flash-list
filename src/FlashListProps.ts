@@ -1,3 +1,4 @@
+import type React from "react";
 import {
   StyleProp,
   ScrollViewProps,
@@ -136,6 +137,13 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * Styling for internal View for `ListHeaderComponent`.
    */
   ListHeaderComponentStyle?: StyleProp<ViewStyle> | undefined;
+
+  /**
+   * Rendered as the main scrollview.
+   */
+  renderScrollComponent?:
+    | React.ComponentType<ScrollViewProps>
+    | React.FC<ScrollViewProps>;
 
   /**
    * You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself.

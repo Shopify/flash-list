@@ -281,6 +281,7 @@ class FlashList<T> extends React.PureComponent<
       initialScrollIndex,
       style,
       contentContainerStyle,
+      renderScrollComponent,
       ...restProps
     } = this.props;
 
@@ -355,6 +356,9 @@ class FlashList<T> extends React.PureComponent<
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
           itemAnimator={this.itemAnimator}
           suppressBoundedSizeException
+          externalScrollView={
+            renderScrollComponent as RecyclerListViewProps["externalScrollView"]
+          }
         />
       </StickyHeaderContainer>
     );

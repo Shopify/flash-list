@@ -453,6 +453,18 @@ refreshing?: boolean;
 
 Set this true while waiting for new data from a refresh.
 
+### `renderScrollComponent`
+
+```tsx
+import type { ScrollViewProps } from "react-native";
+
+renderScrollComponent?:
+    | React.ComponentType<ScrollViewProps>
+    | React.FC<ScrollViewProps>;
+```
+
+Rendered as the main scrollview.
+
 ### `viewabilityConfig`
 
 ```tsx
