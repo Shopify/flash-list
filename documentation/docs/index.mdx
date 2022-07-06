@@ -36,17 +36,14 @@ feature, you will need to manually link the dependency - read
 </TabItem>
 <TabItem value="expo">
 
+- ✅ You can use this library with [Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
+- ❌ This library can't be used in the "Expo Go" app because it [requires custom native code](https://docs.expo.dev/workflow/customizing/).
+
 ```bash
 expo install @shopify/flash-list expo-dev-client
 ```
 
-You can then run the app on iOS or Android via:
-
-```bash
-expo run:ios
-# or
-expo run:android
-```
+You can then [create a new Development Build](https://docs.expo.dev/development/build/) and begin using `FlashList`.
 
 </TabItem>
 </Tabs>

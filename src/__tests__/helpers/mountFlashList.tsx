@@ -1,10 +1,10 @@
 import React from "react";
-import { ListRenderItem, Text } from "react-native";
+import { Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { mount, Root } from "@quilted/react-testing";
 
 import FlashList from "../../FlashList";
-import { FlashListProps } from "../../FlashListProps";
+import { FlashListProps, ListRenderItem } from "../../FlashListProps";
 
 jest.mock("../../FlashList", () => {
   const ActualFlashList = jest.requireActual("../../FlashList").default;

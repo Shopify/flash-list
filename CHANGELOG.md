@@ -7,6 +7,15 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add Apple TV support
+  - https://github.com/Shopify/flash-list/pull/511
+- Clarify installation instructions in Expo projects
+  - https://github.com/Shopify/flash-list/pull/497
+- Upgrade recyclerlistview to v4.0.1
+  - https://github.com/Shopify/flash-list/pull/507
+- Add tslib as a dependency
+  - https://github.com/Shopify/flash-list/pull/514
+
 ## [1.0.4] - 2022-07-02
 
 - Build fix for Android projects having `kotlinVersion` defined in `build.gradle`.
@@ -26,6 +35,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - `data` prop change will force update items only if `renderItem` is also updated
   - https://github.com/Shopify/flash-list/pull/453
+- Added render target info to `renderItem` callback
+  - https://github.com/Shopify/flash-list/pull/454
 
 ## [1.0.0] - 2022-06-17
 
