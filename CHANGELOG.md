@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add Apple TV support
+  - https://github.com/Shopify/flash-list/pull/511
 - Clarify installation instructions in Expo projects
   - https://github.com/Shopify/flash-list/pull/497
 - Upgrade recyclerlistview to v4.0.1
