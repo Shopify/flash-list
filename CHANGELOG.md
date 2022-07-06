@@ -11,6 +11,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Build fix for Android projects having `kotlinVersion` defined in `build.gradle`.
 - Allow providing an external scrollview.
+  - https://github.com/Shopify/flash-list/pull/502
 
 ## [1.0.3] - 2022-07-01
 

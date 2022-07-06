@@ -7,7 +7,6 @@ import {
   ViewStyle,
   ColorValue,
 } from "react-native";
-import type { ScrollViewDefaultProps } from "recyclerlistview/dist/reactnative/core/scrollcomponent/BaseScrollView";
 
 import { BlankAreaEventHandler } from "./native/auto-layout/AutoLayoutView";
 import ViewToken from "./viewability/ViewToken";
@@ -125,12 +124,11 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   ListHeaderComponentStyle?: StyleProp<ViewStyle> | undefined;
 
   /**
-   * Rendered as the main scrollview. Its contract for the scroll event should match the native scroll event contract, i.e.
-   * `scrollEvent = { nativeEvent: { contentOffset: { x: offset, y: offset } } }`
+   * Rendered as the main scrollview.
    */
   renderScrollComponent?:
-    | React.ComponentType<ScrollViewDefaultProps>
-    | React.FC<ScrollViewDefaultProps>;
+    | React.ComponentType<ScrollViewProps>
+    | React.FC<ScrollViewProps>;
 
   /**
    * You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself.

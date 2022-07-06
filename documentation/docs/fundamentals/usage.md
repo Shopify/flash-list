@@ -96,14 +96,6 @@ estimatedItemSize?: number;
 
 ---
 
-### `renderScrollComponent`
-
-Rendered as the main scrollview. Its contract for the scroll event should match the native scroll event contract, i.e. `scrollEvent = { nativeEvent: { contentOffset: { x: offset, y: offset } } }`
-
-```ts
-return <FlashList renderScrollComponent={Animated.ScrollView} />;
-```
-
 ### `CellRendererComponent`
 
 Each cell is rendered using this element. Can be a React Component Class, or a render function. The root component should always be a `CellContainer` which is also the default component used. Ensure that the original `props` are passed to the returned `CellContainer`. The `props` contain the following properties:
@@ -455,6 +447,18 @@ refreshing?: boolean;
 ```
 
 Set this true while waiting for new data from a refresh.
+
+### `renderScrollComponent`
+
+```tsx
+import type { ScrollViewProps } from "react-native";
+
+renderScrollComponent?:
+    | React.ComponentType<ScrollViewProps>
+    | React.FC<ScrollViewProps>;
+```
+
+Rendered as the main scrollview.
 
 ### `viewabilityConfig`
 
