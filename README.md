@@ -1,4 +1,4 @@
-![FlashList Image](./FlashList.png)
+![FlashList Image](https://raw.githubusercontent.com/Shopify/flash-list/main/FlashList.png)
 
 <div align="center">
   <a href="https://shopify.github.io/flash-list/">Website</a> •
