@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.DisplayMetrics
 import android.view.View
+import android.view.ViewGroup
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
@@ -65,6 +66,31 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
             alShadow.clearGapsAndOverlaps(positionSortedViews)
         }
     }
+    private fun fixFooter() {
+        val footer = getFooter() as View;
+        val autoLayoutEnd = if (alShadow.horizontal) right else bottom
+        val diff = alShadow.lastMaxBoundOverall - autoLayoutEnd
+        if (diff != 0) {
+            if (alShadow.horizontal) {
+                footer.offsetLeftAndRight(diff)
+            } else {
+                footer.offsetTopAndBottom(diff)
+            }
+        }
+    }
+
+    private fun getFooter() {
+        (parent as ViewGroup)?.let {
+            val count = it.childCount;
+            for (i in 0 until count) {
+                val view = it.getChildAt(i)
+                if (view is CellContainer && view.index == -1) {
+                    return@let view
+                }
+            }
+        }
+    }
+
 
     /** TODO: Check migration to Fabric */
     private fun emitBlankAreaEvent() {
