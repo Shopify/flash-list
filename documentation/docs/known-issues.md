@@ -33,3 +33,7 @@ As of now we only provide relevant data and index. No plans to change this.
 - `onBlankArea` event and `useBlankAreaTracker` hook are not supported.
 
 Exercise caution and make sure all changes are tested on web as there could be some differences when compared to Android/iOS.
+
+### 6) `react-native-windows/macos` support
+
+FlashList will run in JS only mode on both Windows and macOS. We don't have plans to write native code or actively test on platforms other than Android, iOS and Web. Please use at your own risk.
