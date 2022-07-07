@@ -10,6 +10,11 @@ import { ListRenderItemInfo, RenderTargetOptions } from "../FlashListProps";
 
 import { mountFlashList } from "./helpers/mountFlashList";
 
+jest.mock("../native/cell-container/CellContainer", () => {
+  return jest.requireActual("../native/cell-container/CellContainer.ios.ts")
+    .default;
+});
+
 describe("FlashList", () => {
   beforeEach(() => {
     jest.clearAllMocks();
