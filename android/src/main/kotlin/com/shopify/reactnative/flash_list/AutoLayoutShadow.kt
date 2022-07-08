@@ -69,6 +69,7 @@ class AutoLayoutShadow {
                 }
             }
             lastMaxBoundOverall = kotlin.math.max(lastMaxBoundOverall, if (horizontal) cell.right else cell.bottom)
+            lastMaxBoundOverall = kotlin.math.max(lastMaxBoundOverall, if (horizontal) neighbour.right else neighbour.bottom)
         }
         lastMaxBound = maxBoundNeighbour
         lastMinBound = minBound

@@ -576,11 +576,12 @@ class FlashList<T> extends React.PureComponent<
   private footer = () => {
     return (
       <>
-        <View
+        <CellContainer
+          index={-1}
           style={[this.props.ListFooterComponentStyle, this.getTransform()]}
         >
           {this.getValidComponent(this.props.ListFooterComponent)}
-        </View>
+        </CellContainer>
         <View
           style={{
             paddingBottom: this.contentStyle.paddingBottom,
