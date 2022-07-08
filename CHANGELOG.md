@@ -9,6 +9,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Added JS only fallbacks for unsupported platforms
   - https://github.com/Shopify/flash-list/pull/518
+- Added footer correction in AutoLayoutView
+  - https://github.com/Shopify/flash-list/pull/519
 
 ## [1.1.0] - 2022-07-06
 
