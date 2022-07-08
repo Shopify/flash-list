@@ -6,6 +6,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.HorizontalScrollView
 import android.widget.ScrollView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
@@ -126,8 +127,8 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     private fun getParentScrollView(): View? {
         var alParent = parent;
         while (alParent != null) {
-            if (alParent is ScrollView) {
-                return alParent
+            if (alParent is ScrollView || alParent is HorizontalScrollView) {
+                return alParent as View
             }
             alParent = alParent.parent;
         }
