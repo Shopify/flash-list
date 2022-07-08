@@ -39,6 +39,8 @@ import UIKit
     private var enableInstrumentation = false
     private var disableAutoLayout = false
 
+    /// Tracks where the last pixel is drawn in the overall
+    private var lastMaxBoundOverall: CGFloat = 0
     /// Tracks where the last pixel is drawn in the visible window
     private var lastMaxBound: CGFloat = 0
     /// Tracks where first pixel is drawn in the visible window
@@ -46,9 +48,10 @@ import UIKit
 
     override func layoutSubviews() {
         fixLayout()
+        fixFooter()
         super.layoutSubviews()
 
-        let scrollView = sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView })
+        let scrollView = getScrollView()
         guard enableInstrumentation, let scrollView = scrollView as? UIScrollView else { return }
 
         let scrollContainerSize = horizontal ? scrollView.frame.width : scrollView.frame.height
@@ -74,6 +77,10 @@ import UIKit
                 "offsetEnd": blankOffsetEnd,
             ]
         )
+    }
+
+    func getScrollView() -> UIView? {
+        return sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView })
     }
 
     /// Sorts views by index and then invokes clearGaps which does the correction.
@@ -105,7 +112,7 @@ import UIKit
         var minBound: CGFloat = CGFloat(Int.max)
         var maxBoundNextCell: CGFloat = 0
         let correctedScrollOffset = scrollOffset - (horizontal ? frame.minX : frame.minY)
-
+        lastMaxBoundOverall = 0
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
             let cellTop = cellContainer.frame.minY
@@ -172,6 +179,8 @@ import UIKit
                     maxBoundNextCell = max(maxBound, nextCellBottom)
                 }
             }
+            lastMaxBoundOverall = max(lastMaxBoundOverall, horizontal ? cellContainer.frame.maxX : cellContainer.frame.maxY)
+            lastMaxBoundOverall = max(lastMaxBoundOverall, horizontal ? nextCell.frame.maxX : nextCell.frame.maxY)
         }
 
         lastMaxBound = maxBoundNextCell
@@ -214,5 +223,45 @@ import UIKit
         } else {
             return (cellFrame.minY >= boundsStart || cellFrame.maxY >= boundsStart) && (cellFrame.minY <= boundsEnd || cellFrame.maxY <= boundsEnd)
         }
+    }
+
+    /// Fixes footer position along with rest of the items
+    func fixFooter() {
+        if !disableAutoLayout {
+            if let parentSV = getScrollView() {
+                let isAutoLayoutEndVisible = horizontal ? frame.maxX <= parentSV.frame.width : frame.maxY <= parentSV.frame.height
+                if isAutoLayoutEndVisible {
+                    if let footer = getFooter() {
+                    let diff = getFooterDiff()
+                    if diff != 0 {
+                        if (horizontal) {
+                            footer.frame.origin.x += diff
+                            frame.size.width += diff
+                            superview?.frame.size.width += diff
+                        } else {
+                            footer.frame.origin.y += diff
+                            frame.size.height += diff
+                            superview?.frame.size.height += diff
+                        }
+                    }
+                }
+            }
+        }
+    }
+    }
+
+    func getFooterDiff() -> CGFloat {
+        if subviews.count == 0 {
+            lastMaxBoundOverall = 0
+        } else if subviews.count == 1 {
+            let firstChild = subviews[0]
+            lastMaxBoundOverall = horizontal ? firstChild.frame.maxX : firstChild.frame.maxY
+        }
+        let autoLayoutEnd = horizontal ? frame.width : frame.height
+        return lastMaxBoundOverall - autoLayoutEnd
+    }
+
+    func getFooter() -> UIView? {
+        return superview?.subviews.first(where:{($0 as? CellContainer)?.index == -1})
     }
 }
