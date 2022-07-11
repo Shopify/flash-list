@@ -226,29 +226,29 @@ import UIKit
     }
 
     /// Fixes footer position along with rest of the items
-    func fixFooter() {
-        if !disableAutoLayout {
-            if let parentSV = getScrollView() {
-                let isAutoLayoutEndVisible = horizontal ? frame.maxX <= parentSV.frame.width : frame.maxY <= parentSV.frame.height
-                if isAutoLayoutEndVisible {
-                    if let footer = getFooter() {
-                    let diff = getFooterDiff()
-                    if diff != 0 {
-                        if (horizontal) {
-                            footer.frame.origin.x += diff
-                            frame.size.width += diff
-                            superview?.frame.size.width += diff
-                        } else {
-                            footer.frame.origin.y += diff
-                            frame.size.height += diff
-                            superview?.frame.size.height += diff
-                        }
-                    }
-                }
-            }
-        }
-    }
-    }
+func fixFooter() {
+		guard !disableAutoLayout, let parentScrollView = getScrollView() else {
+			return
+		}
+		
+		let isAutoLayoutEndVisible = horizontal ? frame.maxX <= parentScrollView.frame.width : frame.maxY <= parentScrollView.frame.height
+		guard isAutoLayoutEndVisible, let footer = getFooter() else {
+			return
+		}
+		
+		let diff = getFooterDiff()
+		guard diff != 0 else { return }
+		
+		if (horizontal) {
+			footer.frame.origin.x += diff
+			frame.size.width += diff
+			superview?.frame.size.width += diff
+		} else {
+			footer.frame.origin.y += diff
+			frame.size.height += diff
+			superview?.frame.size.height += diff
+		}
+	}
 
     func getFooterDiff() -> CGFloat {
         if subviews.count == 0 {
