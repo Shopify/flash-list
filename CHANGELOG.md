@@ -11,6 +11,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/518
 - Added footer correction in AutoLayoutView
   - https://github.com/Shopify/flash-list/pull/519
+- Added `viewPosition` and `viewOffset` support scrollTo methods
+  - https://github.com/Shopify/flash-list/pull/520
 
 ## [1.1.0] - 2022-07-06
 
