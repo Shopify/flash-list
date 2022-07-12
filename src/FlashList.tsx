@@ -33,6 +33,7 @@ import {
 } from "./FlashListProps";
 import {
   getCellContainerPlatformStyles,
+  getFooterContainer,
   getItemAnimator,
   PlatformConfig,
 } from "./native/config/PlatformHelper";
@@ -574,14 +575,15 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private footer = () => {
+    const FooterContainer = getFooterContainer() ?? CellContainer;
     return (
       <>
-        <CellContainer
+        <FooterContainer
           index={-1}
           style={[this.props.ListFooterComponentStyle, this.getTransform()]}
         >
           {this.getValidComponent(this.props.ListFooterComponent)}
-        </CellContainer>
+        </FooterContainer>
         <View
           style={{
             paddingBottom: this.contentStyle.paddingBottom,
