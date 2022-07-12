@@ -771,7 +771,6 @@ class FlashList<T> extends React.PureComponent<
     viewOffset?: number | undefined;
     viewPosition?: number | undefined;
   }) {
-    // known issue: no support for view offset/position
     const layout = this.rlvRef?.getLayout(params.index);
     const listSize = this.rlvRef?.getRenderedSize();
 
