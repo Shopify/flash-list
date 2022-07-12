@@ -1676,9 +1676,10 @@
     join-component "^1.1.0"
 
 "@shopify/flash-list@file:../..":
-  version "0.6.1"
+  version "1.1.0"
   dependencies:
-    recyclerlistview "3.3.0-beta.2"
+    recyclerlistview "4.0.1"
+    tslib "2.4.0"
 
 "@sideway/address@^4.1.3":
   version "4.1.4"
@@ -5536,10 +5537,10 @@ recast@^0.20.4:
     source-map "~0.6.1"
     tslib "^2.0.1"
 
-recyclerlistview@3.3.0-beta.2:
-  version "3.3.0-beta.2"
-  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.3.0-beta.2.tgz#c51781a0e40115ece491ef3c30620e88f27da66a"
-  integrity sha512-xrg5boxoF/IZnfsvS5jUSxOYRmir7PM78XUnj0WXSYYQTEIEDRNYcF8Bx75+RnsbamBNnqME11xV5dEnFkrMNA==
+recyclerlistview@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-4.0.1.tgz#b653fc4151b2931aafe753c182908f97997c5e19"
+  integrity sha512-KPUK8uFkE7++hgaH9duoFh3ZQQOmyeIklcoe8RkzzrsK3PoUx8D6ABAo+UhRbwaYbgyqJTcILe2htW7wJeLBLQ==
   dependencies:
     lodash.debounce "4.0.8"
     prop-types "15.5.8"
@@ -6393,15 +6394,15 @@ ts-object-utils@0.0.5:
   resolved "https://registry.yarnpkg.com/ts-object-utils/-/ts-object-utils-0.0.5.tgz#95361cdecd7e52167cfc5e634c76345e90a26077"
   integrity sha1-lTYc3s1+UhZ8/F5jTHY0XpCiYHc=
 
+tslib@2.4.0, tslib@^2.0.1, tslib@^2.1.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
+  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
+
 tslib@^1.10.0:
   version "1.14.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
-
-tslib@^2.0.1, tslib@^2.1.0:
-  version "2.4.0"
-  resolved "https://registry.npmjs.org/tslib/-/tslib-2.4.0.tgz"
-  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
 type-fest@^0.12.0:
   version "0.12.0"

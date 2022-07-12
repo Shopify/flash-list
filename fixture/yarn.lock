@@ -6656,6 +6656,11 @@ ts-object-utils@0.0.5:
   resolved "https://registry.yarnpkg.com/ts-object-utils/-/ts-object-utils-0.0.5.tgz#95361cdecd7e52167cfc5e634c76345e90a26077"
   integrity sha1-lTYc3s1+UhZ8/F5jTHY0XpCiYHc=
 
+tslib@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
+  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
+
 tslib@^2.0.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
