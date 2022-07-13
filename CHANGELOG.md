@@ -9,6 +9,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Added JS only fallbacks for unsupported platforms
   - https://github.com/Shopify/flash-list/pull/518
+- Upgrade recyclerlistview to v4.1.1
+  - https://github.com/Shopify/flash-list/pull/524
 
 ## [1.1.0] - 2022-07-06
 
