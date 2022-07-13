@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Added JS only fallbacks for unsupported platforms
+  - https://github.com/Shopify/flash-list/pull/518
+
 ## [1.1.0] - 2022-07-06
 
 - Added render target info to `renderItem` callback
