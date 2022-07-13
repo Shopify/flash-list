@@ -15,8 +15,6 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/521
 - Fix inverted mode while being horizontal
   - https://github.com/Shopify/flash-list/pull/520
-- Upgrade recyclerlistview to v4.1.1
-  - https://github.com/Shopify/flash-list/pull/522
 
 ## [1.1.0] - 2022-07-06
 
