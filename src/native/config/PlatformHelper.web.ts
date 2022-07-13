@@ -1,3 +1,5 @@
+import React from "react";
+import { View } from "react-native";
 import { BaseItemAnimator } from "recyclerlistview";
 import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platform/reactnative/itemanimators/defaultjsanimator/DefaultJSItemAnimator";
 
@@ -6,10 +8,10 @@ const PlatformConfig = {
 };
 const getCellContainerPlatformStyles = (
   inverted: boolean,
-  parentProps: { x: number; y: number }
+  parentProps: { x: number; y: number; isHorizontal?: boolean }
 ): { transform: string; WebkitTransform: string } | undefined => {
   const transformValue = `translate(${parentProps.x}px,${parentProps.y}px)${
-    inverted ? ` scaleY(-1)` : ``
+    inverted ? ` ${parentProps.isHorizontal ? `scaleX` : `scaleY`}(-1)` : ``
   }`;
   return { transform: transformValue, WebkitTransform: transformValue };
 };
@@ -17,4 +19,14 @@ const getCellContainerPlatformStyles = (
 const getItemAnimator = (): BaseItemAnimator | undefined => {
   return new DefaultJSItemAnimator();
 };
-export { PlatformConfig, getCellContainerPlatformStyles, getItemAnimator };
+
+const getFooterContainer = (): React.ComponentClass | undefined => {
+  return View;
+};
+
+export {
+  PlatformConfig,
+  getCellContainerPlatformStyles,
+  getItemAnimator,
+  getFooterContainer,
+};
