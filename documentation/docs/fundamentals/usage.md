@@ -55,6 +55,10 @@ Most of the props from `FlatList` are available in `FlashList`, too. This docume
 Required
 :::
 
+:::warning
+Components returned from this renderer that make use of `useState` may have their state recycled in other cells. See [Known Issues](../known-issues.md).
+:::
+
 ```tsx
 renderItem: ({ item, index, target, extraData }) => void;
 ```
