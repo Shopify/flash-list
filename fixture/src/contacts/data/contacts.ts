@@ -411,8 +411,8 @@ const contacts = contactsData.reduce((contactsMap, contact) => {
   return contactsMap;
 }, new Map<string, Contact[]>());
 contacts.forEach(
-  (contacts: Contact[], key: string, map: Map<string, Contact[]>) => {
-    const sortedContacts = contacts.sort((aContact, bContact) =>
+  (_contacts: Contact[], key: string, map: Map<string, Contact[]>) => {
+    const sortedContacts = _contacts.sort((aContact, bContact) =>
       aContact.lastName.localeCompare(bContact.lastName)
     );
     map.set(key, sortedContacts);

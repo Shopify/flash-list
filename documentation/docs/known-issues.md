@@ -19,21 +19,17 @@ Please note most lists do mount with deterministic sizes so make sure to check i
 
 This value is reported as 0. We don't have plans to implement this right now. Please provide feedback if this is important to you.
 
-### 3)`scrollToIndex` doesn't have `viewOffset, viewPosition` support
-
-The list only guarantees to bring the given index in view port (as close to the top as possible). There is no support for additional customization.
-
-### 4) `renderItem` callback doesn't have all features
+### 3) `renderItem` callback doesn't have all features
 
 As of now we only provide relevant data and index. No plans to change this.
 
-### 5) Web support is in beta
+### 4) Web support is in beta
 
 - Layout is async so it's possible to see shift animations on list load.
 - `onBlankArea` event and `useBlankAreaTracker` hook are not supported.
 
 Exercise caution and make sure all changes are tested on web as there could be some differences when compared to Android/iOS.
 
-### 6) `react-native-windows/macos` support
+### 5) `react-native-windows/macos` support
 
 FlashList will run in JS only mode on both Windows and macOS. We don't have plans to write native code or actively test on platforms other than Android, iOS and Web.
