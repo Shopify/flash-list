@@ -578,6 +578,9 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private footer = () => {
+    /** The web version of CellContainer uses a div directly which doesn't compose styles the way a View does.
+     * We will skip using CellContainer on web to avoid this issue. `getFooterContainer` on web will
+     * return a View. */
     const FooterContainer = getFooterContainer() ?? CellContainer;
     return (
       <>
