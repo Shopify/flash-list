@@ -543,11 +543,18 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private separator = (index: number) => {
-    const leadingItem = this.props.data?.[index];
-    const trailingItem = this.props.data?.[index + 1];
-    if (trailingItem === undefined) {
+    // Make sure we have data and don't read out of bounds
+    if (
+      this.props.data === null ||
+      this.props.data === undefined ||
+      index + 1 >= this.props.data.length
+    ) {
       return null;
     }
+
+    const leadingItem = this.props.data[index];
+    const trailingItem = this.props.data[index + 1];
+
     const props = {
       leadingItem,
       trailingItem,
