@@ -771,16 +771,39 @@ class FlashList<T> extends React.PureComponent<
     viewOffset?: number | undefined;
     viewPosition?: number | undefined;
   }) {
-    // known issue: no support for view offset/position
-    this.rlvRef?.scrollToIndex(params.index, Boolean(params.animated));
+    const layout = this.rlvRef?.getLayout(params.index);
+    const listSize = this.rlvRef?.getRenderedSize();
+
+    if (layout && listSize) {
+      const itemOffset = this.props.horizontal ? layout.x : layout.y;
+      const fixedDimension = this.props.horizontal
+        ? listSize.width
+        : listSize.height;
+      const itemSize = this.props.horizontal ? layout.width : layout.height;
+      const scrollOffset =
+        Math.max(
+          0,
+          itemOffset - (params.viewPosition || 0) * (fixedDimension - itemSize)
+        ) - (params.viewOffset || 0);
+      this.rlvRef?.scrollToOffset(
+        scrollOffset,
+        scrollOffset,
+        Boolean(params.animated),
+        true
+      );
+    }
   }
 
   public scrollToItem(params: {
     animated?: boolean | null | undefined;
     item: any;
     viewPosition?: number | undefined;
+    viewOffset?: number | undefined;
   }) {
-    this.rlvRef?.scrollToItem(params.item, Boolean(params.animated));
+    const index = this.props.data?.indexOf(params.item) ?? -1;
+    if (index >= 0) {
+      this.scrollToIndex({ ...params, index });
+    }
   }
 
   public scrollToOffset(params: {

@@ -770,4 +770,33 @@ describe("FlashList", () => {
     flashList.setProps({ disableAutoLayout: true });
     expect(flashList.find(AutoLayoutView)?.props.disableAutoLayout).toBe(true);
   });
+  it("Computed correct scrollTo offset if view position/offset are specified", () => {
+    const flashList = mountFlashList({
+      data: new Array(40).fill(1).map((_, index) => {
+        return index.toString();
+      }),
+    });
+    const plv = flashList.find(ProgressiveListView)
+      ?.instance as ProgressiveListView;
+    const scrollToOffset = jest.spyOn(plv, "scrollToOffset");
+    flashList.instance.scrollToIndex({ index: 10, viewPosition: 0.5 });
+    expect(scrollToOffset).toBeCalledWith(1650, 1650, false, true);
+    flashList.instance.scrollToIndex({
+      index: 10,
+      viewPosition: 0.5,
+      viewOffset: 100,
+    });
+    expect(scrollToOffset).toBeCalledWith(1550, 1550, false, true);
+    flashList.instance.scrollToItem({
+      item: "10",
+      viewPosition: 0.5,
+    });
+    expect(scrollToOffset).toBeCalledWith(1650, 1650, false, true);
+    flashList.setProps({ horizontal: true });
+    flashList.instance.scrollToItem({
+      item: "10",
+      viewPosition: 0.5,
+    });
+    expect(scrollToOffset).toBeCalledWith(1900, 1900, false, true);
+  });
 });
