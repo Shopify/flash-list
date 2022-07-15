@@ -1,7 +1,7 @@
 import {
   getCellContainerPlatformStyles,
   getItemAnimator,
-} from "../utils/PlatformHelper.web";
+} from "../native/config/PlatformHelper.web";
 
 describe("Platform Helper Web", () => {
   it("can compute right transform for web", () => {

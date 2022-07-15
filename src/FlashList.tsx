@@ -35,7 +35,7 @@ import {
   getCellContainerPlatformStyles,
   getItemAnimator,
   PlatformConfig,
-} from "./utils/PlatformHelper";
+} from "./native/config/PlatformHelper";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
