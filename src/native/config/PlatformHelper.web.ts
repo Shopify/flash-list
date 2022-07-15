@@ -1,3 +1,5 @@
+import React from "react";
+import { View } from "react-native";
 import { BaseItemAnimator } from "recyclerlistview";
 import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platform/reactnative/itemanimators/defaultjsanimator/DefaultJSItemAnimator";
 
@@ -17,4 +19,14 @@ const getCellContainerPlatformStyles = (
 const getItemAnimator = (): BaseItemAnimator | undefined => {
   return new DefaultJSItemAnimator();
 };
-export { PlatformConfig, getCellContainerPlatformStyles, getItemAnimator };
+
+const getFooterContainer = (): React.ComponentClass | undefined => {
+  return View;
+};
+
+export {
+  PlatformConfig,
+  getCellContainerPlatformStyles,
+  getItemAnimator,
+  getFooterContainer,
+};

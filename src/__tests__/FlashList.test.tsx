@@ -606,7 +606,9 @@ describe("FlashList", () => {
 
     // items widths before layout manager change should be 400
     flashList.findAll(CellContainer).forEach((cell) => {
-      expect(cell.instance.props.style.width).toBe(400);
+      if (cell.props.index !== -1) {
+        expect(cell.instance.props.style.width).toBe(400);
+      }
     });
 
     // This will cause a layout manager change
@@ -619,7 +621,9 @@ describe("FlashList", () => {
 
     // items widths after layout manager change should be 900
     flashList.findAll(CellContainer).forEach((cell) => {
-      expect(cell.instance.props.style.width).toBe(900);
+      if (cell.props.index !== -1) {
+        expect(cell.instance.props.style.width).toBe(900);
+      }
     });
 
     flashList.unmount();

@@ -14,4 +14,14 @@ const getCellContainerPlatformStyles = (
 const getItemAnimator = (): BaseItemAnimator | undefined => {
   return new DefaultJSItemAnimator();
 };
-export { PlatformConfig, getCellContainerPlatformStyles, getItemAnimator };
+
+const getFooterContainer = (): React.ComponentClass | undefined => {
+  return undefined;
+};
+
+export {
+  PlatformConfig,
+  getCellContainerPlatformStyles,
+  getItemAnimator,
+  getFooterContainer,
+};

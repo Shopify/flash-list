@@ -33,6 +33,7 @@ import {
 } from "./FlashListProps";
 import {
   getCellContainerPlatformStyles,
+  getFooterContainer,
   getItemAnimator,
   PlatformConfig,
 } from "./native/config/PlatformHelper";
@@ -197,7 +198,7 @@ class FlashList<T> extends React.PureComponent<
   // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
   private static getLayoutProvider<T>(
     numColumns: number,
-    props: FlashListProps<T>
+    flashListProps: FlashListProps<T>
   ) {
     return new GridLayoutProviderWithProps<T>(
       // max span or, total columns
@@ -233,7 +234,7 @@ class FlashList<T> extends React.PureComponent<
         );
         return mutableLayout?.size;
       },
-      props
+      flashListProps
     );
   }
 
@@ -574,13 +575,15 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private footer = () => {
+    const FooterContainer = getFooterContainer() ?? CellContainer;
     return (
       <>
-        <View
+        <FooterContainer
+          index={-1}
           style={[this.props.ListFooterComponentStyle, this.getTransform()]}
         >
           {this.getValidComponent(this.props.ListFooterComponent)}
-        </View>
+        </FooterContainer>
         <View
           style={{
             paddingBottom: this.contentStyle.paddingBottom,
