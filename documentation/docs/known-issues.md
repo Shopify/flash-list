@@ -15,29 +15,25 @@ FlashList and FlatList have very different internal. While the API is almost the
 
 Please note most lists do mount with deterministic sizes so make sure to check if you really need workarounds.
 
-### 2) `useState` values will be recycled
-
-If your component hierarchy returned from `renderItem` makes use of `useState`, you will find that state values set by components in other cells of the list may be reflected in cells that use the recycled component. There are two workarounds for this, see [the Github issue](https://github.com/Shopify/flash-list/issues/527#issuecomment-1184463150).
-
-### 3) `onEndReached` event doesn't have `distanceFromEnd`
+### 2) `onEndReached` event doesn't have `distanceFromEnd`
 
 This value is reported as 0. We don't have plans to implement this right now. Please provide feedback if this is important to you.
 
-### 4)`scrollToIndex` doesn't have `viewOffset, viewPosition` support
+### 3)`scrollToIndex` doesn't have `viewOffset, viewPosition` support
 
 The list only guarantees to bring the given index in view port (as close to the top as possible). There is no support for additional customization.
 
-### 5) `renderItem` callback doesn't have all features
+### 4) `renderItem` callback doesn't have all features
 
 As of now we only provide relevant data and index. No plans to change this.
 
-### 6) Web support is in beta
+### 5) Web support is in beta
 
 - Layout is async so it's possible to see shift animations on list load.
 - `onBlankArea` event and `useBlankAreaTracker` hook are not supported.
 
 Exercise caution and make sure all changes are tested on web as there could be some differences when compared to Android/iOS.
 
-### 7) `react-native-windows/macos` support
+### 6) `react-native-windows/macos` support
 
 FlashList will run in JS only mode on both Windows and macOS. We don't have plans to write native code or actively test on platforms other than Android, iOS and Web.
