@@ -73,14 +73,12 @@ const Twitter = ({
         }}
         ListHeaderComponent={Header}
         ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
-        ListFooterComponent={() => {
-          return (
-            <Footer
-              isLoading={tweets.length !== tweetsData.length}
-              isPagingEnabled={debugContext.pagingEnabled}
-            />
-          );
-        }}
+        ListFooterComponent={
+          <Footer
+            isLoading={tweets.length !== tweetsData.length}
+            isPagingEnabled={debugContext.pagingEnabled}
+          />
+        }
         ListEmptyComponent={Empty()}
         estimatedItemSize={150}
         ItemSeparatorComponent={Divider}
