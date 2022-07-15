@@ -551,9 +551,6 @@ class FlashList<T> extends React.PureComponent<
     const leadingItem = this.props.data[index];
     const trailingItem = this.props.data[index + 1];
 
-    if (trailingItem === undefined) {
-      return null;
-    }
     const props = {
       leadingItem,
       trailingItem,
