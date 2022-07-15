@@ -786,8 +786,8 @@ class FlashList<T> extends React.PureComponent<
       const scrollOffset =
         Math.max(
           0,
-          itemOffset - (params.viewPosition || 0) * (fixedDimension - itemSize)
-        ) - (params.viewOffset || 0);
+          itemOffset - (params.viewPosition ?? 0) * (fixedDimension - itemSize)
+        ) - (params.viewOffset ?? 0);
       this.rlvRef?.scrollToOffset(
         scrollOffset,
         scrollOffset,
