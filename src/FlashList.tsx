@@ -65,6 +65,7 @@ class FlashList<T> extends React.PureComponent<
   private stickyContentContainerRef?: PureComponentWrapper;
   private listFixedDimensionSize = 0;
   private transformStyle = { transform: [{ scaleY: -1 }] };
+  private transformStyleHorizontal = { transform: [{ scaleX: -1 }] };
   private distanceFromWindow = 0;
   private contentStyle: ContentStyle = {};
   private loadStartTime = 0;
@@ -79,7 +80,6 @@ class FlashList<T> extends React.PureComponent<
     applyToInitialOffset: true,
   };
 
-  private emptyObject = {};
   private postLoadTimeoutId?: ReturnType<typeof setTimeout>;
   private sizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
 
@@ -303,7 +303,7 @@ class FlashList<T> extends React.PureComponent<
         stickyHeaderIndices={stickyHeaderIndices}
         style={
           this.props.horizontal
-            ? this.emptyObject
+            ? { ...this.getTransform() }
             : { flex: 1, ...this.getTransform() }
         }
       >
@@ -496,7 +496,10 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private getTransform() {
-    return (this.props.inverted && this.transformStyle) || undefined;
+    const transformStyle = this.props.horizontal
+      ? this.transformStyleHorizontal
+      : this.transformStyle;
+    return (this.props.inverted && transformStyle) || undefined;
   }
 
   private getContentContainerInfo() {
