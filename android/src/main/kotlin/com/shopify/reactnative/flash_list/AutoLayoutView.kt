@@ -31,15 +31,15 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         fixFooter()
         super.dispatchDraw(canvas)
 
-        val parentSV = getParentScrollView()
-        if (enableInstrumentation && parentSV != null) {
+        val parentScrollView = getParentScrollView()
+        if (enableInstrumentation && parentScrollView != null) {
             /** Since we need to call this method with scrollOffset on the UI thread and not with the one react has we're querying parent's parent
             directly which will be a ScrollView. If it isn't reported values will be incorrect but the component will not break.
             RecyclerListView is expected not to change the hierarchy of children. */
 
-            val scrollContainerSize = if (alShadow.horizontal) parentSV.width else parentSV.height
+            val scrollContainerSize = if (alShadow.horizontal) parentScrollView.width else parentScrollView.height
 
-            val scrollOffset = if (alShadow.horizontal) parentSV.scrollX else parentSV.scrollY
+            val scrollOffset = if (alShadow.horizontal) parentScrollView.scrollX else parentScrollView.scrollY
 
             val startOffset = if (alShadow.horizontal) left else top
             val endOffset = if (alShadow.horizontal) right else bottom
@@ -72,27 +72,29 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
 
     /** Fixes footer position along with rest of the items */
     private fun fixFooter() {
-        if (!disableAutoLayout) {
-            val parentSV = getParentScrollView()
-            if (parentSV != null) {
-                val isAutoLayoutEndVisible = if (alShadow.horizontal) right <= parentSV.width else bottom <= parentSV.height
-                if (isAutoLayoutEndVisible) {
-                    val footer = getFooter();
-                    val diff = getFooterDiff()
-                    if (diff != 0 && footer != null) {
-                        val alParent = parent as View;
-                        if (alShadow.horizontal) {
-                            footer.offsetLeftAndRight(diff)
-                            right += diff
-                            alParent?.right += diff
-                        } else {
-                            footer.offsetTopAndBottom(diff)
-                            bottom += diff
-                            alParent?.bottom += diff
-                        }
-                    }
-                }
-            }
+        val parentScrollView = getParentScrollView()
+        if (disableAutoLayout || parentScrollView == null) {
+            return
+        }
+        val isAutoLayoutEndVisible = if (alShadow.horizontal) right <= parentScrollView.width else bottom <= parentScrollView.height
+        if (!isAutoLayoutEndVisible) {
+            return
+        }
+        val autoLayoutParent = parent as? View
+        val footer = getFooter();
+        val diff = getFooterDiff()
+        if (diff == 0 || footer == null || autoLayoutParent == null) {
+            return
+        }
+
+        if (alShadow.horizontal) {
+            footer.offsetLeftAndRight(diff)
+            right += diff
+            autoLayoutParent.right += diff
+        } else {
+            footer.offsetTopAndBottom(diff)
+            bottom += diff
+            autoLayoutParent.bottom += diff
         }
     }
 
@@ -112,12 +114,11 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     }
 
     private fun getFooter(): View? {
-        return (parent as ViewGroup)?.let {
-            val count = it.childCount;
-            for (i in 0 until count) {
+        return (parent as? ViewGroup)?.let {
+            for (i in 0 until it.childCount) {
                 val view = it.getChildAt(i)
                 if (view is CellContainer && view.index == -1) {
-                    return@let view as View
+                    return@let view
                 }
             }
             return@let null
@@ -125,12 +126,12 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     }
 
     private fun getParentScrollView(): View? {
-        var alParent = parent;
-        while (alParent != null) {
-            if (alParent is ScrollView || alParent is HorizontalScrollView) {
-                return alParent as View
+        var autoLayoutParent = parent;
+        while (autoLayoutParent != null) {
+            if (autoLayoutParent is ScrollView || autoLayoutParent is HorizontalScrollView) {
+                return autoLayoutParent as View
             }
-            alParent = alParent.parent;
+            autoLayoutParent = autoLayoutParent.parent;
         }
         return null
     }

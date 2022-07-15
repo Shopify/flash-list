@@ -198,7 +198,7 @@ class FlashList<T> extends React.PureComponent<
   // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
   private static getLayoutProvider<T>(
     numColumns: number,
-    props: FlashListProps<T>
+    flashListProps: FlashListProps<T>
   ) {
     return new GridLayoutProviderWithProps<T>(
       // max span or, total columns
@@ -234,7 +234,7 @@ class FlashList<T> extends React.PureComponent<
         );
         return mutableLayout?.size;
       },
-      props
+      flashListProps
     );
   }
 

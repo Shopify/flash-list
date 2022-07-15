@@ -13,6 +13,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/519
 - Added `viewPosition` and `viewOffset` support scrollTo methods
   - https://github.com/Shopify/flash-list/pull/521
+- Upgrade recyclerlistview to v4.1.1
+  - https://github.com/Shopify/flash-list/pull/526
 
 ## [1.1.0] - 2022-07-06
 
