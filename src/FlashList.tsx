@@ -539,13 +539,11 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private separator = (index: number) => {
-    const dataLength = this.props.data?.length || 0;
-
     // Make sure we have data and don't read out of bounds
     if (
-      index + 1 >= dataLength ||
       this.props.data === null ||
-      this.props.data === undefined
+      this.props.data === undefined ||
+      index + 1 >= this.props.data.length
     ) {
       return null;
     }
