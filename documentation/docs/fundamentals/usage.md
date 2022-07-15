@@ -36,8 +36,9 @@ To avoid common pitfalls, you can also follow these steps for migrating from `Fl
 
 1. Switch from `FlatList` to `FlashList` and render the list once. You should see a warning about missing `estimatedItemSize` and a suggestion. Set this value as the prop directly.
 2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you’re doing a `.map()` use indices as keys.
-3. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](#getitemtype) prop to improve performance.
-4. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
+3. Also check your [`renderItem`](#renderitem) hierarchy for components that make use of `useState` and verify whether that state would need to be reset if a different item is passed to that component (see [Recycling](./performant-components.md#recycling))
+4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](#getitemtype) prop to improve performance.
+5. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
 
 :::note `estimatedItemSize`
 [`estimatedItemSize`](#estimateditemsize) is necessary to achieve optimal performance.
@@ -53,10 +54,6 @@ Most of the props from `FlatList` are available in `FlashList`, too. This docume
 
 :::note
 Required
-:::
-
-:::warning
-Components returned from this renderer that make use of `useState` may have their state recycled in other cells. See [Known Issues](../known-issues.md).
 :::
 
 ```tsx
