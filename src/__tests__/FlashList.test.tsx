@@ -781,7 +781,7 @@ describe("FlashList", () => {
     const scrollToOffset = jest.spyOn(plv, "scrollToOffset");
     flashList.instance.scrollToIndex({ index: 10, viewPosition: 0.5 });
 
-    // Each item is 200px in height and to position it in the middle of the window (900 x 400), it's offset needs to be
+    // Each item is 200px in height and to position it in the middle of the window (900 x 400), its offset needs to be
     // reduced by 350px. That gives us 1650. Other test cases follow the same logic.
     expect(scrollToOffset).toBeCalledWith(1650, 1650, false, true);
     flashList.instance.scrollToItem({
