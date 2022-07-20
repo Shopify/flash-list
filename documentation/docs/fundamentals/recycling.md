@@ -22,6 +22,6 @@ const MyItem = ({ item }) => {
 };
 ```
 
-This follows advice in the [React Hooks FAQ on implementing getDerivedStateFromProps](https://reactjs.org/docs/hooks-faq.html#how-do-i-implement-getderivedstatefromprops). Ideally your component hierarchy returned from [renderItem](../fundamentals/usage.md#renderitem) does not make use of `useState`.
+This follows advice in the [React Hooks FAQ on implementing getDerivedStateFromProps](https://reactjs.org/docs/hooks-faq.html#how-do-i-implement-getderivedstatefromprops). Ideally your component hierarchy returned from [renderItem](../fundamentals/usage.md#renderitem) should not make use of `useState` for best performance.
 
 When optimizing your item component, try to ensure as few things as possible have to be re-rendered and recomputed when recycling.
