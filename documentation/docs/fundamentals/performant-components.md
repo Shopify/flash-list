@@ -5,6 +5,10 @@ title: Writing performant components
 
 While `FlashList` does its best to achieve high performance, it will still perform poorly if your item components are slow to render. In this post, let's dive deeper into how you can remedy this.
 
+## Recycling
+
+One important thing to understand is how `FlashList` works under the hood. When an item gets out of the viewport, instead of being destroyed, the component is re-rendered with a different `item` prop. When optimizing your item component, try to ensure as few things as possible have to be re-rendered and recomputed when recycling.
+
 ## Optimizations
 
 There's lots of optimizations that are applicable for _any_ React Native component and which might help render times of your item components as well. Usage of `useCallback`, `useMemo`, and `useRef` is advised - but don't use these blindly, always [measure the performance](/performance-troubleshooting) before and after making your changes.
