@@ -6,7 +6,7 @@ const PlatformConfig = {
 };
 const getCellContainerPlatformStyles = (
   inverted: boolean,
-  parentProps: { x: number; y: number }
+  parentProps: { x: number; y: number; isHorizontal?: boolean }
 ): { transform: string; WebkitTransform: string } | undefined => {
   return undefined;
 };
@@ -14,4 +14,14 @@ const getCellContainerPlatformStyles = (
 const getItemAnimator = (): BaseItemAnimator | undefined => {
   return new DefaultJSItemAnimator();
 };
-export { PlatformConfig, getCellContainerPlatformStyles, getItemAnimator };
+
+const getFooterContainer = (): React.ComponentClass | undefined => {
+  return undefined;
+};
+
+export {
+  PlatformConfig,
+  getCellContainerPlatformStyles,
+  getItemAnimator,
+  getFooterContainer,
+};

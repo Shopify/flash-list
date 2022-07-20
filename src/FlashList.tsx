@@ -33,6 +33,7 @@ import {
 } from "./FlashListProps";
 import {
   getCellContainerPlatformStyles,
+  getFooterContainer,
   getItemAnimator,
   PlatformConfig,
 } from "./native/config/PlatformHelper";
@@ -64,6 +65,7 @@ class FlashList<T> extends React.PureComponent<
   private stickyContentContainerRef?: PureComponentWrapper;
   private listFixedDimensionSize = 0;
   private transformStyle = { transform: [{ scaleY: -1 }] };
+  private transformStyleHorizontal = { transform: [{ scaleX: -1 }] };
   private distanceFromWindow = 0;
   private contentStyle: ContentStyle = {};
   private loadStartTime = 0;
@@ -78,7 +80,6 @@ class FlashList<T> extends React.PureComponent<
     applyToInitialOffset: true,
   };
 
-  private emptyObject = {};
   private postLoadTimeoutId?: ReturnType<typeof setTimeout>;
   private sizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
 
@@ -197,7 +198,7 @@ class FlashList<T> extends React.PureComponent<
   // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
   private static getLayoutProvider<T>(
     numColumns: number,
-    props: FlashListProps<T>
+    flashListProps: FlashListProps<T>
   ) {
     return new GridLayoutProviderWithProps<T>(
       // max span or, total columns
@@ -233,7 +234,7 @@ class FlashList<T> extends React.PureComponent<
         );
         return mutableLayout?.size;
       },
-      props
+      flashListProps
     );
   }
 
@@ -302,7 +303,7 @@ class FlashList<T> extends React.PureComponent<
         stickyHeaderIndices={stickyHeaderIndices}
         style={
           this.props.horizontal
-            ? this.emptyObject
+            ? { ...this.getTransform() }
             : { flex: 1, ...this.getTransform() }
         }
       >
@@ -495,7 +496,10 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private getTransform() {
-    return (this.props.inverted && this.transformStyle) || undefined;
+    const transformStyle = this.props.horizontal
+      ? this.transformStyleHorizontal
+      : this.transformStyle;
+    return (this.props.inverted && transformStyle) || undefined;
   }
 
   private getContentContainerInfo() {
@@ -539,11 +543,18 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private separator = (index: number) => {
-    const leadingItem = this.props.data?.[index];
-    const trailingItem = this.props.data?.[index + 1];
-    if (trailingItem === undefined) {
+    // Make sure we have data and don't read out of bounds
+    if (
+      this.props.data === null ||
+      this.props.data === undefined ||
+      index + 1 >= this.props.data.length
+    ) {
       return null;
     }
+
+    const leadingItem = this.props.data[index];
+    const trailingItem = this.props.data[index + 1];
+
     const props = {
       leadingItem,
       trailingItem,
@@ -574,13 +585,18 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private footer = () => {
+    /** The web version of CellContainer uses a div directly which doesn't compose styles the way a View does.
+     * We will skip using CellContainer on web to avoid this issue. `getFooterContainer` on web will
+     * return a View. */
+    const FooterContainer = getFooterContainer() ?? CellContainer;
     return (
       <>
-        <View
+        <FooterContainer
+          index={-1}
           style={[this.props.ListFooterComponentStyle, this.getTransform()]}
         >
           {this.getValidComponent(this.props.ListFooterComponent)}
-        </View>
+        </FooterContainer>
         <View
           style={{
             paddingBottom: this.contentStyle.paddingBottom,
@@ -768,16 +784,39 @@ class FlashList<T> extends React.PureComponent<
     viewOffset?: number | undefined;
     viewPosition?: number | undefined;
   }) {
-    // known issue: no support for view offset/position
-    this.rlvRef?.scrollToIndex(params.index, Boolean(params.animated));
+    const layout = this.rlvRef?.getLayout(params.index);
+    const listSize = this.rlvRef?.getRenderedSize();
+
+    if (layout && listSize) {
+      const itemOffset = this.props.horizontal ? layout.x : layout.y;
+      const fixedDimension = this.props.horizontal
+        ? listSize.width
+        : listSize.height;
+      const itemSize = this.props.horizontal ? layout.width : layout.height;
+      const scrollOffset =
+        Math.max(
+          0,
+          itemOffset - (params.viewPosition ?? 0) * (fixedDimension - itemSize)
+        ) - (params.viewOffset ?? 0);
+      this.rlvRef?.scrollToOffset(
+        scrollOffset,
+        scrollOffset,
+        Boolean(params.animated),
+        true
+      );
+    }
   }
 
   public scrollToItem(params: {
     animated?: boolean | null | undefined;
     item: any;
     viewPosition?: number | undefined;
+    viewOffset?: number | undefined;
   }) {
-    this.rlvRef?.scrollToItem(params.item, Boolean(params.animated));
+    const index = this.props.data?.indexOf(params.item) ?? -1;
+    if (index >= 0) {
+      this.scrollToIndex({ ...params, index });
+    }
   }
 
   public scrollToOffset(params: {

@@ -606,7 +606,9 @@ describe("FlashList", () => {
 
     // items widths before layout manager change should be 400
     flashList.findAll(CellContainer).forEach((cell) => {
-      expect(cell.instance.props.style.width).toBe(400);
+      if (cell.props.index !== -1) {
+        expect(cell.instance.props.style.width).toBe(400);
+      }
     });
 
     // This will cause a layout manager change
@@ -619,7 +621,9 @@ describe("FlashList", () => {
 
     // items widths after layout manager change should be 900
     flashList.findAll(CellContainer).forEach((cell) => {
-      expect(cell.instance.props.style.width).toBe(900);
+      if (cell.props.index !== -1) {
+        expect(cell.instance.props.style.width).toBe(900);
+      }
     });
 
     flashList.unmount();
@@ -765,5 +769,59 @@ describe("FlashList", () => {
     );
     flashList.setProps({ disableAutoLayout: true });
     expect(flashList.find(AutoLayoutView)?.props.disableAutoLayout).toBe(true);
+  });
+  it("computes correct scrollTo offset when view position is specified", () => {
+    const flashList = mountFlashList({
+      data: new Array(40).fill(1).map((_, index) => {
+        return index.toString();
+      }),
+    });
+    const plv = flashList.find(ProgressiveListView)
+      ?.instance as ProgressiveListView;
+    const scrollToOffset = jest.spyOn(plv, "scrollToOffset");
+    flashList.instance.scrollToIndex({ index: 10, viewPosition: 0.5 });
+
+    // Each item is 200px in height and to position it in the middle of the window (900 x 400), its offset needs to be
+    // reduced by 350px. That gives us 1650. Other test cases follow the same logic.
+    expect(scrollToOffset).toBeCalledWith(1650, 1650, false, true);
+    flashList.instance.scrollToItem({
+      item: "10",
+      viewPosition: 0.5,
+    });
+    expect(scrollToOffset).toBeCalledWith(1650, 1650, false, true);
+    flashList.setProps({ horizontal: true });
+    flashList.instance.scrollToItem({
+      item: "10",
+      viewPosition: 0.5,
+    });
+    expect(scrollToOffset).toBeCalledWith(1900, 1900, false, true);
+    flashList.unmount();
+  });
+  it("computes correct scrollTo offset when view offset is specified", () => {
+    const flashList = mountFlashList({
+      data: new Array(40).fill(1).map((_, index) => {
+        return index.toString();
+      }),
+    });
+    const plv = flashList.find(ProgressiveListView)
+      ?.instance as ProgressiveListView;
+    const scrollToOffset = jest.spyOn(plv, "scrollToOffset");
+
+    // Each item is 200px in height and to position it in the middle of the window (900 x 400), it's offset needs to be
+    // reduced by 350px + 100px offset. That gives us 1550. Other test cases follow the same logic.
+    flashList.instance.scrollToIndex({
+      index: 10,
+      viewPosition: 0.5,
+      viewOffset: 100,
+    });
+    expect(scrollToOffset).toBeCalledWith(1550, 1550, false, true);
+    flashList.setProps({ horizontal: true });
+    flashList.instance.scrollToItem({
+      item: "10",
+      viewPosition: 0.5,
+      viewOffset: 100,
+    });
+    expect(scrollToOffset).toBeCalledWith(1800, 1800, false, true);
+    flashList.unmount();
   });
 });
