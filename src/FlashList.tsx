@@ -6,6 +6,7 @@ import {
   ViewStyle,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  ScrollViewComponent,
 } from "react-native";
 import {
   BaseItemAnimator,
@@ -828,8 +829,40 @@ class FlashList<T> extends React.PureComponent<
     this.rlvRef?.scrollToOffset(x, y, Boolean(params.animated));
   }
 
+  /**
+   * Provides a handle to the underlying scroll node.
+   */
   public getScrollableNode(): number | null {
     return this.rlvRef?.getScrollableNode?.() || null;
+  }
+
+  /**
+   * Provides a reference to the underlying scroll component
+   */
+  public getNativeScrollRef(): View | ScrollViewComponent | null | undefined {
+    // @ts-ignore
+    return this.rlvRef?._scrollComponent?._scrollViewRef;
+  }
+
+  /**
+   * Provides a handle to the underlying scroll responder.
+   */
+  public getScrollResponder(): JSX.Element | null | undefined {
+    // @ts-ignore
+    return this.rlvRef?._scrollComponent?._scrollViewRef?.getScrollResponder();
+  }
+
+  /**
+   * Flashes the scroll indicators.
+   */
+  public flashScrollIndicators() {
+    // @ts-ignore
+    this.rlvRef?._scrollComponent?._scrollViewRef?.flashScrollIndicators();
+  }
+
+  public setNativeProps(props: { [key: string]: unknown }) {
+    // @ts-ignore
+    this.rlvRef?._scrollComponent?._scrollViewRef?.setNativeProps(props);
   }
 
   /**

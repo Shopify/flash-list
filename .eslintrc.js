@@ -39,6 +39,7 @@ module.exports = {
     "require-atomic-updates": "off",
     "@typescript-eslint/member-ordering": "off",
     "@typescript-eslint/consistent-indexed-object-style": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "jsx-a11y/no-autofocus": "off",
   },
   overrides: [

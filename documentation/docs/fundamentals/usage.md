@@ -532,6 +532,38 @@ List of `ViewabilityConfig`/`onViewableItemsChanged` pairs. A specific `onViewab
 
 # FlashList methods
 
+### `flashScrollIndicators()`
+
+```ts
+flashScrollIndicators(): void;
+```
+
+Flashes the scroll indicators.
+
+### `getNativeScrollRef()`
+
+```ts
+getNativeScrollRef(): View | ScrollViewComponent | null | undefined;
+```
+
+Provides a reference to the underlying scroll component
+
+### `getScrollResponder()`
+
+```ts
+getScrollResponder(): JSX.Element | null | undefined;
+```
+
+Provides a handle to the underlying scroll responder.
+
+### `getScrollableNode()`
+
+```ts
+getScrollableNode(): number | null;
+```
+
+Provides a handle to the underlying scroll node.
+
 ### `prepareForLayoutAnimationRender()`
 
 ```tsx
@@ -600,6 +632,14 @@ Param `offset` expects the offset to scroll to. In case of `horizontal` is true,
 
 Param `animated` (`true` by default) defines whether the list should do an animation while scrolling.
 
+### `setNativeProps()`
+
+```ts
+setNativeProps(props: { [key: string]: unknown }): void;
+```
+
+Sets native props of the underlying native view.
+
 # ScrollView props
 
 `FlashList`, as `FlatList`, uses `ScrollView` under the hood. You can take a look into the React Native documentation for [`ScrollView`](https://reactnative.dev/docs/scrollview) to see the exhaustive list of props.
@@ -617,13 +657,8 @@ The following props from `FlatList` are currently not implemented:
 
 Unsupported methods:
 
-- [`flashScrollIndicators()`](https://reactnative.dev/docs/flatlist#flashscrollindicators)
 - [`hasMore`](https://reactnative.dev/docs/virtualizedlist#hasmore)
 - [`getChildContext`](https://reactnative.dev/docs/virtualizedlist#getchildcontext)
-- [`getNativeScrollRef()`​](https://reactnative.dev/docs/flatlist#getnativescrollref)
-- [`getScrollableNode`](https://reactnative.dev/docs/virtualizedlist#getscrollablenode)
-- [`getScrollRef`](https://reactnative.dev/docs/virtualizedlist#getscrollref)
-- [`getScrollResponder()`](https://reactnative.dev/docs/flatlist#getscrollresponder)
 
 There are also `FlatList` props that would bring no value if ported to `FlashList` due to the differences in their underlying implementation:
 

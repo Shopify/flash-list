@@ -824,4 +824,9 @@ describe("FlashList", () => {
     expect(scrollToOffset).toBeCalledWith(1800, 1800, false, true);
     flashList.unmount();
   });
+
+  it("gets native scroll ref", () => {
+    const flashList = mountFlashList();
+    expect(flashList.instance.getNativeScrollRef()).toBeInstanceOf(ScrollView);
+  });
 });
