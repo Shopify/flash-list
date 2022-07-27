@@ -1,43 +1,20 @@
 import Foundation
 import UIKit
+import React
 
 
 /// Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.
 /// Note: This cannot work for masonry layouts i.e, pinterest like layout
-@objc class AutoLayoutView: UIView {
+@objc public class AutoLayoutView: UIView {
     @objc(onBlankAreaEvent)
     var onBlankAreaEvent: RCTDirectEventBlock?
 
-    @objc func setHorizontal(_ horizontal: Bool) {
-        self.horizontal = horizontal
-    }
-
-    @objc func setScrollOffset(_ scrollOffset: Int) {
-        self.scrollOffset = CGFloat(scrollOffset)
-    }
-
-    @objc func setWindowSize(_ windowSize: Int) {
-        self.windowSize = CGFloat(windowSize)
-    }
-
-    @objc func setRenderAheadOffset(_ renderAheadOffset: Int) {
-        self.renderAheadOffset = CGFloat(renderAheadOffset)
-    }
-
-    @objc func setEnableInstrumentation(_ enableInstrumentation: Bool) {
-        self.enableInstrumentation = enableInstrumentation
-    }
-
-    @objc func setDisableAutoLayout(_ disableAutoLayout: Bool) {
-        self.disableAutoLayout = disableAutoLayout
-    }
-
-    private var horizontal = false
-    private var scrollOffset: CGFloat = 0
-    private var windowSize: CGFloat = 0
-    private var renderAheadOffset: CGFloat = 0
-    private var enableInstrumentation = false
-    private var disableAutoLayout = false
+    @objc public var horizontal = false
+    @objc public var scrollOffset: CGFloat = 0
+    @objc public var windowSize: CGFloat = 0
+    @objc public var renderAheadOffset: CGFloat = 0
+    @objc public var enableInstrumentation = false
+    @objc public var disableAutoLayout = false
 
     /// Tracks where the last pixel is drawn in the overall
     private var lastMaxBoundOverall: CGFloat = 0
@@ -46,7 +23,7 @@ import UIKit
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
 
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         fixLayout()
         fixFooter()
         super.layoutSubviews()

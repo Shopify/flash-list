@@ -64,6 +64,7 @@
     "prettier": "^2.7.1",
     "react": "17.0.2",
     "react-native": "0.68.1",
+    "react-native-codegen": "^0.70.0",
     "typescript": "^4.7.4"
   },
   "files": [
@@ -77,5 +78,14 @@
   "dependencies": {
     "recyclerlistview": "4.1.1",
     "tslib": "2.4.0"
+  },
+  "codegenConfig": {
+    "libraries": [
+      {
+        "name": "rnflashlist",
+        "type": "components",
+        "jsSrcsDir": "./src/fabric"
+      }
+    ]
   }
 }

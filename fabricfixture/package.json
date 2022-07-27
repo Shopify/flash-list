@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@shopify/flash-list": "../",
+    "@shopify/flash-list": "link:../",
     "react": "18.1.0",
     "react-native": "0.70.0-rc.0"
   },

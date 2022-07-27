@@ -698,7 +698,13 @@ PODS:
     - React-logger (= 0.70.0-rc.0)
     - React-perflogger (= 0.70.0-rc.0)
   - RNFlashList (1.2.0):
-    - React-Core
+    - RCT-Folly (= 2021.07.22.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-Codegen
+    - React-RCTFabric
+    - ReactCommon/turbomodule/core
   - SocketRocket (0.6.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -921,7 +927,7 @@ SPEC CHECKSUMS:
   React-rncore: 23d65db3bd846b60aa619158de5b44506b1d8e1e
   React-runtimeexecutor: ee487c5c8d0d4a4b375659b750b53b48ed570bd3
   ReactCommon: 108b41dbec8a340e8765cf891a701eafc7bca51e
-  RNFlashList: 21e0a55b1311e24783e9ca576b053eceab4ca943
+  RNFlashList: ae2a66b9ce7ac08ef0aa249468522e897b65b030
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 454a537b6acc2912c42976cf5e542060f7a23cfe
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
