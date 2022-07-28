@@ -24,6 +24,7 @@ type NativeProps = $ReadOnly<{|
   windowSize?: Double,
   renderAheadOffset?: Double,
   enableInstrumentation?: boolean,
+  disableAutoLayout?: boolean,
   onBlankAreaEvent?: DirectEventHandler<BlankAreaEvent>, // This type is not parsable by the TS codegen, once it is, let's rewrite this file to TS
 |}>;
 

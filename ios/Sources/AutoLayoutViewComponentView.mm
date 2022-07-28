@@ -44,11 +44,12 @@ using namespace facebook::react;
 {
     const auto &newProps = *std::static_pointer_cast<const AutoLayoutViewProps>(props);
 
-    _autoLayoutView.horizontal = newProps.horizontal;
-    _autoLayoutView.scrollOffset = newProps.scrollOffset;
-    _autoLayoutView.windowSize = newProps.windowSize;
-    _autoLayoutView.renderAheadOffset = newProps.renderAheadOffset;
-    _autoLayoutView.enableInstrumentation = newProps.enableInstrumentation;
+    [_autoLayoutView setHorizontal:newProps.horizontal];
+    [_autoLayoutView setScrollOffset:newProps.scrollOffset];
+    [_autoLayoutView setWindowSize:newProps.windowSize];
+    [_autoLayoutView setRenderAheadOffset:newProps.renderAheadOffset];
+    [_autoLayoutView setEnableInstrumentation:newProps.enableInstrumentation];
+    [_autoLayoutView setDisableAutoLayout:newProps.disableAutoLayout];
 
     [super updateProps:props oldProps:oldProps];
 }

@@ -9,12 +9,36 @@ import React
     @objc(onBlankAreaEvent)
     var onBlankAreaEvent: RCTDirectEventBlock?
 
-    @objc public var horizontal = false
-    @objc public var scrollOffset: CGFloat = 0
-    @objc public var windowSize: CGFloat = 0
-    @objc public var renderAheadOffset: CGFloat = 0
-    @objc public var enableInstrumentation = false
-    @objc public var disableAutoLayout = false
+    @objc public func setHorizontal(_ horizontal: Bool) {
+        self.horizontal = horizontal
+    }
+
+    @objc public func setScrollOffset(_ scrollOffset: Int) {
+        self.scrollOffset = CGFloat(scrollOffset)
+    }
+
+    @objc public func setWindowSize(_ windowSize: Int) {
+        self.windowSize = CGFloat(windowSize)
+    }
+
+    @objc public func setRenderAheadOffset(_ renderAheadOffset: Int) {
+        self.renderAheadOffset = CGFloat(renderAheadOffset)
+    }
+
+    @objc public func setEnableInstrumentation(_ enableInstrumentation: Bool) {
+        self.enableInstrumentation = enableInstrumentation
+    }
+
+    @objc public func setDisableAutoLayout(_ disableAutoLayout: Bool) {
+        self.disableAutoLayout = disableAutoLayout
+    }
+
+    private var horizontal = false
+    private var scrollOffset: CGFloat = 0
+    private var windowSize: CGFloat = 0
+    private var renderAheadOffset: CGFloat = 0
+    private var enableInstrumentation = false
+    private var disableAutoLayout = false
 
     /// Tracks where the last pixel is drawn in the overall
     private var lastMaxBoundOverall: CGFloat = 0
