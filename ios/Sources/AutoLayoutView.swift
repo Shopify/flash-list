@@ -46,6 +46,14 @@ import React
     private var lastMaxBound: CGFloat = 0
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
+    
+    private func getSubviews() -> [UIView] {
+        #if RCT_NEW_ARCH_ENABLED
+        return superview?.subviews ?? []
+        #else
+        return subviews
+        #endif
+    }
 
     override public func layoutSubviews() {
         fixLayout()
@@ -88,15 +96,21 @@ import React
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
         guard
-            subviews.count > 1,
+            getSubviews().count > 1,
             // Fixing layout during animation can interfere with it.
             layer.animationKeys()?.isEmpty ?? true,
             !disableAutoLayout
         else { return }
-        let cellContainers = subviews
+        let cellContainers = getSubviews()
             .compactMap { subview -> CellContainerComponentView? in
                 if let cellContainer = subview as? CellContainerComponentView {
                     return cellContainer
+                } else if subview is AutoLayoutView {
+                    // On Fabric, due to view flattening children of AutoLayoutView are moved one level up, so they appear
+                    // as children of AutoLayoutViewComponentView in view hierarchy. getSubviews() method takes it under
+                    // consideration, returning children of AutoLayoutViewComponentView when on Fabric. Because of that
+                    // AutoLayoutView may be on the list, in which case we want to ignore it.
+                    return nil
                 } else {
                     assertionFailure("CellRendererComponent outer view should always be CellContainer. Learn more here: https://shopify.github.io/flash-list/docs/usage#cellrenderercomponent.")
                     return nil
@@ -256,9 +270,9 @@ import React
     }
 
     private func footerDiff() -> CGFloat {
-        if subviews.count == 0 {
+        if getSubviews().count == 0 {
             lastMaxBoundOverall = 0
-        } else if subviews.count == 1 {
+        } else if getSubviews().count == 1 {
             let firstChild = subviews[0]
             lastMaxBoundOverall = horizontal ? firstChild.frame.maxX : firstChild.frame.maxY
         }
@@ -267,6 +281,7 @@ import React
     }
 
     private func footer() -> UIView? {
+        // TODO: Investigate hierarchy here
         return superview?.subviews.first(where:{($0 as? CellContainerComponentView)?.index == -1})
     }
 }
