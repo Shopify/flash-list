@@ -70,8 +70,8 @@ import React
             !disableAutoLayout
         else { return }
         let cellContainers = subviews
-            .compactMap { subview -> CellContainer? in
-                if let cellContainer = subview as? CellContainer {
+            .compactMap { subview -> CellContainerComponentView? in
+                if let cellContainer = subview as? CellContainerComponentView {
                     return cellContainer
                 } else {
                     assertionFailure("CellRendererComponent outer view should always be CellContainer. Learn more here: https://shopify.github.io/flash-list/docs/usage#cellrenderercomponent.")
@@ -84,7 +84,7 @@ import React
 
     /// Checks for overlaps or gaps between adjacent items and then applies a correction.
     /// Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on the iOS side.
-    private func clearGaps(for cellContainers: [CellContainer]) {
+    private func clearGaps(for cellContainers: [CellContainerComponentView]) {
         var maxBound: CGFloat = 0
         var minBound: CGFloat = CGFloat(Int.max)
         var maxBoundNextCell: CGFloat = 0
@@ -164,7 +164,7 @@ import React
         lastMinBound = minBound
     }
 
-    private func updateLastMaxBoundOverall(currentCell: CellContainer, nextCell: CellContainer) {
+    private func updateLastMaxBoundOverall(currentCell: CellContainerComponentView, nextCell: CellContainerComponentView) {
         lastMaxBoundOverall = max(lastMaxBoundOverall, horizontal ? currentCell.frame.maxX : currentCell.frame.maxY, horizontal ? nextCell.frame.maxX : nextCell.frame.maxY)
     }
 
@@ -189,7 +189,7 @@ import React
 
     /// It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
     func isWithinBounds(
-        _ cellContainer: CellContainer,
+        _ cellContainer: CellContainerComponentView,
         scrollOffset: CGFloat,
         renderAheadOffset: CGFloat,
         windowSize: CGFloat,
@@ -243,6 +243,6 @@ import React
     }
 
     private func footer() -> UIView? {
-        return superview?.subviews.first(where:{($0 as? CellContainer)?.index == -1})
+        return superview?.subviews.first(where:{($0 as? CellContainerComponentView)?.index == -1})
     }
 }

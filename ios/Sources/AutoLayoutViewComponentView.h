@@ -1,16 +1,15 @@
 #ifndef AutoLayoutViewComponentView_h
 #define AutoLayoutViewComponentView_h
 
-#ifdef RN_FABRIC_ENABLED
-
 #import <UIKit/UIKit.h>
+
+#ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
 
 @interface AutoLayoutViewComponentView : RCTViewComponentView
-
-@end
-
-
+#else
+@interface AutoLayoutViewComponentView : UIView
 #endif /* RN_FABRIC_ENABLED */
+@end
 
 #endif /* AutoLayoutViewComponentView_h */

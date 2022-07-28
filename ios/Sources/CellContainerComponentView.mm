@@ -1,5 +1,6 @@
-#ifdef RN_FABRIC_ENABLED
 #import "CellContainerComponentView.h"
+
+#ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
 
 #import <react/renderer/components/rnflashlist/ComponentDescriptors.h>
@@ -16,16 +17,12 @@ using namespace facebook::react;
 @end
 
 @implementation CellContainerComponentView
-{
-    CellContainer *_cellContainerView;
-}
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const CellContainerProps>();
         _props = defaultProps;
-        _cellContainerView = [[CellContainer alloc] initWithFrame:self.bounds];
         self.superview.userInteractionEnabled = false;
 
         self.userInteractionEnabled = true;
@@ -50,7 +47,7 @@ using namespace facebook::react;
 {
     const auto &newProps = *std::static_pointer_cast<const CellContainerProps>(props);
 
-    _cellContainerView.index = newProps.index;
+    self.index = newProps.index;
 
     [super updateProps:props oldProps:oldProps];
 }
@@ -60,4 +57,7 @@ Class<RCTComponentViewProtocol> CellContainerCls(void)
 {
     return CellContainerComponentView.class;
 }
+#else
+@implementation CellContainerComponentView
+@end
 #endif /* RN_FABRIC_ENABLED */
