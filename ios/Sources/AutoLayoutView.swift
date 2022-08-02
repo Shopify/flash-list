@@ -6,6 +6,10 @@ import React
 /// Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.
 /// Note: This cannot work for masonry layouts i.e, pinterest like layout
 @objc public class AutoLayoutView: UIView {
+    #if RCT_NEW_ARCH_ENABLED
+    @objc public var onBlankAreaEventHandler: ((CGFloat, CGFloat) -> Void)?
+    #endif
+
     @objc(onBlankAreaEvent)
     var onBlankAreaEvent: RCTDirectEventBlock?
 
@@ -46,7 +50,7 @@ import React
     private var lastMaxBound: CGFloat = 0
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
-    
+
     private func getSubviews() -> [UIView] {
         #if RCT_NEW_ARCH_ENABLED
         return superview?.subviews ?? []
@@ -80,12 +84,16 @@ import React
             distanceFromWindowEnd: distanceFromWindowEnd
         )
 
+        #if RCT_NEW_ARCH_ENABLED
+        onBlankAreaEventHandler?(blankOffsetStart, blankOffsetEnd)
+        #else
         onBlankAreaEvent?(
             [
                 "offsetStart": blankOffsetStart,
                 "offsetEnd": blankOffsetEnd,
             ]
         )
+        #endif
     }
 
     func getScrollView() -> UIScrollView? {

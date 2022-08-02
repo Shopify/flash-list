@@ -1,6 +1,7 @@
 #ifdef RN_FABRIC_ENABLED
 #import "AutoLayoutViewComponentView.h"
 #import <React/RCTConversions.h>
+#import <React/RCTViewManager.h>
 
 #import <react/renderer/components/rnflashlist/ComponentDescriptors.h>
 #import <react/renderer/components/rnflashlist/EventEmitters.h>
@@ -26,12 +27,24 @@ using namespace facebook::react;
     static const auto defaultProps = std::make_shared<const AutoLayoutViewProps>();
     _props = defaultProps;
     _autoLayoutView = [[AutoLayoutView alloc] initWithFrame:self.bounds];
-    
+
     // Due to view flattening, AutoLayoutView's children get moved to its parent (AutoLayoutViewComponentView) and
     // AutoLayoutView is positioned above them consuming all events. Turning off userInteraction prevents that.
     _autoLayoutView.userInteractionEnabled = false;
 
     self.contentView = _autoLayoutView;
+
+    __weak AutoLayoutViewComponentView* weakSelf = self;
+    _autoLayoutView.onBlankAreaEventHandler = ^(CGFloat start, CGFloat end) {
+      AutoLayoutViewComponentView *strongSelf = weakSelf;
+      if (strongSelf->_eventEmitter != nullptr) {
+        std::dynamic_pointer_cast<const facebook::react::AutoLayoutViewEventEmitter>(strongSelf->_eventEmitter)
+          ->onBlankAreaEvent(facebook::react::AutoLayoutViewEventEmitter::OnBlankAreaEvent{
+            .offsetStart = (int) floor(start),
+            .offsetEnd = (int) floor(end),
+          });
+      }
+    };
   }
 
   return self;
