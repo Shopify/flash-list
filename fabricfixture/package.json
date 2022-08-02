@@ -12,8 +12,7 @@
   "dependencies": {
     "@shopify/flash-list": "link:../",
     "react": "18.1.0",
-    "react-native": "0.70.0-rc.0",
-    "react-native-reanimated": "https://github.com/software-mansion/react-native-reanimated.git"
+    "react-native": "0.70.0-rc.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
