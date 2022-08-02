@@ -34,6 +34,7 @@ const Twitter = ({
   }).current;
 
   return (
+    // @ts-ignore Figure out why there are incompatible types
     <FlashList
       ref={instance}
       onBlankArea={blankAreaTracker}

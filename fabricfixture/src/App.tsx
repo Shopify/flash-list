@@ -4,22 +4,25 @@
  */
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, useOnNativeBlankAreaEvents } from "@shopify/flash-list";
 
 import TwitterBenchmark from "./twitter/TwitterBenchmark";
 
 export interface PaginatedListState {
   // This property is used but eslint fails to find its usage.
-  /* eslint-disable react/no-unused-prop-types */
+
   elems: any[];
 }
 
 /** *
  * To test out just copy this component and render in you root component
  */
-
+//
 export default TwitterBenchmark;
-export class PaginatedList extends React.Component<PaginatedListState> {
+export class PaginatedList extends React.Component<
+  unknown,
+  PaginatedListState
+> {
   state: PaginatedListState = this.getInitialState();
 
   private getInitialState() {
@@ -36,6 +39,7 @@ export class PaginatedList extends React.Component<PaginatedListState> {
 
   render() {
     return (
+      // @ts-ignore Figure out why there are incompatible types
       <FlashList
         keyExtractor={(item: number) => {
           return item.toString();

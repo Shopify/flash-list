@@ -8,6 +8,7 @@ import { Header, Footer, Divider, Empty } from "./Twitter";
 const TwitterFlatList = () => {
   return (
     <View style={{ flex: 1 }}>
+      {/* @ts-ignore Figure out why there are incompatible types */}
       <FlatList
         testID="FlatList"
         keyExtractor={(item) => {

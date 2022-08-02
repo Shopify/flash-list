@@ -12,7 +12,7 @@ const TweetCell = ({ tweet }: TweetCellProps) => {
   return (
     <Pressable
       onPress={() => {
-        console.log("press");
+        console.log("press on", tweet.id);
       }}
     >
       <TweetContent tweet={tweet} />
