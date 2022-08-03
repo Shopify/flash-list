@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.1] - 2022-08-03
+
 - Fixed crash when `estimatedListSize` is used in an empty list
   - https://github.com/Shopify/flash-list/pull/546
 
