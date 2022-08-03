@@ -1,48 +1,40 @@
-const path = require('path');
+const path = require("path");
 
-const exclusionList = require('metro-config/src/defaults/exclusionList');
-const escape = require('escape-string-regexp');
+const exclusionList = require("metro-config/src/defaults/exclusionList");
+const escape = require("escape-string-regexp");
 
-const package = require('../package.json');
+const pack = require("../package.json");
 
-const modules = Object.keys({
-  ...package.peerDependencies,
-});
+const root = path.resolve(__dirname, "..");
 
-const root = path.resolve(__dirname, '..');
+const modules = Object.keys(pack.peerDependencies);
 
-let watchFolders = [root];
-watchFolders = watchFolders.concat([path.join(__dirname, './node_modules')]);
-watchFolders = watchFolders.concat([path.join(__dirname, '../node_modules')]);
+module.exports = {
+  projectRoot: __dirname,
+  watchFolders: [root],
 
-module.exports = (() => {
-  const config = {
-    projectRoot: __dirname,
-    transformer: {
-      getTransformOptions: () => ({
-        transform: {
-          experimentalImportSupport: false,
-          inlineRequires: false,
-        },
-      }),
-    },
-    resolver: {
-      blockList: exclusionList(
-        modules.map(
-          m =>
-            new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`),
-        ),
-      ),
+  // We need to make sure that only one version is loaded for peerDependencies
+  // So we exclude them at the root, and alias them to the versions in example's node_modules
+  resolver: {
+    blacklistRE: exclusionList(
+      modules.map(
+        (m) =>
+          new RegExp(`^${escape(path.join(root, "node_modules", m))}\\/.*$`)
+      )
+    ),
 
-      extraNodeModules: modules.reduce((acc, name) => {
-        acc[name] = path.join(__dirname, 'node_modules', name);
-        return acc;
-      }, {}),
-    },
-    watchFolders,
-  };
-  if (process.env.CI === 'true') {
-    config.maxWorkers = 1;
-  }
-  return config;
-})();
+    extraNodeModules: modules.reduce((acc, name) => {
+      acc[name] = path.join(__dirname, "node_modules", name);
+      return acc;
+    }, {}),
+  },
+
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: true,
+      },
+    }),
+  },
+};

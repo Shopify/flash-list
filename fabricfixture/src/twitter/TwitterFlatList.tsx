@@ -1,7 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 import { FlatList, View } from "react-native";
 
-import { tweets } from "./data/tweets";
 import TweetCell from "./TweetCell";
 import { Header, Footer, Divider, Empty } from "./Twitter";
 

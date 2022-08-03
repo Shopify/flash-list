@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { CellContainer } from "@shopify/flash-list";
 // import Animated, {
 //   useAnimatedStyle,

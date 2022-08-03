@@ -18,28 +18,25 @@ const tweetActions = (
       <View style={styles.elemAction}>
         <Image
           style={styles.actionButton}
-          source={require("../assets/comment.png")}
+          source={require("assets/comment.png")}
         />
         <Text style={styles.actionText}>{comments}</Text>
       </View>
       <View style={styles.elemAction}>
         <Image
           style={styles.actionButton}
-          source={require("../assets/retweet.png")}
+          source={require("assets/retweet.png")}
         />
         <Text style={styles.actionText}>{retweets}</Text>
       </View>
       <View style={styles.elemAction}>
         <Image
           style={styles.actionButton}
-          source={require("../assets/like.png")}
+          source={require("assets/like.png")}
         />
         <Text style={styles.actionText}>{likes}</Text>
       </View>
-      <Image
-        style={styles.actionButton}
-        source={require("../assets/share.png")}
-      />
+      <Image style={styles.actionButton} source={require("assets/share.png")} />
     </View>
   );
 };
