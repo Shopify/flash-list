@@ -612,7 +612,6 @@ The following props from `FlatList` are currently not implemented:
 - [`debug`](https://reactnative.dev/docs/virtualizedlist#debug)
 - [`listKey`](https://reactnative.dev/docs/virtualizedlist#listkey)
 - [`onScrollToIndexFailed`](https://reactnative.dev/docs/virtualizedlist#onscrolltoindexfailed)
-- [`renderScrollComponent`](https://reactnative.dev/docs/virtualizedlist#renderscrollcomponent)
 - [`windowSize`](https://reactnative.dev/docs/virtualizedlist#windowsize)
 
 Unsupported methods:
