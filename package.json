@@ -45,7 +45,8 @@
   "peerDependencies": {
     "@babel/runtime": "*",
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "recyclerlistview": ">=4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.5",
@@ -75,7 +76,7 @@
     "jestSetup.js"
   ],
   "dependencies": {
-    "recyclerlistview": "4.1.2",
+    "recyclerlistview": "^4.1.2",
     "tslib": "2.4.0"
   }
 }
