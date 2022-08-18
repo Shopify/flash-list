@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fixes type checking error in `AutoLayoutView` due to `children` not being an explicit type
+  - https://github.com/Shopify/flash-list/pull/567
+
 ## [1.2.1] - 2022-08-03
 
 - Fixed crash when `estimatedListSize` is used in an empty list
