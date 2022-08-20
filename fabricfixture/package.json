@@ -1,0 +1,33 @@
+{
+  "name": "fabricfixture",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "react": "18.1.0",
+    "react-native": "0.70.0-rc.3",
+    "@shopify/flash-list": "link:../"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.0",
+    "@types/pixelmatch": "^5.2.4",
+    "@types/pngjs": "^6.0.1",
+    "babel-jest": "^27.5.1",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "jest": "^27.5.1",
+    "metro-config": "^0.71.0",
+    "metro-react-native-babel-preset": "^0.72.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
+    "typescript": "^4.7.4"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}

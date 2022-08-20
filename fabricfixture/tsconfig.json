@@ -1,0 +1,15 @@
+{
+  "extends": "../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "references": [
+    {
+      "path": "../"
+    }
+  ],
+  "include": ["src/**/*", "e2e/**/*"]
+}
