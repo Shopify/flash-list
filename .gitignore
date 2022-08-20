@@ -74,11 +74,11 @@ freeline/
 freeline_project_description.json
 
 # fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
-fastlane/readme.md
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+**/fastlane/readme.md
 
 # Version control
 vcs.xml
@@ -198,20 +198,20 @@ dist
 **/.DS_Store
 
 # CocoaPods
-fixture/ios/Pods/
+*fixture/ios/Pods/
 
 # Xcode
-fixture/ios/xcuserdata/
-fixture/ios/*.xcworkspace/xcuserdata/
-fixture/ios/*.xcodeproj/*
-!fixture/ios/*.xcodeproj/project.pbxproj
-!fixture/ios/*.xcodeproj/xcshareddata/
-!fixture/ios/*.xcworkspace/contents.xcworkspacedata
-fixture/ios/**/xcshareddata/WorkspaceSettings.xcsettings
+*fixture/ios/xcuserdata/
+*fixture/ios/*.xcworkspace/xcuserdata/
+*fixture/ios/*.xcodeproj/*
+!*fixture/ios/*.xcodeproj/project.pbxproj
+!*fixture/ios/*.xcodeproj/xcshareddata/
+!*fixture/ios/*.xcworkspace/contents.xcworkspacedata
+*fixture/ios/**/xcshareddata/WorkspaceSettings.xcsettings
 
 # Android
 
-fixture/android/*.hprof
+*fixture/android/*.hprof
 
 # e2e
 
