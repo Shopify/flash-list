@@ -45,6 +45,14 @@ import UIKit
     private var lastMaxBound: CGFloat = 0
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
+    
+    private var viewsToLayout: [UIView] {
+        #if RCT_NEW_ARCH_ENABLED
+        return superview?.subviews ?? []
+        #else
+        return subviews
+        #endif
+    }
 
     override public func layoutSubviews() {
         fixLayout()
@@ -85,15 +93,21 @@ import UIKit
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
         guard
-            subviews.count > 1,
+            viewsToLayout.count > 1,
             // Fixing layout during animation can interfere with it.
             layer.animationKeys()?.isEmpty ?? true,
             !disableAutoLayout
         else { return }
-        let cellContainers = subviews
+        let cellContainers = viewsToLayout
             .compactMap { subview -> CellContainerComponentView? in
                 if let cellContainer = subview as? CellContainerComponentView {
                     return cellContainer
+                } else if subview is AutoLayoutView {
+                    // On Fabric, due to view flattening children of AutoLayoutView are moved one level up, so they appear
+                    // as children of AutoLayoutViewComponentView in view hierarchy. viewsToLayout property takes it under
+                    // consideration, returning children of AutoLayoutViewComponentView when on Fabric. Because of that
+                    // AutoLayoutView may be on the list, in which case we want to ignore it.
+                    return nil
                 } else {
                     assertionFailure("CellRendererComponent outer view should always be CellContainer. Learn more here: https://shopify.github.io/flash-list/docs/usage#cellrenderercomponent.")
                     return nil
@@ -260,10 +274,10 @@ import UIKit
     }
 
     private func footerDiff() -> CGFloat {
-        if subviews.count == 0 {
+        if viewsToLayout.count == 0 {
             lastMaxBoundOverall = 0
-        } else if subviews.count == 1 {
-            let firstChild = subviews[0]
+        } else if viewsToLayout.count == 1 {
+            let firstChild = viewsToLayout[0]
             lastMaxBoundOverall = horizontal ? firstChild.frame.maxX : firstChild.frame.maxY
         }
         let autoLayoutEnd = horizontal ? frame.width : frame.height
@@ -271,6 +285,13 @@ import UIKit
     }
 
     private func footer() -> UIView? {
-        return superview?.subviews.first(where:{($0 as? CellContainerComponentView)?.index == -1})
+        // On Fabric, AutoLayoutView is wrapped with AutoLayoutViewComponentView, so we need to go up one more level
+        #if RCT_NEW_ARCH_ENABLED
+        let parentSubviews = superview?.superview?.subviews
+        #else
+        let parentSubviews = superview?.subviews
+        #endif
+        
+        return parentSubviews?.first(where:{($0 as? CellContainerComponentView)?.index == -1})
     }
 }
