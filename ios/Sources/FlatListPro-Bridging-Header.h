@@ -6,4 +6,6 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTComponent.h>
 
+#import "CellContainerComponentView.h"
+
 #endif /* FlatListPro_Bridging_Header_h */
