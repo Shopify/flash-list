@@ -2,8 +2,6 @@ package com.shopify.reactnative.flash_list
 
 import android.content.Context
 import android.graphics.Canvas
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.HorizontalScrollView
@@ -11,7 +9,6 @@ import android.widget.ScrollView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
-import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.facebook.react.views.view.ReactViewGroup
 
 
@@ -142,9 +139,8 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         val event: WritableMap = Arguments.createMap()
         event.putDouble("offsetStart", alShadow.blankOffsetAtStart / pixelDensity)
         event.putDouble("offsetEnd", alShadow.blankOffsetAtEnd / pixelDensity)
+
         val reactContext = context as ReactContext
-        reactContext
-                .getJSModule(RCTEventEmitter::class.java)
-                .receiveEvent(id, "onBlankAreaEvent", event)
+        reactContext.dispatchEvent(id, "onBlankAreaEvent", event)
     }
 }
