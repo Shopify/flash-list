@@ -32,13 +32,10 @@ class AutoLayoutViewManager: ViewGroupManager<AutoLayoutView>(), AutoLayoutViewM
         return AutoLayoutView(context).also { it.pixelDensity = context.resources.displayMetrics.density.toDouble() }
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
-        return MapBuilder.builder<String, Any>().put(
-                "onBlankAreaEvent",
-                MapBuilder.of(
-                        "registrationName", "onBlankAreaEvent")
-        ).build();
-    }
+    override fun getExportedCustomDirectEventTypeConstants() = mutableMapOf(
+        "onBlankAreaEvent" to mutableMapOf("registrationName" to "onBlankAreaEvent"),
+        "topOnBlankAreaEvent" to mutableMapOf("registrationName" to "onBlankAreaEvent"),
+    )
 
     @ReactProp(name = "horizontal")
     override fun setHorizontal(view: AutoLayoutView, isHorizontal: Boolean) {
