@@ -4,31 +4,31 @@ import UIKit
 
 /// Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.
 /// Note: This cannot work for masonry layouts i.e, pinterest like layout
-@objc class AutoLayoutView: UIView {
+@objc public class AutoLayoutView: UIView {
     @objc(onBlankAreaEvent)
     var onBlankAreaEvent: RCTDirectEventBlock?
 
-    @objc func setHorizontal(_ horizontal: Bool) {
+    @objc public func setHorizontal(_ horizontal: Bool) {
         self.horizontal = horizontal
     }
 
-    @objc func setScrollOffset(_ scrollOffset: Int) {
+    @objc public func setScrollOffset(_ scrollOffset: Int) {
         self.scrollOffset = CGFloat(scrollOffset)
     }
 
-    @objc func setWindowSize(_ windowSize: Int) {
+    @objc public func setWindowSize(_ windowSize: Int) {
         self.windowSize = CGFloat(windowSize)
     }
 
-    @objc func setRenderAheadOffset(_ renderAheadOffset: Int) {
+    @objc public func setRenderAheadOffset(_ renderAheadOffset: Int) {
         self.renderAheadOffset = CGFloat(renderAheadOffset)
     }
 
-    @objc func setEnableInstrumentation(_ enableInstrumentation: Bool) {
+    @objc public func setEnableInstrumentation(_ enableInstrumentation: Bool) {
         self.enableInstrumentation = enableInstrumentation
     }
 
-    @objc func setDisableAutoLayout(_ disableAutoLayout: Bool) {
+    @objc public func setDisableAutoLayout(_ disableAutoLayout: Bool) {
         self.disableAutoLayout = disableAutoLayout
     }
 
@@ -46,7 +46,7 @@ import UIKit
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
 
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         fixLayout()
         super.layoutSubviews()
 
