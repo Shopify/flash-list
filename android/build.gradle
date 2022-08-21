@@ -50,6 +50,8 @@ android {
 
         if (isNewArchitectureEnabled()) {
             main.java.srcDirs += ["${project.buildDir}/generated/source/codegen/java"]
+        } else {
+            main.java.srcDirs += ['src/paper/java']
         }
     }
 
