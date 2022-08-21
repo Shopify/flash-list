@@ -86,5 +86,10 @@
   "dependencies": {
     "recyclerlistview": "4.1.2",
     "tslib": "2.4.0"
+  },
+  "codegenConfig": {
+    "name": "rnflashlist",
+    "type": "components",
+    "jsSrcsDir": "./src/fabric"
   }
 }
