@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
       'CLANG_CXX_LANGUAGE_STANDARD' => 'c++17',
       'OTHER_SWIFT_FLAGS' => '-D RCT_NEW_ARCH_ENABLED',
     }
-    s.platforms       = { ios: '11.0', tvos: '11.0' }
+    s.platforms        = { :ios => '11.0', :tvos => '12.0' }
     s.compiler_flags  = folly_compiler_flags
 
     s.dependency "React"
@@ -36,7 +36,7 @@ Pod::Spec.new do |s|
     s.dependency "RCTTypeSafety"
     s.dependency "ReactCommon/turbomodule/core"
   else
-    s.platforms = { :ios => "11.0", :tvos => "11.0" }
+    s.platforms = { :ios => "11.0", :tvos => "12.0" }
 
     s.dependency "React-Core"
   end
