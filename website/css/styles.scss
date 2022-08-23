@@ -69,7 +69,6 @@ div.content {
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
-  display: flex;
   flex-direction: column;
 
   align-items: center;
@@ -343,12 +342,18 @@ div.section.fullwidth {
 }
 div.section.casestudy {
   margin: 200px 0px;
+  padding: 40px;
+  width: 100%;
   position: relative;
   background: -webkit-linear-gradient(
     0deg,
     $secondary-title-color,
     lighten($secondary-title-color, 30%)
   );
+  a.button {
+    color: white;
+    display: inline-block;
+  }
   column-gap: 10px;
   div.info {
     max-width: 570px;
@@ -404,6 +409,11 @@ p.subtitle {
   body {
     margin: 0px;
   }
+  div.header {
+    h2 {
+      font-size: 60px;
+    }
+  }
   div.content {
     padding: 4%;
     width: 92%;
@@ -427,8 +437,11 @@ p.subtitle {
     }
     &.casestudy {
       flex-direction: column;
+      padding: 0px;
       img {
         position: relative;
+        margin: 0 auto;
+        right: 0;
       }
     }
     img {
