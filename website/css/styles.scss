@@ -220,6 +220,9 @@ pre {
 .highlight {
   border-radius: 20px;
 }
+.column .highlight {
+  margin: 0px;
+}
 .column {
   flex-direction: column;
 }
@@ -338,10 +341,20 @@ div.section.fullwidth {
   }
   .info {
     text-align: center;
+    max-width: none;
+  }
+}
+div.tweets {
+  display: flex;
+  flex-direction: row;
+  column-gap: 40px;
+  flex-wrap: wrap;
+  .tweet {
+    max-width: 30%;
   }
 }
 div.section.casestudy {
-  margin: 200px 0px;
+  margin: 100px 0px;
   padding: 40px;
   width: 100%;
   position: relative;
@@ -418,6 +431,11 @@ p.subtitle {
     padding: 4%;
     width: 92%;
   }
+  div.tweets {
+    .tweet {
+      max-width: 100%;
+    }
+  }
   div.section {
     flex-direction: column;
     margin: 8px;
@@ -437,6 +455,7 @@ p.subtitle {
     }
     &.casestudy {
       flex-direction: column;
+      margin: 30px 0px;
       padding: 0px;
       img {
         position: relative;

@@ -135,12 +135,34 @@ appname: FlashList
                 alt="Shopify uses FlashList to make commerce better for everyone" />
         </div>
 
+        <div class="section fullwidth">
+            <div class="info">
+                <h1>See what people say about FlashList</h1>
+            </div>
+            <div class="tweets">
+                {% for tweet in site.data.tweets %}
+                <div class="tweet">
+                    {% twitter tweet theme="dark" %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
         <div class="section fullwidth" id="install">
             <div class="info">
                 <h1>Install now</h1>
                 <p>Try it in your project now:</p>
             </div>
-            {% highlight bash linedivs %}{% include install.sh %}{% endhighlight %}
+            <div class="row">
+                <div class="column">
+                    <h3>React Native Setup</h3>
+                    {% highlight bash linedivs %}{% include install.sh %}{% endhighlight %}
+                </div>
+                <div class="column">
+                    <h3>Expo setup</h3>
+                    {% highlight bash linedivs %}{% include install_expo.sh %}{% endhighlight %}
+                </div>
+            </div>
         </div>
     </div>
     <div id="footer">
