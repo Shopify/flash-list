@@ -133,13 +133,13 @@ div.section {
 }
 div.section img,
 div.section video {
-  max-width: 450px;
+  max-width: 45%;
   height: auto;
   border-radius: 6px;
 }
 div.section .info {
   flex-direction: column;
-  max-width: 450px;
+  max-width: 45%;
 }
 div.section .info h1 {
   margin: 0;
@@ -416,7 +416,6 @@ div.section.casestudy {
 p.subtitle {
   font-size: 50px;
 }
-
 /* Mobile styles */
 @media only screen and (max-width: 600px) {
   body {
@@ -426,6 +425,12 @@ p.subtitle {
     h2 {
       font-size: 60px;
     }
+  }
+  h2 {
+    font-size: 29px;
+  }
+  .row {
+    flex-direction: column;
   }
   div.content {
     padding: 4%;
@@ -494,5 +499,38 @@ p.subtitle {
   }
   .section.pair {
     flex-direction: column-reverse;
+  }
+  div.section .info {
+    max-width: 95%;
+  }
+}
+
+/* Table styles */
+@media only screen and (min-width: 700px) and (max-width: 1100px) {
+  .highlight {
+    margin: 5px;
+    border-radius: 20px;
+    max-width: 47%;
+    pre {
+      font-size: 14px;
+    }
+  }
+  div.section .info h1 {
+    font-size: 33px;
+  }
+  div.section.casestudy div.info h2 {
+    max-width: 45%;
+  }
+  div.section.casestudy {
+    max-width: 90%;
+  }
+  div.section.casestudy img {
+    right: 10px;
+  }
+  h2 {
+    font-size: 28px;
+  }
+  div.content {
+    width: 95%;
   }
 }
