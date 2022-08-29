@@ -5,6 +5,7 @@ import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platfor
 
 const PlatformConfig = {
   defaultDrawDistance: 2000,
+  defaultMasonryDrawDistance: 2000,
 };
 const getCellContainerPlatformStyles = (
   inverted: boolean,
