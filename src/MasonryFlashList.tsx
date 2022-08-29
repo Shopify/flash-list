@@ -95,6 +95,9 @@ export const MasonryFlashList = React.forwardRef(
         ListHeaderComponentStyle={props.ListHeaderComponentStyle}
         estimatedItemSize={estimatedListSize.height}
         estimatedListSize={props.estimatedListSize}
+        extraData={props.extraData}
+        onEndReached={props.onEndReached}
+        onEndReachedThreshold={props.onEndReachedThreshold}
         renderItem={(args) => {
           return (
             <FlashList
@@ -114,8 +117,6 @@ export const MasonryFlashList = React.forwardRef(
                 );
               }}
               drawDistance={drawDistance}
-              onEndReached={args.index === 0 ? props.onEndReached : undefined}
-              onEndReachedThreshold={props.onEndReachedThreshold}
               estimatedListSize={{
                 height: estimatedListSize.height,
                 width: estimatedListSize.width / columnCount,
