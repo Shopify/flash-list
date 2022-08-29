@@ -94,6 +94,7 @@ export const MasonryFlashList = React.forwardRef(
         ListFooterComponentStyle={props.ListFooterComponentStyle}
         ListHeaderComponentStyle={props.ListHeaderComponentStyle}
         estimatedItemSize={estimatedListSize.height}
+        estimatedListSize={props.estimatedListSize}
         renderItem={(args) => {
           return (
             <FlashList
@@ -104,7 +105,11 @@ export const MasonryFlashList = React.forwardRef(
                 return (
                   props.renderItem?.({
                     ...innerArgs,
-                    index: innerArgs.index + args.index,
+                    index: getActualIndex(
+                      innerArgs.index,
+                      args.index,
+                      columnCount
+                    ),
                   }) ?? null
                 );
               }}
@@ -120,8 +125,12 @@ export const MasonryFlashList = React.forwardRef(
               onViewableItemsChanged={
                 props.onViewableItemsChanged
                   ? (info) => {
-                      updateViewToken(info.viewableItems, args.index);
-                      updateViewToken(info.changed, args.index);
+                      updateViewToken(
+                        info.viewableItems,
+                        args.index,
+                        columnCount
+                      );
+                      updateViewToken(info.changed, args.index, columnCount);
                       props.onViewableItemsChanged?.(info);
                     }
                   : undefined
@@ -186,13 +195,20 @@ const getFlashListScrollView = (
   FlashListScrollView.displayName = "FlashListScrollView";
   return FlashListScrollView;
 };
-const updateViewToken = (tokens: ViewToken[], offset: number) => {
+const updateViewToken = (
+  tokens: ViewToken[],
+  column: number,
+  columnCount: number
+) => {
   const length = tokens.length;
   for (let i = 0; i < length; i++) {
     const token = tokens[i];
     if (token.index !== null && token.index !== undefined) {
-      token.index += offset;
+      token.index = getActualIndex(token.index, column, columnCount);
     }
   }
+};
+const getActualIndex = (row: number, column: number, columnCount: number) => {
+  return row * columnCount + column;
 };
 MasonryFlashList.displayName = "MasonryFlashList";
