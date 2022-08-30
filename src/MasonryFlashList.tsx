@@ -32,6 +32,8 @@ export interface MasonryFlashListProps<T> {
   ListHeaderComponentStyle?: FlashListProps<T>["ListHeaderComponentStyle"];
   viewabilityConfig?: FlashListProps<T>["viewabilityConfig"];
   onViewableItemsChanged?: FlashListProps<T>["onViewableItemsChanged"];
+  renderScrollComponent?: FlashListProps<T>["renderScrollComponent"];
+  onLoad?: FlashListProps<T>["onLoad"];
 }
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
@@ -45,7 +47,7 @@ export interface MasonryFlashListRef<T> {
 export const MasonryFlashList = React.forwardRef(
   <T,>(
     props: MasonryFlashListProps<T>,
-    ref: React.ForwardedRef<MasonryFlashListRef<T>>
+    forwardRef: React.ForwardedRef<MasonryFlashListRef<T>>
   ) => {
     const columnCount = props.numColumns || 1;
     const drawDistance =
@@ -77,13 +79,12 @@ export const MasonryFlashList = React.forwardRef(
       }
     ).current;
 
-    const parentFlashList = useRef<FlashList<T[]>>(null);
-
-    useEffect(() => {}, []);
+    const [parentFlashList, getFlashList] =
+      useRefWithForwardRef<FlashList<T[]>>(forwardRef);
 
     return (
       <FlashList
-        ref={parentFlashList}
+        ref={getFlashList}
         numColumns={columnCount}
         data={dataSet}
         onScroll={onScrollProxy}
@@ -98,6 +99,8 @@ export const MasonryFlashList = React.forwardRef(
         extraData={props.extraData}
         onEndReached={props.onEndReached}
         onEndReachedThreshold={props.onEndReachedThreshold}
+        renderScrollComponent={props.renderScrollComponent}
+        onLoad={props.onLoad}
         renderItem={(args) => {
           return (
             <FlashList
@@ -157,6 +160,25 @@ const useDataSet = <T,>(
       : data;
   }, [sourceData, columnCount]) as T[][];
 };
+const useRefWithForwardRef = <T,>(
+  forwardRef: any
+): [React.MutableRefObject<T | null>, (instance: T | null) => void] => {
+  const ref: React.MutableRefObject<T | null> = useRef(null);
+  return [
+    ref,
+    useCallback(
+      (instance: T | null) => {
+        ref.current = instance;
+        if (typeof forwardRef === "function") {
+          forwardRef(instance);
+        } else if (forwardRef) {
+          forwardRef.current = instance;
+        }
+      },
+      [forwardRef]
+    ),
+  ];
+};
 
 const getFlashListScrollView = (
   onScrollRef: React.RefObject<OnScrollCallback[]>,
@@ -166,7 +188,7 @@ const getFlashListScrollView = (
     (props: ScrollViewProps, ref: React.ForwardedRef<View>) => {
       const { onLayout, onScroll, ...rest } = props;
       const onLayoutProxy = useCallback(
-        (layoutEvent) => {
+        (layoutEvent: LayoutChangeEvent) => {
           onLayout?.({
             nativeEvent: {
               layout: {
