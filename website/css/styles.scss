@@ -122,9 +122,9 @@ video {
 div.section {
   display: flex;
   margin: 40px 0px;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
-  padding: 20px 0px;
+  padding: 20px;
   align-items: center;
   border-radius: 20px;
   max-width: 1050px;
@@ -140,10 +140,11 @@ div.section video {
 div.section .info {
   flex-direction: column;
   max-width: 45%;
+  padding: 20px 0px;
 }
 div.section .info h1 {
   margin: 0;
-  font-size: 44px;
+  font-size: 43px;
   line-height: 1.3;
   margin-bottom: 10px;
   background: -webkit-linear-gradient(
@@ -176,7 +177,7 @@ div.metric {
 }
 
 .highlight pre {
-  padding: 20px 40px;
+  padding: 10px 20px;
 }
 
 pre {
@@ -186,8 +187,7 @@ pre {
   font-weight: 100;
 }
 .section.half {
-  column-gap: 60px;
-  align-items: start;
+  column-gap: 40px;
   h1 {
     margin-bottom: 20px;
   }
@@ -219,6 +219,7 @@ pre {
 
 .highlight {
   border-radius: 20px;
+  margin: 0px;
 }
 .column .highlight {
   margin: 0px;
@@ -358,6 +359,7 @@ div.section.casestudy {
   padding: 40px;
   width: 100%;
   position: relative;
+  justify-content: space-between;
   background: -webkit-linear-gradient(
     0deg,
     $secondary-title-color,
@@ -420,6 +422,10 @@ p.subtitle {
 @media only screen and (max-width: 600px) {
   body {
     margin: 0px;
+  }
+  .highlight {
+    margin-bottom: 30px;
+    margin-top: 0px;
   }
   div.header {
     h2 {
@@ -503,14 +509,22 @@ p.subtitle {
   div.section .info {
     max-width: 95%;
   }
+  div.section.fullwidth .highlight {
+    width: auto;
+  }
 }
 
 /* Table styles */
 @media only screen and (min-width: 700px) and (max-width: 1100px) {
+  div.tweets .tweet {
+    max-width: 47%;
+  }
+  div.section.half .highlight {
+    max-width: 47%;
+  }
   .highlight {
     margin: 5px;
     border-radius: 20px;
-    max-width: 47%;
     pre {
       font-size: 14px;
     }
