@@ -63,7 +63,7 @@
     "@react-native-community/eslint-config": "^3.0.3",
     "@shopify/eslint-plugin": "^41.3.1",
     "@types/jest": "^28.1.3",
-    "@types/react-native": "0.67.6",
+    "@types/react-native": "^0.69.6",
     "babel-jest": "^28.1.1",
     "enhanced-resolve": "^5.9.3",
     "eslint": "8.18.0",
