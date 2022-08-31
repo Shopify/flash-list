@@ -9,6 +9,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Fixes type checking error in `AutoLayoutView` due to `children` not being an explicit type
   - https://github.com/Shopify/flash-list/pull/567
+- Fixes the header re-mount when switching from an empty data array
+  - https://github.com/Shopify/flash-list/pull/576
 
 ## [1.2.1] - 2022-08-03
 
