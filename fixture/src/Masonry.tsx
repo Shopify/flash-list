@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Text, View, StyleSheet, Platform, Dimensions } from "react-native";
+import React from "react";
+import { Text, View, StyleSheet, Platform } from "react-native";
 import { MasonryFlashList } from "@shopify/flash-list";
 
 interface MasonryData {
