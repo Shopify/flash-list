@@ -37,6 +37,9 @@ export interface MasonryFlashListProps<T> {
   getItemType?: FlashListProps<T>["getItemType"];
   onLayout?: FlashListProps<T>["onLayout"];
   scrollViewProps?: ScrollViewProps;
+  refreshing?: FlashListProps<T>["refreshing"];
+  onRefresh?: FlashListProps<T>["onRefresh"];
+  progressViewOffset?: FlashListProps<T>["progressViewOffset"];
 }
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
@@ -117,6 +120,9 @@ export const MasonryFlashList = React.forwardRef(
         renderScrollComponent={props.renderScrollComponent}
         onLoad={props.onLoad}
         onLayout={props.onLayout}
+        refreshing={props.refreshing}
+        onRefresh={props.onRefresh}
+        progressViewOffset={props.progressViewOffset}
         renderItem={(args) => {
           return (
             <FlashList
@@ -173,7 +179,11 @@ export const MasonryFlashList = React.forwardRef(
       />
     );
   }
-);
+) as <T>(
+  props: MasonryFlashListProps<T> & {
+    ref?: React.RefObject<MasonryFlashListRef<T>>;
+  }
+) => React.ReactElement;
 
 const useDataSet = <T,>(
   columnCount: number,
