@@ -34,9 +34,16 @@ export interface MasonryFlashListProps<T> {
   onViewableItemsChanged?: FlashListProps<T>["onViewableItemsChanged"];
   renderScrollComponent?: FlashListProps<T>["renderScrollComponent"];
   onLoad?: FlashListProps<T>["onLoad"];
+  getItemType?: FlashListProps<T>["getItemType"];
+  onLayout?: FlashListProps<T>["onLayout"];
+  scrollViewProps?: ScrollViewProps;
 }
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
+
+export interface MasonryFlashListScrollEvent extends NativeScrollEvent {
+  doNotPropagate?: boolean;
+}
 
 export interface MasonryFlashListRef<T> {
   scrollToOffset: FlashList<T>["scrollToOffset"];
@@ -58,26 +65,33 @@ export const MasonryFlashList = React.forwardRef(
     const dataSet = useDataSet(columnCount, props.data);
 
     const onScrollRef = useRef<OnScrollCallback[]>([]);
-    const scrollEventObject = useRef({
-      nativeEvent: { contentOffset: { y: 0, x: 0 } },
-    }).current as NativeSyntheticEvent<NativeScrollEvent>;
+    const emptyScrollEvent = useRef(getBlackScrollEvent())
+      .current as NativeSyntheticEvent<MasonryFlashListScrollEvent>;
     const ScrollComponent = useRef(
       getFlashListScrollView(onScrollRef, estimatedListSize.height)
     ).current;
 
     const onScrollProxy = useRef<OnScrollCallback>(
-      (scrollEvent: NativeSyntheticEvent<NativeScrollEvent>) => {
+      (scrollEvent: NativeSyntheticEvent<MasonryFlashListScrollEvent>) => {
+        emptyScrollEvent.nativeEvent.contentOffset.y =
+          scrollEvent.nativeEvent.contentOffset.y -
+          (parentFlashList.current?.firstItemOffset ?? 0);
         onScrollRef.current?.forEach((onScrollCallback) => {
-          scrollEventObject.nativeEvent.contentOffset.y =
-            scrollEvent.nativeEvent.contentOffset.y -
-            (parentFlashList.current?.firstItemOffset ?? 0);
-          scrollEventObject.nativeEvent.contentOffset.x =
-            scrollEvent.nativeEvent.contentOffset.x;
-          onScrollCallback?.(scrollEventObject);
+          onScrollCallback?.(emptyScrollEvent);
         });
-        props.onScroll?.(scrollEvent);
+        if (!scrollEvent.nativeEvent.doNotPropagate) {
+          props.onScroll?.(scrollEvent);
+        }
       }
     ).current;
+
+    const onLoadForNestedLists = useRef(() => {
+      setTimeout(() => {
+        emptyScrollEvent.nativeEvent.doNotPropagate = true;
+        onScrollProxy?.(emptyScrollEvent);
+        emptyScrollEvent.nativeEvent.doNotPropagate = false;
+      }, 32);
+    }).current;
 
     const [parentFlashList, getFlashList] =
       useRefWithForwardRef<FlashList<T[]>>(forwardRef);
@@ -85,6 +99,7 @@ export const MasonryFlashList = React.forwardRef(
     return (
       <FlashList
         ref={getFlashList}
+        {...props.scrollViewProps}
         numColumns={columnCount}
         data={dataSet}
         onScroll={onScrollProxy}
@@ -101,12 +116,14 @@ export const MasonryFlashList = React.forwardRef(
         onEndReachedThreshold={props.onEndReachedThreshold}
         renderScrollComponent={props.renderScrollComponent}
         onLoad={props.onLoad}
+        onLayout={props.onLayout}
         renderItem={(args) => {
           return (
             <FlashList
               renderScrollComponent={ScrollComponent}
               estimatedItemSize={props.estimatedItemSize}
               data={args.item}
+              onLoad={args.index === 0 ? onLoadForNestedLists : undefined}
               renderItem={(innerArgs) => {
                 return (
                   props.renderItem?.({
@@ -119,6 +136,17 @@ export const MasonryFlashList = React.forwardRef(
                   }) ?? null
                 );
               }}
+              getItemType={
+                props.getItemType
+                  ? (item, index, extraData) => {
+                      return props.getItemType?.(
+                        item,
+                        getActualIndex(index, args.index, columnCount),
+                        extraData
+                      );
+                    }
+                  : undefined
+              }
               drawDistance={drawDistance}
               estimatedListSize={{
                 height: estimatedListSize.height,
@@ -201,9 +229,11 @@ const getFlashListScrollView = (
         [onLayout]
       );
       useEffect(() => {
-        onScrollRef.current?.push(onScroll);
+        if (onScroll) {
+          onScrollRef.current?.push(onScroll);
+        }
         return () => {
-          if (!onScrollRef.current) {
+          if (!onScrollRef.current || !onScroll) {
             return;
           }
           const indexToDelete = onScrollRef.current.indexOf(onScroll);
@@ -211,7 +241,7 @@ const getFlashListScrollView = (
             onScrollRef.current.splice(indexToDelete, 1);
           }
         };
-      });
+      }, [onScroll]);
       return <View ref={ref} {...rest} onLayout={onLayoutProxy} />;
     }
   );
@@ -233,5 +263,10 @@ const updateViewToken = (
 };
 const getActualIndex = (row: number, column: number, columnCount: number) => {
   return row * columnCount + column;
+};
+const getBlackScrollEvent = () => {
+  return {
+    nativeEvent: { contentOffset: { y: 0, x: 0 } },
+  };
 };
 MasonryFlashList.displayName = "MasonryFlashList";
