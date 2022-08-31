@@ -427,7 +427,7 @@ class FlashList<T> extends React.PureComponent<
     return (
       <>
         <PureComponentWrapper
-          enabled={children.length > 0 || this.isEmptyList}
+          enabled={true}
           contentStyle={this.props.contentContainerStyle}
           horizontal={this.props.horizontal}
           header={this.props.ListHeaderComponent}
