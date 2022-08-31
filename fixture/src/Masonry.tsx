@@ -27,8 +27,15 @@ export function Masonry() {
         ListFooterComponent={
           <Component
             item={{ index: 0, height: 100 }}
-            text="Header"
-            backgroundColor="blue"
+            text="Footer"
+            backgroundColor="lightblue"
+          />
+        }
+        ListEmptyComponent={
+          <Component
+            item={{ index: 0, height: 100 }}
+            text="Empty"
+            backgroundColor="black"
           />
         }
         onViewableItemsChanged={(info) => {
