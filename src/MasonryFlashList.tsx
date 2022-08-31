@@ -54,7 +54,7 @@ export interface MasonryFlashListRef<T> {
   getScrollableNode: FlashList<T>["getScrollableNode"];
 }
 
-export const MasonryFlashList = React.forwardRef(
+const MasonryFlashListComponent = React.forwardRef(
   <T,>(
     props: MasonryFlashListProps<T>,
     forwardRef: React.ForwardedRef<MasonryFlashListRef<T>>
@@ -179,11 +179,7 @@ export const MasonryFlashList = React.forwardRef(
       />
     );
   }
-) as <T>(
-  props: MasonryFlashListProps<T> & {
-    ref?: React.RefObject<MasonryFlashListRef<T>>;
-  }
-) => React.ReactElement;
+);
 
 const useDataSet = <T,>(
   columnCount: number,
@@ -279,4 +275,9 @@ const getBlackScrollEvent = () => {
     nativeEvent: { contentOffset: { y: 0, x: 0 } },
   };
 };
-MasonryFlashList.displayName = "MasonryFlashList";
+MasonryFlashListComponent.displayName = "MasonryFlashList";
+export const MasonryFlashList = MasonryFlashListComponent as <T>(
+  props: MasonryFlashListProps<T> & {
+    ref?: React.RefObject<MasonryFlashListRef<T>>;
+  }
+) => React.ReactElement;
