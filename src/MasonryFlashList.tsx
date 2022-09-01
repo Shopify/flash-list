@@ -48,12 +48,19 @@ export interface MasonryFlashListScrollEvent extends NativeScrollEvent {
   doNotPropagate?: boolean;
 }
 
+/**
+ * MasonryFlashListRef with support for scroll related methods
+ */
 export interface MasonryFlashListRef<T> {
   scrollToOffset: FlashList<T>["scrollToOffset"];
   scrollToEnd: FlashList<T>["scrollToEnd"];
   getScrollableNode: FlashList<T>["getScrollableNode"];
 }
 
+/**
+ * FlashList variant that enables rendering of masonry layouts.
+ * Please note that the component with not calculate the best fit. The data needs to be in the right order already.
+ */
 const MasonryFlashListComponent = React.forwardRef(
   <T,>(
     props: MasonryFlashListProps<T>,
@@ -186,6 +193,9 @@ const MasonryFlashListComponent = React.forwardRef(
   }
 );
 
+/**
+ * Splits data for each column's FlashList
+ */
 const useDataSet = <T,>(
   columnCount: number,
   sourceData?: FlashListProps<T>["data"]
@@ -199,6 +209,10 @@ const useDataSet = <T,>(
       : data;
   }, [sourceData, columnCount]) as T[][];
 };
+
+/**
+ * Handle both function refs and refs with current property
+ */
 const useRefWithForwardRef = <T,>(
   forwardRef: any
 ): [React.MutableRefObject<T | null>, (instance: T | null) => void] => {
@@ -219,6 +233,10 @@ const useRefWithForwardRef = <T,>(
   ];
 };
 
+/**
+ * This ScrollView is actually just a view mimicking a scrollview. We block the onScroll event from being passed to the parent list directly.
+ * We manually drive onScroll from the parent and thus, achieve recycling.
+ */
 const getFlashListScrollView = (
   onScrollRef: React.RefObject<OnScrollCallback[]>,
   getParentHeight: () => number
@@ -281,6 +299,11 @@ const getBlackScrollEvent = () => {
   };
 };
 MasonryFlashListComponent.displayName = "MasonryFlashList";
+
+/**
+ * FlashList variant that enables rendering of masonry layouts.
+ * Please note that the component with not calculate the best fit. The data needs to be in the right order already.
+ */
 export const MasonryFlashList = MasonryFlashListComponent as <T>(
   props: MasonryFlashListProps<T> & {
     ref?: React.RefObject<MasonryFlashListRef<T>>;
