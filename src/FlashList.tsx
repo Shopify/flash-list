@@ -427,7 +427,7 @@ class FlashList<T> extends React.PureComponent<
     return (
       <>
         <PureComponentWrapper
-          enabled={children.length > 0 || this.isEmptyList}
+          enabled={this.isListLoaded || children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}
           horizontal={this.props.horizontal}
           header={this.props.ListHeaderComponent}
@@ -448,7 +448,7 @@ class FlashList<T> extends React.PureComponent<
           ? this.getValidComponent(this.props.ListEmptyComponent)
           : null}
         <PureComponentWrapper
-          enabled={children.length > 0 || this.isEmptyList}
+          enabled={this.isListLoaded || children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}
           horizontal={this.props.horizontal}
           header={this.props.ListFooterComponent}

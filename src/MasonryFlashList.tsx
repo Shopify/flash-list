@@ -59,7 +59,7 @@ export interface MasonryFlashListRef<T> {
 
 /**
  * FlashList variant that enables rendering of masonry layouts.
- * Please note that the component with not calculate the best fit. The data needs to be in the right order already.
+ * Please note that the component will not calculate the best fit. The data needs to be in the right order already.
  */
 const MasonryFlashListComponent = React.forwardRef(
   <T,>(
@@ -302,7 +302,7 @@ MasonryFlashListComponent.displayName = "MasonryFlashList";
 
 /**
  * FlashList variant that enables rendering of masonry layouts.
- * Please note that the component with not calculate the best fit. The data needs to be in the right order already.
+ * Please note that the component will not calculate the best fit. The data needs to be in the right order already.
  */
 export const MasonryFlashList = MasonryFlashListComponent as <T>(
   props: MasonryFlashListProps<T> & {
