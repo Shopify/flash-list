@@ -71,7 +71,12 @@ const MasonryFlashListComponent = React.forwardRef(
     const emptyScrollEvent = useRef(getBlackScrollEvent())
       .current as NativeSyntheticEvent<MasonryFlashListScrollEvent>;
     const ScrollComponent = useRef(
-      getFlashListScrollView(onScrollRef, estimatedListSize.height)
+      getFlashListScrollView(onScrollRef, () => {
+        const parentHeight =
+          parentFlashList?.current?.recyclerlistview_unsafe?.getRenderedSize()
+            .height ?? 0;
+        return parentHeight > 0 ? parentHeight : estimatedListSize.height;
+      })
     ).current;
 
     const onScrollProxy = useRef<OnScrollCallback>(
@@ -216,7 +221,7 @@ const useRefWithForwardRef = <T,>(
 
 const getFlashListScrollView = (
   onScrollRef: React.RefObject<OnScrollCallback[]>,
-  estimatedHeight: number
+  getParentHeight: () => number
 ) => {
   const FlashListScrollView = React.forwardRef(
     (props: ScrollViewProps, ref: React.ForwardedRef<View>) => {
@@ -226,7 +231,7 @@ const getFlashListScrollView = (
           onLayout?.({
             nativeEvent: {
               layout: {
-                height: estimatedHeight,
+                height: getParentHeight(),
                 width: layoutEvent.nativeEvent.layout.width,
               },
             },
