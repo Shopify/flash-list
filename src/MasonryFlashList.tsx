@@ -183,7 +183,7 @@ const MasonryFlashListComponent = React.forwardRef(
               }
               overrideItemLayout={
                 overrideItemLayout
-                  ? (layout, item, index, maxColumns, extraData) => {
+                  ? (layout, item, index, _, extraData) => {
                       overrideItemLayout?.(
                         layout,
                         item,
