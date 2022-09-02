@@ -19,7 +19,6 @@ export interface MasonryFlashListProps<T>
     | "horizontal"
     | "initialScrollIndex"
     | "inverted"
-    | "keyExtractor"
     | "onBlankArea"
     | "viewabilityConfigCallbackPairs"
   > {
@@ -113,6 +112,7 @@ const MasonryFlashListComponent = React.forwardRef(
       getColumnSizeMultiplier,
       overrideItemLayout,
       viewabilityConfig,
+      keyExtractor,
       onViewableItemsChanged,
       data,
       stickyHeaderIndices,
@@ -148,6 +148,16 @@ const MasonryFlashListComponent = React.forwardRef(
                   }) ?? null
                 );
               }}
+              keyExtractor={
+                keyExtractor
+                  ? (item, index) => {
+                      return keyExtractor?.(
+                        item,
+                        getActualIndex(index, args.index, columnCount)
+                      );
+                    }
+                  : undefined
+              }
               getItemType={
                 getItemType
                   ? (item, index, extraData) => {

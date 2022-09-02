@@ -41,9 +41,15 @@ export function Masonry() {
         onViewableItemsChanged={(info) => {
           info.changed.forEach((item) => {
             if (item.isViewable) {
-              console.log(item.index);
+              console.log("Viewable:", item.index);
             }
           });
+        }}
+        keyExtractor={(item, index) => {
+          if (item.index !== index) {
+            console.log("Key Extractor issue @", index);
+          }
+          return item.index.toString();
         }}
         getItemType={(item, index) => {
           if (item.index !== index) {
@@ -56,6 +62,9 @@ export function Masonry() {
         }}
         getColumnSizeMultiplier={(_, index) => {
           return index === 1 ? 0.75 * 2 : 0.75 * 1;
+        }}
+        onLoad={({ elapsedTimeInMs }) => {
+          console.log("List Load Time", elapsedTimeInMs);
         }}
       />
     </View>

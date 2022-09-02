@@ -18,7 +18,6 @@ To get started, import `MasonryFlashList` from `@shopify/flash-list` and use it 
 There are some props that `MasonryFlashList` does not support when compared to `FlashList`. These are:
 
 - [`horizontal`](../fundamentals/usage.md#horizontal)
-- [`keyExtractor`](../fundamentals/usage.md#keyextractor)
 - [`inverted`](../fundamentals/usage.md#inverted)
 - [`initialScrollIndex`](../fundamentals/usage.md#initialscrollindex)
 - [`viewabilityConfigCallbackPairs`](../fundamentals/usage.md#viewabilityconfigcallbackpairs)
