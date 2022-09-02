@@ -39,9 +39,18 @@ There are some additional props that `MasonryFlashList` supports when compared t
   ) => number | undefined;
 ```
 
-Allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others e.g, if `numColumns` is 3, you can return 1.25 for index 1 and 0.75 for the rest to achieve a 1:2:1 split by width.
+Allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others.
 
-### Methods
+Example:
+
+```tsx
+// if `numColumns` is 3, you can return 1.25 for index 1 and 0.75 for the rest to achieve a 1:2:1 split by width.
+getColumnSizeMultiplier={(items, index, maxColumns, extraData) => {
+    return index === 1 ? 0.75 * 2 : 0.75 * 1;
+}}
+```
+
+## Methods
 
 `MasonryFlashList` exposes the some methods that `FlashList` does. These are:
 
