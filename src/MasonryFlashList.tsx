@@ -13,34 +13,17 @@ import { FlashListProps } from "./FlashListProps";
 import { PlatformConfig } from "./native/config/PlatformHelper";
 import ViewToken from "./viewability/ViewToken";
 
-export interface MasonryFlashListProps<T> {
-  data?: FlashListProps<T>["data"];
-  numColumns?: FlashListProps<T>["numColumns"];
-  estimatedListSize?: FlashListProps<T>["estimatedListSize"];
-  estimatedItemSize?: FlashListProps<T>["estimatedItemSize"];
-  onEndReached?: FlashListProps<T>["onEndReached"];
-  drawDistance?: FlashListProps<T>["drawDistance"];
-  renderItem: FlashListProps<T>["renderItem"];
-  onEndReachedThreshold?: FlashListProps<T>["onEndReachedThreshold"];
-  extraData?: FlashListProps<T>["extraData"];
-  onScroll?: FlashListProps<T>["onScroll"];
-  contentContainerStyle?: FlashListProps<T>["contentContainerStyle"];
-  ListFooterComponent?: FlashListProps<T>["ListFooterComponent"];
-  ListHeaderComponent?: FlashListProps<T>["ListHeaderComponent"];
-  ListEmptyComponent?: FlashListProps<T>["ListEmptyComponent"];
-  ListFooterComponentStyle?: FlashListProps<T>["ListFooterComponentStyle"];
-  ListHeaderComponentStyle?: FlashListProps<T>["ListHeaderComponentStyle"];
-  viewabilityConfig?: FlashListProps<T>["viewabilityConfig"];
-  onViewableItemsChanged?: FlashListProps<T>["onViewableItemsChanged"];
-  renderScrollComponent?: FlashListProps<T>["renderScrollComponent"];
-  onLoad?: FlashListProps<T>["onLoad"];
-  getItemType?: FlashListProps<T>["getItemType"];
-  onLayout?: FlashListProps<T>["onLayout"];
-  scrollViewProps?: ScrollViewProps;
-  refreshing?: FlashListProps<T>["refreshing"];
-  onRefresh?: FlashListProps<T>["onRefresh"];
-  progressViewOffset?: FlashListProps<T>["progressViewOffset"];
-}
+export interface MasonryFlashListProps<T>
+  extends Omit<
+    FlashListProps<T>,
+    | "horizontal"
+    | "initialScrollIndex"
+    | "inverted"
+    | "keyExtractor"
+    | "onBlankArea"
+    | "overrideProps"
+    | "viewabilityConfigCallbackPairs"
+  > {}
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
 
@@ -63,6 +46,9 @@ export interface MasonryFlashListRef<T> {
  */
 const MasonryFlashListComponent = React.forwardRef(
   <T,>(
+    /**
+     * Forward Ref will force cast generic parament T to unknown. Export has a explicit cast to solve this.
+     * */
     props: MasonryFlashListProps<T>,
     forwardRef: React.ForwardedRef<MasonryFlashListRef<T>>
   ) => {
@@ -111,30 +97,27 @@ const MasonryFlashListComponent = React.forwardRef(
     const [parentFlashList, getFlashList] =
       useRefWithForwardRef<FlashList<T[]>>(forwardRef);
 
+    const {
+      renderItem,
+      getItemType,
+      overrideItemLayout,
+      viewabilityConfig,
+      onViewableItemsChanged,
+      data,
+      stickyHeaderIndices,
+      CellRendererComponent,
+      ItemSeparatorComponent,
+      ...remainingProps
+    } = props;
+
     return (
       <FlashList
         ref={getFlashList}
-        {...props.scrollViewProps}
+        {...remainingProps}
         numColumns={columnCount}
         data={dataSet}
         onScroll={onScrollProxy}
-        contentContainerStyle={props.contentContainerStyle}
-        ListFooterComponent={props.ListFooterComponent}
-        ListHeaderComponent={props.ListHeaderComponent}
-        ListEmptyComponent={props.ListEmptyComponent}
-        ListFooterComponentStyle={props.ListFooterComponentStyle}
-        ListHeaderComponentStyle={props.ListHeaderComponentStyle}
         estimatedItemSize={estimatedListSize.height}
-        estimatedListSize={props.estimatedListSize}
-        extraData={props.extraData}
-        onEndReached={props.onEndReached}
-        onEndReachedThreshold={props.onEndReachedThreshold}
-        renderScrollComponent={props.renderScrollComponent}
-        onLoad={props.onLoad}
-        onLayout={props.onLayout}
-        refreshing={props.refreshing}
-        onRefresh={props.onRefresh}
-        progressViewOffset={props.progressViewOffset}
         renderItem={(args) => {
           return (
             <FlashList
@@ -144,7 +127,7 @@ const MasonryFlashListComponent = React.forwardRef(
               onLoad={args.index === 0 ? onLoadForNestedLists : undefined}
               renderItem={(innerArgs) => {
                 return (
-                  props.renderItem?.({
+                  renderItem?.({
                     ...innerArgs,
                     index: getActualIndex(
                       innerArgs.index,
@@ -155,9 +138,9 @@ const MasonryFlashListComponent = React.forwardRef(
                 );
               }}
               getItemType={
-                props.getItemType
+                getItemType
                   ? (item, index, extraData) => {
-                      return props.getItemType?.(
+                      return getItemType?.(
                         item,
                         getActualIndex(index, args.index, columnCount),
                         extraData
@@ -171,9 +154,11 @@ const MasonryFlashListComponent = React.forwardRef(
                 width: estimatedListSize.width / columnCount,
               }}
               extraData={props.extraData}
-              viewabilityConfig={props.viewabilityConfig}
+              CellRendererComponent={CellRendererComponent}
+              ItemSeparatorComponent={ItemSeparatorComponent}
+              viewabilityConfig={viewabilityConfig}
               onViewableItemsChanged={
-                props.onViewableItemsChanged
+                onViewableItemsChanged
                   ? (info) => {
                       updateViewToken(
                         info.viewableItems,
@@ -181,7 +166,7 @@ const MasonryFlashListComponent = React.forwardRef(
                         columnCount
                       );
                       updateViewToken(info.changed, args.index, columnCount);
-                      props.onViewableItemsChanged?.(info);
+                      onViewableItemsChanged?.(info);
                     }
                   : undefined
               }
