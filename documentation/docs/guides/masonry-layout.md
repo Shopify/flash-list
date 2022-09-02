@@ -5,6 +5,10 @@ title: Masonry Layout
 
 Masonry Layout allows you to create a grid of items with different heights. It is a great way to display a collection of images with different sizes.
 
+<div align="center">
+<img src="https://user-images.githubusercontent.com/7811728/188055598-41f5c961-0dd0-4bb9-bc6e-22d78596a036.png" height="500"/>
+</div>
+
 To get started, import `MasonryFlashList` from `@shopify/flash-list` and use it just like you would use `FlashList`:
 
 **Note:** `MasonryFlashList` will not compute most optimal arrangement for you. It will fit the items in the order they are provided.
