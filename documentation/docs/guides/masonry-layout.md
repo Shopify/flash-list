@@ -13,4 +13,4 @@ To get started, import `MasonryFlashList` from `@shopify/flash-list` and use it 
 
 There are some props that `MasonryFlashList` does not support when compared to `FlashList`. These are:
 
-- `[horizontal](../fundamentals/usage#horizontal)`
+- [horizontal](../fundamentals/usage#horizontal)
