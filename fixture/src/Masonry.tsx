@@ -54,6 +54,9 @@ export function Masonry() {
         renderItem={({ item, index }) => {
           return <Component item={item} />;
         }}
+        getColumnSizeMultiplier={(_, index) => {
+          return index === 1 ? 0.75 * 2 : 0.75 * 1;
+        }}
       />
     </View>
   );

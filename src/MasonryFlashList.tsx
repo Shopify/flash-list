@@ -21,9 +21,19 @@ export interface MasonryFlashListProps<T>
     | "inverted"
     | "keyExtractor"
     | "onBlankArea"
-    | "overrideProps"
     | "viewabilityConfigCallbackPairs"
-  > {}
+  > {
+  /**
+   * Allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others.
+   * e.g, if numColumns is 3, you can return 1.25 for index 1 and 0.75 for the rest to achieve a 1:2:1 split by size
+   */
+  getColumnSizeMultiplier?: (
+    items: T[],
+    columnIndex: number,
+    maxColumns: number,
+    extraData?: any
+  ) => number | undefined;
+}
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
 
@@ -100,6 +110,7 @@ const MasonryFlashListComponent = React.forwardRef(
     const {
       renderItem,
       getItemType,
+      getColumnSizeMultiplier,
       overrideItemLayout,
       viewabilityConfig,
       onViewableItemsChanged,
@@ -170,9 +181,35 @@ const MasonryFlashListComponent = React.forwardRef(
                     }
                   : undefined
               }
+              overrideItemLayout={
+                overrideItemLayout
+                  ? (layout, item, index, maxColumns, extraData) => {
+                      overrideItemLayout?.(
+                        layout,
+                        item,
+                        getActualIndex(index, args.index, columnCount),
+                        columnCount,
+                        extraData
+                      );
+                      layout.span = undefined;
+                    }
+                  : undefined
+              }
             />
           );
         }}
+        overrideItemLayout={
+          getColumnSizeMultiplier
+            ? (layout, item, index, maxColumns, extraData) => {
+                layout.span = getColumnSizeMultiplier?.(
+                  item,
+                  index,
+                  maxColumns,
+                  extraData
+                );
+              }
+            : undefined
+        }
       />
     );
   }
@@ -188,7 +225,7 @@ const useDataSet = <T,>(
   return useMemo(() => {
     const data = sourceData ?? [];
     return data.length > 0
-      ? new Array(columnCount).fill(null).map((_, pIndex) => {
+      ? new Array(columnCount).fill(undefined).map((_, pIndex) => {
           return data?.filter((__, index) => index % columnCount === pIndex);
         })
       : data;
