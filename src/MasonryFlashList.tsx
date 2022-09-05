@@ -125,6 +125,7 @@ const MasonryFlashListComponent = React.forwardRef(
       <FlashList
         ref={getFlashList}
         {...remainingProps}
+        horizontal={false}
         numColumns={columnCount}
         data={dataSet}
         onScroll={onScrollProxy}
