@@ -172,7 +172,14 @@ const MasonryFlashListComponent = React.forwardRef(
               drawDistance={drawDistance}
               estimatedListSize={{
                 height: estimatedListSize.height,
-                width: estimatedListSize.width / columnCount,
+                width:
+                  (estimatedListSize.width / columnCount) *
+                  (getColumnSizeMultiplier?.(
+                    args.item,
+                    args.index,
+                    columnCount,
+                    props.extraData
+                  ) ?? 1),
               }}
               extraData={props.extraData}
               CellRendererComponent={CellRendererComponent}
@@ -233,13 +240,21 @@ const useDataSet = <T,>(
   sourceData?: FlashListProps<T>["data"]
 ) => {
   return useMemo(() => {
-    const data = sourceData ?? [];
-    return data.length > 0
-      ? new Array(columnCount).fill(undefined).map((_, pIndex) => {
-          return data?.filter((__, index) => index % columnCount === pIndex);
-        })
-      : data;
-  }, [sourceData, columnCount]) as T[][];
+    if (!sourceData || sourceData.length === 0) {
+      return [];
+    }
+    const dataSet = new Array<T[]>(columnCount);
+    const dataSize = sourceData.length;
+
+    for (let i = 0; i < columnCount; i++) {
+      dataSet[i] = [];
+    }
+    for (let i = 0; i < dataSize; i++) {
+      dataSet[i % columnCount].push(sourceData[i]);
+    }
+    console.log(dataSet);
+    return dataSet;
+  }, [sourceData, columnCount]);
 };
 
 /**

@@ -8,7 +8,7 @@ interface MasonryData {
 }
 
 export function Masonry() {
-  const data: MasonryData[] = new Array(1000).fill(null).map((_, index) => {
+  const data: MasonryData[] = new Array(999).fill(null).map((_, index) => {
     return { index, height: ((index * 10) % 100) + 100 };
   });
   return (
