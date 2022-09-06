@@ -74,10 +74,10 @@ const MasonryFlashListComponent = React.forwardRef(
       .current as NativeSyntheticEvent<MasonryFlashListScrollEvent>;
     const ScrollComponent = useRef(
       getFlashListScrollView(onScrollRef, () => {
-        const parentHeight =
-          parentFlashList?.current?.recyclerlistview_unsafe?.getRenderedSize()
-            .height ?? 0;
-        return parentHeight > 0 ? parentHeight : estimatedListSize.height;
+        return (
+          getListRenderedSize(parentFlashList)?.height ||
+          estimatedListSize.height
+        );
       })
     ).current;
 
@@ -95,12 +95,13 @@ const MasonryFlashListComponent = React.forwardRef(
       }
     ).current;
 
-    const onLoadForNestedLists = useRef(() => {
+    const onLoadForNestedLists = useRef((args: { elapsedTimeInMs: number }) => {
       setTimeout(() => {
         emptyScrollEvent.nativeEvent.doNotPropagate = true;
         onScrollProxy?.(emptyScrollEvent);
         emptyScrollEvent.nativeEvent.doNotPropagate = false;
       }, 32);
+      props.onLoad?.(args);
     }).current;
 
     const [parentFlashList, getFlashList] =
@@ -113,6 +114,7 @@ const MasonryFlashListComponent = React.forwardRef(
       overrideItemLayout,
       viewabilityConfig,
       keyExtractor,
+      onLoad,
       onViewableItemsChanged,
       data,
       stickyHeaderIndices,
@@ -174,7 +176,9 @@ const MasonryFlashListComponent = React.forwardRef(
               estimatedListSize={{
                 height: estimatedListSize.height,
                 width:
-                  (estimatedListSize.width / columnCount) *
+                  ((getListRenderedSize(parentFlashList)?.width ||
+                    estimatedListSize.width) /
+                    columnCount) *
                   (getColumnSizeMultiplier?.(
                     args.item,
                     args.index,
@@ -344,6 +348,11 @@ const getBlackScrollEvent = () => {
   return {
     nativeEvent: { contentOffset: { y: 0, x: 0 } },
   };
+};
+const getListRenderedSize = <T,>(
+  parentFlashList: React.MutableRefObject<FlashList<T[]> | null>
+) => {
+  return parentFlashList?.current?.recyclerlistview_unsafe?.getRenderedSize();
 };
 MasonryFlashListComponent.displayName = "MasonryFlashList";
 
