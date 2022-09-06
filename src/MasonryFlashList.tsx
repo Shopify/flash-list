@@ -253,7 +253,6 @@ const useDataSet = <T,>(
     for (let i = 0; i < dataSize; i++) {
       dataSet[i % columnCount].push(sourceData[i]);
     }
-    console.log(dataSet);
     return dataSet;
   }, [sourceData, columnCount]);
 };
