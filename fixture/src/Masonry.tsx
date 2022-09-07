@@ -14,6 +14,7 @@ export function Masonry() {
   return (
     <View style={styles.container}>
       <MasonryFlashList
+        testID="MasonryList"
         data={data}
         numColumns={3}
         estimatedItemSize={150}
