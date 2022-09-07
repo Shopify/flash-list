@@ -1,4 +1,4 @@
-import { ScrollView, Text } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import "@quilted/react-testing/matchers";
 import { ProgressiveListView } from "recyclerlistview";
 import React from "react";
@@ -175,5 +175,22 @@ describe("MasonryFlashList", () => {
     jest.advanceTimersByTime(1000);
     masonryFlashList.unmount();
   });
-  it("internal list dimensions should be derived from the parent", () => {});
+  it("internal list height should be derived from the parent and width from itself", () => {
+    const masonryFlashList = mountMasonryFlashList({
+      testID: "MasonryProxyScrollView",
+    });
+    expect(masonryFlashList.findAll(ProgressiveListView).length).toBe(3);
+    masonryFlashList.findAll(View).forEach((view: any) => {
+      view.props?.onLayout?.({
+        nativeEvent: { layout: { width: 500, height: 500 } },
+      });
+    });
+    masonryFlashList.findAll(ProgressiveListView).forEach((list, index) => {
+      if (index !== 0) {
+        expect(list.instance.getRenderedSize().width).toBe(500);
+        expect(list.instance.getRenderedSize().height).toBe(900);
+      }
+    });
+    masonryFlashList.unmount();
+  });
 });
