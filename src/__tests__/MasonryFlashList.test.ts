@@ -3,7 +3,11 @@ import "@quilted/react-testing/matchers";
 import { ProgressiveListView } from "recyclerlistview";
 import React from "react";
 
-import { MasonryFlashListRef } from "../MasonryFlashList";
+import {
+  MasonryFlashListProps,
+  MasonryFlashListRef,
+} from "../MasonryFlashList";
+import FlashList from "../FlashList";
 
 import { mountMasonryFlashList } from "./helpers/mountMasonryFlashList";
 
@@ -13,22 +17,31 @@ describe("MasonryFlashList", () => {
     jest.useFakeTimers();
   });
 
-  it("renders items", () => {
+  it("renders items and has 3 internal lists", () => {
     const masonryFlashList = mountMasonryFlashList();
     expect(masonryFlashList.findAll(ProgressiveListView).length).toBe(3);
     expect(masonryFlashList).toContainReactComponent(Text, { children: "One" });
     expect(masonryFlashList).toContainReactComponent(ProgressiveListView, {
       isHorizontal: false,
     });
+    masonryFlashList.unmount();
   });
-  it("raised onLoad event when first internal child mounts", () => {
+  it("raised onLoad event only when first internal child mounts", () => {
     const onLoadMock = jest.fn();
-    const masonryFlashList = mountMasonryFlashList({
-      onLoad: onLoadMock,
-    });
+    const ref = React.createRef<MasonryFlashListRef<string>>();
+    const masonryFlashList = mountMasonryFlashList(
+      {
+        onLoad: onLoadMock,
+      },
+      ref
+    );
     expect(onLoadMock).not.toHaveBeenCalled();
     masonryFlashList.findAll(ProgressiveListView)[1]?.instance.onItemLayout(0);
     expect(onLoadMock).toHaveBeenCalledTimes(1);
+
+    // on load shouldn't be passed to wrapper list
+    expect((ref.current as FlashList<string>).props.onLoad).toBeUndefined();
+    masonryFlashList.unmount();
   });
   it("can resize columns using getColumnSizeMultiplier", () => {
     const masonryFlashList = mountMasonryFlashList({
@@ -48,10 +61,12 @@ describe("MasonryFlashList", () => {
         expect(plv.instance.props.layoutSize.width).toBe(300);
       }
     });
+    masonryFlashList.unmount();
   });
   it("mounts a single ScrollView", () => {
     const masonryFlashList = mountMasonryFlashList();
     expect(masonryFlashList.findAll(ScrollView)).toHaveLength(1);
+    masonryFlashList.unmount();
   });
   it("forwards single onScroll event to external listener", () => {
     const onScrollMock = jest.fn();
@@ -62,6 +77,7 @@ describe("MasonryFlashList", () => {
       nativeEvent: { contentOffset: { x: 0, y: 0 } },
     });
     expect(onScrollMock).toHaveBeenCalledTimes(1);
+    masonryFlashList.unmount();
   });
   it("updates scroll offset of all internal lists", () => {
     const onScrollMock = jest.fn();
@@ -74,11 +90,13 @@ describe("MasonryFlashList", () => {
     masonryFlashList.findAll(ProgressiveListView).forEach((list) => {
       expect(list.instance.getCurrentScrollOffset()).toBe(100);
     });
+    masonryFlashList.unmount();
   });
   it("has a valid ref object", () => {
     const ref = React.createRef<MasonryFlashListRef<string>>();
-    mountMasonryFlashList({}, ref);
+    const masonryFlashList = mountMasonryFlashList({}, ref);
     expect(ref.current).toBeDefined();
+    masonryFlashList.unmount();
   });
   it("forwards overrideItemLayout to internal lists", () => {
     const overrideItemLayout = jest.fn((layout) => {
@@ -93,6 +111,7 @@ describe("MasonryFlashList", () => {
         expect(list.instance.getLayout(0).height).toBe(300);
       }
     });
+    masonryFlashList.unmount();
   });
   it("forwards keyExtractor to internal list", () => {
     const keyExtractor = (_: string, index: number) => (index + 1).toString();
@@ -115,5 +134,46 @@ describe("MasonryFlashList", () => {
         .findAll(ProgressiveListView)[2]
         .instance.props.dataProvider.getStableId(0)
     ).toBe("2");
+    masonryFlashList.unmount();
   });
+  it("correctly maps list indices to actual indices", () => {
+    const data = new Array(20).fill(0).map((_, index) => index.toString());
+    const getItemType = (item: string, index: number) => {
+      expect(index.toString()).toBe(item);
+      return 0;
+    };
+    const renderItem: MasonryFlashListProps<string>["renderItem"] = ({
+      item,
+      index,
+    }) => {
+      expect(index.toString()).toBe(item);
+      return null;
+    };
+    const overrideItemLayout: MasonryFlashListProps<string>["overrideItemLayout"] =
+      (layout, item: string, index: number) => {
+        expect(index.toString()).toBe(item);
+      };
+    const keyExtractor = (item: string, index: number) => {
+      expect(index.toString()).toBe(item);
+      return index.toString();
+    };
+    const onViewableItemsChanged: MasonryFlashListProps<string>["onViewableItemsChanged"] =
+      (info) => {
+        info.viewableItems.forEach((viewToken) => {
+          expect(viewToken.index?.toString()).toBe(viewToken.item);
+        });
+      };
+
+    const masonryFlashList = mountMasonryFlashList({
+      data,
+      renderItem,
+      getItemType,
+      overrideItemLayout,
+      keyExtractor,
+      onViewableItemsChanged,
+    });
+    jest.advanceTimersByTime(1000);
+    masonryFlashList.unmount();
+  });
+  it("internal list dimensions should be derived from the parent", () => {});
 });
