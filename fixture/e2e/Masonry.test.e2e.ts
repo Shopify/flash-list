@@ -26,7 +26,7 @@ describe("Masonry", () => {
   });
   it("can scroll", async () => {
     await element(by.id("Masonry")).tap();
-    await element(by.id("MasonryList")).scroll(240, "down");
+    await element(by.id("MasonryList")).scroll(2000, "down");
     const testRunScreenshotPath = await element(
       by.id("MasonryList")
     ).takeScreenshot(testNameScroll);
