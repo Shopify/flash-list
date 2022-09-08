@@ -28,7 +28,7 @@ export interface MasonryFlashListProps<T>
    * e.g, if numColumns is 3, you can return 1.25 for index 1 and 0.75 for the rest to achieve a 1:2:1 split by size
    */
   getColumnSizeMultiplier?: (
-    items: MasonryListData<T>[],
+    items: MasonryListItem<T>[],
     columnIndex: number,
     maxColumns: number,
     extraData?: any
@@ -47,7 +47,7 @@ export interface MasonryFlashListScrollEvent extends NativeScrollEvent {
   doNotPropagate?: boolean;
 }
 
-export interface MasonryListData<T> {
+export interface MasonryListItem<T> {
   originalIndex: number;
   originalItem: T;
 }
@@ -127,7 +127,7 @@ const MasonryFlashListComponent = React.forwardRef(
     }).current;
 
     const [parentFlashList, getFlashList] =
-      useRefWithForwardRef<FlashList<MasonryListData<T>[]>>(forwardRef);
+      useRefWithForwardRef<FlashList<MasonryListItem<T>[]>>(forwardRef);
 
     const {
       renderItem,
@@ -261,14 +261,14 @@ const useDataSet = <T,>(
   sourceData?: FlashListProps<T>["data"],
   overrideItemLayout?: MasonryFlashListProps<T>["overrideItemLayout"],
   extraData?: MasonryFlashListProps<T>["extraData"]
-): MasonryListData<T>[][] => {
+): MasonryListItem<T>[][] => {
   return useMemo(() => {
     if (!sourceData || sourceData.length === 0) {
       return [];
     }
     const columnHeightTracker = new Array<number>(columnCount).fill(0);
     const layoutObject = { size: 1 };
-    const dataSet = new Array<MasonryListData<T>[]>(columnCount);
+    const dataSet = new Array<MasonryListItem<T>[]>(columnCount);
     const dataSize = sourceData.length;
 
     for (let i = 0; i < columnCount; i++) {

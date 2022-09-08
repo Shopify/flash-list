@@ -193,4 +193,43 @@ describe("MasonryFlashList", () => {
     });
     masonryFlashList.unmount();
   });
+  it("can optimize item arrangement", () => {
+    const columnCount = 3;
+    const data = new Array(999).fill(null).map((_, index) => {
+      return "1";
+    });
+    const masonryFlashList = mountMasonryFlashList({
+      data,
+      optimizeItemArrangement: true,
+      numColumns: columnCount,
+      overrideItemLayout(layout, _, index, __, ___?) {
+        layout.size = ((index * 10) % 100) + 100 / ((index % columnCount) + 1);
+      },
+    });
+    expect(masonryFlashList.findAll(ProgressiveListView).length).toBe(4);
+
+    // I've verified that the following values are correct by observing the algorithm in action
+    // Captured values will help prevent regression in the future
+    expect(
+      Math.floor(
+        masonryFlashList
+          .findAll(ProgressiveListView)[1]
+          .instance.getContentDimension().height
+      )
+    ).toBe(35306);
+    expect(
+      Math.floor(
+        masonryFlashList
+          .findAll(ProgressiveListView)[2]
+          .instance.getContentDimension().height
+      )
+    ).toBe(35313);
+    expect(
+      Math.floor(
+        masonryFlashList
+          .findAll(ProgressiveListView)[3]
+          .instance.getContentDimension().height
+      )
+    ).toBe(35339);
+  });
 });
