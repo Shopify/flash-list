@@ -267,7 +267,7 @@ const useDataSet = <T,>(
       return [];
     }
     const columnHeightTracker = new Array<number>(columnCount).fill(0);
-    const layoutObject = { size: 1 };
+    const layoutObject: { size: number | undefined } = { size: undefined };
     const dataSet = new Array<MasonryListItem<T>[]>(columnCount);
     const dataSize = sourceData.length;
 
@@ -283,6 +283,7 @@ const useDataSet = <T,>(
           }
         }
         // update height of column
+        layoutObject.size = undefined;
         overrideItemLayout!(
           layoutObject,
           sourceData[i],
@@ -290,7 +291,7 @@ const useDataSet = <T,>(
           columnCount,
           extraData
         );
-        columnHeightTracker[nextColumnIndex] += layoutObject.size;
+        columnHeightTracker[nextColumnIndex] += layoutObject.size ?? 100;
       }
       dataSet[nextColumnIndex].push({
         originalItem: sourceData[i],
