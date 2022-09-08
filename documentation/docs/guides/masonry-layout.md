@@ -11,7 +11,7 @@ Masonry Layout allows you to create a grid of items with different heights. It i
 
 To get started, import `MasonryFlashList` from `@shopify/flash-list` and use it just like you would use `FlashList`:
 
-**Note:** `MasonryFlashList` will not compute most optimal arrangement for you. It will fit the items in the order they are provided. Individual items cannot span multiple columns however, you can change the width of an entire columns using `getColumnSizeMultiplier` prop.
+**Note:** If you want `MasonryFlashList` to optimize item arrangement, enable `optimizeItemArrangement` and pass a valid [`overrideItemLayout`](../fundamentals/usage.md#overrideitemlayout) function.
 
 ## Unsupported Props
 
@@ -26,6 +26,14 @@ There are some props that `MasonryFlashList` does not support when compared to `
 ## Additional Props
 
 There are some additional props that `MasonryFlashList` supports when compared to `FlashList`. These are:
+
+### `optimizeItemArrangement`
+
+```tsx
+optimizeItemArrangement?: boolean;
+```
+
+If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order. `overrideItemLayout` is required to make this work. Default value is `false`.
 
 ### `getColumnSizeMultiplier`
 

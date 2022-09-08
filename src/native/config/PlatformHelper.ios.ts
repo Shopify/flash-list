@@ -2,7 +2,6 @@ import { BaseItemAnimator } from "recyclerlistview";
 
 const PlatformConfig = {
   defaultDrawDistance: 250,
-  defaultMasonryDrawDistance: 500,
 };
 const getCellContainerPlatformStyles = (
   inverted: boolean,

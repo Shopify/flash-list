@@ -8,15 +8,23 @@ interface MasonryData {
 }
 
 export function Masonry() {
+  const columnCount = 3;
   const data: MasonryData[] = new Array(999).fill(null).map((_, index) => {
-    return { index, height: ((index * 10) % 100) + 100 };
+    return {
+      index,
+      height: ((index * 10) % 100) + 100 / ((index % columnCount) + 1),
+    };
   });
   return (
     <View style={styles.container}>
       <MasonryFlashList
         testID="MasonryList"
         data={data}
-        numColumns={3}
+        optimizeItemArrangement
+        overrideItemLayout={(layout, item) => {
+          layout.size = item.height;
+        }}
+        numColumns={columnCount}
         estimatedItemSize={150}
         ListHeaderComponent={
           <Component
