@@ -42,6 +42,7 @@ export interface MasonryFlashListProps<T>
 }
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
+const defaultEstimatedItemSize = 100;
 
 export interface MasonryFlashListScrollEvent extends NativeScrollEvent {
   doNotPropagate?: boolean;
@@ -145,6 +146,10 @@ const MasonryFlashListComponent = React.forwardRef(
       ...remainingProps
     } = props;
 
+    const firstColumnHeight =
+      (dataSet[0]?.length ?? 0) *
+      (props.estimatedItemSize ?? defaultEstimatedItemSize);
+
     return (
       <FlashList
         ref={getFlashList}
@@ -153,7 +158,7 @@ const MasonryFlashListComponent = React.forwardRef(
         numColumns={columnCount}
         data={dataSet}
         onScroll={onScrollProxy}
-        estimatedItemSize={estimatedListSize.height}
+        estimatedItemSize={firstColumnHeight || estimatedListSize.height}
         renderItem={(args) => {
           return (
             <FlashList
@@ -291,7 +296,8 @@ const useDataSet = <T,>(
           columnCount,
           extraData
         );
-        columnHeightTracker[nextColumnIndex] += layoutObject.size ?? 100;
+        columnHeightTracker[nextColumnIndex] +=
+          layoutObject.size ?? defaultEstimatedItemSize;
       }
       dataSet[nextColumnIndex].push({
         originalItem: sourceData[i],
