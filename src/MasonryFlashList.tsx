@@ -70,7 +70,7 @@ const MasonryFlashListComponent = React.forwardRef(
   <T,>(
     /**
      * Forward Ref will force cast generic parament T to unknown. Export has a explicit cast to solve this.
-     * */
+     */
     props: MasonryFlashListProps<T>,
     forwardRef: React.ForwardedRef<MasonryFlashListRef<T>>
   ) => {
@@ -93,7 +93,7 @@ const MasonryFlashListComponent = React.forwardRef(
     );
 
     const onScrollRef = useRef<OnScrollCallback[]>([]);
-    const emptyScrollEvent = useRef(getBlackScrollEvent())
+    const emptyScrollEvent = useRef(getEmptyScrollEvent())
       .current as NativeSyntheticEvent<MasonryFlashListScrollEvent>;
     const ScrollComponent = useRef(
       getFlashListScrollView(onScrollRef, () => {
@@ -217,8 +217,8 @@ const MasonryFlashListComponent = React.forwardRef(
               onViewableItemsChanged={
                 onViewableItemsChanged
                   ? (info) => {
-                      updateViewToken(info.viewableItems);
-                      updateViewToken(info.changed);
+                      updateViewTokens(info.viewableItems);
+                      updateViewTokens(info.changed);
                       onViewableItemsChanged?.(info);
                     }
                   : undefined
@@ -262,7 +262,7 @@ const MasonryFlashListComponent = React.forwardRef(
  */
 const useDataSet = <T,>(
   columnCount: number,
-  autoOptimizeLayout: boolean,
+  optimizeItemArrangement: boolean,
   sourceData?: FlashListProps<T>["data"],
   overrideItemLayout?: MasonryFlashListProps<T>["overrideItemLayout"],
   extraData?: MasonryFlashListProps<T>["extraData"]
@@ -281,7 +281,7 @@ const useDataSet = <T,>(
     }
     for (let i = 0; i < dataSize; i++) {
       let nextColumnIndex = i % columnCount;
-      if (autoOptimizeLayout) {
+      if (optimizeItemArrangement) {
         for (let j = 0; j < columnCount; j++) {
           if (columnHeightTracker[j] < columnHeightTracker[nextColumnIndex]) {
             nextColumnIndex = j;
@@ -306,7 +306,7 @@ const useDataSet = <T,>(
     }
     return dataSet;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sourceData, columnCount, autoOptimizeLayout, extraData]);
+  }, [sourceData, columnCount, optimizeItemArrangement, extraData]);
 };
 
 /**
@@ -376,7 +376,7 @@ const getFlashListScrollView = (
   FlashListScrollView.displayName = "FlashListScrollView";
   return FlashListScrollView;
 };
-const updateViewToken = (tokens: ViewToken[]) => {
+const updateViewTokens = (tokens: ViewToken[]) => {
   const length = tokens.length;
   for (let i = 0; i < length; i++) {
     const token = tokens[i];
@@ -386,7 +386,7 @@ const updateViewToken = (tokens: ViewToken[]) => {
     }
   }
 };
-const getBlackScrollEvent = () => {
+const getEmptyScrollEvent = () => {
   return {
     nativeEvent: { contentOffset: { y: 0, x: 0 } },
   };
