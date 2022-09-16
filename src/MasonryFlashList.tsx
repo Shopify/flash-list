@@ -25,14 +25,14 @@ export interface MasonryFlashListProps<T>
   > {
   /**
    * Allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others.
-   * e.g, if numColumns is 3, you can return 1.25 for index 1 and 0.75 for the rest to achieve a 1:2:1 split by size
+   * e.g, if `numColumns` is `3`, you can return `2` for `index 1` and `1` for the rest to achieve a `1:2:1` split by width.
    */
-  getColumnSizeMultiplier?: (
+  getColumnFlex?: (
     items: MasonryListItem<T>[],
     columnIndex: number,
     maxColumns: number,
     extraData?: any
-  ) => number | undefined;
+  ) => number;
 
   /**
    * If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order.
@@ -92,6 +92,8 @@ const MasonryFlashListComponent = React.forwardRef(
       props.extraData
     );
 
+    const totalColumnFlex = useTotalColumnFlex(dataSet, props);
+
     const onScrollRef = useRef<OnScrollCallback[]>([]);
     const emptyScrollEvent = useRef(getEmptyScrollEvent())
       .current as NativeSyntheticEvent<MasonryFlashListScrollEvent>;
@@ -133,7 +135,7 @@ const MasonryFlashListComponent = React.forwardRef(
     const {
       renderItem,
       getItemType,
-      getColumnSizeMultiplier,
+      getColumnFlex,
       overrideItemLayout,
       viewabilityConfig,
       keyExtractor,
@@ -202,8 +204,8 @@ const MasonryFlashListComponent = React.forwardRef(
                 width:
                   ((getListRenderedSize(parentFlashList)?.width ||
                     estimatedListSize.width) /
-                    columnCount) *
-                  (getColumnSizeMultiplier?.(
+                    totalColumnFlex) *
+                  (getColumnFlex?.(
                     args.item,
                     args.index,
                     columnCount,
@@ -225,7 +227,7 @@ const MasonryFlashListComponent = React.forwardRef(
               }
               overrideItemLayout={
                 overrideItemLayout
-                  ? (layout, item, index, _, extraData) => {
+                  ? (layout, item, _, __, extraData) => {
                       overrideItemLayout?.(
                         layout,
                         item.originalItem,
@@ -241,14 +243,12 @@ const MasonryFlashListComponent = React.forwardRef(
           );
         }}
         overrideItemLayout={
-          getColumnSizeMultiplier
+          getColumnFlex
             ? (layout, item, index, maxColumns, extraData) => {
-                layout.span = getColumnSizeMultiplier?.(
-                  item,
-                  index,
-                  maxColumns,
-                  extraData
-                );
+                layout.span =
+                  (columnCount *
+                    getColumnFlex(item, index, maxColumns, extraData)) /
+                  totalColumnFlex;
               }
             : undefined
         }
@@ -307,6 +307,29 @@ const useDataSet = <T,>(
     return dataSet;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceData, columnCount, optimizeItemArrangement, extraData]);
+};
+
+const useTotalColumnFlex = <T,>(
+  dataSet: MasonryListItem<T>[][],
+  props: MasonryFlashListProps<T>
+): number => {
+  return useMemo(() => {
+    const columnCount = props.numColumns || 1;
+    if (!props.getColumnFlex) {
+      return columnCount;
+    }
+    let totalFlexSum = 0;
+    const dataSize = dataSet.length;
+    for (let i = 0; i < dataSize; i++) {
+      totalFlexSum += props.getColumnFlex(
+        dataSet[i],
+        i,
+        columnCount,
+        props.extraData
+      );
+    }
+    return totalFlexSum;
+  }, [dataSet, props.getColumnFlex, props.extraData]);
 };
 
 /**
@@ -386,6 +409,7 @@ const updateViewTokens = (tokens: ViewToken[]) => {
     }
   }
 };
+
 const getEmptyScrollEvent = () => {
   return {
     nativeEvent: { contentOffset: { y: 0, x: 0 } },

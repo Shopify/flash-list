@@ -43,9 +43,9 @@ describe("MasonryFlashList", () => {
     expect((ref.current as FlashList<string>).props.onLoad).toBeUndefined();
     masonryFlashList.unmount();
   });
-  it("can resize columns using getColumnSizeMultiplier", () => {
+  it("can resize columns using getColumnFlex", () => {
     const masonryFlashList = mountMasonryFlashList({
-      getColumnSizeMultiplier: (_, column) => (column === 0 ? 0.5 : 1.5),
+      getColumnFlex: (_, column) => (column === 0 ? 1 : 3),
     });
     const progressiveListView =
       masonryFlashList.find(ProgressiveListView)!.instance;

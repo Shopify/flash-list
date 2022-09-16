@@ -69,8 +69,8 @@ export function Masonry() {
         renderItem={({ item }) => {
           return <Component item={item} />;
         }}
-        getColumnSizeMultiplier={(_, index) => {
-          return index === 1 ? 0.75 * 2 : 0.75 * 1;
+        getColumnFlex={(_, index) => {
+          return index === 1 ? 2 : 1;
         }}
         onLoad={({ elapsedTimeInMs }) => {
           console.log("List Load Time", elapsedTimeInMs);
