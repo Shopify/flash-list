@@ -329,6 +329,7 @@ const useTotalColumnFlex = <T,>(
       );
     }
     return totalFlexSum;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSet, props.getColumnFlex, props.extraData]);
 };
 
