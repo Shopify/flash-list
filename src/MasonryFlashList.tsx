@@ -120,6 +120,10 @@ const MasonryFlashListComponent = React.forwardRef(
       }
     ).current;
 
+    /**
+     * We're triggering an onScroll on internal lists so that they register the correct offset which is offset - header size.
+     * This will make sure viewability callbacks are triggered correctly.
+     */
     const onLoadForNestedLists = useRef((args: { elapsedTimeInMs: number }) => {
       setTimeout(() => {
         emptyScrollEvent.nativeEvent.doNotPropagate = true;
