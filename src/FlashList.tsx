@@ -141,7 +141,7 @@ class FlashList<T> extends React.PureComponent<
 
   // Some of the state variables need to update when props change
   static getDerivedStateFromProps<T>(
-    nextProps: FlashListProps<T>,
+    nextProps: Readonly<FlashListProps<T>>,
     prevState: FlashListState<T>
   ): FlashListState<T> {
     const newState = { ...prevState };
