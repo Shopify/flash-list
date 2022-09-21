@@ -11,6 +11,24 @@ Masonry Layout allows you to create a grid of items with different heights. It i
 
 To get started, import `MasonryFlashList` from `@shopify/flash-list` and use it just like you would use `FlashList`:
 
+```tsx
+import React from "react";
+import { View, Text, StatusBar } from "react-native";
+import { MasonryFlashList } from "@shopify/flash-list";
+import { DATA } from "./data";
+
+const MyMasonryList = () => {
+  return (
+    <MasonryFlashList
+      data={DATA}
+      numColumns={2}
+      renderItem={({ item }) => <Text>{item.title}</Text>}
+      estimatedItemSize={200}
+    />
+  );
+};
+```
+
 **Note:** If you want `MasonryFlashList` to optimize item arrangement, enable `optimizeItemArrangement` and pass a valid [`overrideItemLayout`](../fundamentals/usage.md#overrideitemlayout) function.
 
 ## Unsupported Props
