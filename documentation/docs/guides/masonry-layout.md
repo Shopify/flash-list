@@ -38,12 +38,12 @@ If enabled, MasonryFlashList will try to reduce difference in column height by m
 ### `getColumnFlex`
 
 ```tsx
-  getColumnFlex?: (
-    items: T[],
-    columnIndex: number,
-    maxColumns: number,
-    extraData?: any
-  ) => number;
+getColumnFlex?: (
+  items: T[],
+  columnIndex: number,
+  maxColumns: number,
+  extraData?: any
+) => number;
 ```
 
 Allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others.
