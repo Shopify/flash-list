@@ -25,7 +25,7 @@ There are some props that `MasonryFlashList` does not support when compared to `
 
 ## Additional Props
 
-There are some additional props that `MasonryFlashList` supports when compared to `FlashList`. These are:
+`MasonryFlashList` supports these additional props on top of `FlashList`:
 
 ### `optimizeItemArrangement`
 
