@@ -64,7 +64,7 @@ export interface MasonryFlashListRef<T> {
 
 /**
  * FlashList variant that enables rendering of masonry layouts.
- * `MasonryFlashList` will not compute most optimal arrangement for you automatically. You can use the `useMasonryLayoutOptimizer` preprocessing hook to improve item arrangement.
+ * If you want `MasonryFlashList` to optimize item arrangement, enable `optimizeItemArrangement` and pass a valid `overrideItemLayout` function.
  */
 const MasonryFlashListComponent = React.forwardRef(
   <T,>(
@@ -123,6 +123,7 @@ const MasonryFlashListComponent = React.forwardRef(
     /**
      * We're triggering an onScroll on internal lists so that they register the correct offset which is offset - header size.
      * This will make sure viewability callbacks are triggered correctly.
+     * 32 ms is equal to two frames at 60 fps. Faster framerates will not cause any problems.
      */
     const onLoadForNestedLists = useRef((args: { elapsedTimeInMs: number }) => {
       setTimeout(() => {
@@ -429,7 +430,7 @@ MasonryFlashListComponent.displayName = "MasonryFlashList";
 
 /**
  * FlashList variant that enables rendering of masonry layouts.
- * `MasonryFlashList` will not compute most optimal arrangement for you automatically. You can use the `useMasonryLayoutOptimizer` preprocessing hook to improve item arrangement.
+ * If you want `MasonryFlashList` to optimize item arrangement, enable `optimizeItemArrangement` and pass a valid `overrideItemLayout` function.
  */
 export const MasonryFlashList = MasonryFlashListComponent as <T>(
   props: MasonryFlashListProps<T> & {
