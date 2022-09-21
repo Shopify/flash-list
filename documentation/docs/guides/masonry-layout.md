@@ -46,7 +46,7 @@ getColumnFlex?: (
 ) => number;
 ```
 
-Allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others.
+`getColumnFlex` allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others.
 
 Example:
 
