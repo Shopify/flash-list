@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Added `MasonryFlashList` which adds support for rendering masonry layouts
+  - https://github.com/Shopify/flash-list/pull/587
+
 ## [1.2.2] - 2022-09-06
 
 - Fixes type checking error in `AutoLayoutView` due to `children` not being an explicit type

@@ -14,6 +14,7 @@ import { DebugScreen } from "./Debug";
 import { Messages, MessagesFlatList } from "./Messages";
 import TwitterBenchmark from "./twitter/TwitterBenchmark";
 import TwitterCustomCellContainer from "./twitter/CustomCellRendererComponent";
+import { Masonry } from "./Masonry";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -50,6 +51,7 @@ const NavigationTree = () => {
             component={TwitterCustomCellContainer}
           />
         </Stack.Group>
+        <Stack.Screen name="Masonry" component={Masonry} />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />
         </Stack.Group>

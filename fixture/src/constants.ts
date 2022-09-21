@@ -17,4 +17,5 @@ export type RootStackParamList = {
   MessagesFlatList: undefined;
   TwitterBenchmark: undefined;
   TwitterCustomCellContainer: undefined;
+  Masonry: undefined;
 };

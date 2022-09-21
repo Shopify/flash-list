@@ -19,5 +19,10 @@ const ExceptionList = {
       "You can set exactly one of itemVisiblePercentThreshold or viewAreaCoveragePercentThreshold. Specifying both is not supported.",
     type: "MultipleViewabilityThresholdTypesException",
   },
+  overrideItemLayoutRequiredForMasonryOptimization: {
+    message:
+      "optimizeItemArrangement has been enabled on `MasonryFlashList` but overrideItemLayout is not set.",
+    type: "InvariantViolation",
+  },
 };
 export default ExceptionList;

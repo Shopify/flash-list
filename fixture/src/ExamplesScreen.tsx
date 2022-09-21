@@ -52,6 +52,7 @@ export const ExamplesScreen = () => {
       title: "Twitter Custom Cell Container",
       destination: "TwitterCustomCellContainer",
     },
+    { title: "Masonry", destination: "Masonry" },
   ];
   return (
     <>

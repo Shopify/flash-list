@@ -427,7 +427,7 @@ class FlashList<T> extends React.PureComponent<
     return (
       <>
         <PureComponentWrapper
-          enabled={children.length > 0 || this.isEmptyList}
+          enabled={this.isListLoaded || children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}
           horizontal={this.props.horizontal}
           header={this.props.ListHeaderComponent}
@@ -448,7 +448,7 @@ class FlashList<T> extends React.PureComponent<
           ? this.getValidComponent(this.props.ListEmptyComponent)
           : null}
         <PureComponentWrapper
-          enabled={children.length > 0 || this.isEmptyList}
+          enabled={this.isListLoaded || children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}
           horizontal={this.props.horizontal}
           header={this.props.ListFooterComponent}
@@ -489,10 +489,15 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private updateDistanceFromWindow = (event: LayoutChangeEvent) => {
-    this.distanceFromWindow = this.props.horizontal
+    const newDistanceFromWindow = this.props.horizontal
       ? event.nativeEvent.layout.x
       : event.nativeEvent.layout.y;
-    this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
+
+    if (this.distanceFromWindow !== newDistanceFromWindow) {
+      this.distanceFromWindow = newDistanceFromWindow;
+      this.windowCorrectionConfig.value.windowShift = -this.distanceFromWindow;
+      this.viewabilityManager.updateViewableItems();
+    }
   };
 
   private getTransform() {
