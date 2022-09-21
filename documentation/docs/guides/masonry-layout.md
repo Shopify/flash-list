@@ -80,6 +80,6 @@ scrollToOffset(params: {
 
 Scroll to a specific content pixel offset in the list.
 
-Param `offset` expects the offset to scroll to.
+Parameter `offset` expects the offset to scroll to.
 
 Parameter `animated` (`false` by default) defines whether the list should animate while scrolling.
