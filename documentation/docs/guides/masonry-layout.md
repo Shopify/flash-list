@@ -33,7 +33,7 @@ There are some props that `MasonryFlashList` does not support when compared to `
 optimizeItemArrangement?: boolean;
 ```
 
-If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order. `overrideItemLayout` is required to make this work. Default value is `false`.
+If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order. If `true`, specifying [`overrideItemLayout`](../fundamentals/usage.md#overrideitemlayout) is required. Default value is `false`.
 
 ### `getColumnFlex`
 
