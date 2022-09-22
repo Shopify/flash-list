@@ -319,7 +319,7 @@ Values reported:
 - `blankArea`: maximum of `offsetStart` and `offsetEnd`. You might see negative values indicating that items are rendered outside the list's visible area.
 
 :::warning
-This callback will be triggered even if the blanks are excepted - for example, when the list does not have enough items to fill the screen.
+This callback will be triggered even if the blanks are expected - for example, when the list does not have enough items to fill the screen.
 :::
 
 :::note
