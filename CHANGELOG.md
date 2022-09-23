@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.3.0] - 2022-09-26
+
 - Added `MasonryFlashList` which adds support for rendering masonry layouts
   - https://github.com/Shopify/flash-list/pull/587
 
