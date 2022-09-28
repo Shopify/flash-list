@@ -7,12 +7,14 @@ import {
 
 import { FlashListProps } from "./FlashListProps";
 import { AverageWindow } from "./utils/AverageWindow";
+import { applyContentContainerInsetForLayoutManager } from "./utils/ContentContainerUtils";
 
 export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
   private props: FlashListProps<T>;
   private layoutObject = { span: undefined, size: undefined };
-
   private averageWindow: AverageWindow;
+  private renderWindowInsets: Dimension = { width: 0, height: 0 };
+  private _hasExpired = false;
   public defaultEstimatedItemSize = 100;
 
   constructor(
@@ -57,10 +59,31 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
       1,
       props.estimatedItemSize ?? this.defaultEstimatedItemSize
     );
+    this.renderWindowInsets = this.getAdjustedRenderWindowSize(
+      this.renderWindowInsets
+    );
   }
 
   public updateProps(props: FlashListProps<T>) {
+    this._hasExpired = this.props.numColumns !== props.numColumns;
+    const newInsetValues = applyContentContainerInsetForLayoutManager(
+      {
+        height: 0,
+        width: 0,
+      },
+      props.contentContainerStyle,
+      Boolean(props.horizontal)
+    );
+    this._hasExpired =
+      this._hasExpired ||
+      newInsetValues.height !== this.renderWindowInsets.height ||
+      newInsetValues.width !== this.renderWindowInsets.width;
+    this.renderWindowInsets = newInsetValues;
     this.props = props;
+  }
+
+  public get hasExpired() {
+    return this._hasExpired;
   }
 
   /**
@@ -104,7 +127,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
       this.averageWindow.currentValue
     );
     const newLayoutManager = super.newLayoutManager(
-      renderWindowSize,
+      this.getAdjustedRenderWindowSize(renderWindowSize),
       isHorizontal,
       cachedLayouts
     );
@@ -133,5 +156,13 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     this.layoutObject.size = undefined;
     this.layoutObject.span = undefined;
     return this.layoutObject;
+  }
+
+  private getAdjustedRenderWindowSize(renderWindowSize: Dimension) {
+    return applyContentContainerInsetForLayoutManager(
+      { ...renderWindowSize },
+      this.props.contentContainerStyle,
+      Boolean(this.props.horizontal)
+    );
   }
 }
