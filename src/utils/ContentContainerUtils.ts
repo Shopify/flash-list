@@ -1,5 +1,6 @@
 import { ViewStyle } from "react-native";
 import { Dimension } from "recyclerlistview";
+
 import { ContentStyle } from "../FlashListProps";
 
 export interface ContentStyleExplicit {
@@ -65,11 +66,9 @@ export const applyContentContainerInsetForLayoutManager = (
 ) => {
   const contentStyle = updateContentStyle({}, contentContainerStyle);
   if (horizontal) {
-    dim.height =
-      dim.height - (contentStyle.paddingTop + contentStyle.paddingBottom);
+    dim.height -= contentStyle.paddingTop + contentStyle.paddingBottom;
   } else {
-    dim.width =
-      dim.width - (contentStyle.paddingLeft + contentStyle.paddingRight);
+    dim.width -= contentStyle.paddingLeft + contentStyle.paddingRight;
   }
   return dim;
 };

@@ -64,7 +64,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     );
   }
 
-  public updateProps(props: FlashListProps<T>) {
+  public updateProps(props: FlashListProps<T>): GridLayoutProviderWithProps<T> {
     this._hasExpired = this.props.numColumns !== props.numColumns;
     const newInsetValues = applyContentContainerInsetForLayoutManager(
       {
@@ -80,6 +80,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
       newInsetValues.width !== this.renderWindowInsets.width;
     this.renderWindowInsets = newInsetValues;
     this.props = props;
+    return this;
   }
 
   public get hasExpired() {

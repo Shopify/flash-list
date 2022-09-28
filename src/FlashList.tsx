@@ -154,15 +154,12 @@ class FlashList<T> extends React.PureComponent<
         newState.numColumns,
         nextProps
       );
-    } else {
-      prevState.layoutProvider.updateProps(nextProps);
-      if (prevState.layoutProvider.hasExpired) {
-        newState.layoutProvider = FlashList.getLayoutProvider<T>(
-          newState.numColumns,
-          nextProps
-        );
-        newState.layoutProvider.shouldRefreshWithAnchoring = false;
-      }
+    } else if (prevState.layoutProvider.updateProps(nextProps).hasExpired) {
+      newState.layoutProvider = FlashList.getLayoutProvider<T>(
+        newState.numColumns,
+        nextProps
+      );
+      newState.layoutProvider.shouldRefreshWithAnchoring = false;
     }
     if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
