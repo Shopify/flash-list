@@ -62,7 +62,7 @@ export const hasUnsupportedKeysInContentContainerStyle = (
 export const applyContentContainerInsetForLayoutManager = (
   dim: Dimension,
   contentContainerStyle: ViewStyle | undefined,
-  horizontal: boolean
+  horizontal: boolean | undefined | null
 ) => {
   const contentStyle = updateContentStyle({}, contentContainerStyle);
   if (horizontal) {
@@ -71,4 +71,22 @@ export const applyContentContainerInsetForLayoutManager = (
     dim.width -= contentStyle.paddingLeft + contentStyle.paddingRight;
   }
   return dim;
+};
+
+/** Returns padding to be applied on content container and will ignore paddings that have already been handled. */
+export const getContentContainerPadding = (
+  contentStyle: ContentStyleExplicit,
+  horizontal: boolean | undefined | null
+) => {
+  if (horizontal) {
+    return {
+      paddingTop: contentStyle.paddingTop,
+      paddingBottom: contentStyle.paddingBottom,
+    };
+  } else {
+    return {
+      paddingLeft: contentStyle.paddingLeft,
+      paddingRight: contentStyle.paddingRight,
+    };
+  }
 };

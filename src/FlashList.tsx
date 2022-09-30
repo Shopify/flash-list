@@ -26,7 +26,6 @@ import WarningList from "./errors/Warnings";
 import ViewabilityManager from "./viewability/ViewabilityManager";
 import {
   FlashListProps,
-  ContentStyle,
   RenderTarget,
   RenderTargetOptions,
 } from "./FlashListProps";
@@ -37,6 +36,8 @@ import {
   PlatformConfig,
 } from "./native/config/PlatformHelper";
 import {
+  ContentStyleExplicit,
+  getContentContainerPadding,
   hasUnsupportedKeysInContentContainerStyle,
   updateContentStyle,
 } from "./utils/ContentContainerUtils";
@@ -70,7 +71,13 @@ class FlashList<T> extends React.PureComponent<
   private transformStyle = { transform: [{ scaleY: -1 }] };
   private transformStyleHorizontal = { transform: [{ scaleX: -1 }] };
   private distanceFromWindow = 0;
-  private contentStyle: ContentStyle = {};
+  private contentStyle: ContentStyleExplicit = {
+    paddingBottom: 0,
+    paddingTop: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
+  };
+
   private loadStartTime = 0;
   private isListLoaded = false;
   private windowCorrectionConfig: WindowCorrectionConfig = {
@@ -338,18 +345,7 @@ class FlashList<T> extends React.PureComponent<
               minHeight: 1,
               minWidth: 1,
 
-              paddingLeft: this.props.horizontal
-                ? 0
-                : this.contentStyle.paddingLeft,
-              paddingRight: this.props.horizontal
-                ? 0
-                : this.contentStyle.paddingRight,
-              paddingTop: this.props.horizontal
-                ? this.contentStyle.paddingTop
-                : 0,
-              paddingBottom: this.props.horizontal
-                ? this.contentStyle.paddingBottom
-                : 0,
+              ...getContentContainerPadding(this.contentStyle, horizontal),
             },
             ...this.props.overrideProps,
           }}
