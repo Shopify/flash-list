@@ -42,7 +42,7 @@ export const updateContentStyle = (
 };
 
 export const hasUnsupportedKeysInContentContainerStyle = (
-  contentContainerStyleSource: ContentStyle | undefined
+  contentContainerStyleSource: ViewStyle | undefined
 ) => {
   const {
     paddingTop,
