@@ -246,7 +246,6 @@ describe("MasonryFlashList", () => {
         expect(list.instance.getRenderedSize().width).toBe(95);
         expect(list.instance.getRenderedSize().height).toBe(900);
       }
-      console.log(index, list.instance.getRenderedSize().width);
     });
     masonryFlashList.unmount();
   });
