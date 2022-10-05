@@ -26,8 +26,8 @@ describe("MasonryFlashList", () => {
     });
     masonryFlashList.unmount();
   });
-  it("renders items and provides columnIndex as extraData", () => {
-    const mockRenderItem = jest.fn(({ extraData: { columnIndex } }) => null);
+  it("invokes renderItem with columnIndex and columnSpan", () => {
+    const mockRenderItem = jest.fn(() => null);
     const masonryFlashList = mountMasonryFlashList({
       renderItem: mockRenderItem,
       data: ["One", "Two", "Three"],
@@ -35,19 +35,22 @@ describe("MasonryFlashList", () => {
     });
     expect(mockRenderItem).toHaveBeenCalledWith(
       expect.objectContaining({
-        extraData: { columnIndex: 0 },
+        columnIndex: 0,
+        columnSpan: 1,
       })
     );
 
     expect(mockRenderItem).toHaveBeenCalledWith(
       expect.objectContaining({
-        extraData: { columnIndex: 1 },
+        columnIndex: 1,
+        columnSpan: 1,
       })
     );
 
     expect(mockRenderItem).toHaveBeenCalledWith(
       expect.objectContaining({
-        extraData: { columnIndex: 2 },
+        columnSpan: 1,
+        columnIndex: 2,
       })
     );
     masonryFlashList.unmount();

@@ -11,7 +11,7 @@ import {
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import FlashList from "./FlashList";
-import { FlashListProps } from "./FlashListProps";
+import { FlashListProps, MasonryListRenderItem } from "./FlashListProps";
 import ViewToken from "./viewability/ViewToken";
 
 export interface MasonryFlashListProps<T>
@@ -39,6 +39,11 @@ export interface MasonryFlashListProps<T>
    * `overrideItemLayout` is required to make this work.
    */
   optimizeItemArrangement?: boolean;
+
+  /**
+   * Extends normal renderItem to include `columnIndex` and `columnSpan` (number of columns the item spans).
+   */
+  renderItem: MasonryListRenderItem<T> | null | undefined;
 }
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
@@ -179,10 +184,8 @@ const MasonryFlashListComponent = React.forwardRef(
                     ...innerArgs,
                     item: innerArgs.item.originalItem,
                     index: innerArgs.item.originalIndex,
-                    extraData: {
-                      ...innerArgs.extraData,
-                      columnIndex: args.index,
-                    },
+                    columnSpan: 1,
+                    columnIndex: args.index,
                   }) ?? null
                 );
               }}

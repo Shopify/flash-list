@@ -24,6 +24,12 @@ export interface ListRenderItemInfo<TItem> {
   extraData?: any;
 }
 
+export interface MasonryListRenderItemInfo<TItem>
+  extends ListRenderItemInfo<TItem> {
+  columnSpan: number;
+  columnIndex: number;
+}
+
 export type RenderTarget = "Cell" | "StickyHeader" | "Measurement";
 
 export const RenderTargetOptions: Record<string, RenderTarget> = {
@@ -34,6 +40,10 @@ export const RenderTargetOptions: Record<string, RenderTarget> = {
 
 export type ListRenderItem<TItem> = (
   info: ListRenderItemInfo<TItem>
+) => React.ReactElement | null;
+
+export type MasonryListRenderItem<TItem> = (
+  info: MasonryListRenderItemInfo<TItem>
 ) => React.ReactElement | null;
 
 export interface ContentStyle {
