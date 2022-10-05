@@ -179,6 +179,10 @@ const MasonryFlashListComponent = React.forwardRef(
                     ...innerArgs,
                     item: innerArgs.item.originalItem,
                     index: innerArgs.item.originalIndex,
+                    extraData: {
+                      ...innerArgs.extraData,
+                      columnIndex: args.index,
+                    },
                   }) ?? null
                 );
               }}
