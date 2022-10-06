@@ -418,6 +418,32 @@ div.section.casestudy {
 p.subtitle {
   font-size: 50px;
 }
+
+.conference {
+  iframe,
+  img {
+    width: 100% !important;
+    aspect-ratio: 16/9;
+  }
+}
+p.date {
+  color: #666;
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+
+ul.events li {
+  list-style: none;
+  border-bottom: 0.5px solid #444;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  max-width: 700px;
+  text-align: left;
+  a {
+    text-decoration: none;
+  }
+}
+
 /* Mobile styles */
 @media only screen and (max-width: 600px) {
   body {
