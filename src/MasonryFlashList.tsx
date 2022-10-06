@@ -438,8 +438,13 @@ const updateViewTokens = (tokens: ViewToken[]) => {
   for (let i = 0; i < length; i++) {
     const token = tokens[i];
     if (token.index !== null && token.index !== undefined) {
-      token.index = token.item.originalIndex;
-      token.item = token.item.originalItem;
+      if (token.item) {
+        token.index = token.item.originalIndex;
+        token.item = token.item.originalItem;
+      } else {
+        token.index = null;
+        token.item = undefined;
+      }
     }
   }
 };

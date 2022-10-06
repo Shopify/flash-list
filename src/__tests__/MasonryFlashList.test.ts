@@ -278,4 +278,15 @@ describe("MasonryFlashList", () => {
     });
     masonryFlashList.unmount();
   });
+  it("divides columns equally if no getColumnFlex is passed", () => {
+    const masonryFlashList = mountMasonryFlashList({
+      numColumns: 4,
+    });
+    const progressiveListView =
+      masonryFlashList.find(ProgressiveListView)!.instance;
+    expect(progressiveListView.getLayout(0).width).toBe(100);
+    expect(progressiveListView.getLayout(1).width).toBe(100);
+    expect(progressiveListView.getLayout(2).width).toBe(100);
+    expect(progressiveListView.getLayout(3).width).toBe(100);
+  });
 });
