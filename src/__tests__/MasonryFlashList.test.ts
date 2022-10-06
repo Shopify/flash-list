@@ -26,6 +26,35 @@ describe("MasonryFlashList", () => {
     });
     masonryFlashList.unmount();
   });
+  it("invokes renderItem with columnIndex and columnSpan", () => {
+    const mockRenderItem = jest.fn(() => null);
+    const masonryFlashList = mountMasonryFlashList({
+      renderItem: mockRenderItem,
+      data: ["One", "Two", "Three"],
+      numColumns: 3,
+    });
+    expect(mockRenderItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        columnIndex: 0,
+        columnSpan: 1,
+      })
+    );
+
+    expect(mockRenderItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        columnIndex: 1,
+        columnSpan: 1,
+      })
+    );
+
+    expect(mockRenderItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        columnSpan: 1,
+        columnIndex: 2,
+      })
+    );
+    masonryFlashList.unmount();
+  });
   it("raised onLoad event only when first internal child mounts", () => {
     const onLoadMock = jest.fn();
     const ref = React.createRef<MasonryFlashListRef<string>>();
