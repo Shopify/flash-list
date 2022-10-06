@@ -75,6 +75,22 @@ getColumnFlex={(items, index, maxColumns, extraData) => {
 }}
 ```
 
+## Additional information in `renderItem` arguments
+
+```tsx
+export interface MasonryListRenderItemInfo<TItem>
+  extends ListRenderItemInfo<TItem> {
+  columnSpan: number;
+  columnIndex: number;
+}
+```
+
+When using `MasonryFlashList` the `renderItem` prop callback will be called with two additional properties on the `info` object.
+
+`columnIndex`: A number representing the index of the column in which the item is rendered. When using `optimizeItemArrangement` this becomes more important as the items are no longer spread linearly across the columns.
+
+`columnSpan`: A number representing how many columns a given item may span, for now this will always return `1`.
+
 ## Methods
 
 `MasonryFlashList` exposes the some methods that `FlashList` does. These are:

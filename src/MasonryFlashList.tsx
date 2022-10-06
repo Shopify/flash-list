@@ -11,9 +11,19 @@ import {
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import FlashList from "./FlashList";
-import { FlashListProps } from "./FlashListProps";
+import { FlashListProps, ListRenderItemInfo } from "./FlashListProps";
 import { applyContentContainerInsetForLayoutManager } from "./utils/ContentContainerUtils";
 import ViewToken from "./viewability/ViewToken";
+
+export interface MasonryListRenderItemInfo<TItem>
+  extends ListRenderItemInfo<TItem> {
+  columnSpan: number;
+  columnIndex: number;
+}
+
+export type MasonryListRenderItem<TItem> = (
+  info: MasonryListRenderItemInfo<TItem>
+) => React.ReactElement | null;
 
 export interface MasonryFlashListProps<T>
   extends Omit<
@@ -40,6 +50,14 @@ export interface MasonryFlashListProps<T>
    * `overrideItemLayout` is required to make this work.
    */
   optimizeItemArrangement?: boolean;
+
+  /**
+   * Extends typical `renderItem` to include `columnIndex` and `columnSpan` (number of columns the item spans).
+   * `columnIndex` gives the consumer column information in case they might need to treat items differently based on column.
+   * This information may not otherwise be derived if using the `optimizeItemArrangement` feature, as the items will no
+   * longer be linearly distributed across the columns; instead they are allocated to the column with the least estimated height.
+   */
+  renderItem: MasonryListRenderItem<T> | null | undefined;
 }
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
@@ -186,6 +204,8 @@ const MasonryFlashListComponent = React.forwardRef(
                     ...innerArgs,
                     item: innerArgs.item.originalItem,
                     index: innerArgs.item.originalIndex,
+                    columnSpan: 1,
+                    columnIndex: args.index,
                   }) ?? null
                 );
               }}

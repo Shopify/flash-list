@@ -34,6 +34,8 @@ export {
   MasonryFlashListScrollEvent,
   MasonryFlashListRef,
   MasonryListItem,
+  MasonryListRenderItem,
+  MasonryListRenderItemInfo,
 } from "./MasonryFlashList";
 export { JSFPSMonitor, JSFPSResult } from "./benchmark/JSFPSMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
