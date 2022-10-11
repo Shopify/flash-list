@@ -7,6 +7,11 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.3.1] - 2022-10-11
+
+- Expose `columnIndex` and `columnSpan` to `MasonryFlashList.renderItem`
+  - https://github.com/Shopify/flash-list/pull/625
+
 ## [1.3.0] - 2022-09-26
 
 - Added `MasonryFlashList` which adds support for rendering masonry layouts
