@@ -31,6 +31,7 @@ export interface MasonryFlashListProps<T>
     | "initialScrollIndex"
     | "inverted"
     | "onBlankArea"
+    | "renderItem"
     | "viewabilityConfigCallbackPairs"
   > {
   /**
