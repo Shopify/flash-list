@@ -126,10 +126,14 @@ class FlashList<T> extends React.PureComponent<
       throw new CustomError(ExceptionList.columnsWhileHorizontalNotSupported);
     }
 
+    const styles = Array.isArray(this.props.style) ? this.props.style : [this.props.style]
+
     // `createAnimatedComponent` always passes a blank style object. To avoid warning while using AnimatedFlashList we've modified the check
-    if (Object.keys(this.props.style || {}).length > 0) {
+    // `style` prop can be an array. So we need to validate every object in array. Check: https://github.com/Shopify/flash-list/issues/651
+    if(styles.some((e) => Object.keys(e || {}).length > 0)) {
       console.warn(WarningList.styleUnsupported);
     }
+
     const contentStyleInfo = this.getContentContainerInfo();
     if (contentStyleInfo.unsupportedKeys) {
       console.warn(WarningList.styleContentContainerUnsupported);
