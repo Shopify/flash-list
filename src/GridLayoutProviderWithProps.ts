@@ -83,6 +83,10 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     return this;
   }
 
+  /**
+   * This methods returns true if the layout provider has expired and needs to be recreated.
+   * This can happen if the number of columns has changed or the render window size has changed in a way that cannot be handled by the layout provider internally.
+   */
   public get hasExpired() {
     return this._hasExpired;
   }
