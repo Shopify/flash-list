@@ -16,7 +16,12 @@ jest.mock("../../FlashList", () => {
     componentDidMount() {
       super.componentDidMount();
       this.rlvRef?._scrollComponent?._scrollViewRef?.props.onLayout({
-        nativeEvent: { layout: { height: 900, width: 400 } },
+        nativeEvent: {
+          layout: {
+            height: this.props.estimatedListSize?.height ?? 900,
+            width: this.props.estimatedListSize?.width ?? 400,
+          },
+        },
       });
     }
   }

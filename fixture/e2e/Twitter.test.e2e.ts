@@ -48,7 +48,8 @@ describe("Twitter", () => {
     );
   });
 
-  it("looks the same after orientation change", async () => {
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip("looks the same after orientation change", async () => {
     const testName = "Twitter_looks_the_same_after_orientation_change";
     const flatListTestName = `with_FlatList_${testName}`;
 
