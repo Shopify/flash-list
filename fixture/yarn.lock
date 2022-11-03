@@ -2560,10 +2560,10 @@ detect-newline@^3.0.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-3.1.0.tgz#576f5dfc63ae1a192ff192d8ad3af6308991b651"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
 
-detox@^19.7.1:
-  version "19.12.5"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-19.12.5.tgz#6e34b461ebfb42a504b1c0a1211ab1a84b84d5c4"
-  integrity sha512-vGL3CwfSARimbwbBPW3JZ4WEGgeqpT2PXyVcDyCWgmFu//K9/Ng6c0H2lysh4foSbtcMJgC6+zrATUX5wbThhw==
+detox@^19.12.5:
+  version "19.12.6"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-19.12.6.tgz#39cf99c23944a3d1a3724fb1e67f92f05e90753a"
+  integrity sha512-Mf9ZaJLHsgCDLJnFZg50h/HwqZHXnc+yRQkqU1Rw7ZNdICkeg8mJDJY/mN+A2GkA8zdFRARrZ3PoAKtQpVPEFg==
   dependencies:
     ajv "^8.6.3"
     bunyan "^1.8.12"
@@ -5770,10 +5770,10 @@ recast@^0.20.4:
     source-map "~0.6.1"
     tslib "^2.0.1"
 
-recyclerlistview@4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-4.1.2.tgz#3629c2faff13be3dc64bca82490e9a5efb2303aa"
-  integrity sha512-fvopyPoXaDY/RJGJKzroGYHgBAZoXlEdLw1D4PSi3isTRhyfbh0WNNuTyLfJSiz6ctZeb0J2ErPCInYcahFTlw==
+recyclerlistview@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-4.2.0.tgz#a140149aaa470c9787a1426452651934240d69ef"
+  integrity sha512-uuBCi0c+ggqHKwrzPX4Z/mJOzsBbjZEAwGGmlwpD/sD7raXixdAbdJ6BTcAmuWG50Cg4ru9p12M94Njwhr/27A==
   dependencies:
     lodash.debounce "4.0.8"
     prop-types "15.8.1"

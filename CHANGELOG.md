@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add contend padding support to FlashList
+- Upgrade recyclerlistview to v4.0.1
+
 ## [1.3.1] - 2022-10-11
 
 - Expose `columnIndex` and `columnSpan` to `MasonryFlashList.renderItem`
