@@ -261,4 +261,32 @@ describe("MasonryFlashList", () => {
       )
     ).toBe(35339);
   });
+  it("applies horizontal content container padding to the list", () => {
+    const masonryFlashList = mountMasonryFlashList({
+      numColumns: 4,
+      contentContainerStyle: { paddingHorizontal: 10 },
+    });
+    expect(masonryFlashList.findAll(ProgressiveListView).length).toBe(5);
+    masonryFlashList.findAll(ProgressiveListView).forEach((list, index) => {
+      if (index === 0) {
+        expect(list.instance.getRenderedSize().width).toBe(400);
+        expect(list.instance.getRenderedSize().height).toBe(900);
+      } else {
+        expect(list.instance.getRenderedSize().width).toBe(95);
+        expect(list.instance.getRenderedSize().height).toBe(900);
+      }
+    });
+    masonryFlashList.unmount();
+  });
+  it("divides columns equally if no getColumnFlex is passed", () => {
+    const masonryFlashList = mountMasonryFlashList({
+      numColumns: 4,
+    });
+    const progressiveListView =
+      masonryFlashList.find(ProgressiveListView)!.instance;
+    expect(progressiveListView.getLayout(0).width).toBe(100);
+    expect(progressiveListView.getLayout(1).width).toBe(100);
+    expect(progressiveListView.getLayout(2).width).toBe(100);
+    expect(progressiveListView.getLayout(3).width).toBe(100);
+  });
 });
