@@ -68,7 +68,8 @@ export default class ViewabilityManager<T> {
 
   public updateViewableItems = (newViewableIndices?: number[]) => {
     const listSize =
-      this.flashListRef.recyclerlistview_unsafe?.getRenderedSize();
+      this.flashListRef.recyclerlistview_unsafe?.getRenderedSize() ??
+      this.flashListRef.props.estimatedListSize;
     if (listSize === undefined || !this.shouldListenToVisibleIndices) {
       return;
     }

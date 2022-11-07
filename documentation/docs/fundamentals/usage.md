@@ -206,10 +206,6 @@ interface ContentStyle {
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
 
-:::note
-Horizontal padding is ignored on vertical lists and vertical padding on horizontal ones.
-:::
-
 ### `disableAutoLayout`
 
 ```tsx
@@ -598,7 +594,7 @@ Scroll to a specific content pixel offset in the list.
 
 Param `offset` expects the offset to scroll to. In case of `horizontal` is true, the offset is the x-value, in any other case the offset is the y-value.
 
-Param `animated` (`true` by default) defines whether the list should do an animation while scrolling.
+Param `animated` (`false` by default) defines whether the list should do an animation while scrolling.
 
 # ScrollView props
 
@@ -620,7 +616,6 @@ Unsupported methods:
 - [`hasMore`](https://reactnative.dev/docs/virtualizedlist#hasmore)
 - [`getChildContext`](https://reactnative.dev/docs/virtualizedlist#getchildcontext)
 - [`getNativeScrollRef()`​](https://reactnative.dev/docs/flatlist#getnativescrollref)
-- [`getScrollableNode`](https://reactnative.dev/docs/virtualizedlist#getscrollablenode)
 - [`getScrollRef`](https://reactnative.dev/docs/virtualizedlist#getscrollref)
 - [`getScrollResponder()`](https://reactnative.dev/docs/flatlist#getscrollresponder)
 

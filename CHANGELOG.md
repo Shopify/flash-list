@@ -7,6 +7,23 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add content padding support to FlashList
+  - https://github.com/Shopify/flash-list/pull/626
+- Upgrade recyclerlistview to v4.2.0
+  - https://github.com/Shopify/flash-list/pull/660
+
+## [1.3.1] - 2022-10-11
+
+- Expose `columnIndex` and `columnSpan` to `MasonryFlashList.renderItem`
+  - https://github.com/Shopify/flash-list/pull/625
+
+## [1.3.0] - 2022-09-26
+
+- Added `MasonryFlashList` which adds support for rendering masonry layouts
+  - https://github.com/Shopify/flash-list/pull/587
+
+## [1.2.2] - 2022-09-06
+
 - Fixes type checking error in `AutoLayoutView` due to `children` not being an explicit type
   - https://github.com/Shopify/flash-list/pull/567
 

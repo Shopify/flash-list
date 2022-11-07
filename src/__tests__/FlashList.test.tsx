@@ -824,4 +824,36 @@ describe("FlashList", () => {
     expect(scrollToOffset).toBeCalledWith(1800, 1800, false, true);
     flashList.unmount();
   });
+  it("applies horizontal content container padding for vertical list", () => {
+    const flashList = mountFlashList({
+      numColumns: 4,
+      contentContainerStyle: { paddingHorizontal: 10 },
+    });
+    let hasLayoutItems = false;
+    flashList.instance.state.layoutProvider
+      .getLayoutManager()!
+      .getLayouts()
+      .forEach((layout) => {
+        hasLayoutItems = true;
+        expect(layout.width).toBe(95);
+      });
+    expect(hasLayoutItems).toBe(true);
+    flashList.unmount();
+  });
+  it("applies vertical content container padding for horizontal list", () => {
+    const flashList = mountFlashList({
+      horizontal: true,
+      contentContainerStyle: { paddingVertical: 10 },
+    });
+    let hasLayoutItems = false;
+    flashList.instance.state.layoutProvider
+      .getLayoutManager()!
+      .getLayouts()
+      .forEach((layout) => {
+        hasLayoutItems = true;
+        expect(layout.height).toBe(880);
+      });
+    expect(hasLayoutItems).toBe(true);
+    flashList.unmount();
+  });
 });

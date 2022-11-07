@@ -28,6 +28,15 @@ export {
   BlankAreaTrackerResult,
   BlankAreaTrackerConfig,
 } from "./benchmark/useBlankAreaTracker";
+export {
+  MasonryFlashList,
+  MasonryFlashListProps,
+  MasonryFlashListScrollEvent,
+  MasonryFlashListRef,
+  MasonryListItem,
+  MasonryListRenderItem,
+  MasonryListRenderItemInfo,
+} from "./MasonryFlashList";
 export { JSFPSMonitor, JSFPSResult } from "./benchmark/JSFPSMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
 export { default as ViewToken } from "./viewability/ViewToken";
