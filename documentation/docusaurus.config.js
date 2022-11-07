@@ -78,7 +78,7 @@ module.exports = {
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
-            "https://github.com/shopify/flash-list/edit/main/docusaurus/",
+            "https://github.com/Shopify/flash-list/blob/main/documentation",
         },
         blog: false,
         pages: false,
