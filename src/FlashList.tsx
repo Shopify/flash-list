@@ -5,6 +5,7 @@ import {
   LayoutChangeEvent,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  Platform,
 } from "react-native";
 import {
   BaseItemAnimator,
@@ -24,11 +25,7 @@ import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import WarningList from "./errors/Warnings";
 import ViewabilityManager from "./viewability/ViewabilityManager";
-import {
-  FlashListProps,
-  RenderTarget,
-  RenderTargetOptions,
-} from "./FlashListProps";
+import { FlashListProps, RenderTarget, RenderTargetOptions } from "./FlashListProps";
 import {
   getCellContainerPlatformStyles,
   getFooterContainer,
@@ -45,8 +42,7 @@ import {
 interface StickyProps extends StickyContainerProps {
   children: any;
 }
-const StickyHeaderContainer =
-  StickyContainer as React.ComponentClass<StickyProps>;
+const StickyHeaderContainer = StickyContainer as React.ComponentClass<StickyProps>;
 
 export interface FlashListState<T> {
   dataProvider: DataProvider;
@@ -61,15 +57,14 @@ interface ExtraData<T> {
   value?: T;
 }
 
-class FlashList<T> extends React.PureComponent<
-  FlashListProps<T>,
-  FlashListState<T>
-> {
+class FlashList<T> extends React.PureComponent<FlashListProps<T>, FlashListState<T>> {
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
   private stickyContentContainerRef?: PureComponentWrapper;
   private listFixedDimensionSize = 0;
-  private transformStyle = { transform: [{ scaleY: -1 }] };
-  private transformStyleHorizontal = { transform: [{ scaleX: -1 }] };
+  private transformStyle = Platform.OS === "android" ? { scaleY: -1 } : { transform: [{ scaleY: -1 }] };
+
+  private transformStyleHorizontal = Platform.OS === "android" ? { scaleY: -1 } : { transform: [{ scaleX: -1 }] };
+
   private distanceFromWindow = 0;
   private contentStyle: ContentStyleExplicit = {
     paddingBottom: 0,
@@ -114,8 +109,7 @@ class FlashList<T> extends React.PureComponent<
         this.listFixedDimensionSize = props.estimatedListSize.width;
       }
     }
-    this.distanceFromWindow =
-      props.estimatedFirstItemOffset ?? ((props.ListHeaderComponent && 1) || 0);
+    this.distanceFromWindow = props.estimatedFirstItemOffset ?? ((props.ListHeaderComponent && 1) || 0);
     // eslint-disable-next-line react/state-in-constructor
     this.state = FlashList.getInitialMutableState(this);
     this.viewabilityManager = new ViewabilityManager(this);
@@ -126,10 +120,7 @@ class FlashList<T> extends React.PureComponent<
     if (this.props.onRefresh && typeof this.props.refreshing !== "boolean") {
       throw new CustomError(ExceptionList.refreshBooleanMissing);
     }
-    if (
-      Number(this.props.stickyHeaderIndices?.length) > 0 &&
-      this.props.horizontal
-    ) {
+    if (Number(this.props.stickyHeaderIndices?.length) > 0 && this.props.horizontal) {
       throw new CustomError(ExceptionList.stickyWhileHorizontalNotSupported);
     }
     if (Number(this.props.numColumns) > 1 && this.props.horizontal) {
@@ -140,11 +131,7 @@ class FlashList<T> extends React.PureComponent<
     if (Object.keys(this.props.style || {}).length > 0) {
       console.warn(WarningList.styleUnsupported);
     }
-    if (
-      hasUnsupportedKeysInContentContainerStyle(
-        this.props.contentContainerStyle
-      )
-    ) {
+    if (hasUnsupportedKeysInContentContainerStyle(this.props.contentContainerStyle)) {
       console.warn(WarningList.styleContentContainerUnsupported);
     }
   }
@@ -157,24 +144,16 @@ class FlashList<T> extends React.PureComponent<
     const newState = { ...prevState };
     if (prevState.numColumns !== nextProps.numColumns) {
       newState.numColumns = nextProps.numColumns || 1;
-      newState.layoutProvider = FlashList.getLayoutProvider<T>(
-        newState.numColumns,
-        nextProps
-      );
+      newState.layoutProvider = FlashList.getLayoutProvider<T>(newState.numColumns, nextProps);
     } else if (prevState.layoutProvider.updateProps(nextProps).hasExpired) {
-      newState.layoutProvider = FlashList.getLayoutProvider<T>(
-        newState.numColumns,
-        nextProps
-      );
+      newState.layoutProvider = FlashList.getLayoutProvider<T>(newState.numColumns, nextProps);
       // RLV retries to reposition the first visible item on layout provider change.
       // It's not required in our case so we're disabling it
       newState.layoutProvider.shouldRefreshWithAnchoring = false;
     }
     if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
-      newState.dataProvider = prevState.dataProvider.cloneWithRows(
-        nextProps.data as any[]
-      );
+      newState.dataProvider = prevState.dataProvider.cloneWithRows(nextProps.data as any[]);
       if (nextProps.renderItem !== prevState.renderItem) {
         newState.extraData = { ...prevState.extraData };
       }
@@ -186,21 +165,13 @@ class FlashList<T> extends React.PureComponent<
     return newState;
   }
 
-  private static getInitialMutableState<T>(
-    flashList: FlashList<T>
-  ): FlashListState<T> {
+  private static getInitialMutableState<T>(flashList: FlashList<T>): FlashListState<T> {
     let getStableId: ((index: number) => string) | undefined;
-    if (
-      flashList.props.keyExtractor !== null &&
-      flashList.props.keyExtractor !== undefined
-    ) {
+    if (flashList.props.keyExtractor !== null && flashList.props.keyExtractor !== undefined) {
       getStableId = (index) =>
         // We assume `keyExtractor` function will never change from being `null | undefined` to defined and vice versa.
         // Similarly, data should never be `null | undefined` when `getStableId` is called.
-        flashList.props.keyExtractor!(
-          flashList.props.data![index],
-          index
-        ).toString();
+        flashList.props.keyExtractor!(flashList.props.data![index], index).toString();
     }
     return {
       data: null,
@@ -213,42 +184,23 @@ class FlashList<T> extends React.PureComponent<
   }
 
   // Using only grid layout provider as it can also act as a listview, sizeProvider is a function to support future overrides
-  private static getLayoutProvider<T>(
-    numColumns: number,
-    flashListProps: FlashListProps<T>
-  ) {
+  private static getLayoutProvider<T>(numColumns: number, flashListProps: FlashListProps<T>) {
     return new GridLayoutProviderWithProps<T>(
       // max span or, total columns
       numColumns,
       (index, props) => {
         // type of the item for given index
-        const type = props.getItemType?.(
-          props.data!![index],
-          index,
-          props.extraData
-        );
+        const type = props.getItemType?.(props.data!![index], index, props.extraData);
         return type || 0;
       },
       (index, props, mutableLayout) => {
         // span of the item at given index, item can choose to span more than one column
-        props.overrideItemLayout?.(
-          mutableLayout,
-          props.data!![index],
-          index,
-          numColumns,
-          props.extraData
-        );
+        props.overrideItemLayout?.(mutableLayout, props.data!![index], index, numColumns, props.extraData);
         return mutableLayout?.span ?? 1;
       },
       (index, props, mutableLayout) => {
         // estimated size of the item an given index
-        props.overrideItemLayout?.(
-          mutableLayout,
-          props.data!![index],
-          index,
-          numColumns,
-          props.extraData
-        );
+        props.overrideItemLayout?.(mutableLayout, props.data!![index], index, numColumns, props.extraData);
         return mutableLayout?.size;
       },
       flashListProps
@@ -305,24 +257,15 @@ class FlashList<T> extends React.PureComponent<
 
     // RecyclerListView simply ignores if initialScrollIndex is set to 0 because it doesn't understand headers
     // Using initialOffset to force RLV to scroll to the right place
-    const initialOffset =
-      (this.isInitialScrollIndexInFirstRow() && this.distanceFromWindow) ||
-      undefined;
-    const finalDrawDistance =
-      drawDistance === undefined
-        ? PlatformConfig.defaultDrawDistance
-        : drawDistance;
+    const initialOffset = (this.isInitialScrollIndexInFirstRow() && this.distanceFromWindow) || undefined;
+    const finalDrawDistance = drawDistance === undefined ? PlatformConfig.defaultDrawDistance : drawDistance;
 
     return (
       <StickyHeaderContainer
         overrideRowRenderer={this.stickyOverrideRowRenderer}
         applyWindowCorrection={this.applyWindowCorrection}
         stickyHeaderIndices={stickyHeaderIndices}
-        style={
-          this.props.horizontal
-            ? { ...this.getTransform() }
-            : { flex: 1, ...this.getTransform() }
-        }
+        style={this.props.horizontal ? { ...this.getTransform() } : { flex: 1, ...this.getTransform() }}
       >
         <ProgressiveListView
           {...restProps}
@@ -335,8 +278,7 @@ class FlashList<T> extends React.PureComponent<
           scrollViewProps={{
             onScrollBeginDrag: this.onScrollBeginDrag,
             onLayout: this.handleSizeChange,
-            refreshControl:
-              this.props.refreshControl || this.getRefreshControl(),
+            refreshControl: this.props.refreshControl || this.getRefreshControl(),
 
             // Min values are being used to suppress RLV's bounded exception
             style: { minHeight: 1, minWidth: 1 },
@@ -361,10 +303,7 @@ class FlashList<T> extends React.PureComponent<
           maxRenderAhead={3 * finalDrawDistance}
           finalRenderAheadOffset={finalDrawDistance}
           renderAheadStep={finalDrawDistance}
-          initialRenderIndex={
-            (!this.isInitialScrollIndexInFirstRow() && initialScrollIndex) ||
-            undefined
-          }
+          initialRenderIndex={(!this.isInitialScrollIndexInFirstRow() && initialScrollIndex) || undefined}
           initialOffset={initialOffset}
           onItemLayout={this.onItemLayout}
           onScroll={this.onScroll}
@@ -376,17 +315,13 @@ class FlashList<T> extends React.PureComponent<
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
           itemAnimator={this.itemAnimator}
           suppressBoundedSizeException
-          externalScrollView={
-            renderScrollComponent as RecyclerListViewProps["externalScrollView"]
-          }
+          externalScrollView={renderScrollComponent as RecyclerListViewProps["externalScrollView"]}
         />
       </StickyHeaderContainer>
     );
   }
 
-  private onScrollBeginDrag = (
-    event: NativeSyntheticEvent<NativeScrollEvent>
-  ) => {
+  private onScrollBeginDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     this.recordInteraction();
     this.props.onScrollBeginDrag?.(event);
   };
@@ -411,10 +346,7 @@ class FlashList<T> extends React.PureComponent<
   }
 
   private isInitialScrollIndexInFirstRow() {
-    return (
-      (this.props.initialScrollIndex ?? this.state.numColumns) <
-      this.state.numColumns
-    );
+    return (this.props.initialScrollIndex ?? this.state.numColumns) < this.state.numColumns;
   }
 
   private validateListSize(event: LayoutChangeEvent) {
@@ -426,9 +358,7 @@ class FlashList<T> extends React.PureComponent<
 
   private handleSizeChange = (event: LayoutChangeEvent) => {
     this.validateListSize(event);
-    const newSize = this.props.horizontal
-      ? event.nativeEvent.layout.height
-      : event.nativeEvent.layout.width;
+    const newSize = this.props.horizontal ? event.nativeEvent.layout.height : event.nativeEvent.layout.width;
     const oldSize = this.listFixedDimensionSize;
     this.listFixedDimensionSize = newSize;
 
@@ -463,9 +393,7 @@ class FlashList<T> extends React.PureComponent<
         >
           {children}
         </AutoLayoutView>
-        {this.isEmptyList
-          ? this.getValidComponent(this.props.ListEmptyComponent)
-          : null}
+        {this.isEmptyList ? this.getValidComponent(this.props.ListEmptyComponent) : null}
         <PureComponentWrapper
           enabled={this.isListLoaded || children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}
@@ -482,8 +410,7 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private itemContainer = (props: any, parentProps: any) => {
-    const CellRendererComponent =
-      this.props.CellRendererComponent ?? CellContainer;
+    const CellRendererComponent = this.props.CellRendererComponent ?? CellContainer;
     return (
       <CellRendererComponent
         {...props}
@@ -508,9 +435,7 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private updateDistanceFromWindow = (event: LayoutChangeEvent) => {
-    const newDistanceFromWindow = this.props.horizontal
-      ? event.nativeEvent.layout.x
-      : event.nativeEvent.layout.y;
+    const newDistanceFromWindow = this.props.horizontal ? event.nativeEvent.layout.x : event.nativeEvent.layout.y;
 
     if (this.distanceFromWindow !== newDistanceFromWindow) {
       this.distanceFromWindow = newDistanceFromWindow;
@@ -520,19 +445,13 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private getTransform() {
-    const transformStyle = this.props.horizontal
-      ? this.transformStyleHorizontal
-      : this.transformStyle;
+    const transformStyle = this.props.horizontal ? this.transformStyleHorizontal : this.transformStyle;
     return (this.props.inverted && transformStyle) || undefined;
   }
 
   private separator = (index: number) => {
     // Make sure we have data and don't read out of bounds
-    if (
-      this.props.data === null ||
-      this.props.data === undefined ||
-      index + 1 >= this.props.data.length
-    ) {
+    if (this.props.data === null || this.props.data === undefined || index + 1 >= this.props.data.length) {
       return null;
     }
 
@@ -559,9 +478,7 @@ class FlashList<T> extends React.PureComponent<
           }}
         />
 
-        <View
-          style={[this.props.ListHeaderComponentStyle, this.getTransform()]}
-        >
+        <View style={[this.props.ListHeaderComponentStyle, this.getTransform()]}>
           {this.getValidComponent(this.props.ListHeaderComponent)}
         </View>
       </>
@@ -575,10 +492,7 @@ class FlashList<T> extends React.PureComponent<
     const FooterContainer = getFooterContainer() ?? CellContainer;
     return (
       <>
-        <FooterContainer
-          index={-1}
-          style={[this.props.ListFooterComponentStyle, this.getTransform()]}
-        >
+        <FooterContainer index={-1} style={[this.props.ListFooterComponentStyle, this.getTransform()]}>
           {this.getValidComponent(this.props.ListFooterComponent)}
         </FooterContainer>
         <View
@@ -597,30 +511,19 @@ class FlashList<T> extends React.PureComponent<
       !this.isListLoaded &&
       this.state.dataProvider.getSize() > 0 ? (
       <View style={{ opacity: 0 }} pointerEvents="none">
-        {this.rowRendererWithIndex(
-          Math.min(this.state.dataProvider.getSize() - 1, 1),
-          RenderTargetOptions.Measurement
-        )}
+        {this.rowRendererWithIndex(Math.min(this.state.dataProvider.getSize() - 1, 1), RenderTargetOptions.Measurement)}
       </View>
     ) : null;
   };
 
-  private getValidComponent(
-    component: React.ComponentType | React.ReactElement | null | undefined
-  ) {
+  private getValidComponent(component: React.ComponentType | React.ReactElement | null | undefined) {
     const PassedComponent = component;
     return (
-      (React.isValidElement(PassedComponent) && PassedComponent) ||
-      (PassedComponent && <PassedComponent />) ||
-      null
+      (React.isValidElement(PassedComponent) && PassedComponent) || (PassedComponent && <PassedComponent />) || null
     );
   }
 
-  private applyWindowCorrection = (
-    _: any,
-    __: any,
-    correctionObject: { windowShift: number }
-  ) => {
+  private applyWindowCorrection = (_: any, __: any, correctionObject: { windowShift: number }) => {
     correctionObject.windowShift = -this.distanceFromWindow;
     this.stickyContentContainerRef?.setEnabled(this.isStickyEnabled);
   };
@@ -653,10 +556,7 @@ class FlashList<T> extends React.PureComponent<
       <>
         <View
           style={{
-            flexDirection:
-              this.props.horizontal || this.props.numColumns === 1
-                ? "column"
-                : "row",
+            flexDirection: this.props.horizontal || this.props.numColumns === 1 ? "column" : "row",
           }}
         >
           {this.rowRendererWithIndex(index, RenderTargetOptions.Cell)}
@@ -674,12 +574,7 @@ class FlashList<T> extends React.PureComponent<
     this.stickyContentContainerRef = ref;
   };
 
-  private stickyOverrideRowRenderer = (
-    _: any,
-    __: any,
-    index: number,
-    ___: any
-  ) => {
+  private stickyOverrideRowRenderer = (_: any, __: any, index: number, ___: any) => {
     return (
       <PureComponentWrapper
         ref={this.stickyContentRef}
@@ -714,15 +609,8 @@ class FlashList<T> extends React.PureComponent<
   private runAfterOnLoad = () => {
     if (this.props.estimatedItemSize === undefined) {
       this.sizeWarningTimeoutId = setTimeout(() => {
-        const averageItemSize = Math.floor(
-          this.state.layoutProvider.averageItemSize
-        );
-        console.warn(
-          WarningList.estimatedItemSizeMissingWarning.replace(
-            "@size",
-            averageItemSize.toString()
-          )
-        );
+        const averageItemSize = Math.floor(this.state.layoutProvider.averageItemSize);
+        console.warn(WarningList.estimatedItemSizeMissingWarning.replace("@size", averageItemSize.toString()));
       }, 1000);
     }
     this.postLoadTimeoutId = setTimeout(() => {
@@ -748,10 +636,7 @@ class FlashList<T> extends React.PureComponent<
    * The next render will run as normal and reuse items.
    */
   public prepareForLayoutAnimationRender(): void {
-    if (
-      this.props.keyExtractor === null ||
-      this.props.keyExtractor === undefined
-    ) {
+    if (this.props.keyExtractor === null || this.props.keyExtractor === undefined) {
       console.warn(WarningList.missingKeyExtractor);
     } else {
       this.rlvRef?.prepareForLayoutAnimationRender();
@@ -773,21 +658,11 @@ class FlashList<T> extends React.PureComponent<
 
     if (layout && listSize) {
       const itemOffset = this.props.horizontal ? layout.x : layout.y;
-      const fixedDimension = this.props.horizontal
-        ? listSize.width
-        : listSize.height;
+      const fixedDimension = this.props.horizontal ? listSize.width : listSize.height;
       const itemSize = this.props.horizontal ? layout.width : layout.height;
       const scrollOffset =
-        Math.max(
-          0,
-          itemOffset - (params.viewPosition ?? 0) * (fixedDimension - itemSize)
-        ) - (params.viewOffset ?? 0);
-      this.rlvRef?.scrollToOffset(
-        scrollOffset,
-        scrollOffset,
-        Boolean(params.animated),
-        true
-      );
+        Math.max(0, itemOffset - (params.viewPosition ?? 0) * (fixedDimension - itemSize)) - (params.viewOffset ?? 0);
+      this.rlvRef?.scrollToOffset(scrollOffset, scrollOffset, Boolean(params.animated), true);
     }
   }
 
@@ -803,10 +678,7 @@ class FlashList<T> extends React.PureComponent<
     }
   }
 
-  public scrollToOffset(params: {
-    animated?: boolean | null | undefined;
-    offset: number;
-  }) {
+  public scrollToOffset(params: { animated?: boolean | null | undefined; offset: number }) {
     const x = this.props.horizontal ? params.offset : 0;
     const y = this.props.horizontal ? 0 : params.offset;
     this.rlvRef?.scrollToOffset(x, y, Boolean(params.animated));
