@@ -463,9 +463,11 @@ class FlashList<T> extends React.PureComponent<
         >
           {children}
         </AutoLayoutView>
-        {this.isEmptyList
-          ? this.getValidComponent(this.props.ListEmptyComponent)
-          : null}
+        <View style={[this.props.ListFooterComponentStyle]}>
+          {this.isEmptyList
+            ? this.getValidComponent(this.props.ListEmptyComponent)
+            : null}
+        </View>
         <PureComponentWrapper
           enabled={this.isListLoaded || children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}

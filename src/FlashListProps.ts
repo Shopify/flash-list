@@ -111,6 +111,11 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
     | undefined;
 
   /**
+   * Styling for internal View for `ListEmptyComponent`.
+   */
+   ListEmptyComponentStyle?: StyleProp<ViewStyle> | undefined;
+
+  /**
    * Rendered at the bottom of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
    */
   ListFooterComponent?:
