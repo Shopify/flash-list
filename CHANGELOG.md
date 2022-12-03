@@ -7,6 +7,13 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.0] - 2022-11-07
+
+- Add content padding support to FlashList
+  - https://github.com/Shopify/flash-list/pull/626
+- Upgrade recyclerlistview to v4.2.0
+  - https://github.com/Shopify/flash-list/pull/660
+
 ## [1.3.1] - 2022-10-11
 
 - Expose `columnIndex` and `columnSpan` to `MasonryFlashList.renderItem`

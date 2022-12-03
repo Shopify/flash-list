@@ -69,7 +69,6 @@ div.content {
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
-  display: flex;
   flex-direction: column;
 
   align-items: center;
@@ -123,9 +122,9 @@ video {
 div.section {
   display: flex;
   margin: 40px 0px;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
-  padding: 20px 0px;
+  padding: 20px;
   align-items: center;
   border-radius: 20px;
   max-width: 1050px;
@@ -134,17 +133,19 @@ div.section {
 }
 div.section img,
 div.section video {
-  max-width: 450px;
+  max-width: 45%;
   height: auto;
   border-radius: 6px;
+  max-height: 600px;
 }
 div.section .info {
   flex-direction: column;
-  max-width: 450px;
+  max-width: 45%;
+  padding: 20px 0px;
 }
 div.section .info h1 {
   margin: 0;
-  font-size: 44px;
+  font-size: 43px;
   line-height: 1.3;
   margin-bottom: 10px;
   background: -webkit-linear-gradient(
@@ -177,7 +178,7 @@ div.metric {
 }
 
 .highlight pre {
-  padding: 20px 40px;
+  padding: 10px 20px;
 }
 
 pre {
@@ -187,8 +188,7 @@ pre {
   font-weight: 100;
 }
 .section.half {
-  column-gap: 60px;
-  align-items: start;
+  column-gap: 40px;
   h1 {
     margin-bottom: 20px;
   }
@@ -220,6 +220,10 @@ pre {
 
 .highlight {
   border-radius: 20px;
+  margin: 0px;
+}
+.column .highlight {
+  margin: 0px;
 }
 .column {
   flex-direction: column;
@@ -339,16 +343,33 @@ div.section.fullwidth {
   }
   .info {
     text-align: center;
+    max-width: none;
+  }
+}
+div.tweets {
+  display: flex;
+  flex-direction: row;
+  column-gap: 40px;
+  flex-wrap: wrap;
+  .tweet {
+    max-width: 30%;
   }
 }
 div.section.casestudy {
-  margin: 200px 0px;
+  margin: 100px 0px;
+  padding: 40px;
+  width: 100%;
   position: relative;
+  justify-content: space-between;
   background: -webkit-linear-gradient(
     0deg,
     $secondary-title-color,
     lighten($secondary-title-color, 30%)
   );
+  a.button {
+    color: white;
+    display: inline-block;
+  }
   column-gap: 10px;
   div.info {
     max-width: 570px;
@@ -362,6 +383,10 @@ div.section.casestudy {
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
+      span.mission {
+        font-weight: 800;
+        text-decoration: underline;
+      }
     }
   }
   a {
@@ -372,7 +397,6 @@ div.section.casestudy {
   img {
     position: absolute;
     right: 40px;
-    width: 350px;
   }
 }
 
@@ -399,14 +423,59 @@ p.subtitle {
   font-size: 50px;
 }
 
+.conference {
+  iframe,
+  img {
+    width: 100% !important;
+    aspect-ratio: 16/9;
+  }
+}
+p.date {
+  color: #666;
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+
+ul.events li {
+  list-style: none;
+  border-bottom: 0.5px solid #444;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  max-width: 700px;
+  text-align: left;
+  a {
+    text-decoration: none;
+  }
+}
+
 /* Mobile styles */
 @media only screen and (max-width: 600px) {
   body {
     margin: 0px;
   }
+  .highlight {
+    margin-bottom: 30px;
+    margin-top: 0px;
+  }
+  div.header {
+    h2 {
+      font-size: 60px;
+    }
+  }
+  h2 {
+    font-size: 29px;
+  }
+  .row {
+    flex-direction: column;
+  }
   div.content {
     padding: 4%;
     width: 92%;
+  }
+  div.tweets {
+    .tweet {
+      max-width: 100%;
+    }
   }
   div.section {
     flex-direction: column;
@@ -427,8 +496,12 @@ p.subtitle {
     }
     &.casestudy {
       flex-direction: column;
+      margin: 30px 0px;
+      padding: 0px;
       img {
         position: relative;
+        margin: 0 auto;
+        right: 0;
       }
     }
     img {
@@ -462,5 +535,46 @@ p.subtitle {
   }
   .section.pair {
     flex-direction: column-reverse;
+  }
+  div.section .info {
+    max-width: 95%;
+  }
+  div.section.fullwidth .highlight {
+    width: auto;
+  }
+}
+
+/* Table styles */
+@media only screen and (min-width: 700px) and (max-width: 1100px) {
+  div.tweets .tweet {
+    max-width: 47%;
+  }
+  div.section.half .highlight {
+    max-width: 47%;
+  }
+  .highlight {
+    margin: 5px;
+    border-radius: 20px;
+    pre {
+      font-size: 14px;
+    }
+  }
+  div.section .info h1 {
+    font-size: 33px;
+  }
+  div.section.casestudy div.info h2 {
+    max-width: 45%;
+  }
+  div.section.casestudy {
+    max-width: 90%;
+  }
+  div.section.casestudy img {
+    right: 10px;
+  }
+  h2 {
+    font-size: 28px;
+  }
+  div.content {
+    width: 95%;
   }
 }

@@ -12,6 +12,7 @@ import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import FlashList from "./FlashList";
 import { FlashListProps, ListRenderItemInfo } from "./FlashListProps";
+import { applyContentContainerInsetForLayoutManager } from "./utils/ContentContainerUtils";
 import ViewToken from "./viewability/ViewToken";
 
 export interface MasonryListRenderItemInfo<TItem>
@@ -31,6 +32,7 @@ export interface MasonryFlashListProps<T>
     | "initialScrollIndex"
     | "inverted"
     | "onBlankArea"
+    | "renderItem"
     | "viewabilityConfigCallbackPairs"
   > {
   /**
@@ -175,6 +177,12 @@ const MasonryFlashListComponent = React.forwardRef(
       (dataSet[0]?.length ?? 0) *
       (props.estimatedItemSize ?? defaultEstimatedItemSize);
 
+    const insetForLayoutManager = applyContentContainerInsetForLayoutManager(
+      { height: 0, width: 0 },
+      props.contentContainerStyle,
+      false
+    );
+
     return (
       <FlashList
         ref={getFlashList}
@@ -227,8 +235,9 @@ const MasonryFlashListComponent = React.forwardRef(
               estimatedListSize={{
                 height: estimatedListSize.height,
                 width:
-                  ((getListRenderedSize(parentFlashList)?.width ||
-                    estimatedListSize.width) /
+                  (((getListRenderedSize(parentFlashList)?.width ||
+                    estimatedListSize.width) +
+                    insetForLayoutManager.width) /
                     totalColumnFlex) *
                   (getColumnFlex?.(
                     args.item,
@@ -430,8 +439,13 @@ const updateViewTokens = (tokens: ViewToken[]) => {
   for (let i = 0; i < length; i++) {
     const token = tokens[i];
     if (token.index !== null && token.index !== undefined) {
-      token.index = token.item.originalIndex;
-      token.item = token.item.originalItem;
+      if (token.item) {
+        token.index = token.item.originalIndex;
+        token.item = token.item.originalItem;
+      } else {
+        token.index = null;
+        token.item = undefined;
+      }
     }
   }
 };

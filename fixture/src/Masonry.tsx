@@ -75,6 +75,7 @@ export function Masonry() {
         onLoad={({ elapsedTimeInMs }) => {
           console.log("List Load Time", elapsedTimeInMs);
         }}
+        contentContainerStyle={{ paddingHorizontal: 2 }}
       />
     </View>
   );
@@ -107,6 +108,5 @@ const styles = StyleSheet.create({
     height: Platform.OS === "web" ? window.innerHeight : undefined,
     justifyContent: "center",
     backgroundColor: "#ecf0f1",
-    paddingHorizontal: 2,
   },
 });

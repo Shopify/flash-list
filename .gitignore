@@ -217,3 +217,5 @@ fixture/android/*.hprof
 
 fixture/e2e/artifacts/ios/diff
 fixture/e2e/artifacts/android/diff
+
+website/.tweet-cache

@@ -3,7 +3,6 @@ import {
   View,
   RefreshControl,
   LayoutChangeEvent,
-  ViewStyle,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from "react-native";
@@ -27,7 +26,6 @@ import WarningList from "./errors/Warnings";
 import ViewabilityManager from "./viewability/ViewabilityManager";
 import {
   FlashListProps,
-  ContentStyle,
   RenderTarget,
   RenderTargetOptions,
 } from "./FlashListProps";
@@ -37,6 +35,12 @@ import {
   getItemAnimator,
   PlatformConfig,
 } from "./native/config/PlatformHelper";
+import {
+  ContentStyleExplicit,
+  getContentContainerPadding,
+  hasUnsupportedKeysInContentContainerStyle,
+  updateContentStyle,
+} from "./utils/ContentContainerUtils";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
@@ -67,7 +71,13 @@ class FlashList<T> extends React.PureComponent<
   private transformStyle = { transform: [{ scaleY: -1 }] };
   private transformStyleHorizontal = { transform: [{ scaleX: -1 }] };
   private distanceFromWindow = 0;
-  private contentStyle: ContentStyle = {};
+  private contentStyle: ContentStyleExplicit = {
+    paddingBottom: 0,
+    paddingTop: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
+  };
+
   private loadStartTime = 0;
   private isListLoaded = false;
   private windowCorrectionConfig: WindowCorrectionConfig = {
@@ -126,20 +136,20 @@ class FlashList<T> extends React.PureComponent<
       throw new CustomError(ExceptionList.columnsWhileHorizontalNotSupported);
     }
 
-    const styles = Array.isArray(this.props.style) ? this.props.style : [this.props.style]
-
     // `createAnimatedComponent` always passes a blank style object. To avoid warning while using AnimatedFlashList we've modified the check
     // `style` prop can be an array. So we need to validate every object in array. Check: https://github.com/Shopify/flash-list/issues/651
-    if (__DEV__ && Object.keys(StyleSheet.flatten(this.props.style ?? {})).length > 0) {
+    if (
+      __DEV__ &&
+      Object.keys(StyleSheet.flatten(this.props.style ?? {})).length > 0
+    ) {
       console.warn(WarningList.styleUnsupported);
     }
-
-    const contentStyleInfo = this.getContentContainerInfo();
-    if (contentStyleInfo.unsupportedKeys) {
+    if (
+      hasUnsupportedKeysInContentContainerStyle(
+        this.props.contentContainerStyle
+      )
+    ) {
       console.warn(WarningList.styleContentContainerUnsupported);
-    }
-    if (contentStyleInfo.paddingIgnored) {
-      console.warn(WarningList.styleUnsupportedPaddingType);
     }
   }
 
@@ -155,6 +165,14 @@ class FlashList<T> extends React.PureComponent<
         newState.numColumns,
         nextProps
       );
+    } else if (prevState.layoutProvider.updateProps(nextProps).hasExpired) {
+      newState.layoutProvider = FlashList.getLayoutProvider<T>(
+        newState.numColumns,
+        nextProps
+      );
+      // RLV retries to reposition the first visible item on layout provider change.
+      // It's not required in our case so we're disabling it
+      newState.layoutProvider.shouldRefreshWithAnchoring = false;
     }
     if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
@@ -169,7 +187,6 @@ class FlashList<T> extends React.PureComponent<
       newState.extraData = { value: nextProps.extraData };
     }
     newState.renderItem = nextProps.renderItem;
-    newState.layoutProvider.updateProps(nextProps);
     return newState;
   }
 
@@ -274,7 +291,7 @@ class FlashList<T> extends React.PureComponent<
 
   render() {
     this.isEmptyList = this.state.dataProvider.getSize() === 0;
-    this.contentStyle = this.getContentContainerInfo().style;
+    updateContentStyle(this.contentStyle, this.props.contentContainerStyle);
 
     const {
       drawDistance,
@@ -333,6 +350,8 @@ class FlashList<T> extends React.PureComponent<
               // Required to handle a scrollview bug. Check: https://github.com/Shopify/flash-list/pull/187
               minHeight: 1,
               minWidth: 1,
+
+              ...getContentContainerPadding(this.contentStyle, horizontal),
             },
             ...this.props.overrideProps,
           }}
@@ -509,46 +528,6 @@ class FlashList<T> extends React.PureComponent<
       ? this.transformStyleHorizontal
       : this.transformStyle;
     return (this.props.inverted && transformStyle) || undefined;
-  }
-
-  private getContentContainerInfo() {
-    const {
-      paddingTop,
-      paddingRight,
-      paddingBottom,
-      paddingLeft,
-      padding,
-      paddingVertical,
-      paddingHorizontal,
-      backgroundColor,
-      ...rest
-    } = (this.props.contentContainerStyle || {}) as ViewStyle;
-    const unsupportedKeys = Object.keys(rest).length > 0;
-    if (this.props.horizontal) {
-      const paddingIgnored =
-        padding || paddingVertical || paddingTop || paddingBottom;
-      return {
-        style: {
-          paddingLeft: paddingLeft || paddingHorizontal || padding || 0,
-          paddingRight: paddingRight || paddingHorizontal || padding || 0,
-          backgroundColor,
-        },
-        unsupportedKeys,
-        paddingIgnored,
-      };
-    } else {
-      const paddingIgnored =
-        padding || paddingHorizontal || paddingLeft || paddingRight;
-      return {
-        style: {
-          paddingTop: paddingTop || paddingVertical || padding || 0,
-          paddingBottom: paddingBottom || paddingVertical || padding || 0,
-          backgroundColor,
-        },
-        unsupportedKeys,
-        paddingIgnored,
-      };
-    }
   }
 
   private separator = (index: number) => {

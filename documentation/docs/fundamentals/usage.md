@@ -206,10 +206,6 @@ interface ContentStyle {
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
 
-:::note
-Horizontal padding is ignored on vertical lists and vertical padding on horizontal ones.
-:::
-
 ### `disableAutoLayout`
 
 ```tsx

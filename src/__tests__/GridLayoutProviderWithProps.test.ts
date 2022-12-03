@@ -147,4 +147,33 @@ describe("GridLayoutProviderWithProps", () => {
     // horizontal list
     runCacheUpdateTest(true);
   });
+  it("expires if column count or padding changes", () => {
+    const flashList = mountFlashList();
+    const baseProps = flashList.instance.props;
+    expect(
+      flashList.instance.state.layoutProvider.updateProps({
+        ...baseProps,
+        contentContainerStyle: { paddingTop: 10 },
+      }).hasExpired
+    ).toBe(false);
+    expect(
+      flashList.instance.state.layoutProvider.updateProps({
+        ...baseProps,
+        contentContainerStyle: { paddingBottom: 10 },
+      }).hasExpired
+    ).toBe(false);
+    expect(
+      flashList.instance.state.layoutProvider.updateProps({
+        ...baseProps,
+        contentContainerStyle: { paddingLeft: 10 },
+      }).hasExpired
+    ).toBe(true);
+    flashList.instance.state.layoutProvider["_hasExpired"] = false;
+    expect(
+      flashList.instance.state.layoutProvider.updateProps({
+        ...baseProps,
+        numColumns: 2,
+      }).hasExpired
+    ).toBe(true);
+  });
 });
