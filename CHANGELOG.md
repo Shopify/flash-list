@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Make optional peer dependency on @types/react explicit.
+
+
 ## [1.4.0] - 2022-11-07
 
 - Add content padding support to FlashList
