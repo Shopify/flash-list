@@ -53,9 +53,23 @@
   },
   "peerDependencies": {
     "@babel/runtime": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@types/react-native": "*",
     "react": "*",
     "react-native": "*"
   },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    },
+    "@types/react-native": {
+      "optional": true
+    },
+  }
   "devDependencies": {
     "@babel/core": "^7.18.5",
     "@babel/runtime": "^7.18.3",
