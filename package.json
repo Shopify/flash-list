@@ -68,8 +68,8 @@
     },
     "@types/react-native": {
       "optional": true
-    },
-  }
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.18.5",
     "@babel/runtime": "^7.18.3",
