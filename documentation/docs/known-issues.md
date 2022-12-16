@@ -33,3 +33,9 @@ Exercise caution and make sure all changes are tested on web as there could be s
 ### 5) `react-native-windows/macos` support
 
 FlashList will run in JS only mode on both Windows and macOS. We don't have plans to write native code or actively test on platforms other than Android, iOS and Web.
+
+### 6) iOS Image flickers on render of item
+
+When you scroll down a FlashList of components containing images, on iOS it will show the incorrect image and flicker to the correct image once the correct URI is loaded. To avoid this, you need to check if the URI ref of the current item rendering is the URI of the image you want to render. If it is not, then you need to render a blank image and then render the correct image once the URI is loaded. An example
+of this is shown on this [gist here](https://gist.githubusercontent.com/naqvitalha/f13772b7bc5d361fb95cdd008f47042b/raw/41992420e40512ce10ea6189fea4a71b43cf020e/RecyclableImage.tsx).
+
