@@ -38,4 +38,3 @@ FlashList will run in JS only mode on both Windows and macOS. We don't have plan
 
 When you scroll down a FlashList of components containing images, on iOS it will show the incorrect image and flicker to the correct image once the correct URI is loaded. To avoid this, you need to check if the URI ref of the current item rendering is the URI of the image you want to render. If it is not, then you need to render a blank image and then render the correct image once the URI is loaded. An example
 of this is shown on this [gist here](https://gist.githubusercontent.com/naqvitalha/f13772b7bc5d361fb95cdd008f47042b/raw/41992420e40512ce10ea6189fea4a71b43cf020e/RecyclableImage.tsx).
-
