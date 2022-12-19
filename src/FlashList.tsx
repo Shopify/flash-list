@@ -321,7 +321,7 @@ class FlashList<T> extends React.PureComponent<
         style={
           this.props.horizontal
             ? { ...this.getTransform() }
-            : { flex: 1, ...this.getTransform() }
+            : { flex: 1, overflow: "hidden", ...this.getTransform() }
         }
       >
         <ProgressiveListView
