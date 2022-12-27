@@ -649,6 +649,7 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private getCellContainerChild = (index: number) => {
+    console.log({ index });
     return (
       <>
         <View
