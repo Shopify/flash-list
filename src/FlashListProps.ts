@@ -45,6 +45,7 @@ export interface ContentStyle {
   padding?: string | number;
   paddingVertical?: string | number;
   paddingHorizontal?: string | number;
+  flexGrow?: number;
 }
 
 export interface FlashListProps<TItem> extends ScrollViewProps {

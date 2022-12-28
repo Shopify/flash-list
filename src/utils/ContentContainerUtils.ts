@@ -9,6 +9,7 @@ export interface ContentStyleExplicit {
   paddingLeft: number;
   paddingRight: number;
   backgroundColor?: string;
+  flexGrow?: number;
 }
 
 export const updateContentStyle = (
@@ -24,6 +25,7 @@ export const updateContentStyle = (
     paddingVertical,
     paddingHorizontal,
     backgroundColor,
+    flexGrow
   } = (contentContainerStyleSource ?? {}) as ViewStyle;
   contentStyle.paddingLeft = Number(
     paddingLeft || paddingHorizontal || padding || 0
@@ -38,6 +40,7 @@ export const updateContentStyle = (
     paddingBottom || paddingVertical || padding || 0
   );
   contentStyle.backgroundColor = backgroundColor;
+  contentStyle.flexGrow = flexGrow;
   return contentStyle as ContentStyleExplicit;
 };
 

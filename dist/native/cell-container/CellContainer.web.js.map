@@ -1,0 +1,1 @@
+{"version":3,"file":"CellContainer.web.js","sourceRoot":"","sources":["../../../src/native/cell-container/CellContainer.web.tsx"],"names":[],"mappings":";;;AAAA,wDAA0B;AAC1B;;GAEG;AACH,IAAM,aAAa,GAAG,eAAK,CAAC,UAAU,CAAC,UAAC,KAAU,EAAE,GAAG;IACrD,OAAO,wDAAK,GAAG,EAAE,GAAG,IAAM,KAAK,EAAI,CAAC;AACtC,CAAC,CAAC,CAAC;AACH,aAAa,CAAC,WAAW,GAAG,eAAe,CAAC;AAC5C,kBAAe,aAAa,CAAC"}

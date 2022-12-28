@@ -1,0 +1,1 @@
+{"version":3,"file":"ViewToken.d.ts","sourceRoot":"","sources":["../../src/viewability/ViewToken.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,WAAW,SAAS;IAChC,IAAI,EAAE,GAAG,CAAC;IACV,GAAG,EAAE,MAAM,CAAC;IACZ,KAAK,EAAE,MAAM,GAAG,IAAI,CAAC;IACrB,UAAU,EAAE,OAAO,CAAC;IACpB,SAAS,EAAE,MAAM,CAAC;CACnB"}

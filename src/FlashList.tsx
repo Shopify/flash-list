@@ -342,6 +342,7 @@ class FlashList<T> extends React.PureComponent<
             style: { minHeight: 1, minWidth: 1 },
             contentContainerStyle: {
               backgroundColor: this.contentStyle.backgroundColor,
+              flexGrow: this.contentStyle.flexGrow,
 
               // Required to handle a scrollview bug. Check: https://github.com/Shopify/flash-list/pull/187
               minHeight: 1,
