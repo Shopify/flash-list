@@ -48,7 +48,6 @@ import UIKit
 
     override func layoutSubviews() {
         fixLayout()
-        fixFooter()
         super.layoutSubviews()
 
         let scrollView = getScrollView()
@@ -103,6 +102,7 @@ import UIKit
             }
             .sorted(by: { $0.index < $1.index })
         clearGaps(for: cellContainers)
+        fixFooter()
     }
 
     /// Checks for overlaps or gaps between adjacent items and then applies a correction.
