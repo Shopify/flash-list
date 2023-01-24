@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Skip footer correction when layout animations run of iOS
+  - https://github.com/Shopify/flash-list/pull/743
+
 ## [1.4.0] - 2022-11-07
 
 - Add content padding support to FlashList
