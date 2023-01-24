@@ -7,6 +7,10 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.1] - 2023-01-24
+
+- Prevent overflow of sticky headers
+  - https://github.com/Shopify/flash-list/pull/714
 - Skip footer correction when layout correction is skipped
   - https://github.com/Shopify/flash-list/pull/743
 
