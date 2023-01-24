@@ -20,5 +20,11 @@
     "title": "Extra configuration for even better performance.",
     "description": "Apart from FlatList props, FlashList offers a set of extra props to tweak the performance even more.",
     "code": "snippet2.js"
+  },
+  {
+    "title": "Buttery smooth complex layouts",
+    "description": "FlashList supports layouts like Masonry, which allows you to render a Pinterest-like layout. This is Shopify's Shop app taking advantage of MasonryFlashList component.",
+    "image": "img/masonry.gif",
+    "alt": "Masonry layout React Native list created using FlashList"
   }
 ]

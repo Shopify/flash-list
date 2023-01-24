@@ -4,6 +4,7 @@ import {
   RefreshControl,
   LayoutChangeEvent,
   NativeSyntheticEvent,
+  StyleSheet,
   NativeScrollEvent,
 } from "react-native";
 import {
@@ -137,7 +138,11 @@ class FlashList<T> extends React.PureComponent<
     }
 
     // `createAnimatedComponent` always passes a blank style object. To avoid warning while using AnimatedFlashList we've modified the check
-    if (Object.keys(this.props.style || {}).length > 0) {
+    // `style` prop can be an array. So we need to validate every object in array. Check: https://github.com/Shopify/flash-list/issues/651
+    if (
+      __DEV__ &&
+      Object.keys(StyleSheet.flatten(this.props.style ?? {})).length > 0
+    ) {
       console.warn(WarningList.styleUnsupported);
     }
     if (
@@ -321,7 +326,7 @@ class FlashList<T> extends React.PureComponent<
         style={
           this.props.horizontal
             ? { ...this.getTransform() }
-            : { flex: 1, ...this.getTransform() }
+            : { flex: 1, overflow: "hidden", ...this.getTransform() }
         }
       >
         <ProgressiveListView
