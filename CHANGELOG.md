@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Replacing android styles from `{ transform: [{ scaleX: -1 }] }` to `{ scaleY: -1 }` to fix inverted list performance issues
+
 ## [1.4.1] - 2023-01-24
 
 - Prevent overflow of sticky headers
