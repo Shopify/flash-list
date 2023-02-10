@@ -13,7 +13,7 @@ import UIKit
     }
 
     @objc func setScrollOffset(_ scrollOffset: Int) {
-        self.scrollOffset = CGFloat(scrollOffset)
+//        self.scrollOffset = CGFloat(scrollOffset)
     }
 
     @objc func setWindowSize(_ windowSize: Int) {

@@ -9,27 +9,44 @@ import {
   Pressable,
   LayoutAnimation,
   StyleSheet,
+  Button,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
+import { useFocusEffect } from "@react-navigation/native";
 
-const generateArray = (size: number) => {
-  const arr = new Array(size);
+interface ListItem {
+  value: number;
+  type?: string;
+}
+
+let newItemIndexes = 1001;
+
+const generateArray = (size: number): ListItem[] => {
+  const arr = new Array<ListItem>(size);
   for (let i = 0; i < size; i++) {
-    arr[i] = i;
+    arr[i] = { value: i };
   }
+
   return arr;
 };
 
 const List = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState(generateArray(100));
+  const [isLoading, setIsLoading] = useState(false);
 
-  const list = useRef<FlashList<number> | null>(null);
+  const list = useRef<FlashList<ListItem> | null>(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      newItemIndexes = 1001;
+    }, [])
+  );
 
   const removeItem = (item: number) => {
     setData(
       data.filter((dataItem) => {
-        return dataItem !== item;
+        return dataItem.value !== item;
       })
     );
     list.current?.prepareForLayoutAnimationRender();
@@ -37,12 +54,19 @@ const List = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
 
-  const renderItem = ({ item }: { item: number }) => {
-    const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
+  const renderItem = ({ item }: { item: ListItem }) => {
+    const backgroundColor = item.value % 2 === 0 ? "#00a1f1" : "#ffbb00";
+
+    // if (Number(item.value) >= 90 && Number(item.value) <= 99) {
+    //   return <View />;
+    // }
+    // item.value % 2 === 0
+    // ? 100 + (item.value > 1000 ? item.value / 10 : item.value) + 1
+    // : 200 + (item.value > 1000 ? item.value / 10 : item.value),
     return (
       <Pressable
         onPress={() => {
-          removeItem(item);
+          removeItem(item.value);
         }}
       >
         <View
@@ -52,7 +76,7 @@ const List = () => {
             height: item % 2 === 0 ? 100 : 200,
           }}
         >
-          <Text>Cell Id: {item}</Text>
+          <Text>Cell Id: {item.value}</Text>
         </View>
       </Pressable>
     );
