@@ -118,6 +118,42 @@ import UIKit
         fixFooter()
     }
 
+    /// Finds the item with the first stable id and adjusts the scroll view offset based on how much
+    /// it moved when a new item is added.
+    private func maintainTopContentPosition(
+        cellContainers: [CellContainer],
+        scrollView: UIScrollView?
+    ) {
+        guard let scrollView = scrollView, !self.isInitialRender else { return }
+
+        for cellContainer in cellContainers {
+            let minValue = horizontal ?
+                cellContainer.frame.minX :
+                cellContainer.frame.minY
+
+            if cellContainer.layoutType == firstItemStableId {
+                if minValue != firstItemOffset {
+                    let diff = minValue - firstItemOffset
+
+                    let currentOffset = horizontal
+                      ? scrollView.contentOffset.x
+                      : scrollView.contentOffset.y
+
+                    let scrollValue = diff + currentOffset
+
+                    scrollView.contentOffset = CGPoint(
+                        x: horizontal ? scrollValue : 0,
+                        y: horizontal ? 0 : scrollValue
+                    )
+
+                    // You only need to adjust the scroll view once. Break the
+                    // loop after this
+                    return
+                }
+            }
+        }
+    }
+
     /// Checks for overlaps or gaps between adjacent items and then applies a correction.
     /// Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on the iOS side.
     private func clearGaps(for cellContainers: [CellContainer]) {
@@ -125,7 +161,7 @@ import UIKit
         var maxBound: CGFloat = 0
         var minBound: CGFloat = CGFloat(Int.max)
         var maxBoundNextCell: CGFloat = 0
-        let correctedScrollOffset = scrollView!.contentOffset.y - (horizontal ? frame.minX : frame.minY)
+        let correctedScrollOffset = (horizontal ? scrollView!.contentOffset.x : scrollView!.contentOffset.y) - (horizontal ? frame.minX : frame.minY)
         lastMaxBoundOverall = 0
 
         var nextFirstItemStableId = ""
@@ -205,43 +241,33 @@ import UIKit
                     maxBoundNextCell = max(maxBound, nextCell.frame.maxY)
                 }
             }
-            if(nextFirstItemStableId == "" || nextCell.layoutType == firstItemStableId) {
-                nextFirstItemOffset = nextCell.frame.minY
+
+            // This state update is used for maintainTopContentPosition only.
+            // This is ignored during normal use cases
+            if (
+                nextFirstItemStableId == "" ||
+                nextCell.layoutType == firstItemStableId
+            ) {
+                nextFirstItemOffset = horizontal ?
+                    nextCell.frame.minX :
+                    nextCell.frame.minY
+
                 nextFirstItemStableId = nextCell.layoutType
             }
+
             updateLastMaxBoundOverall(currentCell: cellContainer, nextCell: nextCell)
         }
 
-        // This was placed here so that offset adjustments would ONLY be performed after
-        // all necessary views were pulled up to remove the white space
-        cellContainers.indices.forEach { index in
-            let cellContainer = cellContainers[index]
+        // IF experimental_maintainTopContentPosition = true
+        maintainTopContentPosition(
+            cellContainers: cellContainers,
+            scrollView: scrollView
+        )
 
-            if cellContainer.layoutType == firstItemStableId {
-                if cellContainers[index].frame.minY != firstItemOffset {
-                    print("TAG: firstItemStableId: \(firstItemStableId)")
-                    print("TAG: nextFirstItemStableId: \(nextFirstItemStableId)")
-
-                    let diff = cellContainers[index].frame.minY - firstItemOffset
-
-                    print("TAG: diff: \(diff)")
-
-                    if let scrollView = scrollView, !self.isInitialRender {
-                        let newValue = scrollView.contentOffset.y + diff
-                        print("NewValue \(newValue)")
-                        let newScrollHeight = superview!.frame.height - scrollView.frame.height
-                        print("New Scroll Height \(newScrollHeight)")
-                        scrollView.contentOffset = CGPoint(x: 0, y: scrollView.contentOffset.y + diff)
-                        print("Content Offset \(scrollView.contentOffset.y)")
-                    }
-                }
-            }
-        }
-
-        firstItemStableId = nextFirstItemStableId
-        firstItemOffset = nextFirstItemOffset
         lastMaxBound = maxBoundNextCell
         lastMinBound = minBound
+        firstItemStableId = nextFirstItemStableId
+        firstItemOffset = nextFirstItemOffset
     }
 
     private func updateLastMaxBoundOverall(currentCell: CellContainer, nextCell: CellContainer) {
