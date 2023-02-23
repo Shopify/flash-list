@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useFocusEffect } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 interface ListItem {
   value: number;

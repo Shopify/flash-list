@@ -151,6 +151,42 @@ import UIKit
 
     /// Finds the item with the first stable id and adjusts the scroll view offset based on how much
     /// it moved when a new item is added.
+    private func maintainTopContentPosition(
+        cellContainers: [CellContainer],
+        scrollView: UIScrollView?
+    ) {
+        guard let scrollView = scrollView, !self.isInitialRender else { return }
+
+        for cellContainer in cellContainers {
+            let minValue = horizontal ?
+                cellContainer.frame.minX :
+                cellContainer.frame.minY
+
+            if cellContainer.layoutType == firstItemStableId {
+                if minValue != firstItemOffset {
+                    let diff = minValue - firstItemOffset
+
+                    let currentOffset = horizontal
+                      ? scrollView.contentOffset.x
+                      : scrollView.contentOffset.y
+
+                    let scrollValue = diff + currentOffset
+
+                    scrollView.contentOffset = CGPoint(
+                        x: horizontal ? scrollValue : 0,
+                        y: horizontal ? 0 : scrollValue
+                    )
+
+                    // You only need to adjust the scroll view once. Break the
+                    // loop after this
+                    return
+                }
+            }
+        }
+    }
+
+    /// Finds the item with the first stable id and adjusts the scroll view offset based on how much
+    /// it moved when a new item is added.
     private func adjustTopContentPosition(
         cellContainers: [CellContainer],
         scrollView: UIScrollView?
