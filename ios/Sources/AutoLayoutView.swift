@@ -13,7 +13,7 @@ import UIKit
     }
 
     @objc func setScrollOffset(_ scrollOffset: Int) {
-//        self.scrollOffset = CGFloat(scrollOffset)
+        self.scrollOffset = CGFloat(scrollOffset)
     }
 
     @objc func setWindowSize(_ windowSize: Int) {
@@ -32,8 +32,13 @@ import UIKit
         self.disableAutoLayout = disableAutoLayout
     }
 
+    @objc func setExperimentalMaintainTopContentPosition(_ experimentalMaintainTopContentPosition: Bool) {
+        self.maintainTopContentPosition = experimentalMaintainTopContentPosition
+    }
+
     private var horizontal = false
-//    private var scrollOffset: CGFloat = 0
+    private var maintainTopContentPosition = false
+    private var scrollOffset: CGFloat = 0
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
     private var enableInstrumentation = false
@@ -55,9 +60,11 @@ import UIKit
     /// State that informs us whether this is the first render
     private var isInitialRender: Bool = true
 
+    /// Id of the anchor element when using `maintainTopContentPosition`
+    private var anchorStableId: String = ""
 
-    private var firstItemStableId: String = ""
-    private var firstItemOffset: CGFloat = 0
+    /// Offset of the anchor when using `maintainTopContentPosition`
+    private var anchorOffset: CGFloat = 0
 
     override func layoutSubviews() {
         fixLayout()
@@ -95,6 +102,23 @@ import UIKit
         return sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView }) as? UIScrollView
     }
 
+    func getScrollViewOffset(for scrollView: UIScrollView?) -> CGFloat {
+        /// When using `maintainTopContentPosition` we can't use the offset provided by React
+        /// Native. Because its async, it is sometimes sent in too late for the position maintainence
+        /// calculation causing list jumps or sometimes wrong scroll positions altogether. Since this is still
+        /// experimental, the old scrollOffset is here to not regress previous functionality if the feature
+        /// doesn't work at scale.
+        ///
+        /// The goal is that we can remove this in the future and get the offset from only one place 🤞
+        if let scrollView, maintainTopContentPosition {
+            return horizontal ?
+                scrollView.contentOffset.x :
+                scrollView.contentOffset.y
+        }
+
+        return scrollOffset
+    }
+
     /// Sorts views by index and then invokes clearGaps which does the correction.
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
@@ -120,7 +144,7 @@ import UIKit
 
     /// Finds the item with the first stable id and adjusts the scroll view offset based on how much
     /// it moved when a new item is added.
-    private func maintainTopContentPosition(
+    private func adjustTopContentPosition(
         cellContainers: [CellContainer],
         scrollView: UIScrollView?
     ) {
@@ -131,9 +155,9 @@ import UIKit
                 cellContainer.frame.minX :
                 cellContainer.frame.minY
 
-            if cellContainer.layoutType == firstItemStableId {
-                if minValue != firstItemOffset {
-                    let diff = minValue - firstItemOffset
+            if cellContainer.stableId == anchorStableId {
+                if minValue != anchorOffset {
+                    let diff = minValue - anchorOffset
 
                     let currentOffset = horizontal
                       ? scrollView.contentOffset.x
@@ -161,11 +185,11 @@ import UIKit
         var maxBound: CGFloat = 0
         var minBound: CGFloat = CGFloat(Int.max)
         var maxBoundNextCell: CGFloat = 0
-        let correctedScrollOffset = (horizontal ? scrollView!.contentOffset.x : scrollView!.contentOffset.y) - (horizontal ? frame.minX : frame.minY)
-        lastMaxBoundOverall = 0
+        let correctedScrollOffset = getScrollViewOffset(for: scrollView)
 
-        var nextFirstItemStableId = ""
-        var  nextFirstItemOffset: CGFloat = 0
+        lastMaxBoundOverall = 0
+        var nextAnchorStableId = ""
+        var nextAnchorOffset: CGFloat = 0
 
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
@@ -242,32 +266,32 @@ import UIKit
                 }
             }
 
-            // This state update is used for maintainTopContentPosition only.
-            // This is ignored during normal use cases
-            if (
-                nextFirstItemStableId == "" ||
-                nextCell.layoutType == firstItemStableId
-            ) {
-                nextFirstItemOffset = horizontal ?
+            let isAnchorFound =
+                nextAnchorStableId == "" ||
+                nextCell.stableId == anchorStableId
+
+            if maintainTopContentPosition && isAnchorFound {
+                nextAnchorOffset = horizontal ?
                     nextCell.frame.minX :
                     nextCell.frame.minY
 
-                nextFirstItemStableId = nextCell.layoutType
+                nextAnchorStableId = nextCell.stableId
             }
 
             updateLastMaxBoundOverall(currentCell: cellContainer, nextCell: nextCell)
         }
 
-        // IF experimental_maintainTopContentPosition = true
-        maintainTopContentPosition(
-            cellContainers: cellContainers,
-            scrollView: scrollView
-        )
+        if maintainTopContentPosition {
+            adjustTopContentPosition(
+                cellContainers: cellContainers,
+                scrollView: scrollView
+            )
+        }
 
         lastMaxBound = maxBoundNextCell
         lastMinBound = minBound
-        firstItemStableId = nextFirstItemStableId
-        firstItemOffset = nextFirstItemOffset
+        anchorStableId = nextAnchorStableId
+        anchorOffset = nextAnchorOffset
     }
 
     private func updateLastMaxBoundOverall(currentCell: CellContainer, nextCell: CellContainer) {

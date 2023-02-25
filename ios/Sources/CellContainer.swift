@@ -2,13 +2,13 @@ import Foundation
 
 @objc class CellContainer: UIView {
     var index: Int = -1
-    var layoutType: String = ""
+    var stableId: String = ""
     
     @objc func setIndex(_ index: Int) {
         self.index = index
     }
   
-    @objc func setType(_ layoutType: String) {
-        self.layoutType = layoutType
+    @objc func setStableId(_ stableId: String) {
+        self.stableId = stableId
     }
 }
