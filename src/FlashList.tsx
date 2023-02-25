@@ -505,6 +505,7 @@ class FlashList<T> extends React.PureComponent<
         }}
         index={parentProps.index}
         stableId={
+          /* Empty string is used so the list can still render without an extractor */
           this.props.keyExtractor?.(parentProps.data, parentProps.index) ?? ""
         }
       >
