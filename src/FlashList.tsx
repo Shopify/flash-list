@@ -162,7 +162,6 @@ class FlashList<T> extends React.PureComponent<
     prevState: FlashListState<T>
   ): FlashListState<T> {
     const newState = { ...prevState };
-
     if (prevState.numColumns !== nextProps.numColumns) {
       newState.numColumns = nextProps.numColumns || 1;
       newState.layoutProvider = FlashList.getLayoutProvider<T>(
