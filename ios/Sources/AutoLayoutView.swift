@@ -51,12 +51,6 @@ import UIKit
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
 
-    /// Marks the first Item in the Scroll View
-    private var firstItemMarker: CellContainer? = nil
-
-    /// The position of the item in the Scroll View after insertion / deletion
-    private var previousMarkerOffset: CGFloat = -1
-
     /// State that informs us whether this is the first render
     private var isInitialRender: Bool = true
 
