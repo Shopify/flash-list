@@ -13,7 +13,7 @@ import UIKit
     }
 
     @objc func setScrollOffset(_ scrollOffset: Int) {
-//        self.scrollOffset = CGFloat(scrollOffset)
+        self.scrollOffset = CGFloat(scrollOffset)
     }
 
     @objc func setWindowSize(_ windowSize: Int) {
@@ -30,6 +30,10 @@ import UIKit
 
     @objc func setDisableAutoLayout(_ disableAutoLayout: Bool) {
         self.disableAutoLayout = disableAutoLayout
+    }
+
+    @objc func setExperimentalMaintainTopContentPosition(_ experimentalMaintainTopContentPosition: Bool) {
+        self.maintainTopContentPosition = experimentalMaintainTopContentPosition
     }
 
     @objc func setExperimentalMaintainTopContentPosition(_ experimentalMaintainTopContentPosition: Bool) {
@@ -60,9 +64,11 @@ import UIKit
     /// State that informs us whether this is the first render
     private var isInitialRender: Bool = true
 
+    /// Id of the anchor element when using `maintainTopContentPosition`
+    private var anchorStableId: String = ""
 
-    private var firstItemStableId: String = ""
-    private var firstItemOffset: CGFloat = 0
+    /// Offset of the anchor when using `maintainTopContentPosition`
+    private var anchorOffset: CGFloat = 0
 
     /// State that informs us whether this is the first render
     private var isInitialRender: Bool = true
@@ -126,6 +132,23 @@ import UIKit
         return scrollOffset
     }
 
+    func getScrollViewOffset(for scrollView: UIScrollView?) -> CGFloat {
+        /// When using `maintainTopContentPosition` we can't use the offset provided by React
+        /// Native. Because its async, it is sometimes sent in too late for the position maintainence
+        /// calculation causing list jumps or sometimes wrong scroll positions altogether. Since this is still
+        /// experimental, the old scrollOffset is here to not regress previous functionality if the feature
+        /// doesn't work at scale.
+        ///
+        /// The goal is that we can remove this in the future and get the offset from only one place 🤞
+        if let scrollView, maintainTopContentPosition {
+            return horizontal ?
+                scrollView.contentOffset.x :
+                scrollView.contentOffset.y
+        }
+
+        return scrollOffset
+    }
+
     /// Sorts views by index and then invokes clearGaps which does the correction.
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
@@ -151,7 +174,7 @@ import UIKit
 
     /// Finds the item with the first stable id and adjusts the scroll view offset based on how much
     /// it moved when a new item is added.
-    private func maintainTopContentPosition(
+    private func adjustTopContentPosition(
         cellContainers: [CellContainer],
         scrollView: UIScrollView?
     ) {
@@ -162,9 +185,9 @@ import UIKit
                 cellContainer.frame.minX :
                 cellContainer.frame.minY
 
-            if cellContainer.layoutType == firstItemStableId {
-                if minValue != firstItemOffset {
-                    let diff = minValue - firstItemOffset
+            if cellContainer.stableId == anchorStableId {
+                if minValue != anchorOffset {
+                    let diff = minValue - anchorOffset
 
                     let currentOffset = horizontal
                       ? scrollView.contentOffset.x
@@ -317,17 +340,11 @@ import UIKit
                 nextAnchorOffset = horizontal ?
                     nextCell.frame.minX :
                     nextCell.frame.minY
-
                 nextAnchorStableId = nextCell.stableId
             }
 
             updateLastMaxBoundOverall(currentCell: cellContainer, nextCell: nextCell)
         }
-
-        // This was placed here so that offset adjustments would ONLY be performed after
-        // all necessary views were pulled up to remove the white space
-        cellContainers.indices.forEach { index in
-            let cellContainer = cellContainers[index]
 
         if maintainTopContentPosition {
             adjustTopContentPosition(
