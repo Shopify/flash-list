@@ -123,7 +123,7 @@ internal class AutoLayoutShadowTest {
     }
 
     private fun getTestModel(): TestDataModel {
-        var str = this.javaClass.classLoader.getResource("LayoutTestData.json").readText()
+        var str = this.javaClass.classLoader?.getResource("LayoutTestData.json")?.readText()
         return gson.fromJson<TestDataModel>(str, TestDataModel::class.java)
     }
 
