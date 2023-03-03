@@ -24,4 +24,9 @@ class CellContainerManager: ReactViewManager() {
     fun setIndex(view: CellContainerImpl, index: Int) {
         view.index = index
     }
+
+    @ReactProp(name = "stableId")
+    fun setStableId(view: CellContainerImpl, stableId: String) {
+        view.stableId = stableId
+    }
 }
