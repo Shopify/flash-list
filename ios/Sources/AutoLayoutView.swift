@@ -124,7 +124,7 @@ import UIKit
             let nextCellTop = nextCell.frame.minY
             let nextCellLeft = nextCell.frame.minX
 
-            // Only apply correction if the next cell is consecutive.
+			// Only apply correction if the next cell is consecutive.
 			let isNextCellConsecutive = nextCell.index == cellContainer.index + 1
 
             guard
@@ -151,7 +151,7 @@ import UIKit
                 maxBound = max(maxBound, cellRight)
                 minBound = min(minBound, cellLeft)
                 maxBoundNextCell = maxBound
-				if(isNextCellConsecutive) {
+				if isNextCellConsecutive {
 					if cellTop < nextCellTop {
 						if cellBottom != nextCellTop {
 							nextCell.frame.origin.y = cellBottom
@@ -170,7 +170,7 @@ import UIKit
                 maxBound = max(maxBound, cellBottom)
                 minBound = min(minBound, cellTop)
                 maxBoundNextCell = maxBound
-				if(isNextCellConsecutive) {
+				if isNextCellConsecutive {
 					if cellLeft < nextCellLeft {
 						if cellRight != nextCellLeft {
 							nextCell.frame.origin.x = cellRight
