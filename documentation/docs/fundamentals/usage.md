@@ -596,6 +596,14 @@ Param `offset` expects the offset to scroll to. In case of `horizontal` is true,
 
 Param `animated` (`false` by default) defines whether the list should do an animation while scrolling.
 
+### `showsVerticalScrollIndicator`
+
+```tsx
+showsVerticalScrollIndicator?: boolean;
+```
+
+Show scroll indicator (scroll bar)
+
 # ScrollView props
 
 `FlashList`, as `FlatList`, uses `ScrollView` under the hood. You can take a look into the React Native documentation for [`ScrollView`](https://reactnative.dev/docs/scrollview) to see the exhaustive list of props.
