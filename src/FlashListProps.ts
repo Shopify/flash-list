@@ -56,6 +56,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * );
    * ...
    * <FlashList data={[{title: 'Title Text', key: 'item1'}]} renderItem={renderItem} />
+   * ```
    *
    * Provides additional metadata like `index`
    *
