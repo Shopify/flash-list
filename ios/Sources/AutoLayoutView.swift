@@ -50,8 +50,7 @@ import UIKit
         fixLayout()
         super.layoutSubviews()
 
-        let scrollView = getScrollView()
-        guard enableInstrumentation, let scrollView = scrollView else { return }
+        guard enableInstrumentation, let scrollView = getScrollView() else { return }
 
         let scrollContainerSize = horizontal ? scrollView.frame.width : scrollView.frame.height
         let currentScrollOffset = horizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
