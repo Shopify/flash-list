@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix build errors on older Swift and Xcode versions
+  - https://github.com/Shopify/flash-list/pull/800
+
 ## [1.4.2] - 2023-03-20
 
 - Apply layout correction only to consecutive cells
