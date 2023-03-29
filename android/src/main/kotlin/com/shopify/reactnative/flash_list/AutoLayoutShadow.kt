@@ -106,8 +106,11 @@ class AutoLayoutShadow {
                     val diff = minValue - anchorOffset
                     val currentOffset = scrollView.scrollY
                     val scrollValue = diff + currentOffset
+                    (scrollView as DoubleSidedScrollView).setShiftOffset(diff.toDouble())
+
+
 //                    scrollView.scrollTo(0, scrollValue)
-                    scrollView.scrollY = scrollValue
+//                    scrollView.scrollY = scrollValue
                     break
                 }
             }

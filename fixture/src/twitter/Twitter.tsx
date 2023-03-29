@@ -9,6 +9,7 @@ import {
 import { BlankAreaEventHandler, FlashList } from "@shopify/flash-list";
 import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
 
+import { ScrollView } from "../ScrollView";
 import { DebugContext } from "../Debug";
 
 import TweetCell from "./TweetCell";
@@ -89,6 +90,7 @@ const Twitter = ({
           console.log(info);
         }}
         disableAutoLayout={disableAutoLayout}
+        renderScrollComponent={ScrollView}
       />
     </FlashListPerformanceView>
   );
