@@ -36,6 +36,10 @@ import UIKit
         self.maintainTopContentPosition = experimentalMaintainTopContentPosition
     }
 
+    @objc func setExperimentalMaintainTopContentPosition(_ experimentalMaintainTopContentPosition: Bool) {
+        self.maintainTopContentPosition = experimentalMaintainTopContentPosition
+    }
+
     private var horizontal = false
     private var maintainTopContentPosition = false
     private var scrollOffset: CGFloat = 0
@@ -50,6 +54,15 @@ import UIKit
     private var lastMaxBound: CGFloat = 0
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
+
+    /// State that informs us whether this is the first render
+    private var isInitialRender: Bool = true
+
+    /// Id of the anchor element when using `maintainTopContentPosition`
+    private var anchorStableId: String = ""
+
+    /// Offset of the anchor when using `maintainTopContentPosition`
+    private var anchorOffset: CGFloat = 0
 
     /// State that informs us whether this is the first render
     private var isInitialRender: Bool = true
@@ -94,6 +107,23 @@ import UIKit
 
     func getScrollView() -> UIScrollView? {
         return sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView }) as? UIScrollView
+    }
+
+    func getScrollViewOffset(for scrollView: UIScrollView?) -> CGFloat {
+        /// When using `maintainTopContentPosition` we can't use the offset provided by React
+        /// Native. Because its async, it is sometimes sent in too late for the position maintainence
+        /// calculation causing list jumps or sometimes wrong scroll positions altogether. Since this is still
+        /// experimental, the old scrollOffset is here to not regress previous functionality if the feature
+        /// doesn't work at scale.
+        ///
+        /// The goal is that we can remove this in the future and get the offset from only one place 🤞
+        if let scrollView, maintainTopContentPosition {
+            return horizontal ?
+                scrollView.contentOffset.x :
+                scrollView.contentOffset.y
+        }
+
+        return scrollOffset
     }
 
     func getScrollViewOffset(for scrollView: UIScrollView?) -> CGFloat {
@@ -172,6 +202,42 @@ import UIKit
         }
     }
 
+    /// Finds the item with the first stable id and adjusts the scroll view offset based on how much
+    /// it moved when a new item is added.
+    private func adjustTopContentPosition(
+        cellContainers: [CellContainer],
+        scrollView: UIScrollView?
+    ) {
+        guard let scrollView = scrollView, !self.isInitialRender else { return }
+
+        for cellContainer in cellContainers {
+            let minValue = horizontal ?
+                cellContainer.frame.minX :
+                cellContainer.frame.minY
+
+            if cellContainer.stableId == anchorStableId {
+                if minValue != anchorOffset {
+                    let diff = minValue - anchorOffset
+
+                    let currentOffset = horizontal
+                      ? scrollView.contentOffset.x
+                      : scrollView.contentOffset.y
+
+                    let scrollValue = diff + currentOffset
+
+                    scrollView.contentOffset = CGPoint(
+                        x: horizontal ? scrollValue : 0,
+                        y: horizontal ? 0 : scrollValue
+                    )
+
+                    // You only need to adjust the scroll view once. Break the
+                    // loop after this
+                    return
+                }
+            }
+        }
+    }
+
     /// Checks for overlaps or gaps between adjacent items and then applies a correction.
     /// Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on the iOS side.
     private func clearGaps(for cellContainers: [CellContainer]) {
@@ -197,8 +263,8 @@ import UIKit
             let nextCellTop = nextCell.frame.minY
             let nextCellLeft = nextCell.frame.minX
 
-            // Only apply correction if the next cell is consecutive.
-            let isNextCellConsecutive = nextCell.index == cellContainer.index + 1
+			// Only apply correction if the next cell is consecutive.
+			let isNextCellConsecutive = nextCell.index == cellContainer.index + 1
 
             guard
                 isWithinBounds(
@@ -224,18 +290,18 @@ import UIKit
                 maxBound = max(maxBound, cellRight)
                 minBound = min(minBound, cellLeft)
                 maxBoundNextCell = maxBound
-                if isNextCellConsecutive {
-                    if cellTop < nextCellTop {
-                        if cellBottom != nextCellTop {
-                            nextCell.frame.origin.y = cellBottom
-                        }
-                        if cellLeft != nextCellLeft {
-                            nextCell.frame.origin.x = cellLeft
-                        }
-                    } else {
-                        nextCell.frame.origin.x = maxBound
-                    }
-                }
+				if isNextCellConsecutive {
+					if cellTop < nextCellTop {
+						if cellBottom != nextCellTop {
+							nextCell.frame.origin.y = cellBottom
+						}
+						if cellLeft != nextCellLeft {
+							nextCell.frame.origin.x = cellLeft
+						}
+					} else {
+						nextCell.frame.origin.x = maxBound
+					}
+				}
                 if isNextCellVisible {
                     maxBoundNextCell = max(maxBound, nextCell.frame.maxX)
                 }
@@ -243,18 +309,18 @@ import UIKit
                 maxBound = max(maxBound, cellBottom)
                 minBound = min(minBound, cellTop)
                 maxBoundNextCell = maxBound
-                if isNextCellConsecutive {
-                    if cellLeft < nextCellLeft {
-                        if cellRight != nextCellLeft {
-                            nextCell.frame.origin.x = cellRight
-                        }
-                        if cellTop != nextCellTop {
-                            nextCell.frame.origin.y = cellTop
-                        }
-                    } else {
-                        nextCell.frame.origin.y = maxBound
-                    }
-                }
+				if isNextCellConsecutive {
+					if cellLeft < nextCellLeft {
+						if cellRight != nextCellLeft {
+							nextCell.frame.origin.x = cellRight
+						}
+						if cellTop != nextCellTop {
+							nextCell.frame.origin.y = cellTop
+						}
+					} else {
+						nextCell.frame.origin.y = maxBound
+					}
+				}
                 if isNextCellVisible {
                     maxBoundNextCell = max(maxBound, nextCell.frame.maxY)
                 }
@@ -268,7 +334,6 @@ import UIKit
                 nextAnchorOffset = horizontal ?
                     nextCell.frame.minX :
                     nextCell.frame.minY
-
                 nextAnchorStableId = nextCell.stableId
             }
 
