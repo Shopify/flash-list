@@ -21,6 +21,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Skip footer correction when layout correction is skipped
   - https://github.com/Shopify/flash-list/pull/743
 
+- Make optional peer dependency on @types/react explicit.
+
+
 ## [1.4.0] - 2022-11-07
 
 - Add content padding support to FlashList
