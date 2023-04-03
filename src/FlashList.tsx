@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Platform,
   View,
   RefreshControl,
   LayoutChangeEvent,
@@ -140,6 +141,7 @@ class FlashList<T> extends React.PureComponent<
     // `createAnimatedComponent` always passes a blank style object. To avoid warning while using AnimatedFlashList we've modified the check
     // `style` prop can be an array. So we need to validate every object in array. Check: https://github.com/Shopify/flash-list/issues/651
     if (
+      Platform.OS !== 'web' &&
       __DEV__ &&
       Object.keys(StyleSheet.flatten(this.props.style ?? {})).length > 0
     ) {
