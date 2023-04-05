@@ -14,6 +14,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Apply layout correction only to consecutive cells
   - https://github.com/Shopify/flash-list/pull/788
 
+- Fix `getTestModel` failing in `AutoLayoutShadowTest` due to unsafe call on classLoader
+
 ## [1.4.1] - 2023-01-24
 
 - Prevent overflow of sticky headers
