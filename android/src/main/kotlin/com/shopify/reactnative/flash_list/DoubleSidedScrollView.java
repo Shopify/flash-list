@@ -1,7 +1,11 @@
+/**
+ * This file comes courtsey of ______ and their work on ______. Huge thanks for helping
+ * solve this problem with fling!
+ * */
+
 package com.shopify.reactnative.flash_list;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.Log;
 import android.view.View;
 import android.widget.OverScroller;
@@ -37,8 +41,6 @@ public class DoubleSidedScrollView extends ReactScrollView {
         Log.d("ScrollView", "set shiftOffset " + shiftOffset);
     }
 
-
-
     protected void dispatchDraw() {
         int scrollWindowHeight = getHeight() - getPaddingBottom() - getPaddingTop();
         if(mShiftOffset != 0) {
@@ -68,40 +70,12 @@ public class DoubleSidedScrollView extends ReactScrollView {
         }
         mShiftHeight = 0;
         mShiftOffset = 0;
-
     }
 
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         super.onLayoutChange(v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom);
         dispatchDraw();
-//        int scrollWindowHeight = getHeight() - getPaddingBottom() - getPaddingTop();
-//        if(mShiftHeight != 0 && mShiftOffset <= getScrollY() + scrollWindowHeight / 2) {
-//            // correct
-//            scrollTo(0, getScrollY() + (int)mShiftHeight);
-//            if(getOverScrollerFromParent() != null && !getOverScrollerFromParent().isFinished()) {
-//                // get current directed velocity from scroller
-//                int direction = getOverScrollerFromParent().getFinalY() - getOverScrollerFromParent().getStartY() > 0 ? 1 : -1;
-//                float velocity = getOverScrollerFromParent().getCurrVelocity() * direction;
-//                // stop and restart animation again
-//                getOverScrollerFromParent().abortAnimation();
-//                mScroller.fling(
-//                        getScrollX(), // startX
-//                        getScrollY(), // startY
-//                        0, // velocityX
-//                        (int)velocity, // velocityY
-//                        0, // minX
-//                        0, // maxX
-//                        0, // minY
-//                        Integer.MAX_VALUE, // maxY
-//                        0, // overX
-//                        scrollWindowHeight / 2 // overY
-//                );
-//                ViewCompat.postInvalidateOnAnimation(this);
-//            }
-//        }
-//        mShiftHeight = 0;
-//        mShiftOffset = 0;
     }
 
     @Nullable

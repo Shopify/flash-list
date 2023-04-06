@@ -19,15 +19,13 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     val alShadow = AutoLayoutShadow()
     var enableInstrumentation = false
     var disableAutoLayout = false
-
     var pixelDensity = 1.0
-
-    fun invalidateScrollView() {
-        getParentScrollView()?.invalidate()
-    }
+    var maintainTopContentPosition = false
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        fixLayout()
+        if(maintainTopContentPosition) {
+            fixLayout()
+        }
         super.onLayout(changed, left, top, right, bottom)
     }
 
@@ -73,7 +71,11 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
             }
             positionSortedViews.sortBy { it.index }
             alShadow.offsetFromStart = if (alShadow.horizontal) left else top
-            alShadow.clearGapsAndOverlaps(positionSortedViews, getParentScrollView() as ScrollView)
+            alShadow.clearGapsAndOverlaps(
+                    positionSortedViews,
+                    getParentScrollView() as ScrollView,
+                    maintainTopContentPosition
+            )
         }
     }
 

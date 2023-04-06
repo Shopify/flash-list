@@ -63,6 +63,11 @@ class AutoLayoutViewManager: ReactViewManager() {
         view.enableInstrumentation = enableInstrumentation
     }
 
+    @ReactProp(name = "experimentalMaintainTopContentPosition")
+    fun setExperimentalMaintainContentPosition(view: AutoLayoutView, isMaintaining: Boolean) {
+        view.maintainTopContentPosition = isMaintaining
+    }
+
     private fun convertToPixelLayout(dp: Double, density: Double): Int {
         return (dp * density).roundToInt()
     }

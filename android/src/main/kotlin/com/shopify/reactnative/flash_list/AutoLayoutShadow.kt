@@ -1,9 +1,6 @@
 package com.shopify.reactnative.flash_list
 
-import android.os.Build
-import android.view.View
 import android.widget.ScrollView
-import androidx.annotation.RequiresApi
 
 class AutoLayoutShadow {
     var horizontal: Boolean = false
@@ -26,7 +23,7 @@ class AutoLayoutShadow {
 
     /** Checks for overlaps or gaps between adjacent items and then applies a correction (Only Grid layouts with varying spans)
      * Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on Android side. Not expecting any major perf issue. */
-    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>, scrollView: ScrollView) {
+    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>, scrollView: ScrollView, maintainTopContentPosition: Boolean) {
         var maxBound = 0
         var minBound = Int.MAX_VALUE
         var maxBoundNeighbour = 0
@@ -97,21 +94,15 @@ class AutoLayoutShadow {
             lastMaxBoundOverall = kotlin.math.max(lastMaxBoundOverall, if (horizontal) neighbour.right else neighbour.bottom)
         }
 
-        for (i in 0 until sortedItems.size) {
-            val cell = sortedItems[i]
-            val minValue = cell.top
-
-            if(cell.stableId == anchorStableId) {
-                if (minValue != anchorOffset) {
-                    val diff = minValue - anchorOffset
-                    val currentOffset = scrollView.scrollY
-                    val scrollValue = diff + currentOffset
-                    (scrollView as DoubleSidedScrollView).setShiftOffset(diff.toDouble())
-
-
-//                    scrollView.scrollTo(0, scrollValue)
-//                    scrollView.scrollY = scrollValue
-                    break
+        if(maintainTopContentPosition) {
+            for (cell in sortedItems) {
+                val minValue = cell.top
+                if (cell.stableId == anchorStableId) {
+                    if (minValue != anchorOffset) {
+                        val diff = minValue - anchorOffset
+                        (scrollView as DoubleSidedScrollView).setShiftOffset(diff.toDouble())
+                        break
+                    }
                 }
             }
         }
