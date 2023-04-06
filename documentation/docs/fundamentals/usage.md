@@ -232,7 +232,7 @@ FlashList attempts to measure size of horizontal lists by drawing an extra list 
 drawDistance?: number;
 ```
 
-Draw distance for advanced rendering (in `dp`/`px`). Default value is `2000` for Web and `250` for Android and iOS.
+Draw distance for advanced rendering (in `dp`/`px`). The default value is `2000` for Web and `250` for Android and iOS.
 
 ### `estimatedFirstItemOffset`
 
