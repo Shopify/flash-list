@@ -1,6 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+/**
+ * This file comes courtsey of steuerbot and their work on react-native-bidirectional-flatlist. Huge thanks for helping
+ * solve this problem with fling!
+ * */
+
 import React, { Component, forwardRef } from "react";
 import {
   PixelRatio,
@@ -16,7 +21,7 @@ import type { ShiftFunction } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const ScrollViewRNRaw: Component<ScrollViewProps> = ScrollViewRN.render().type; // hack to get inner type of ScrollView
+const ScrollViewRNRaw: Component<ScrollViewProps> = ScrollViewRN.render().type;
 
 export class ScrollViewComponent extends ScrollViewRNRaw {
   constructor(props: ScrollViewProps) {
@@ -41,18 +46,6 @@ export class ScrollViewComponent extends ScrollViewRNRaw {
     const NativeDirectionalScrollContentView = View;
 
     const contentContainerStyle = [this.props.contentContainerStyle];
-    // if (__DEV__ && this.props.style !== undefined) {
-    // const style = StyleSheet.flatten(this.props.style);
-    // const childLayoutProps = ['alignItems', 'justifyContent'].filter(
-    //   (prop) => style && style[prop] !== undefined
-    // );
-    // invariant(
-    //   childLayoutProps.length === 0,
-    //   'ScrollView child layout (' +
-    //     JSON.stringify(childLayoutProps) +
-    //     ') must be applied through the contentContainerStyle prop.'
-    // );
-    // }
 
     const contentSizeChangeProps =
       this.props.onContentSizeChange == null
@@ -86,14 +79,14 @@ export class ScrollViewComponent extends ScrollViewRNRaw {
     );
 
     const alwaysBounceHorizontal =
-      this.props.alwaysBounceHorizontal !== undefined
-        ? this.props.alwaysBounceHorizontal
-        : this.props.horizontal;
+      this.props.alwaysBounceHorizontal === undefined
+        ? this.props.horizontal
+        : this.props.alwaysBounceHorizontal;
 
     const alwaysBounceVertical =
-      this.props.alwaysBounceVertical !== undefined
-        ? this.props.alwaysBounceVertical
-        : !this.props.horizontal;
+      this.props.alwaysBounceVertical === undefined
+        ? !this.props.horizontal
+        : this.props.alwaysBounceVertical;
 
     const baseStyle = styles.baseVertical;
     const props = {
@@ -173,7 +166,8 @@ export type ScrollViewType = typeof ScrollViewRN & {
   shift: (options: { offset: number; height: number }) => void;
 };
 
-export const ScrollView: ScrollViewType = forwardRef<
+// eslint-disable-next-line react/display-name
+export const BidirectionalScrollView: ScrollViewType = forwardRef<
   ScrollViewType,
   ScrollViewProps
 >((props, ref) => {

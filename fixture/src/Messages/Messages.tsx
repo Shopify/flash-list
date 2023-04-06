@@ -2,10 +2,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import React, { useRef, useState } from "react";
 
-import { ScrollView } from "../ScrollView";
-
 import MessageType from "./models/MessageType";
-import initialMessages from "./data/messages";
 import TextInputBar from "./TextInputBar";
 import userName from "./userName";
 import MessageItem from "./MessageItem";
@@ -24,8 +21,7 @@ const Messages = () => {
     setMessages([message, ...messages]);
     requestAnimationFrame(() => {
       if (
-        flashListRef.current?.recyclerlistview_unsafe?.findApproxFirstVisibleIndex()! <
-        2
+        flashListRef.current?.experimentalFindApproxFirstVisibleIndex()! < 2
       ) {
         flashListRef.current?.scrollToIndex({ index: 0, animated: true });
       }
@@ -60,7 +56,6 @@ const Messages = () => {
         }}
         data={messages}
         experimentalMaintainTopContentPosition
-        renderScrollComponent={ScrollView}
       />
       <TextInputBar
         onSend={(text) => {

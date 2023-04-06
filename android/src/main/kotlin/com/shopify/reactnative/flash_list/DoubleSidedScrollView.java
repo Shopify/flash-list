@@ -1,5 +1,5 @@
 /**
- * This file comes courtsey of ______ and their work on ______. Huge thanks for helping
+ * This file comes courtsey of steuerbot and their work on react-native-bidirectional-flatlist. Huge thanks for helping
  * solve this problem with fling!
  * */
 
