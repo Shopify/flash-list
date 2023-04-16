@@ -350,17 +350,17 @@ This event is raised once the list has drawn items on the screen. It also report
 ### `onViewableItemsChanged`
 
 ```tsx
-interface ViewToken {
+interface ViewToken<TItem> {
   index: number;
   isViewable: boolean;
-  item: string;
+  item: TItem;
   key: string;
   timestamp: number;
 }
 
 onViewableItemsChanged?: ((info: {
-    viewableItems: ViewToken[];
-    changed: ViewToken[];
+    viewableItems: ViewToken<TItem>[];
+    changed: ViewToken<TItem>[];
 }) => void) | null | undefined
 ```
 
@@ -518,7 +518,7 @@ type ViewabilityConfigCallbackPairs = ViewabilityConfigCallbackPair[];
 interface ViewabilityConfigCallbackPair {
   viewabilityConfig: ViewabilityConfig;
   onViewableItemsChanged:
-    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+    | ((info: { viewableItems: ViewToken<TItem>[]; changed: ViewToken<TItem>[] }) => void)
     | null;
 }
 

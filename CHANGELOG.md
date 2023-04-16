@@ -28,6 +28,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/890
 - Add option to clear cached layouts on update
   - https://github.com/Shopify/flash-list/pull/910
+- Add type definition for `ViewToken["item"]`
+  - https://github.com/Shopify/flash-list/pull/817
 
 ## [1.5.0] - 2023-07-12
 
