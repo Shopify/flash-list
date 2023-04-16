@@ -247,7 +247,10 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * they might be deferred until JS thread is less busy.
    */
   onViewableItemsChanged?:
-    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+    | ((info: {
+        viewableItems: ViewToken<TItem>[];
+        changed: ViewToken<TItem>[];
+      }) => void)
     | null
     | undefined;
 

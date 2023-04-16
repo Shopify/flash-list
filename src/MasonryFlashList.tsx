@@ -34,6 +34,7 @@ export interface MasonryFlashListProps<T>
     | "onBlankArea"
     | "renderItem"
     | "viewabilityConfigCallbackPairs"
+    | "onViewableItemsChanged"
   > {
   /**
    * Allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others.
@@ -59,6 +60,14 @@ export interface MasonryFlashListProps<T>
    * longer be linearly distributed across the columns; instead they are allocated to the column with the least estimated height.
    */
   renderItem: MasonryListRenderItem<T> | null | undefined;
+
+  onViewableItemsChanged?:
+    | ((info: {
+        viewableItems: ViewToken<MasonryListItem<T>>[];
+        changed: ViewToken<MasonryListItem<T>>[];
+      }) => void)
+    | null
+    | undefined;
 }
 
 type OnScrollCallback = ScrollViewProps["onScroll"];
@@ -434,7 +443,9 @@ const getFlashListScrollView = (
   FlashListScrollView.displayName = "FlashListScrollView";
   return FlashListScrollView;
 };
-const updateViewTokens = (tokens: ViewToken[]) => {
+const updateViewTokens = <T extends MasonryListItem<any>>(
+  tokens: ViewToken<T | undefined>[]
+) => {
   const length = tokens.length;
   for (let i = 0; i < length; i++) {
     const token = tokens[i];
