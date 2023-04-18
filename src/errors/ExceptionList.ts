@@ -24,5 +24,13 @@ const ExceptionList = {
       "optimizeItemArrangement has been enabled on `MasonryFlashList` but overrideItemLayout is not set.",
     type: "InvariantViolation",
   },
+  horizontalMaintainScrollNotSupported: {
+    message: "Cannot Scroll Horizontally while maintaining content position",
+    type: "NotSupportedException",
+  },
+  customMaintainScrollNotSupported: {
+    message: "Cannot maintain scroll position for a custom scroll view",
+    type: "NotSupportedException",
+  },
 };
 export default ExceptionList;

@@ -14,5 +14,5 @@ export interface AutoLayoutViewNativeComponentProps {
   onBlankAreaEvent: OnBlankAreaEventHandler;
   enableInstrumentation: boolean;
   disableAutoLayout?: boolean;
-  experimentalMaintainTopContentPosition?: boolean;
+  experimentalScrollPositionManagement?: boolean;
 }

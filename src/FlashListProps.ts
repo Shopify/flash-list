@@ -335,9 +335,10 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
 
   /**
    * If enabled, FlashList will try and maintain the position of the list when items are added from the top.
+   * Additionally, it will fix scroll position when chainging scroll orientation on your device.
    * This prop requires you define a `keyExtractor` function. The `keyExtractor` is used to compute the list
    * top anchor. Without it, the list will fail to render. If in debug mode, you may see flashes if new data
    * comes in quickly. If this happens, please confirm you see this in release mode before reporting an issue.
    */
-  experimentalMaintainTopContentPosition?: boolean;
+  experimentalScrollPositionManagement?: boolean;
 }

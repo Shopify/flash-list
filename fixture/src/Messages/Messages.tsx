@@ -1,15 +1,16 @@
 import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
 import MessageType from "./models/MessageType";
+import initialMessages from "./data/messages";
 import TextInputBar from "./TextInputBar";
 import userName from "./userName";
 import MessageItem from "./MessageItem";
 import Message from "./models/Message";
 
 const Messages = () => {
-  const [messages, setMessages] = useState([] as Message[]);
+  const [messages, setMessages] = useState(initialMessages);
 
   const appendMessage = (text: string) => {
     const message = {
@@ -19,16 +20,7 @@ const Messages = () => {
       type: MessageType.Text,
     } as Message;
     setMessages([message, ...messages]);
-    requestAnimationFrame(() => {
-      if (
-        flashListRef.current?.experimentalFindApproxFirstVisibleIndex()! < 2
-      ) {
-        flashListRef.current?.scrollToIndex({ index: 0, animated: true });
-      }
-    });
   };
-
-  const flashListRef = useRef<FlashList<Message>>(null);
 
   return (
     <KeyboardAvoidingView
@@ -37,7 +29,6 @@ const Messages = () => {
       style={styles.keyboardAvoidingViewStyles}
     >
       <FlashList
-        ref={flashListRef}
         renderItem={MessageItem}
         inverted
         estimatedItemSize={100}
@@ -55,7 +46,6 @@ const Messages = () => {
           return item.type;
         }}
         data={messages}
-        experimentalMaintainTopContentPosition
       />
       <TextInputBar
         onSend={(text) => {

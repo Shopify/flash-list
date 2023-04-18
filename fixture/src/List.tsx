@@ -77,6 +77,7 @@ const List = () => {
       renderItem={renderItem}
       estimatedItemSize={100}
       data={data}
+      experimentalScrollPositionManagement
     />
   );
 };

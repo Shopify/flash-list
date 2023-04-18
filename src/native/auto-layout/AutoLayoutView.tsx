@@ -29,7 +29,7 @@ export interface AutoLayoutViewProps {
   onBlankAreaEvent?: BlankAreaEventHandler;
   onLayout?: (event: LayoutChangeEvent) => void;
   disableAutoLayout?: boolean;
-  experimentalMaintainTopContentPosition?: boolean;
+  experimentalScrollPositionManagement?: boolean;
 }
 
 class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
@@ -64,8 +64,8 @@ class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
           listeners.length !== 0 || Boolean(this.props.onBlankAreaEvent)
         }
         disableAutoLayout={this.props.disableAutoLayout}
-        experimentalMaintainTopContentPosition={Boolean(
-          this.props.experimentalMaintainTopContentPosition
+        experimentalScrollPositionManagement={Boolean(
+          this.props.experimentalScrollPositionManagement
         )}
       >
         {this.props.children}

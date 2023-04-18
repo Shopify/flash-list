@@ -37,11 +37,11 @@ public class DoubleSidedScrollView extends ReactScrollView {
 
     public void setShiftOffset(double shiftOffset) {
         mShiftOffset = shiftOffset;
-        dispatchDraw();
+        adjustOverscroller();
         Log.d("ScrollView", "set shiftOffset " + shiftOffset);
     }
 
-    protected void dispatchDraw() {
+    protected void adjustOverscroller() {
         int scrollWindowHeight = getHeight() - getPaddingBottom() - getPaddingTop();
         if(mShiftOffset != 0) {
             // correct
@@ -75,7 +75,7 @@ public class DoubleSidedScrollView extends ReactScrollView {
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         super.onLayoutChange(v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom);
-        dispatchDraw();
+        adjustOverscroller();
     }
 
     @Nullable

@@ -10,6 +10,6 @@ RCT_EXPORT_VIEW_PROPERTY(renderAheadOffset, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(enableInstrumentation, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableAutoLayout, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(onBlankAreaEvent, RCTDirectEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(experimentalMaintainTopContentPosition, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(experimentalScrollPositionManagement, BOOL)
 
 @end

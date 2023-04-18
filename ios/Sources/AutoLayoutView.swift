@@ -32,12 +32,12 @@ import UIKit
         self.disableAutoLayout = disableAutoLayout
     }
 
-    @objc func setExperimentalMaintainTopContentPosition(_ experimentalMaintainTopContentPosition: Bool) {
-        self.maintainTopContentPosition = experimentalMaintainTopContentPosition
+    @objc func setExperimentalScrollPositionManagement(_ experimentalScrollPositionManagement: Bool) {
+        self.experimentalScrollPositionManagement = experimentalScrollPositionManagement
     }
 
     private var horizontal = false
-    private var maintainTopContentPosition = false
+    private var experimentalScrollPositionManagement = false
     private var scrollOffset: CGFloat = 0
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
@@ -104,7 +104,7 @@ import UIKit
         /// doesn't work at scale.
         ///
         /// The goal is that we can remove this in the future and get the offset from only one place 🤞
-        if let scrollView, maintainTopContentPosition {
+        if let scrollView, experimentalScrollPositionManagement {
             return horizontal ?
                 scrollView.contentOffset.x :
                 scrollView.contentOffset.y
@@ -264,7 +264,7 @@ import UIKit
                 nextAnchorStableId == "" ||
                 nextCell.stableId == anchorStableId
 
-            if maintainTopContentPosition && isAnchorFound {
+            if experimentalScrollPositionManagement && isAnchorFound {
                 nextAnchorOffset = horizontal ?
                     nextCell.frame.minX :
                     nextCell.frame.minY
@@ -275,7 +275,7 @@ import UIKit
             updateLastMaxBoundOverall(currentCell: cellContainer, nextCell: nextCell)
         }
 
-        if maintainTopContentPosition {
+        if experimentalScrollPositionManagement {
             adjustTopContentPosition(
                 cellContainers: cellContainers,
                 scrollView: scrollView

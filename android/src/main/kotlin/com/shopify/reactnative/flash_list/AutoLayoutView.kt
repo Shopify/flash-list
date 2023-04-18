@@ -20,10 +20,10 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     var enableInstrumentation = false
     var disableAutoLayout = false
     var pixelDensity = 1.0
-    var maintainTopContentPosition = false
+    var experimentalScrollPositionManagement = false
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        if(maintainTopContentPosition) {
+        if(experimentalScrollPositionManagement) {
             fixLayout()
         }
         super.onLayout(changed, left, top, right, bottom)
@@ -74,7 +74,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
             alShadow.clearGapsAndOverlaps(
                     positionSortedViews,
                     getParentScrollView() as ScrollView,
-                    maintainTopContentPosition
+                    experimentalScrollPositionManagement
             )
         }
     }
