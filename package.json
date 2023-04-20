@@ -28,7 +28,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "up": "bundle install && yarn fixture-up && yarn e2e-up && yarn build && yarn fixture-web-up",
+    "up": "bundle install && yarn fixture-up && yarn e2e-up && yarn build",
     "fixture-web-up": "cd fixture/web-app && yarn && cd ../../",
     "fixture-up": "cd fixture && yarn && cd ios && bundle exec pod install && cd ../../",
     "e2e-up": "cd fixture/ios && brew tap wix/brew && brew install applesimutils && cd ../../",
