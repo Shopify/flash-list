@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.3] - 2023-04-24
+
 - Fix definition conflicts with previous value
   - https://github.com/Shopify/flash-list/pull/795
 - Fix Android unit test
