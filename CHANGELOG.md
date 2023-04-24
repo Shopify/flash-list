@@ -11,6 +11,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/795
 - Fix Android unit test
   - https://github.com/Shopify/flash-list/pull/815
+- Fix performance issues with inverted lists on Android
+  - https://github.com/Shopify/flash-list/pull/819
 
 ## [1.4.2] - 2023-03-20
 
