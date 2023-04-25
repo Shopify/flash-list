@@ -90,7 +90,7 @@ We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint]
 
 ### Submitting pull requests
 
-Please take some time to correctly fill our [pull request template](.github/PULL_REQUEST_TEMPLATE.md) and detail the proposed changes. This will help reviewers to better understand the context of your PR and provide valuable insights.
+Please take some time to correctly fill our [pull request template](.github/pull_request_template.md) and detail the proposed changes. This will help reviewers to better understand the context of your PR and provide valuable insights.
 
 When you're sending a pull request:
 
