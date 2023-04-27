@@ -730,6 +730,13 @@ class FlashList<T> extends React.PureComponent<
         );
       }, 1000);
     }
+    if (isNaN(this.props.estimatedItemSize)) {
+      this.props.estimatedItemSize = null;
+      console.warn(
+        "Warning: estimatedItemSize is NaN. estimatedItemSize has been reset to null which can caouse performance issues. Please verify your item size calculations to ensure accurate results."
+      );
+    }
+
     this.postLoadTimeoutId = setTimeout(() => {
       // This force update is required to remove dummy element rendered to measure horizontal list height when  the list doesn't update on its own.
       // In most cases this timeout will never be triggered because list usually updates atleast once and this timeout is cleared on update.
