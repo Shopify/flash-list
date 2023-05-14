@@ -494,10 +494,10 @@ class FlashList<T> extends React.PureComponent<
         {...props}
         style={{
           ...props.style,
-          flexDirection: this.props.horizontal ? "row" : "column",
           alignItems: "stretch",
           ...this.getTransform(),
           ...getCellContainerPlatformStyles(this.props.inverted!!, parentProps),
+          ...this.getFlexDirection(),
         }}
         index={parentProps.index}
       >
@@ -531,18 +531,28 @@ class FlashList<T> extends React.PureComponent<
     return (this.props.inverted && transformStyle) || undefined;
   }
 
+  private getFlexDirection() {
+    const { horizontal, inverted } = this.props;
+
+    const direction = horizontal ? "row" : "column";
+    const reverseDirection = horizontal ? "row-reverse" : "column-reverse";
+    const flexDirection = inverted ? reverseDirection : direction;
+
+    return { flexDirection };
+  }
+
   private separator = (index: number) => {
     // Make sure we have data and don't read out of bounds
     if (
       this.props.data === null ||
       this.props.data === undefined ||
-      index + 1 >= this.props.data.length
+      index === 0
     ) {
       return null;
     }
 
-    const leadingItem = this.props.data[index];
-    const trailingItem = this.props.data[index + 1];
+    const leadingItem = this.props.data[index - 1];
+    const trailingItem = this.props.data[index];
 
     const props = {
       leadingItem,
@@ -656,6 +666,7 @@ class FlashList<T> extends React.PureComponent<
   private getCellContainerChild = (index: number) => {
     return (
       <>
+        {this.separator(index)}
         <View
           style={{
             flexDirection:
@@ -666,7 +677,6 @@ class FlashList<T> extends React.PureComponent<
         >
           {this.rowRendererWithIndex(index, RenderTargetOptions.Cell)}
         </View>
-        {this.separator(index)}
       </>
     );
   };
