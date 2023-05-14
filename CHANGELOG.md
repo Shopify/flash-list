@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix item separator issue
+  - https://github.com/Shopify/flash-list/pull/845
+
 ## [1.4.3] - 2023-04-24
 
 - Fix definition conflicts with previous value
