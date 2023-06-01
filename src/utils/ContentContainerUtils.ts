@@ -26,17 +26,17 @@ export const updateContentStyle = (
     backgroundColor,
   } = (contentContainerStyleSource ?? {}) as ViewStyle;
   contentStyle.paddingLeft = Number(
-    paddingLeft || paddingHorizontal || padding || 0
-  );
+    paddingLeft || paddingHorizontal || padding
+  ) || 0;
   contentStyle.paddingRight = Number(
-    paddingRight || paddingHorizontal || padding || 0
-  );
+    paddingRight || paddingHorizontal || padding
+  ) || 0;
   contentStyle.paddingTop = Number(
-    paddingTop || paddingVertical || padding || 0
-  );
+    paddingTop || paddingVertical || padding
+  ) || 0;
   contentStyle.paddingBottom = Number(
-    paddingBottom || paddingVertical || padding || 0
-  );
+    paddingBottom || paddingVertical || padding
+  ) || 0;
   contentStyle.backgroundColor = backgroundColor;
   return contentStyle as ContentStyleExplicit;
 };
