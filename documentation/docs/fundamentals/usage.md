@@ -149,7 +149,7 @@ ItemSeparatorComponent?: React.ComponentType<any>;
 
 ### `ListEmptyComponent`
 
-Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
+Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`). Please note that the `ListFooterComponent` and `ListHeaderComponent` will also be rendered if the list is empty.
 
 ```tsx
 ListEmptyComponent?: React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
