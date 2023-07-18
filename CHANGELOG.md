@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Improve ListEmptyComponent documentation
+ - https://github.com/Shopify/flash-list/pull/878
+
 ## [1.5.0] - 2023-07-12
 
 - Update kotlin version to 1.8.10 for RN 0.72 compatibility
