@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Update types to match `react-native@0.72` view types.
+  - https://github.com/Shopify/flash-list/pull/890
 - Fix item separator issue
   - https://github.com/Shopify/flash-list/pull/845
 
