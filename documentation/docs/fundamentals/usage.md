@@ -192,16 +192,17 @@ ListHeaderComponentStyle?: StyleProp<ViewStyle>;
 ```tsx
 contentContainerStyle?: ContentStyle;
 
-interface ContentStyle {
-  backgroundColor?: ColorValue;
-  paddingTop?: string | number;
-  paddingLeft?: string | number;
-  paddingRight?: string | number;
-  paddingBottom?: string | number;
-  padding?: string | number;
-  paddingVertical?: string | number;
-  paddingHorizontal?: string | number;
-}
+export type ContentStyle = Pick<
+  ViewStyle,
+  | "backgroundColor"
+  | "paddingTop"
+  | "paddingLeft"
+  | "paddingRight"
+  | "paddingBottom"
+  | "padding"
+  | "paddingVertical"
+  | "paddingHorizontal"
+>;
 ```
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.

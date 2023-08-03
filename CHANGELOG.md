@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Update types to match `react-native@0.72` view types.
+  - https://github.com/Shopify/flash-list/pull/890
+
 ## [1.5.0] - 2023-07-12
 
 - Update kotlin version to 1.8.10 for RN 0.72 compatibility
