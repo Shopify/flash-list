@@ -80,6 +80,8 @@ export interface MasonryFlashListRef<T> {
   scrollToOffset: FlashList<T>["scrollToOffset"];
   scrollToEnd: FlashList<T>["scrollToEnd"];
   getScrollableNode: FlashList<T>["getScrollableNode"];
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  recyclerlistview_unsafe: FlashList<T>["recyclerlistview_unsafe"];
 }
 
 /**
