@@ -461,7 +461,7 @@ renderScrollComponent?:
     | React.FC<ScrollViewProps>;
 ```
 
-Rendered as the main scrollview.
+Rendered as the main scrollview. When set, make sure your scroll component uses the ref given to it.
 
 ### `viewabilityConfig`
 
