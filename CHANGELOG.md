@@ -7,8 +7,6 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- Add support for `experimentalMaintainTopContentPosition`
-
 - Update types to match `react-native@0.72` view types.
   - https://github.com/Shopify/flash-list/pull/890
 - Add support for `experimentalMaintainTopContentPosition`

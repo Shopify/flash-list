@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 
-import { BidirectionalFlatlist } from "./BidirectionalFlatlist";
+import { BidirectionalList } from "./BidirectionalList";
 import type { ShiftFunction } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -78,7 +78,6 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
             alShadow.clearGapsAndOverlaps(
                     positionSortedViews,
                     getParentScrollView() as ScrollView,
-                    experimentalScrollPositionManagement
             )
         }
     }

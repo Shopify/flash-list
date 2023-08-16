@@ -14,18 +14,18 @@ const LINKING_ERROR =
   )}- You rebuilt the app after installing the package\n` +
   `- You are not using Expo managed workflow\n`;
 
-interface BidirectionalFlatlistProps {
+interface BidirectionalListProps {
   style: ViewStyle;
   children: ReactNode;
 }
 
 const ComponentName = "DoubleSidedScrollView";
 
-const BidirectionalFlatlist =
-  requireNativeComponent<BidirectionalFlatlistProps>(ComponentName);
+const BidirectionalList =
+  requireNativeComponent<BidirectionalListProps>(ComponentName);
 
-if (BidirectionalFlatlist === null) {
+if (BidirectionalList === null) {
   throw new Error(LINKING_ERROR);
 }
 
-export { BidirectionalFlatlist };
+export { BidirectionalList };
