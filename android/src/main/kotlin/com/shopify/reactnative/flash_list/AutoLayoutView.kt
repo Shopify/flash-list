@@ -20,7 +20,11 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     var enableInstrumentation = false
     var disableAutoLayout = false
     var pixelDensity = 1.0
-    var experimentalScrollPositionManagement = false
+    var experimentalScrollPositionManagement: Boolean = false
+        set(value: Boolean) {
+            alShadow.maintainTopContentPosition = value
+            field = value
+        }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         if(experimentalScrollPositionManagement) {

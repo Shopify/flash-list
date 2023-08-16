@@ -13,17 +13,17 @@ class AutoLayoutShadow {
     var blankOffsetAtEnd = 0 // Tracks blank area from the bottom
 
     var lastMaxBoundOverall = 0 // Tracks where the last pixel is drawn in the overall
+    var maintainTopContentPosition = false
 
     private var lastMaxBound = 0 // Tracks where the last pixel is drawn in the visible window
     private var lastMinBound = 0 // Tracks where first pixel is drawn in the visible window
 
-    private var isInitialRender = true
     private var anchorStableId = ""
     private var anchorOffset = 0
 
     /** Checks for overlaps or gaps between adjacent items and then applies a correction (Only Grid layouts with varying spans)
      * Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on Android side. Not expecting any major perf issue. */
-    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>, scrollView: ScrollView, maintainTopContentPosition: Boolean) {
+    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>, scrollView: ScrollView) {
         var maxBound = 0
         var minBound = Int.MAX_VALUE
         var maxBoundNeighbour = 0
@@ -86,7 +86,7 @@ class AutoLayoutShadow {
             }
             val isAnchorFound = nextAnchorStableId == "" || neighbour.stableId == anchorStableId
 
-            if(isAnchorFound && !isInitialRender) {
+            if(isAnchorFound) {
                 nextAnchorOffset = neighbour.top
                 nextAnchorStableId = neighbour.stableId
             }
@@ -111,7 +111,6 @@ class AutoLayoutShadow {
         anchorOffset = nextAnchorOffset
         lastMaxBound = maxBoundNeighbour
         lastMinBound = minBound
-        isInitialRender = false
     }
 
     /** Offset provided by react can be one frame behind the real one, it's important that this method is called with offset taken directly from
