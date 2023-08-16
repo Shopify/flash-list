@@ -63,6 +63,11 @@ class AutoLayoutViewManager: ReactViewManager() {
         view.enableInstrumentation = enableInstrumentation
     }
 
+    @ReactProp(name = "experimentalScrollPositionManagement")
+    fun setExperimentalMaintainContentPosition(view: AutoLayoutView, isMaintaining: Boolean) {
+        view.experimentalScrollPositionManagement = isMaintaining
+    }
+
     private fun convertToPixelLayout(dp: Double, density: Double): Int {
         return (dp * density).roundToInt()
     }

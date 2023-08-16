@@ -31,6 +31,7 @@ import {
   RenderTargetOptions,
 } from "./FlashListProps";
 import {
+  getBidirectionalScrollView,
   getCellContainerPlatformStyles,
   getFooterContainer,
   getItemAnimator,
@@ -138,6 +139,19 @@ class FlashList<T> extends React.PureComponent<
     if (Number(this.props.numColumns) > 1 && this.props.horizontal) {
       throw new CustomError(ExceptionList.columnsWhileHorizontalNotSupported);
     }
+    if (
+      this.props.horizontal &&
+      this.props.experimentalScrollPositionManagement
+    ) {
+      throw new CustomError(ExceptionList.horizontalMaintainScrollNotSupported);
+    }
+
+    if (
+      this.props.experimentalScrollPositionManagement &&
+      this.props.renderScrollComponent
+    ) {
+      throw new CustomError(ExceptionList.customMaintainScrollNotSupported);
+    }
 
     // `createAnimatedComponent` always passes a blank style object. To avoid warning while using AnimatedFlashList we've modified the check
     // `style` prop can be an array. So we need to validate every object in array. Check: https://github.com/Shopify/flash-list/issues/651
@@ -173,9 +187,6 @@ class FlashList<T> extends React.PureComponent<
         newState.numColumns,
         nextProps
       );
-      // RLV retries to reposition the first visible item on layout provider change.
-      // It's not required in our case so we're disabling it
-      newState.layoutProvider.shouldRefreshWithAnchoring = false;
     }
     if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
@@ -190,6 +201,10 @@ class FlashList<T> extends React.PureComponent<
       newState.extraData = { value: nextProps.extraData };
     }
     newState.renderItem = nextProps.renderItem;
+
+    // RLV retries to reposition the first visible item on layout provider change.
+    // It's not required in our case so we're disabling it
+    newState.layoutProvider.shouldRefreshWithAnchoring = false;
     return newState;
   }
 
@@ -383,9 +398,10 @@ class FlashList<T> extends React.PureComponent<
           windowCorrectionConfig={this.getUpdatedWindowCorrectionConfig()}
           itemAnimator={this.itemAnimator}
           suppressBoundedSizeException
-          externalScrollView={
-            renderScrollComponent as RecyclerListViewProps["externalScrollView"]
-          }
+          externalScrollView={getBidirectionalScrollView(
+            Boolean(this.props.maintainVisibleContentPosition),
+            renderScrollComponent
+          )}
         />
       </StickyHeaderContainer>
     );
@@ -467,6 +483,9 @@ class FlashList<T> extends React.PureComponent<
           onBlankAreaEvent={this.props.onBlankArea}
           onLayout={this.updateDistanceFromWindow}
           disableAutoLayout={this.props.disableAutoLayout}
+          experimentalScrollPositionManagement={
+            this.props.experimentalScrollPositionManagement
+          }
         >
           {children}
         </AutoLayoutView>
@@ -502,6 +521,10 @@ class FlashList<T> extends React.PureComponent<
           ...getCellContainerPlatformStyles(this.props.inverted!!, parentProps),
         }}
         index={parentProps.index}
+        stableId={
+          /* Empty string is used so the list can still render without an extractor */
+          this.props.keyExtractor?.(parentProps.data, parentProps.index) ?? ""
+        }
       >
         <PureComponentWrapper
           extendedState={parentProps.extendedState}
@@ -796,6 +819,10 @@ class FlashList<T> extends React.PureComponent<
         true
       );
     }
+  }
+
+  public experimentalFindApproxFirstVisibleIndex() {
+    return this.rlvRef?.findApproxFirstVisibleIndex() ?? 0;
   }
 
   public scrollToItem(params: {

@@ -1,5 +1,7 @@
 package com.shopify.reactnative.flash_list
 
+import android.widget.ScrollView
+
 class AutoLayoutShadow {
     var horizontal: Boolean = false
     var scrollOffset: Int = 0
@@ -11,17 +13,25 @@ class AutoLayoutShadow {
     var blankOffsetAtEnd = 0 // Tracks blank area from the bottom
 
     var lastMaxBoundOverall = 0 // Tracks where the last pixel is drawn in the overall
+    var maintainTopContentPosition = false
 
     private var lastMaxBound = 0 // Tracks where the last pixel is drawn in the visible window
     private var lastMinBound = 0 // Tracks where first pixel is drawn in the visible window
 
+    private var anchorStableId = ""
+    private var anchorOffset = 0
+
     /** Checks for overlaps or gaps between adjacent items and then applies a correction (Only Grid layouts with varying spans)
      * Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on Android side. Not expecting any major perf issue. */
-    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>) {
+    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>, scrollView: ScrollView) {
         var maxBound = 0
         var minBound = Int.MAX_VALUE
         var maxBoundNeighbour = 0
+
         lastMaxBoundOverall = 0
+        var nextAnchorStableId = ""
+        var nextAnchorOffset = 0
+
         for (i in 0 until sortedItems.size - 1) {
             val cell = sortedItems[i]
             val neighbour = sortedItems[i + 1]
@@ -74,9 +84,31 @@ class AutoLayoutShadow {
                     }
                 }
             }
+            val isAnchorFound = nextAnchorStableId == "" || neighbour.stableId == anchorStableId
+
+            if(isAnchorFound) {
+                nextAnchorOffset = neighbour.top
+                nextAnchorStableId = neighbour.stableId
+            }
             lastMaxBoundOverall = kotlin.math.max(lastMaxBoundOverall, if (horizontal) cell.right else cell.bottom)
             lastMaxBoundOverall = kotlin.math.max(lastMaxBoundOverall, if (horizontal) neighbour.right else neighbour.bottom)
         }
+
+        if(maintainTopContentPosition) {
+            for (cell in sortedItems) {
+                val minValue = cell.top
+                if (cell.stableId == anchorStableId) {
+                    if (minValue != anchorOffset) {
+                        val diff = minValue - anchorOffset
+                        (scrollView as DoubleSidedScrollView).setShiftOffset(diff.toDouble())
+                        break
+                    }
+                }
+            }
+        }
+
+        anchorStableId = nextAnchorStableId
+        anchorOffset = nextAnchorOffset
         lastMaxBound = maxBoundNeighbour
         lastMinBound = minBound
     }

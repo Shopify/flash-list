@@ -32,7 +32,12 @@ import UIKit
         self.disableAutoLayout = disableAutoLayout
     }
 
+    @objc func setExperimentalScrollPositionManagement(_ experimentalScrollPositionManagement: Bool) {
+        self.experimentalScrollPositionManagement = experimentalScrollPositionManagement
+    }
+
     private var horizontal = false
+    private var experimentalScrollPositionManagement = false
     private var scrollOffset: CGFloat = 0
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
@@ -46,9 +51,19 @@ import UIKit
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
 
+    /// State that informs us whether this is the first render
+    private var isInitialRender: Bool = true
+
+    /// Id of the anchor element when using `maintainTopContentPosition`
+    private var anchorStableId: String = ""
+
+    /// Offset of the anchor when using `maintainTopContentPosition`
+    private var anchorOffset: CGFloat = 0
+
     override func layoutSubviews() {
         fixLayout()
         super.layoutSubviews()
+        self.isInitialRender = false
 
         guard enableInstrumentation, let scrollView = getScrollView() else { return }
 
@@ -81,6 +96,23 @@ import UIKit
         return sequence(first: self, next: { $0.superview }).first(where: { $0 is UIScrollView }) as? UIScrollView
     }
 
+    func getScrollViewOffset(for scrollView: UIScrollView?) -> CGFloat {
+        /// When using `maintainTopContentPosition` we can't use the offset provided by React
+        /// Native. Because its async, it is sometimes sent in too late for the position maintainence
+        /// calculation causing list jumps or sometimes wrong scroll positions altogether. Since this is still
+        /// experimental, the old scrollOffset is here to not regress previous functionality if the feature
+        /// doesn't work at scale.
+        ///
+        /// The goal is that we can remove this in the future and get the offset from only one place 🤞
+        if let scrollView, experimentalScrollPositionManagement {
+            return horizontal ?
+                scrollView.contentOffset.x :
+                scrollView.contentOffset.y
+        }
+
+        return scrollOffset
+    }
+
     /// Sorts views by index and then invokes clearGaps which does the correction.
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
@@ -104,16 +136,58 @@ import UIKit
         fixFooter()
     }
 
+    /// Finds the item with the first stable id and adjusts the scroll view offset based on how much
+    /// it moved when a new item is added.
+    private func adjustTopContentPosition(
+        cellContainers: [CellContainer],
+        scrollView: UIScrollView?
+    ) {
+        guard let scrollView = scrollView, !self.isInitialRender else { return }
+
+        for cellContainer in cellContainers {
+            let minValue = horizontal ?
+                cellContainer.frame.minX :
+                cellContainer.frame.minY
+
+            if cellContainer.stableId == anchorStableId {
+                if minValue != anchorOffset {
+                    let diff = minValue - anchorOffset
+
+                    let currentOffset = horizontal
+                      ? scrollView.contentOffset.x
+                      : scrollView.contentOffset.y
+
+                    let scrollValue = diff + currentOffset
+
+                    scrollView.contentOffset = CGPoint(
+                        x: horizontal ? scrollValue : 0,
+                        y: horizontal ? 0 : scrollValue
+                    )
+
+                    // You only need to adjust the scroll view once. Break the
+                    // loop after this
+                    return
+                }
+            }
+        }
+    }
+
     /// Checks for overlaps or gaps between adjacent items and then applies a correction.
     /// Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on the iOS side.
     private func clearGaps(for cellContainers: [CellContainer]) {
+        let scrollView = getScrollView()
         var maxBound: CGFloat = 0
         var minBound: CGFloat = CGFloat(Int.max)
         var maxBoundNextCell: CGFloat = 0
-        let correctedScrollOffset = scrollOffset - (horizontal ? frame.minX : frame.minY)
+        let correctedScrollOffset = getScrollViewOffset(for: scrollView)
+
         lastMaxBoundOverall = 0
+        var nextAnchorStableId = ""
+        var nextAnchorOffset: CGFloat = 0
+
         cellContainers.indices.dropLast().forEach { index in
             let cellContainer = cellContainers[index]
+
             let cellTop = cellContainer.frame.minY
             let cellBottom = cellContainer.frame.maxY
             let cellLeft = cellContainer.frame.minX
@@ -185,11 +259,33 @@ import UIKit
                     maxBoundNextCell = max(maxBound, nextCell.frame.maxY)
                 }
             }
+
+            let isAnchorFound =
+                nextAnchorStableId == "" ||
+                nextCell.stableId == anchorStableId
+
+            if experimentalScrollPositionManagement && isAnchorFound {
+                nextAnchorOffset = horizontal ?
+                    nextCell.frame.minX :
+                    nextCell.frame.minY
+
+                nextAnchorStableId = nextCell.stableId
+            }
+
             updateLastMaxBoundOverall(currentCell: cellContainer, nextCell: nextCell)
+        }
+
+        if experimentalScrollPositionManagement {
+            adjustTopContentPosition(
+                cellContainers: cellContainers,
+                scrollView: scrollView
+            )
         }
 
         lastMaxBound = maxBoundNextCell
         lastMinBound = minBound
+        anchorStableId = nextAnchorStableId
+        anchorOffset = nextAnchorOffset
     }
 
     private func updateLastMaxBoundOverall(currentCell: CellContainer, nextCell: CellContainer) {
