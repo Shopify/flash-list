@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import FlashList from "../FlashList";
+import type FlashList from "../FlashList";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor, JSFPSResult } from "./JSFPSMonitor";

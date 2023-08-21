@@ -1,10 +1,30 @@
 {
-  "extends": "./shared/tsconfig.base.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "baseUrl": ".",
+    "paths": {
+      "@shopify/flash-list": ["./src/index"]
+    },
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "noStrictGenericChecks": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
+    "importsNotUsedAsValues": "error",
+    "ignoreDeprecations": "5.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts?(x)"]
+  "exclude": ["**/*.test.ts?(x)"],
+  "include": ["src"]
 }

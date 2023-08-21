@@ -11,9 +11,9 @@ import {
 import CustomError from "./errors/CustomError";
 import ExceptionList from "./errors/ExceptionList";
 import FlashList from "./FlashList";
-import { FlashListProps, ListRenderItemInfo } from "./FlashListProps";
+import type { FlashListProps, ListRenderItemInfo } from "./FlashListProps";
 import { applyContentContainerInsetForLayoutManager } from "./utils/ContentContainerUtils";
-import ViewToken from "./viewability/ViewToken";
+import type ViewToken from "./viewability/ViewToken";
 
 export interface MasonryListRenderItemInfo<TItem>
   extends ListRenderItemInfo<TItem> {

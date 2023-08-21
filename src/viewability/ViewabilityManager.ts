@@ -1,9 +1,9 @@
-import { ViewabilityConfig } from "react-native";
+import type { ViewabilityConfig } from "react-native";
 
-import FlashList from "../FlashList";
+import type FlashList from "../FlashList";
 
 import ViewabilityHelper from "./ViewabilityHelper";
-import ViewToken from "./ViewToken";
+import type ViewToken from "./ViewToken";
 
 /**
  * Manager for viewability tracking. It holds multiple viewability callback pairs and keeps them updated.

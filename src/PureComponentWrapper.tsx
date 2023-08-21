@@ -1,7 +1,7 @@
 import React from "react";
 
 export interface PureComponentWrapperProps {
-  renderer: (arg: unknown) => JSX.Element | null;
+  renderer: (arg: any) => JSX.Element | null;
 
   /** Renderer is called with this argument.
    * Don't change this value everytime or else component will always rerender. Prefer primitives. */

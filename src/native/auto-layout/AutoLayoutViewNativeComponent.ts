@@ -1,6 +1,6 @@
 import { HostComponent, View } from "react-native";
 
-import { AutoLayoutViewNativeComponentProps } from "./AutoLayoutViewNativeComponentProps";
+import type { AutoLayoutViewNativeComponentProps } from "./AutoLayoutViewNativeComponentProps";
 
 const AutoLayoutViewNativeComponent =
   View as any as HostComponent<AutoLayoutViewNativeComponentProps>;

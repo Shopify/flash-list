@@ -1,5 +1,5 @@
-import { ViewabilityConfig } from "react-native";
-import { Dimension, Layout } from "recyclerlistview";
+import type { ViewabilityConfig } from "react-native";
+import type { Dimension, Layout } from "recyclerlistview";
 
 import CustomError from "../errors/CustomError";
 import ExceptionList from "../errors/ExceptionList";
@@ -26,7 +26,7 @@ class ViewabilityHelper {
     newlyNonvisibleIndices: number[]
   ) => void;
 
-  private timers: Set<NodeJS.Timeout> = new Set();
+  private timers: Set<number> = new Set();
 
   constructor(
     viewabilityConfig: ViewabilityConfig | null | undefined,

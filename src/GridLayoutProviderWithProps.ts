@@ -5,7 +5,7 @@ import {
   LayoutManager,
 } from "recyclerlistview";
 
-import { FlashListProps } from "./FlashListProps";
+import type { FlashListProps } from "./FlashListProps";
 import { AverageWindow } from "./utils/AverageWindow";
 import { applyContentContainerInsetForLayoutManager } from "./utils/ContentContainerUtils";
 

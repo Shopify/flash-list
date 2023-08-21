@@ -11,6 +11,5 @@ jest.mock("@shopify/flash-list", () => {
   return {
     ...jest.requireActual("@shopify/flash-list"),
     FlashList: MockFlashList,
-    AnimatedFlashList: MockFlashList,
   };
 });

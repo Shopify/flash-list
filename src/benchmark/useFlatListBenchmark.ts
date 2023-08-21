@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { FlatList } from "react-native";
+import type { FlatList } from "react-native";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor } from "./JSFPSMonitor";

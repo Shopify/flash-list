@@ -1,7 +1,7 @@
-import { ViewStyle } from "react-native";
-import { Dimension } from "recyclerlistview";
+import type { ViewStyle } from "react-native";
+import type { Dimension } from "recyclerlistview";
 
-import { ContentStyle } from "../FlashListProps";
+import type { ContentStyle } from "../FlashListProps";
 
 export interface ContentStyleExplicit {
   paddingTop: number;

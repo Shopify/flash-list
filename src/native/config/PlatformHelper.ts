@@ -1,4 +1,5 @@
-import { BaseItemAnimator } from "recyclerlistview";
+import type * as React from "react";
+import type { BaseItemAnimator } from "recyclerlistview";
 import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platform/reactnative/itemanimators/defaultjsanimator/DefaultJSItemAnimator";
 
 const PlatformConfig = {

@@ -280,6 +280,7 @@ class FlashList<T> extends React.PureComponent<
         />
       );
     }
+    return null;
   };
 
   componentDidMount() {
@@ -316,9 +317,14 @@ class FlashList<T> extends React.PureComponent<
 
     // RecyclerListView simply ignores if initialScrollIndex is set to 0 because it doesn't understand headers
     // Using initialOffset to force RLV to scroll to the right place
-    const initialOffset =
-      (this.isInitialScrollIndexInFirstRow() && this.distanceFromWindow) ||
-      undefined;
+    let initialOffset: number | undefined = this.props.initialScrollOffset ?? 0;
+    if (this.isInitialScrollIndexInFirstRow() && this.distanceFromWindow) {
+      initialOffset += this.distanceFromWindow;
+    }
+    if (initialOffset === 0) {
+      initialOffset = undefined;
+    }
+
     const finalDrawDistance =
       drawDistance === undefined
         ? PlatformConfig.defaultDrawDistance
@@ -402,10 +408,10 @@ class FlashList<T> extends React.PureComponent<
     this.props.onScrollBeginDrag?.(event);
   };
 
-  private onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+  private onScroll: RecyclerListViewProps["onScroll"] = (event) => {
     this.recordInteraction();
     this.viewabilityManager.updateViewableItems();
-    this.props.onScroll?.(event);
+    this.props.onScroll?.(event as NativeSyntheticEvent<NativeScrollEvent>);
   };
 
   private getUpdatedWindowCorrectionConfig() {
@@ -452,7 +458,13 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
-  private container = (props: object, children: React.ReactNode[]) => {
+  private container: RecyclerListViewProps["renderContentContainer"] = (
+    props,
+    child
+  ) => {
+    const children =
+      // eslint-disable-next-line no-negated-condition,no-nested-ternary
+      child != null ? (child instanceof Array ? child : [child]) : [];
     this.clearPostLoadTimeout();
     return (
       <>
@@ -619,11 +631,13 @@ class FlashList<T> extends React.PureComponent<
   private getValidComponent(
     component: React.ComponentType | React.ReactElement | null | undefined
   ) {
+    if (component == null) return null;
     const PassedComponent = component;
-    return (
-      (React.isValidElement(PassedComponent) && PassedComponent) ||
-      (PassedComponent && <PassedComponent />) ||
-      null
+    return React.isValidElement(PassedComponent) ? (
+      PassedComponent
+    ) : (
+      // @ts-expect-error not sure how to type this properly
+      <PassedComponent />
     );
   }
 
@@ -641,8 +655,9 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private rowRendererWithIndex = (index: number, target: RenderTarget) => {
+    if (this.props.renderItem == null) return null;
     // known issue: expected to pass separators which isn't available in RLV
-    return this.props.renderItem?.({
+    return this.props.renderItem({
       item: this.props.data![index],
       index,
       target,

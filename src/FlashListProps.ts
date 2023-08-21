@@ -1,5 +1,5 @@
 import type React from "react";
-import {
+import type {
   StyleProp,
   ScrollViewProps,
   ViewabilityConfig,
@@ -7,8 +7,8 @@ import {
   ViewStyle,
 } from "react-native";
 
-import { BlankAreaEventHandler } from "./native/auto-layout/AutoLayoutView";
-import ViewToken from "./viewability/ViewToken";
+import type { BlankAreaEventHandler } from "./native/auto-layout/AutoLayoutView";
+import type ViewToken from "./viewability/ViewToken";
 
 export interface ListRenderItemInfo<TItem> {
   item: TItem;
@@ -332,4 +332,6 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * `false` again.
    */
   disableAutoLayout?: boolean;
+
+  initialScrollOffset?: number;
 }

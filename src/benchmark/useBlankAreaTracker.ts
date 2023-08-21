@@ -1,8 +1,8 @@
 import React, { useCallback, useRef } from "react";
-import { RecyclerListView, RecyclerListViewProps } from "recyclerlistview";
+import type { RecyclerListView, RecyclerListViewProps } from "recyclerlistview";
 
-import { BlankAreaEvent } from "../native/auto-layout/AutoLayoutView";
-import FlashList from "../FlashList";
+import type { BlankAreaEvent } from "../native/auto-layout/AutoLayoutView";
+import type FlashList from "../FlashList";
 
 export interface BlankAreaTrackerResult {
   /**
