@@ -7,7 +7,7 @@ buildscript {
         compileSdkVersion = 30
         targetSdkVersion = 30
         ndkVersion = "21.4.7075529"
-        kotlin_version = "1.5.30"
+        kotlin_version = "1.8.10"
 
     }
     repositories {

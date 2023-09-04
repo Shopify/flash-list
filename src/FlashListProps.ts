@@ -5,7 +5,6 @@ import {
   ViewabilityConfig,
   ViewabilityConfigCallbackPairs,
   ViewStyle,
-  ColorValue,
 } from "react-native";
 
 import { BlankAreaEventHandler } from "./native/auto-layout/AutoLayoutView";
@@ -36,16 +35,17 @@ export type ListRenderItem<TItem> = (
   info: ListRenderItemInfo<TItem>
 ) => React.ReactElement | null;
 
-export interface ContentStyle {
-  backgroundColor?: ColorValue;
-  paddingTop?: string | number;
-  paddingLeft?: string | number;
-  paddingRight?: string | number;
-  paddingBottom?: string | number;
-  padding?: string | number;
-  paddingVertical?: string | number;
-  paddingHorizontal?: string | number;
-}
+export type ContentStyle = Pick<
+  ViewStyle,
+  | "backgroundColor"
+  | "paddingTop"
+  | "paddingLeft"
+  | "paddingRight"
+  | "paddingBottom"
+  | "padding"
+  | "paddingVertical"
+  | "paddingHorizontal"
+>;
 
 export interface FlashListProps<TItem> extends ScrollViewProps {
   /**
