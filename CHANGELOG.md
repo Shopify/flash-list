@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.6.0] - 2023-09-13
+
 - Update types to match `react-native@0.72` view types.
   - https://github.com/Shopify/flash-list/pull/890
 - Add option to clear cached layouts on update
