@@ -18,8 +18,10 @@ Swap from FlatList in seconds. Get instant performance.
 
 ## Installation
 
+##### Bare React Native:
 Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
-
+##### Expo:
+Add the package to your project via `npx expo install @shopify/flash-list `.
 ## Usage
 
 We recommend reading the detailed documentation for using `FlashList` [here](https://shopify.github.io/flash-list/docs/usage).
