@@ -840,6 +840,13 @@ class FlashList<T> extends React.PureComponent<
   }
 
   /**
+   * FlashList will skip using layout cache on next update. Can be useful when you know the layout will change drastically for example, orientation change when used as a carousel.
+   */
+  public clearLayoutCacheOnUpdate() {
+    this.state.layoutProvider.markExpired();
+  }
+
+  /**
    * Tells the list an interaction has occurred, which should trigger viewability calculations, e.g. if waitForInteractions is true and the user has not scrolled.
    * This is typically called by taps on items or by navigation actions.
    */
