@@ -10,6 +10,11 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Fix item separator issue
   - https://github.com/Shopify/flash-list/pull/845
 
+## [1.6.1] - 2023-09-14
+
+- Prevent an expired layout provider from being used again
+  - https://github.com/Shopify/flash-list/pull/915
+
 ## [1.6.0] - 2023-09-13
 
 - Update types to match `react-native@0.72` view types.

@@ -65,7 +65,6 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
   }
 
   public updateProps(props: FlashListProps<T>): GridLayoutProviderWithProps<T> {
-    this._hasExpired = this.props.numColumns !== props.numColumns;
     const newInsetValues = applyContentContainerInsetForLayoutManager(
       {
         height: 0,
@@ -76,6 +75,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     );
     this._hasExpired =
       this._hasExpired ||
+      this.props.numColumns !== props.numColumns ||
       newInsetValues.height !== this.renderWindowInsets.height ||
       newInsetValues.width !== this.renderWindowInsets.width;
     this.renderWindowInsets = newInsetValues;
