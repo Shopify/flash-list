@@ -11,6 +11,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/1076
 - Fix stale reference to onScroll and onLoad
   - https://github.com/Shopify/flash-list/pull/1112
+- Added Fabric (new architecture) support for iOS and Android
+  - https://github.com/Shopify/flash-list/pull/931
 
 ## [1.6.4] - 2024-03-18
 
