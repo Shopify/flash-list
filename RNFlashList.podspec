@@ -3,7 +3,6 @@ require 'json'
 package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 
 folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32'
-
 fabric_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 
 Pod::Spec.new do |s|
@@ -13,12 +12,10 @@ Pod::Spec.new do |s|
   s.homepage         = package['homepage']
   s.license          = package['license']
   s.author           = package['author']
-  s.platforms        = { :ios => '12.4', :tvos => '12.0' }
   s.source           = { git: 'https://github.com/shopify/flash-list.git', tag: "v#{s.version}" }
   s.source_files     = 'ios/Sources/**/*'
   s.requires_arc     = true
   s.swift_version    = '5.0'
-
   s.dependency "React-Core"
 
   if fabric_enabled
@@ -37,12 +34,10 @@ Pod::Spec.new do |s|
     s.dependency "RCTTypeSafety"
     s.dependency "ReactCommon/turbomodule/core"
     s.ios.deployment_target = "12.4"
-  end
-
-  if fabric_enabled
-    s.subspec "Fabric" do |ss|
-      ss.source_files = "ios/Fabric/**/*.{h,mm}"
-    end
+    s.platforms        = { :ios => '12.4', :tvos => '12.0' }
+  else
+    # Settings for non-fabric builds
+    s.platforms        = { :ios => '11.0', :tvos => '12.0' }
   end
 
   # Tests spec
