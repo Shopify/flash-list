@@ -173,10 +173,14 @@ class FlashList<T> extends React.PureComponent<
         newState.numColumns,
         nextProps
       );
-      // RLV retries to reposition the first visible item on layout provider change.
-      // It's not required in our case so we're disabling it
-      newState.layoutProvider.shouldRefreshWithAnchoring = false;
     }
+
+    // RLV retries to reposition the first visible item on layout provider change.
+    // It's not required in our case so we're disabling it
+    newState.layoutProvider.shouldRefreshWithAnchoring = Boolean(
+      !prevState.layoutProvider?.hasExpired
+    );
+
     if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
       newState.dataProvider = prevState.dataProvider.cloneWithRows(
