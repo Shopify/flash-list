@@ -7,6 +7,11 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.6.3] - 2023-11-09
+
+- Changes for RN 0.73 support
+  - https://github.com/Shopify/flash-list/pull/930
+
 ## [1.6.2] - 2023-10-19
 
 - Move shouldRefreshWithAnchoring configuration so it is possible to disable it from outside FlashList by invalidating layout
