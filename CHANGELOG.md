@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix item separator issue
+  - https://github.com/Shopify/flash-list/pull/845
+
 ## [1.6.2] - 2023-10-19
 
 - Move shouldRefreshWithAnchoring configuration so it is possible to disable it from outside FlashList by invalidating layout
