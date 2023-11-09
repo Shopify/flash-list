@@ -5,7 +5,7 @@ title: LayoutAnimation
 
 [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) is a popular way how to animate views in React Native.
 
-FlashList does support `LayoutAnimation`s but you need to call [`prepareLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before React Native's [`LayoutAnimation.configureNext`](https://reactnative.dev/docs/layoutanimation#configurenext). `prepareLayoutAnimationRender` is an instance method, so you have to keep a reference to your `FlashList` instance via the [`ref`](https://reactjs.org/docs/refs-and-the-dom.html) prop:
+FlashList does support `LayoutAnimation`s but you need to call [`prepareForLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before React Native's [`LayoutAnimation.configureNext`](https://reactnative.dev/docs/layoutanimation#configurenext). `prepareForLayoutAnimationRender` is an instance method, so you have to keep a reference to your `FlashList` instance via the [`ref`](https://reactjs.org/docs/refs-and-the-dom.html) prop:
 
 ```tsx
 // This must be called before `LayoutAnimation.configureNext` in order for the animation to run properly.
