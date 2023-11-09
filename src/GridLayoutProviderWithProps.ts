@@ -65,7 +65,6 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
   }
 
   public updateProps(props: FlashListProps<T>): GridLayoutProviderWithProps<T> {
-    this._hasExpired = this.props.numColumns !== props.numColumns;
     const newInsetValues = applyContentContainerInsetForLayoutManager(
       {
         height: 0,
@@ -76,6 +75,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
     );
     this._hasExpired =
       this._hasExpired ||
+      this.props.numColumns !== props.numColumns ||
       newInsetValues.height !== this.renderWindowInsets.height ||
       newInsetValues.width !== this.renderWindowInsets.width;
     this.renderWindowInsets = newInsetValues;
@@ -89,6 +89,13 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
    */
   public get hasExpired() {
     return this._hasExpired;
+  }
+
+  /**
+   * Calling this method will mark the layout provider as expired. As a result, a new one will be created by FlashList and old cached layouts will be discarded.
+   */
+  public markExpired() {
+    this._hasExpired = true;
   }
 
   /**
