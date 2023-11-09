@@ -195,7 +195,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   /**
    * Used to extract a unique key for a given item at the specified index.
    * Key is used for optimizing performance. Defining `keyExtractor` is also necessary
-   * when doing [layout animations](https://flash-list.docs.shopify.io/guides/layout-animation)
+   * when doing [layout animations](https://shopify.github.io/flash-list/docs/guides/layout-animation)
    * to uniquely identify animated components.
    */
   keyExtractor?: ((item: TItem, index: number) => string) | undefined;
