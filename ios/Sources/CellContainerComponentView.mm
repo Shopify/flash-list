@@ -1,6 +1,6 @@
 #import "CellContainerComponentView.h"
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 
 #import <react/renderer/components/rnflashlist/ComponentDescriptors.h>
@@ -54,4 +54,4 @@ Class<RCTComponentViewProtocol> CellContainerCls(void)
 #else
 @implementation CellContainerComponentView
 @end
-#endif /* RN_FABRIC_ENABLED */
+#endif /* RCT_NEW_ARCH_ENABLED */

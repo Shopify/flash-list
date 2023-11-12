@@ -3,7 +3,7 @@
 
 #import <UIKit/UIKit.h>
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 
 @interface CellContainerComponentView : RCTViewComponentView

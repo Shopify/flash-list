@@ -1,7 +1,7 @@
 #ifndef AutoLayoutViewComponentView_h
 #define AutoLayoutViewComponentView_h
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 
 #import <UIKit/UIKit.h>
 #import <React/RCTViewComponentView.h>
@@ -11,6 +11,6 @@
 @end
 
 
-#endif /* RN_FABRIC_ENABLED */
+#endif /* RCT_NEW_ARCH_ENABLED */
 
 #endif /* AutoLayoutViewComponentView_h */

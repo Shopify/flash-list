@@ -1,4 +1,4 @@
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import "AutoLayoutViewComponentView.h"
 #import <React/RCTConversions.h>
 #import <React/RCTViewManager.h>
@@ -27,13 +27,13 @@ using namespace facebook::react;
     static const auto defaultProps = std::make_shared<const AutoLayoutViewProps>();
     _props = defaultProps;
     _autoLayoutView = [[AutoLayoutView alloc] initWithFrame:self.bounds];
-      
+
     // Due to view flattening, AutoLayoutView's children get moved to its parent (AutoLayoutViewComponentView) and
     // AutoLayoutView is positioned above them consuming all events. Turning off userInteraction prevents that.
     _autoLayoutView.userInteractionEnabled = false;
 
     self.contentView = _autoLayoutView;
-      
+
     __weak AutoLayoutViewComponentView* weakSelf = self;
     _autoLayoutView.onBlankAreaEventHandler = ^(CGFloat start, CGFloat end) {
       AutoLayoutViewComponentView *strongSelf = weakSelf;
@@ -77,4 +77,4 @@ Class<RCTComponentViewProtocol> AutoLayoutViewCls(void)
   return AutoLayoutViewComponentView.class;
 }
 
-#endif /* RN_FABRIC_ENABLED */
+#endif /* RCT_NEW_ARCH_ENABLED */
