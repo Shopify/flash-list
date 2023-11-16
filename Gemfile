@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
 gem 'cocoapods', '~> 1.11.3'
-gem 'cocoapods-check', '~> 1.0.2'
+gem 'cocoapods-check', '~> 0.1.0'
