@@ -70,7 +70,7 @@
     "eslint": "8.18.0",
     "gh-pages": "^4.0.0",
     "jest": "^28.1.1",
-    "metro-react-native-babel-preset": "^0.71.1",
+    "metro-react-native-babel-preset": "^0.77.0",
     "prettier": "^2.7.1",
     "react": "17.0.2",
     "react-native": "0.68.5",
