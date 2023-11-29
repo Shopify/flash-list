@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@types/jest": "^27.5.0",
-    "@types/pixelmatch": "^5.2.4",
+    "@types/pixelmatch": "^5.2.6",
     "@types/pngjs": "^6.0.1",
     "babel-jest": "^27.5.1",
     "babel-plugin-module-resolver": "^4.1.0",
