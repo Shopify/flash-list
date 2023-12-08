@@ -1,6 +1,6 @@
 {
-  "name": "@shopify/flash-list",
-  "version": "1.6.3",
+  "name": "@react-native-oh-tpl/flash-list",
+  "version": "1.6.3-0.0.1",
   "keywords": [
     "react-native",
     "recyclerview",
@@ -79,6 +79,7 @@
   "files": [
     "android",
     "ios",
+    "harmony",
     "dist",
     "RNFlashList.podspec",
     "src",
