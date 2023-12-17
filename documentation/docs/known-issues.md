@@ -15,6 +15,8 @@ FlashList and FlatList have very different internal. While the API is almost the
 
 Please note most lists do mount with deterministic sizes so make sure to check if you really need workarounds.
 
+Be aware, that using [React Navigation](https://reactnavigation.org/) with the option `animationEnabled` set to `false` will cause screens to be 0px in height and width before unmounting.
+
 ### 2) `onEndReached` event doesn't have `distanceFromEnd`
 
 This value is reported as 0. We don't have plans to implement this right now. Please provide feedback if this is important to you.
