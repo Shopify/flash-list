@@ -1,6 +1,6 @@
 {
   "name": "@react-native-oh-tpl/flash-list",
-  "version": "1.6.3-0.0.2",
+  "version": "1.6.3-0.0.3",
   "keywords": [
     "react-native",
     "recyclerview",
@@ -13,13 +13,16 @@
     "react-native-web",
     "performance"
   ],
+  "harmony": {
+    "alias": "@shopify/flash-list"
+  },
   "publishConfig": {
     "access": "public",
     "@shopify:registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Shopify/flash-list"
+    "url": "https://github.com/react-native-oh-library/flash-list.git"
   },
   "description": "FlashList is a more performant FlatList replacement",
   "author": "shopify",
@@ -87,6 +90,7 @@
   ],
   "dependencies": {
     "recyclerlistview": "4.2.0",
-    "tslib": "2.4.0"
+    "tslib": "2.4.0",
+    "@shopify/flash-list": "1.6.3"
   }
 }
