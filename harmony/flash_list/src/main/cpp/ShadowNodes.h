@@ -21,7 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#pragma once
+#ifndef FLASH_SRC_MAIN_CPP_SHADOWNODES_H
+#define FLASH_SRC_MAIN_CPP_SHADOWNODES_H
 
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/components/view/ViewShadowNode.h>
@@ -47,3 +48,4 @@ using CellContainerShadowNode = ConcreteViewShadowNode<
 
 } // namespace react
 } // namespace facebook
+#endif

@@ -1,0 +1,11 @@
+[
+	{
+	  "Name":"flash-list",
+	  "License":"MIT License",
+	  "License File":"https://github.com/Shopify/flash-list/blob/main/LICENSE",
+	  "Version Number":"1.4.3",
+	  "Owner":"fortmarek Marek Fořt",
+	  "Upstream URL":"https://github.com/Shopify/flash-list",
+	  "Description":"React Native List component for iOS,Android,macOS,and Windows"
+	}
+]
