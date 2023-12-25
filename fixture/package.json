@@ -36,7 +36,7 @@
     "detox": "^19.12.5",
     "glob": "^8.0.3",
     "jest": "^27.5.1",
-    "metro-config": "^0.71.0",
+    "metro-config": "^0.80.2",
     "metro-react-native-babel-preset": "^0.71.1",
     "patch-package": "^6.4.7",
     "pixelmatch": "^5.3.0",
