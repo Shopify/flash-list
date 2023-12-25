@@ -68,7 +68,7 @@
     "babel-jest": "^28.1.1",
     "enhanced-resolve": "^5.9.3",
     "eslint": "8.18.0",
-    "gh-pages": "^4.0.0",
+    "gh-pages": "^6.1.1",
     "jest": "^28.1.1",
     "metro-react-native-babel-preset": "^0.71.1",
     "prettier": "^2.7.1",
