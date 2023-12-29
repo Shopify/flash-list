@@ -1,6 +1,6 @@
 {
   "name": "@react-native-oh-tpl/flash-list",
-  "version": "1.6.3-0.0.4",
+  "version": "1.6.3-0.0.5",
   "keywords": [
     "react-native",
     "recyclerview",
@@ -41,19 +41,7 @@
     "lint:fix": "yarn eslint . --ext .ts,.tsx --fix",
     "type-check": "yarn tsc --pretty --noEmit",
     "build": "tsc -b",
-    "e2e:build:android": "detox build -c android.emu.release",
-    "run-ios": "cd fixture && yarn react-native run-ios && yarn build --watch",
-    "ri": "yarn run-ios",
-    "run-android": "cd fixture && yarn react-native run-android && yarn build --watch",
-    "ra": "yarn run-android",
-    "run-e2e-ios": "cd fixture && yarn e2e:build:ios && yarn e2e:test:ios",
-    "rei": "yarn run-e2e-ios",
-    "run-e2e-android": "cd fixture && yarn e2e:build:android && yarn e2e:test:android",
-    "rea": "yarn run-e2e-android",
-    "run-web": "cd fixture/web-app && yarn web",
-    "rw": "yarn run-web",
-    "predeploy:website": "sh ./build_website.sh",
-    "deploy:website": "gh-pages -d website/_site"
+    "prepack": "tsc -b"
   },
   "peerDependencies": {
     "@babel/runtime": "*",
@@ -80,11 +68,8 @@
     "typescript": "^4.7.4"
   },
   "files": [
-    "android",
-    "ios",
     "harmony",
     "dist",
-    "RNFlashList.podspec",
     "src",
     "jestSetup.js"
   ],
