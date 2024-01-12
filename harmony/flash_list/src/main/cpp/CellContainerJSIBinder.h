@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 #ifndef FLASH_SRC_MAIN_CPP_CELLCONTAINERJSIBINDER_H
 #define FLASH_SRC_MAIN_CPP_CELLCONTAINERJSIBINDER_H
 
@@ -33,7 +34,7 @@ class CellContainerJSIBinder : public ViewComponentJSIBinder {
     object.setProperty(rt, "index", "int");
     return object;
   }
-    
+
 };
-} // namespace rnoh  
+} // namespace rnoh
 #endif

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 #ifndef FLASH_SRC_MAIN_CPP_EVENTEMITTERS_H
 #define FLASH_SRC_MAIN_CPP_EVENTEMITTERS_H
 
@@ -33,12 +34,12 @@ namespace react {
 class JSI_EXPORT AutoLayoutViewEventEmitter : public ViewEventEmitter {
   public:
     using ViewEventEmitter::ViewEventEmitter;
-    
+
     struct OnBlankAreaEvent {
       int offsetStart;
       int offsetEnd;
     };
-    
+
     void onBlankAreaEvent(OnBlankAreaEvent value) const;
 };
 

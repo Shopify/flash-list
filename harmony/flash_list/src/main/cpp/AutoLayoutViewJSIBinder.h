@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 #ifndef FLASH_SRC_MAIN_CPP_AUTOLAYOUTVIEWEVENTEMITREQUESTHANDLER_H
 #define FLASH_SRC_MAIN_CPP_AUTOLAYOUTVIEWJSIBINDER_H
-
 
 #include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
 
@@ -45,7 +45,7 @@ class AutoLayoutViewJSIBinder : public ViewComponentJSIBinder {
     events.setProperty(rt, "topBlankAreaEvent", createDirectEvent(rt, "onBlankAreaEvent"));
     return events;
   }
-  
+
 };
-} // namespace rnoh  
+} // namespace rnoh
 #endif

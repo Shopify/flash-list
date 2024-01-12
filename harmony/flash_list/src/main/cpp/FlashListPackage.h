@@ -21,8 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 #ifndef FLASH_SRC_MAIN_CPP_FLASHLISTPACKAGE_H
 #define FLASH_SRC_MAIN_CPP_FLASHLISTPACKAGE_H
+
 #include "ComponentDescriptors.h"
 #include "RNOH/Package.h"
 #include "FlashListNapiBinder.h"
@@ -34,30 +36,30 @@ using namespace rnoh;
 using namespace facebook;
 
 class FlashListPackage : public Package {
-  public: 
+  public:
     FlashListPackage(Package::Context ctx) : Package(ctx) {}
-    
+
     std::vector<facebook::react::ComponentDescriptorProvider> createComponentDescriptorProviders() override {
       return {
         facebook::react::concreteComponentDescriptorProvider<facebook::react::AutoLayoutViewComponentDescriptor>(),
         facebook::react::concreteComponentDescriptorProvider<facebook::react::CellContainerComponentDescriptor>(),
       };
     }
-    
+
     ComponentJSIBinderByString createComponentJSIBinderByName() override {
       return {
         {"AutoLayoutView", std::make_shared<AutoLayoutViewJSIBinder>()},
         {"CellContainer", std::make_shared<CellContainerJSIBinder>()}
       };
     };
-    
+
     ComponentNapiBinderByString createComponentNapiBinderByName() override {
       return {
         {"AutoLayoutView", std::make_shared<FlashListViewNapiBinder>()},
         {"CellContainer", std::make_shared<FlashListViewNapiBinder>()}
       };
     };
-    
+
     EventEmitRequestHandlers createEventEmitRequestHandlers() override {
       return {std::make_shared<AutoLayoutViewEventEmitRequestHandler>()};
     };
