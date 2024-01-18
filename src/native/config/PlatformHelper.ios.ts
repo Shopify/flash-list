@@ -2,6 +2,8 @@ import { BaseItemAnimator } from "recyclerlistview";
 
 const PlatformConfig = {
   defaultDrawDistance: 250,
+  invertedTransformStyle: { transform: [{ scaleY: -1 }] },
+  invertedTransformStyleHorizontal: { transform: [{ scaleX: -1 }] },
 };
 const getCellContainerPlatformStyles = (
   inverted: boolean,
