@@ -29,7 +29,6 @@
 #include <react/renderer/components/view/ViewShadowNode.h>
 #include <jsi/jsi.h>
 #include "EventEmitters.h"
-#include "Props.h"
 
 namespace facebook {
 namespace react {
@@ -37,15 +36,12 @@ namespace react {
 JSI_EXPORT extern const char AutoLayoutViewComponentName[];
 JSI_EXPORT extern const char CellContainerComponentName[];
 
-using AutoLayoutViewShadowNode = ConcreteViewShadowNode<
-  AutoLayoutViewComponentName,
-  AutoLayoutViewProps,
-  AutoLayoutViewEventEmitter>;
 
-using CellContainerShadowNode = ConcreteViewShadowNode<
-  CellContainerComponentName,
-  CellContainerProps,
-  ViewEventEmitter>;
+using AutoLayoutViewShadowNode =
+    ConcreteViewShadowNode<AutoLayoutViewComponentName, ViewProps, AutoLayoutViewEventEmitter>;
+
+using CellContainerShadowNode =
+    ConcreteViewShadowNode<CellContainerComponentName, ViewProps, ViewEventEmitter>;
 
 } // namespace react
 } // namespace facebook

@@ -40,14 +40,15 @@ import Logger from './Logger';
 export const CELL_CONTAINER_TYPE: string = "CellContainer";
 
 export interface CellContainerProps extends ViewBaseProps {
-  index?: number
+  // index?: number
 }
 
 export interface CellContainerRawProps extends ViewRawProps {
-  top: number
-  left: number
-  height: number
-  width: number
+  index?: number
+  // top: number
+  // left: number
+  // height: number
+  // width: number
 }
 
 export interface CellContainerState {}
@@ -66,12 +67,13 @@ export struct RNCellContainer {
   @State descriptorWrapper: CellContainerDescriptorWrapper | undefined = undefined
   private unregisterDescriptorChangesListener?: () => void = undefined
   @State index: number = -1;
-  @State private childrenTags: Tag[] = []
+  // @State private childrenTags: Tag[] = []
 
   aboutToAppear() {
     this.initComponent();
     this.descriptor = this.ctx.descriptorRegistry.getDescriptor<CellContainerDescriptor>(this.tag)
     this.descriptorWrapper = new CellContainerDescriptorWrapper(this.descriptor)
+
     this.unregisterDescriptorChangesListener = this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag,
       (newDescriptor) => {
         this.descriptor = (newDescriptor as CellContainerDescriptor)
@@ -79,10 +81,6 @@ export struct RNCellContainer {
     )
     Logger.debug(`[RNOH]: in RNCellContainer descriptor: ${JSON.stringify(this.descriptor)}`)
     Logger.debug(`[RNOH]: in RNCellContainer descriptorWrapper: ${JSON.stringify(this.descriptorWrapper)}`)
-    // if (this.descriptor.props.top) {
-    //   // this.descriptorWrapper.
-    //   this.top = this.descriptor.props.top as number;
-    // }
   }
 
   aboutToDisappear() {

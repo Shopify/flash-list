@@ -27,9 +27,7 @@
 
 #include "ComponentDescriptors.h"
 #include "RNOH/Package.h"
-#include "FlashListNapiBinder.h"
 #include "AutoLayoutViewJSIBinder.h"
-#include "CellContainerJSIBinder.h"
 #include "AutoLayoutViewEventEmitRequestHandler.h"
 
 using namespace rnoh;
@@ -49,14 +47,7 @@ class FlashListPackage : public Package {
     ComponentJSIBinderByString createComponentJSIBinderByName() override {
       return {
         {"AutoLayoutView", std::make_shared<AutoLayoutViewJSIBinder>()},
-        {"CellContainer", std::make_shared<CellContainerJSIBinder>()}
-      };
-    };
-
-    ComponentNapiBinderByString createComponentNapiBinderByName() override {
-      return {
-        {"AutoLayoutView", std::make_shared<FlashListViewNapiBinder>()},
-        {"CellContainer", std::make_shared<FlashListViewNapiBinder>()}
+        {"CellContainer", std::make_shared<ViewComponentJSIBinder>()}
       };
     };
 
