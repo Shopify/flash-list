@@ -21,31 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 #ifndef FLASH_SRC_MAIN_CPP_AUTOLAYOUTVIEWEVENTEMITREQUESTHANDLER_H
 #define FLASH_SRC_MAIN_CPP_AUTOLAYOUTVIEWJSIBINDER_H
-
 
 #include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
 
 namespace rnoh {
 class AutoLayoutViewJSIBinder : public ViewComponentJSIBinder {
-  facebook::jsi::Object createNativeProps(facebook::jsi::Runtime &rt) override {
-    auto object = ViewComponentJSIBinder::createNativeProps(rt);
-    object.setProperty(rt, "horizontal", "boolean");
-    object.setProperty(rt, "scrollOffset", "float");
-    object.setProperty(rt, "windowSize", "float");
-    object.setProperty(rt, "renderAheadOffset", "float");
-    object.setProperty(rt, "enableInstrumentation", "boolean");
-    object.setProperty(rt, "disableAutoLayout", "boolean");
-    return object;
-  }
 
   facebook::jsi::Object createDirectEventTypes(facebook::jsi::Runtime &rt) override {
     facebook::jsi::Object events(rt);
     events.setProperty(rt, "topBlankAreaEvent", createDirectEvent(rt, "onBlankAreaEvent"));
     return events;
   }
-  
+
 };
-} // namespace rnoh  
+} // namespace rnoh
 #endif

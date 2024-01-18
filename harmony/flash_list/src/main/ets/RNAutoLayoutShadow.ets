@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2023 Huawei Device Co., Ltd.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { CellContainerProps } from "./RNCellContainer";
+import { CellContainerDescriptor } from "./RNCellContainer";
 import { RNOHContext } from 'rnoh';
 import Logger from './Logger';
 
@@ -49,64 +49,62 @@ export class AutoLayoutShadow {
     let maxBoundNeighbour = 0;
     this.lastMaxBoundOverall = 0;
     for (let i = 0; i < sortedItems.length - 1; i++) {
-      const cell: CellContainerProps =  ctx.descriptorRegistry.getDescriptor(sortedItems[i]).props as CellContainerProps;
+      const cell =  ctx.descriptorRegistry.getDescriptor<CellContainerDescriptor>(sortedItems[i]);
       Logger.debug(`[RNOH]: in AutoLayoutShadow cell: ${JSON.stringify(cell)}`)
-      const neighbour: CellContainerProps = ctx.descriptorRegistry.getDescriptor(sortedItems[i+1]).props as CellContainerProps;
+      const neighbour = ctx.descriptorRegistry.getDescriptor<CellContainerDescriptor>(sortedItems[i+1]);
       Logger.debug(`[RNOH]: in AutoLayoutShadow neighbour: ${JSON.stringify(neighbour)}`)
+      let isNeighbourConsecutive = neighbour.rawProps.index === cell.rawProps.index ?? -1 + 1;
       if (this.isWithinBounds(cell)) {
         if (!this.horizontal) {
-          maxBound = Math.max(maxBound, cell.top + cell.height);
-          minBound = Math.min(minBound, cell.top);
+          maxBound = Math.max(maxBound, cell.layoutMetrics.frame.origin.y + cell.layoutMetrics.frame.size.height);
+          minBound = Math.min(minBound, cell.layoutMetrics.frame.origin.y);
           maxBoundNeighbour = maxBound;
-          if (cell.left < neighbour.left) {
-            if (cell.left + cell.width !== neighbour.left) {
-              neighbour.left = cell.left + cell.width;
+          if (isNeighbourConsecutive) {
+            if (cell.layoutMetrics.frame.origin.x < neighbour.layoutMetrics.frame.origin.x) {
+              if (cell.layoutMetrics.frame.origin.x + cell.layoutMetrics.frame.size.width !==
+              neighbour.layoutMetrics.frame.origin.x) {
+                neighbour.layoutMetrics.frame.origin.x = cell.layoutMetrics.frame.origin.x + cell.layoutMetrics.frame.size.width;
+              }
+              if (cell.layoutMetrics.frame.origin.y !== neighbour.layoutMetrics.frame.origin.y) {
+                neighbour.layoutMetrics.frame.origin.y = cell.layoutMetrics.frame.origin.y;
+              }
+            } else {
+              neighbour.layoutMetrics.frame.origin.y = maxBound;
             }
-            if (cell.top !== neighbour.top) {
-              neighbour.top = cell.top;
-            }
-          } else {
-            neighbour.top = maxBound;
           }
-          if (this.isWithinBounds(ctx.descriptorRegistry.getDescriptor(sortedItems[i+1]).props as CellContainerProps )) {
-            maxBoundNeighbour = Math.max(maxBound, neighbour.top + neighbour.height);
+          if (this.isWithinBounds(neighbour)) {
+            maxBoundNeighbour = Math.max(maxBound, neighbour.layoutMetrics.frame.origin.y + neighbour.layoutMetrics.frame.size.height);
           }
         } else {
-          maxBound = Math.max(maxBound, cell.left + cell.width);
-          minBound = Math.min(minBound, cell.left);
+          maxBound = Math.max(maxBound, cell.layoutMetrics.frame.origin.x + cell.layoutMetrics.frame.size.width);
+          minBound = Math.min(minBound, cell.layoutMetrics.frame.origin.x);
           maxBoundNeighbour = maxBound;
-          if (cell.top < neighbour.top) {
-            if (cell.top + cell.height !== neighbour.top) {
-              neighbour.top = cell.bottom;
+          if (cell.layoutMetrics.frame.origin.y < neighbour.layoutMetrics.frame.origin.y) {
+            if (cell.layoutMetrics.frame.origin.y + cell.layoutMetrics.frame.size.height !== neighbour.layoutMetrics.frame.origin.y) {
+              neighbour.layoutMetrics.frame.origin.y = cell.layoutMetrics.frame.origin.y + cell.layoutMetrics.frame.size.height;
             }
-            if (cell.left !== neighbour.left) {
-              neighbour.left = cell.left;
+            if (cell.layoutMetrics.frame.origin.x !== neighbour.layoutMetrics.frame.origin.x) {
+              neighbour.layoutMetrics.frame.origin.x = cell.layoutMetrics.frame.origin.x;
             }
           } else {
-            neighbour.left = maxBound;
+            neighbour.layoutMetrics.frame.origin.x = maxBound;
           }
-          if (this.isWithinBounds(ctx.descriptorRegistry.getDescriptor(sortedItems[i+1]).props as CellContainerProps)) {
-            maxBoundNeighbour = Math.max(maxBound, neighbour.left + neighbour.width);
+          if (this.isWithinBounds(neighbour)) {
+            maxBoundNeighbour = Math.max(maxBound, neighbour.layoutMetrics.frame.origin.x + neighbour.layoutMetrics.frame.size.width);
           }
         }
       }
-
       this.lastMaxBoundOverall = Math.max(
         this.lastMaxBoundOverall,
-        this.horizontal ? cell.left + cell.width : cell.top + cell.height
+        this.horizontal ? cell.layoutMetrics.frame.origin.x + cell.layoutMetrics.frame.size.width :
+          cell.layoutMetrics.frame.origin.y + cell.layoutMetrics.frame.size.height
       );
       this.lastMaxBoundOverall = Math.max(
         this.lastMaxBoundOverall,
-        this.horizontal ? neighbour.left + neighbour.width : neighbour.top + neighbour.height
+        this.horizontal ? neighbour.layoutMetrics.frame.origin.x + neighbour.layoutMetrics.frame.size.width :
+          neighbour.layoutMetrics.frame.origin.y + neighbour.layoutMetrics.frame.size.height
       );
     }
-
-    let cell:CellContainerProps =  ctx.descriptorRegistry.getDescriptor(sortedItems[sortedItems.length - 2]).props as CellContainerProps;
-    cell = JSON.parse(JSON.stringify(cell));
-    Logger.debug(`[RNOH]: in AutoLayoutShadow After cell: ${JSON.stringify(cell)}`)
-    let neighbour:CellContainerProps = ctx.descriptorRegistry.getDescriptor(sortedItems[sortedItems.length - 1]).props as CellContainerProps;
-    neighbour = JSON.parse(JSON.stringify(neighbour));
-    Logger.debug(`[RNOH]: in AutoLayoutShadow After neighbour: ${JSON.stringify(neighbour)}`)
     this.lastMaxBound = maxBoundNeighbour;
     this.lastMinBound = minBound;
   }
@@ -119,8 +117,7 @@ export class AutoLayoutShadow {
     distanceFromWindowEnd: number
   ): number {
     const actualOffset = actualScrollOffset - this.offsetFromStart;
-    this.blankOffsetAtStart =
-      this.lastMinBound - actualOffset - distanceFromWindowStart;
+    this.blankOffsetAtStart = this.lastMinBound - actualOffset - distanceFromWindowStart;
     this.blankOffsetAtEnd =
       actualOffset +
       this.windowSize -
@@ -132,17 +129,25 @@ export class AutoLayoutShadow {
 
   /** It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between
    * unused items will cause algorithm to fail.*/
-  private isWithinBounds(cell: CellContainerProps): boolean {
+  private isWithinBounds(cell: CellContainerDescriptor): boolean {
     const scrollOffset = this.scrollOffset - this.offsetFromStart;
     if (!this.horizontal) {
       return (
-        (cell.top >= scrollOffset - this.renderOffset ) &&
-          (cell.top <= scrollOffset + this.windowSize )
+        (cell.layoutMetrics.frame.origin.y >= (scrollOffset - this.renderOffset) ||
+          (cell.layoutMetrics.frame.origin.y + cell.layoutMetrics.frame.size.height) >=
+            (scrollOffset - this.renderOffset) ) &&
+          (cell.layoutMetrics.frame.origin.y <= (scrollOffset + this.windowSize) ||
+            (cell.layoutMetrics.frame.origin.y + cell.layoutMetrics.frame.size.height) <=
+              (scrollOffset + this.windowSize) )
       );
     } else {
       return (
-        (cell.left >= scrollOffset - this.renderOffset ) &&
-          (cell.left <= scrollOffset + this.windowSize)
+        (cell.layoutMetrics.frame.origin.x >= (scrollOffset - this.renderOffset) ||
+          (cell.layoutMetrics.frame.origin.x + cell.layoutMetrics.frame.size.width) >=
+            (scrollOffset - this.renderOffset)) &&
+          (cell.layoutMetrics.frame.origin.x <= (scrollOffset + this.windowSize) ||
+            (cell.layoutMetrics.frame.origin.x + cell.layoutMetrics.frame.size.width) <=
+              (scrollOffset + this.windowSize))
       );
     }
   }

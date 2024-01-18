@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2023 Huawei Device Co., Ltd.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,53 +29,77 @@ import {
   RNOHContext,
   RNViewBase,
   ViewBaseProps,
+  ViewRawProps,
   ColorSegments,
   BorderColors,
-  Tag
+  Tag,
+  ViewDescriptorWrapperBase
 } from 'rnoh';
 import Logger from './Logger';
 
 export const CELL_CONTAINER_TYPE: string = "CellContainer";
 
 export interface CellContainerProps extends ViewBaseProps {
-  index: number
-  right: number
-  bottom: number
-  top: number
-  left: number
-  height: number
-  width: number
-  backgroundColor: ColorSegments
-  borderColor: BorderColors
+  // index?: number
 }
 
-export type CellContainerDescriptor = Descriptor<"CellContainer", CellContainerProps>
+export interface CellContainerRawProps extends ViewRawProps {
+  index?: number
+  // top: number
+  // left: number
+  // height: number
+  // width: number
+}
+
+export interface CellContainerState {}
+
+export type CellContainerDescriptor = Descriptor<"CellContainer", CellContainerProps, CellContainerState, CellContainerRawProps>
+
+class CellContainerDescriptorWrapper extends ViewDescriptorWrapperBase<"CellContainer", CellContainerProps, CellContainerState, CellContainerRawProps> {
+}
 
 @Component
 export struct RNCellContainer {
   ctx!: RNOHContext
   tag: number = 0
   @BuilderParam buildCustomComponent: (componentBuilderContext: ComponentBuilderContext) => void
-  @State descriptor: CellContainerDescriptor = {} as CellContainerDescriptor
+  @State descriptor: CellContainerDescriptor = Object() as CellContainerDescriptor
+  @State descriptorWrapper: CellContainerDescriptorWrapper | undefined = undefined
   private unregisterDescriptorChangesListener?: () => void = undefined
   @State index: number = -1;
-  @State top: number = 0;
+  // @State private childrenTags: Tag[] = []
 
   aboutToAppear() {
+    this.initComponent();
     this.descriptor = this.ctx.descriptorRegistry.getDescriptor<CellContainerDescriptor>(this.tag)
+    this.descriptorWrapper = new CellContainerDescriptorWrapper(this.descriptor)
+
     this.unregisterDescriptorChangesListener = this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag,
       (newDescriptor) => {
         this.descriptor = (newDescriptor as CellContainerDescriptor)
       }
     )
-    Logger.debug(`[RNOH]: in RNCellContainer After descriptor: ${JSON.stringify(this.descriptor)}`)
-    if (this.descriptor.props.top) {
-      this.top = this.descriptor.props.top as number;
-    }
+    Logger.debug(`[RNOH]: in RNCellContainer descriptor: ${JSON.stringify(this.descriptor)}`)
+    Logger.debug(`[RNOH]: in RNCellContainer descriptorWrapper: ${JSON.stringify(this.descriptorWrapper)}`)
   }
 
   aboutToDisappear() {
     this.unregisterDescriptorChangesListener?.()
+  }
+
+  initComponent() {
+    let descriptor = this.ctx.descriptorRegistry.getDescriptor<CellContainerDescriptor>(this.tag);
+    this.setDescriptor(descriptor)
+    // const parentTag = descriptor.parentTag;
+    this.unregisterDescriptorChangesListener = this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag,
+      (newDescriptor) => {
+        this.setDescriptor(newDescriptor as CellContainerDescriptor)
+      }
+    )
+  }
+
+  private setDescriptor(descriptor: CellContainerDescriptor) {
+    this.descriptorWrapper = new CellContainerDescriptorWrapper(descriptor)
   }
 
   setIndex(value: number): void {

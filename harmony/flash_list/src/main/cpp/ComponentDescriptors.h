@@ -32,7 +32,7 @@ namespace facebook {
 namespace react {
 
 using AutoLayoutViewComponentDescriptor = ConcreteComponentDescriptor<AutoLayoutViewShadowNode>;
-    
+
 using CellContainerComponentDescriptor = ConcreteComponentDescriptor<CellContainerShadowNode>;
 
 } // namespace react
