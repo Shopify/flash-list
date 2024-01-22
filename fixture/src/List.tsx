@@ -48,7 +48,7 @@ const List = () => {
         <View
           style={{
             ...styles.container,
-            backgroundColor,
+            backgroundColor: item > 97 ? "red" : backgroundColor,
             height: item % 2 === 0 ? 100 : 200,
           }}
         >
@@ -70,6 +70,9 @@ const List = () => {
       }}
       keyExtractor={(item: number) => {
         return item.toString();
+      }}
+      getItemType={(item: number) => {
+        return item > 97 ? "even" : "odd";
       }}
       renderItem={renderItem}
       estimatedItemSize={100}

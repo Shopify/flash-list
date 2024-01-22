@@ -57,25 +57,25 @@ internal class AutoLayoutShadowTest {
 
         //--------- Vertical -----------
         //Item above visible window
-        arrayOf<CellContainer>(getRect(0, 0, 100, 100), getRect(120, 0, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 0, 100, 100, 0), getRect(120, 0, 100, 100, 1)).let {
             alShadow.clearGapsAndOverlaps(it)
             assertEquals(120, it[1].left)
         }
 
         //Item below visible window
-        arrayOf<CellContainer>(getRect(0, 0, 100, 100), getRect(120, 550, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 0, 100, 100, 0), getRect(120, 550, 100, 100, 1)).let {
             alShadow.clearGapsAndOverlaps(it)
             assertEquals(550, it[1].top)
         }
 
         //Item within visible window
-        arrayOf<CellContainer>(getRect(0, 250, 100, 100), getRect(120, 250, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 250, 100, 100, 0), getRect(120, 250, 100, 100, 1)).let {
             alShadow.clearGapsAndOverlaps(it)
             assertEquals(100, it[1].left)
         }
 
         //At the top edge
-        arrayOf<CellContainer>(getRect(0, 200, 100, 100), getRect(120, 200, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 200, 100, 100, 0), getRect(120, 200, 100, 100, 1)).let {
             alShadow.clearGapsAndOverlaps(it)
             assertEquals(100, it[1].left)
         }
@@ -85,25 +85,25 @@ internal class AutoLayoutShadowTest {
         alShadow.horizontal = true
 
         //Item left of visible window
-        arrayOf<CellContainer>(getRect(0, 0, 100, 100), getRect(0, 120, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 0, 100, 100, 0), getRect(0, 120, 100, 100, 1)).let {
             alShadow.clearGapsAndOverlaps(it)
             assertEquals(120, it[1].top)
         }
 
         //Item right of visible window
-        arrayOf<CellContainer>(getRect(0, 0, 100, 100), getRect(550, 120, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(0, 0, 100, 100, 0), getRect(550, 120, 100, 100, 1)).let {
             alShadow.clearGapsAndOverlaps(it)
             assertEquals(120, it[1].top)
         }
 
         //Item within visible window
-        arrayOf<CellContainer>(getRect(250, 0, 100, 100), getRect(250, 120, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(250, 0, 100, 100, 0), getRect(250, 120, 100, 100, 1)).let {
             alShadow.clearGapsAndOverlaps(it)
             assertEquals(100, it[1].top)
         }
 
         //At the left edge
-        arrayOf<CellContainer>(getRect(200, 0, 100, 100), getRect(250, 150, 100, 100)).let {
+        arrayOf<CellContainer>(getRect(200, 0, 100, 100, 0), getRect(250, 150, 100, 100, 1)).let {
             alShadow.clearGapsAndOverlaps(it)
             assertEquals(100, it[1].top)
         }
@@ -127,12 +127,13 @@ internal class AutoLayoutShadowTest {
         return gson.fromJson<TestDataModel>(str, TestDataModel::class.java)
     }
 
-    private fun getRect(l: Int, t: Int, r: Int, b: Int): Rect {
+    private fun getRect(l: Int, t: Int, r: Int, b: Int, index: Int): Rect {
         var rect = Rect(b - t, r - l)
         rect.left = l
         rect.right = r
         rect.bottom = b
         rect.top = t
+        rect.index = index
         return rect
     }
 

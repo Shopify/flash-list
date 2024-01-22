@@ -5,7 +5,6 @@ import {
   ViewabilityConfig,
   ViewabilityConfigCallbackPairs,
   ViewStyle,
-  ColorValue,
 } from "react-native";
 
 import { BlankAreaEventHandler } from "./native/auto-layout/AutoLayoutView";
@@ -36,17 +35,18 @@ export type ListRenderItem<TItem> = (
   info: ListRenderItemInfo<TItem>
 ) => React.ReactElement | null;
 
-export interface ContentStyle {
-  backgroundColor?: ColorValue;
-  paddingTop?: string | number;
-  paddingLeft?: string | number;
-  paddingRight?: string | number;
-  paddingBottom?: string | number;
-  padding?: string | number;
-  paddingVertical?: string | number;
-  paddingHorizontal?: string | number;
-  flexGrow?: number;
-}
+export type ContentStyle = Pick<
+  ViewStyle,
+  | "backgroundColor"
+  | "paddingTop"
+  | "paddingLeft"
+  | "paddingRight"
+  | "paddingBottom"
+  | "padding"
+  | "paddingVertical"
+  | "paddingHorizontal"
+  | "flexGrow"
+>;
 
 export interface FlashListProps<TItem> extends ScrollViewProps {
   /**
@@ -57,6 +57,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * );
    * ...
    * <FlashList data={[{title: 'Title Text', key: 'item1'}]} renderItem={renderItem} />
+   * ```
    *
    * Provides additional metadata like `index`
    *
@@ -195,7 +196,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   /**
    * Used to extract a unique key for a given item at the specified index.
    * Key is used for optimizing performance. Defining `keyExtractor` is also necessary
-   * when doing [layout animations](https://flash-list.docs.shopify.io/guides/layout-animation)
+   * when doing [layout animations](https://shopify.github.io/flash-list/docs/guides/layout-animation)
    * to uniquely identify animated components.
    */
   keyExtractor?: ((item: TItem, index: number) => string) | undefined;

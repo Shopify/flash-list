@@ -9,12 +9,14 @@ class Rect (h: Int? = 0, w: Int? = 0): CellContainer {
     private var bottom = 0
     private var height = 0
     private var width = 0
+    private var index = 0
 
     override fun setIndex(value: Int) {
+        index = value
     }
 
     override fun getIndex(): Int {
-        return 0
+        return index
     }
 
     override fun setLeft(value: Int) {

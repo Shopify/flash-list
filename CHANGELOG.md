@@ -7,6 +7,54 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.6.3] - 2023-11-09
+
+- Changes for RN 0.73 support
+  - https://github.com/Shopify/flash-list/pull/930
+
+## [1.6.2] - 2023-10-19
+
+- Move shouldRefreshWithAnchoring configuration so it is possible to disable it from outside FlashList by invalidating layout
+  - https://github.com/Shopify/flash-list/pull/935
+
+## [1.6.1] - 2023-09-14
+
+- Prevent an expired layout provider from being used again
+  - https://github.com/Shopify/flash-list/pull/915
+
+## [1.6.0] - 2023-09-13
+
+- Update types to match `react-native@0.72` view types.
+  - https://github.com/Shopify/flash-list/pull/890
+- Add option to clear cached layouts on update
+  - https://github.com/Shopify/flash-list/pull/910
+
+## [1.5.0] - 2023-07-12
+
+- Update kotlin version to 1.8.10 for RN 0.72 compatibility
+  - https://github.com/Shopify/flash-list/pull/865
+
+## [1.4.3] - 2023-04-24
+
+- Fix definition conflicts with previous value
+  - https://github.com/Shopify/flash-list/pull/795
+- Fix Android unit test
+  - https://github.com/Shopify/flash-list/pull/815
+- Fix performance issues with inverted lists on Android
+  - https://github.com/Shopify/flash-list/pull/819
+
+## [1.4.2] - 2023-03-20
+
+- Apply layout correction only to consecutive cells
+  - https://github.com/Shopify/flash-list/pull/788
+
+## [1.4.1] - 2023-01-24
+
+- Prevent overflow of sticky headers
+  - https://github.com/Shopify/flash-list/pull/714
+- Skip footer correction when layout correction is skipped
+  - https://github.com/Shopify/flash-list/pull/743
+
 ## [1.4.0] - 2022-11-07
 
 - Add content padding support to FlashList

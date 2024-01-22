@@ -1,6 +1,6 @@
 {
   "name": "@shopify/flash-list",
-  "version": "1.4.0",
+  "version": "1.6.3",
   "keywords": [
     "react-native",
     "recyclerview",
@@ -28,7 +28,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "up": "bundle install && yarn fixture-up && yarn e2e-up && yarn build && yarn fixture-web-up",
+    "up": "bundle install && yarn fixture-up && yarn e2e-up && yarn build",
     "fixture-web-up": "cd fixture/web-app && yarn && cd ../../",
     "fixture-up": "cd fixture && yarn && cd ios && bundle exec pod install && cd ../../",
     "e2e-up": "cd fixture/ios && brew tap wix/brew && brew install applesimutils && cd ../../",
@@ -36,6 +36,7 @@
     "test": "jest",
     "lint": "yarn eslint . --ext .ts,.tsx",
     "lint:fix": "yarn eslint . --ext .ts,.tsx --fix",
+    "type-check": "yarn tsc --pretty --noEmit",
     "build": "tsc -b",
     "e2e:build:android": "detox build -c android.emu.release",
     "run-ios": "cd fixture && yarn react-native run-ios && yarn build --watch",
@@ -63,7 +64,7 @@
     "@react-native-community/eslint-config": "^3.0.3",
     "@shopify/eslint-plugin": "^41.3.1",
     "@types/jest": "^28.1.3",
-    "@types/react-native": "0.67.6",
+    "@types/react-native": "0.72.2",
     "babel-jest": "^28.1.1",
     "enhanced-resolve": "^5.9.3",
     "eslint": "8.18.0",

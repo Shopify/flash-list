@@ -4,6 +4,7 @@ import {
   RefreshControl,
   LayoutChangeEvent,
   NativeSyntheticEvent,
+  StyleSheet,
   NativeScrollEvent,
 } from "react-native";
 import {
@@ -68,8 +69,10 @@ class FlashList<T> extends React.PureComponent<
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
   private stickyContentContainerRef?: PureComponentWrapper;
   private listFixedDimensionSize = 0;
-  private transformStyle = { transform: [{ scaleY: -1 }] };
-  private transformStyleHorizontal = { transform: [{ scaleX: -1 }] };
+  private transformStyle = PlatformConfig.invertedTransformStyle;
+  private transformStyleHorizontal =
+    PlatformConfig.invertedTransformStyleHorizontal;
+
   private distanceFromWindow = 0;
   private contentStyle: ContentStyleExplicit = {
     paddingBottom: 0,
@@ -137,7 +140,11 @@ class FlashList<T> extends React.PureComponent<
     }
 
     // `createAnimatedComponent` always passes a blank style object. To avoid warning while using AnimatedFlashList we've modified the check
-    if (Object.keys(this.props.style || {}).length > 0) {
+    // `style` prop can be an array. So we need to validate every object in array. Check: https://github.com/Shopify/flash-list/issues/651
+    if (
+      __DEV__ &&
+      Object.keys(StyleSheet.flatten(this.props.style ?? {})).length > 0
+    ) {
       console.warn(WarningList.styleUnsupported);
     }
     if (
@@ -166,10 +173,14 @@ class FlashList<T> extends React.PureComponent<
         newState.numColumns,
         nextProps
       );
-      // RLV retries to reposition the first visible item on layout provider change.
-      // It's not required in our case so we're disabling it
-      newState.layoutProvider.shouldRefreshWithAnchoring = false;
     }
+
+    // RLV retries to reposition the first visible item on layout provider change.
+    // It's not required in our case so we're disabling it
+    newState.layoutProvider.shouldRefreshWithAnchoring = Boolean(
+      !prevState.layoutProvider?.hasExpired
+    );
+
     if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
       newState.dataProvider = prevState.dataProvider.cloneWithRows(
@@ -321,7 +332,7 @@ class FlashList<T> extends React.PureComponent<
         style={
           this.props.horizontal
             ? { ...this.getTransform() }
-            : { flex: 1, ...this.getTransform() }
+            : { flex: 1, overflow: "hidden", ...this.getTransform() }
         }
       >
         <ProgressiveListView
@@ -831,6 +842,13 @@ class FlashList<T> extends React.PureComponent<
    */
   public get firstItemOffset() {
     return this.distanceFromWindow;
+  }
+
+  /**
+   * FlashList will skip using layout cache on next update. Can be useful when you know the layout will change drastically for example, orientation change when used as a carousel.
+   */
+  public clearLayoutCacheOnUpdate() {
+    this.state.layoutProvider.markExpired();
   }
 
   /**
