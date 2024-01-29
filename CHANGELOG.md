@@ -7,7 +7,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- Implement `getNativeScrollRef`
+- Added `getNativeScrollRef`
   - https://github.com/Shopify/flash-list/pull/1041
 
 ## [1.6.3] - 2023-11-09
