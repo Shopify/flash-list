@@ -827,6 +827,10 @@ class FlashList<T> extends React.PureComponent<
     return this.rlvRef?.getScrollableNode?.() || null;
   }
 
+  public getNativeScrollRef(): number | null {
+    return this.rlvRef?.getNativeScrollRef?.() || null;
+  }
+
   /**
    * Allows access to internal recyclerlistview. This is useful for enabling access to its public APIs.
    * Warning: We may swap recyclerlistview for something else in the future. Use with caution.
