@@ -15,27 +15,14 @@ Pod::Spec.new do |s|
   s.source_files     = 'ios/Sources/**/*'
   s.requires_arc     = true
   s.swift_version    = '5.0'
-  s.dependency "React-Core"
+  s.pod_target_xcconfig = { 'OTHER_SWIFT_FLAGS' => '-D RCT_NEW_ARCH_ENABLED', }
 
-  if fabric_enabled
-    s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
-    s.pod_target_xcconfig    = {
-        "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
-        "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
-        "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
-        'OTHER_SWIFT_FLAGS' => '-D RCT_NEW_ARCH_ENABLED',
-    }
-
-    s.dependency "React-RCTFabric"
-    s.dependency "React-Codegen"
-    s.dependency "RCT-Folly"
-    s.dependency "RCTRequired"
-    s.dependency "RCTTypeSafety"
-    s.dependency "ReactCommon/turbomodule/core"
+  if defined?(install_modules_dependencies()) != nil
+    install_modules_dependencies(s)
     s.ios.deployment_target = "12.4"
     s.platforms        = { :ios => '12.4', :tvos => '12.0' }
   else
-    # Settings for non-fabric builds
+    s.dependency "React-Core"
     s.platforms        = { :ios => '11.0', :tvos => '12.0' }
   end
 
