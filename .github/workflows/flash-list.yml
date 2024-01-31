@@ -42,6 +42,22 @@ jobs:
           cd fixture/react-native
           yarn
           yarn build
+  build-fabricfixture-ts:
+    name: "Build fabricfixture Typescript"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
+      - run: |
+          yarn
+          cd fabricfixture
+          yarn
+          yarn build
 
   lint-ts:
     name: "Lint Typescript"
