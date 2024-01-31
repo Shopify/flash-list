@@ -1,4 +1,4 @@
 module.exports = {
   root: true,
-  extends: "@react-native/eslint-config",
+  extends: ["@react-native/eslint-config", "../.eslintrc"],
 };
