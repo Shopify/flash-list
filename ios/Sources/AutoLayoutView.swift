@@ -5,9 +5,7 @@ import UIKit
 /// Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.
 /// Note: This cannot work for masonry layouts i.e, pinterest like layout
 @objc public class AutoLayoutView: UIView {
-    #if RCT_NEW_ARCH_ENABLED
     @objc public var onBlankAreaEventHandler: ((CGFloat, CGFloat) -> Void)?
-    #endif
     
     @objc(onBlankAreaEvent)
     var onBlankAreaEvent: RCTDirectEventBlock?
