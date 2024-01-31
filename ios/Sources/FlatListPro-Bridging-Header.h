@@ -7,5 +7,6 @@
 #import <React/RCTComponent.h>
 
 #import "CellContainerComponentView.h"
+#import "AutoLayoutViewComponentView.h"
 
 #endif /* FlatListPro_Bridging_Header_h */
