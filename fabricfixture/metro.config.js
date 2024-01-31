@@ -34,7 +34,10 @@ const config = {
   },
   resolver: {
     blockList: exclusionList(
-      modules.map((m) => new RegExp(`^${escape(path.join(root, "node_modules", m))}\\/.*$`))
+      modules.map((module) => {
+        // eslint-disable-next-line prettier/prettier
+        return new RegExp(`^${escape(path.join(root, "node_modules", module))}\\/.*$`);
+      })
     ),
 
     extraNodeModules: modules.reduce((acc, name) => {
