@@ -1,15 +1,4 @@
 {
-  "extends": "../shared/tsconfig.base.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-    "outDir": "./dist",
-    "rootDir": "."
-  },
-  "references": [
-    {
-      "path": "../"
-    }
-  ],
+  "extends": "@react-native/typescript-config/tsconfig.json",
   "include": ["src/**/*", "e2e/**/*"]
 }
