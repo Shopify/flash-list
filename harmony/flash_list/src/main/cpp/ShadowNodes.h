@@ -36,7 +36,6 @@ namespace react {
 JSI_EXPORT extern const char AutoLayoutViewComponentName[];
 JSI_EXPORT extern const char CellContainerComponentName[];
 
-
 using AutoLayoutViewShadowNode =
     ConcreteViewShadowNode<AutoLayoutViewComponentName, ViewProps, AutoLayoutViewEventEmitter>;
 

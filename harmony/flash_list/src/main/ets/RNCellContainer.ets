@@ -39,23 +39,15 @@ import Logger from './Logger';
 
 export const CELL_CONTAINER_TYPE: string = "CellContainer";
 
-export interface CellContainerProps extends ViewBaseProps {
-  // index?: number
-}
-
 export interface CellContainerRawProps extends ViewRawProps {
   index?: number
-  // top: number
-  // left: number
-  // height: number
-  // width: number
 }
 
 export interface CellContainerState {}
 
-export type CellContainerDescriptor = Descriptor<"CellContainer", CellContainerProps, CellContainerState, CellContainerRawProps>
+export type CellContainerDescriptor = Descriptor<"CellContainer", ViewBaseProps, CellContainerState, CellContainerRawProps>
 
-class CellContainerDescriptorWrapper extends ViewDescriptorWrapperBase<"CellContainer", CellContainerProps, CellContainerState, CellContainerRawProps> {
+class CellContainerDescriptorWrapper extends ViewDescriptorWrapperBase<"CellContainer", ViewBaseProps, CellContainerState, CellContainerRawProps> {
 }
 
 @Component
