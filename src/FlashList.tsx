@@ -662,6 +662,7 @@ class FlashList<T> extends React.PureComponent<
   private getCellContainerChild = (index: number) => {
     return (
       <>
+        {this.props.inverted ? this.separator(index) : null}
         <View
           style={{
             flexDirection:
@@ -672,7 +673,7 @@ class FlashList<T> extends React.PureComponent<
         >
           {this.rowRendererWithIndex(index, RenderTargetOptions.Cell)}
         </View>
-        {this.separator(index)}
+        {this.props.inverted ? null : this.separator(index)}
       </>
     );
   };
