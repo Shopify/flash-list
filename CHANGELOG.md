@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix `ItemSeparatorComponent ` position for the `inverted` flashlist
+  - https://github.com/Shopify/flash-list/pull/1046
+
 ## [1.6.3] - 2023-11-09
 
 - Changes for RN 0.73 support
