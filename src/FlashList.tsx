@@ -784,6 +784,10 @@ class FlashList<T> extends React.PureComponent<
     }
   }
 
+  public updateViewableItems() {
+    this.viewabilityManager.updateViewableItems();
+  }
+
   public scrollToEnd(params?: { animated?: boolean | null | undefined }) {
     this.rlvRef?.scrollToEnd(Boolean(params?.animated));
   }

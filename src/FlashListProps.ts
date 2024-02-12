@@ -337,4 +337,11 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   disableAutoLayout?: boolean;
 
   initialScrollOffset?: number;
+
+  /**
+   * If the FlashList is in a bottom sheet, some rendered items can be off screen.
+   * The value in this ref represents the height of the off-screen area, so onViewableItemsChanged
+   * can consider the visible area of the bottom sheet in its calculations.
+   */
+  bottomViewabilityInsetRef?: React.MutableRefObject<number>;
 }
