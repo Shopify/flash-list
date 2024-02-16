@@ -134,11 +134,9 @@ class ViewabilityHelper {
     if (itemLayout === undefined) {
       return false;
     }
-    const itemTop = (horizontal ? itemLayout.x : itemLayout.y) - scrollOffset;
+    const itemTop = (horizontal ? itemLayout.x : itemLayout.y) - scrollOffset + bottomViewabilityInset;
     const itemSize = horizontal ? itemLayout.width : itemLayout.height;
-    const listMainSize = horizontal
-      ? listSize.width
-      : listSize.height - bottomViewabilityInset;
+    const listMainSize = horizontal ? listSize.width : listSize.height;
     const pixelsVisible =
       Math.min(itemTop + itemSize, listMainSize) - Math.max(itemTop, 0);
 
