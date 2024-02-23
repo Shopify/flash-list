@@ -32,7 +32,7 @@
     "@types/pixelmatch": "^5.2.4",
     "@types/pngjs": "^6.0.1",
     "babel-jest": "^27.5.1",
-    "babel-plugin-module-resolver": "^4.1.0",
+    "babel-plugin-module-resolver": "^5.0.0",
     "detox": "^19.12.5",
     "glob": "^8.0.3",
     "jest": "^27.5.1",
