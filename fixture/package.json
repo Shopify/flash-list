@@ -34,7 +34,7 @@
     "babel-jest": "^27.5.1",
     "babel-plugin-module-resolver": "^4.1.0",
     "detox": "^19.12.5",
-    "glob": "^8.0.3",
+    "glob": "^10.3.10",
     "jest": "^27.5.1",
     "metro-config": "^0.71.0",
     "metro-react-native-babel-preset": "^0.71.1",
