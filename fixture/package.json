@@ -14,7 +14,7 @@
     "e2e:build:android": "detox build -c android.emu.release"
   },
   "dependencies": {
-    "@react-navigation/native": "^6.0.10",
+    "@react-navigation/native": "^6.1.12",
     "@react-navigation/stack": "^6.2.1",
     "@shopify/flash-list": "link:../",
     "@shopify/react-native-performance-lists-profiler": "^1.1.0",
