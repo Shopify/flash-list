@@ -22,27 +22,43 @@
  * SOFTWARE.
  */
 
-#ifndef FLASH_SRC_MAIN_CPP_SHADOWNODES_H
-#define FLASH_SRC_MAIN_CPP_SHADOWNODES_H
+#ifndef FLASH_SRC_MAIN_CPP_PROPS_H
+#define FLASH_SRC_MAIN_CPP_PROPS_H
 
-#include <react/renderer/components/view/ConcreteViewShadowNode.h>
-#include <react/renderer/components/view/ViewShadowNode.h>
 #include <jsi/jsi.h>
-#include "EventEmitters.h"
-#include "Props.h"
+#include <react/renderer/components/view/ViewProps.h>
+#include <react/renderer/core/PropsParserContext.h>
 
 namespace facebook {
-namespace react {
+    namespace react {
 
-JSI_EXPORT extern const char AutoLayoutViewComponentName[];
-JSI_EXPORT extern const char CellContainerComponentName[];
+        class JSI_EXPORT AutoLayoutViewProps final : public ViewProps {
+        public:
+            AutoLayoutViewProps() = default;
+            AutoLayoutViewProps(const PropsParserContext &context, const AutoLayoutViewProps &sourceProps,
+                                const RawProps &rawProps);
 
-using AutoLayoutViewShadowNode =
-    ConcreteViewShadowNode<AutoLayoutViewComponentName, AutoLayoutViewProps, AutoLayoutViewEventEmitter>;
+#pragma mark - Props
 
-using CellContainerShadowNode =
-    ConcreteViewShadowNode<CellContainerComponentName, CellContainerProps, ViewEventEmitter>;
+            bool horizontal{false};
+            facebook::react::Float scrollOffset{0.0};
+            facebook::react::Float windowSize{0.0};
+            facebook::react::Float renderAheadOffset{0.0};
+            bool enableInstrumentation{false};
+            bool disableAutoLayout{false};
+        };
 
-} // namespace react
+        class JSI_EXPORT CellContainerProps final : public ViewProps {
+        public:
+            CellContainerProps() = default;
+            CellContainerProps(const PropsParserContext &context, const CellContainerProps &sourceProps,
+                               const RawProps &rawProps);
+
+#pragma mark - Props
+
+            int index{0};
+        };
+
+    } // namespace react
 } // namespace facebook
 #endif

@@ -28,14 +28,35 @@
 #include "ComponentDescriptors.h"
 #include "RNOH/Package.h"
 #include "AutoLayoutViewJSIBinder.h"
+#include "CellContainerJSIBinder.h"
 #include "AutoLayoutViewEventEmitRequestHandler.h"
+#include "AutoLayoutViewComponentInstance.h"
+#include "CellContainerComponentInstance.h"
 
 using namespace rnoh;
 using namespace facebook;
 
+class FlashListComponentInstanceFactoryDelegate : public ComponentInstanceFactoryDelegate {
+public:
+    using ComponentInstanceFactoryDelegate::ComponentInstanceFactoryDelegate;
+
+    ComponentInstance::Shared create(ComponentInstanceFactoryContext ctx) override {
+        if (ctx.componentName == "AutoLayoutView") {
+            return std::make_shared<AutoLayoutViewComponentInstance>(m_ctx, ctx.tag);
+        } else if (ctx.componentName == "CellContainer") {
+            return std::make_shared<CellContainerComponentInstance>(m_ctx, ctx.tag);
+        }
+        return nullptr;
+    }
+};
+
 class FlashListPackage : public Package {
   public:
     FlashListPackage(Package::Context ctx) : Package(ctx) {}
+
+    ComponentInstanceFactoryDelegate::Shared createComponentInstanceFactoryDelegate() override {
+        return std::make_shared<FlashListComponentInstanceFactoryDelegate>(m_ctx);
+    }
 
     std::vector<facebook::react::ComponentDescriptorProvider> createComponentDescriptorProviders() override {
       return {
@@ -47,7 +68,7 @@ class FlashListPackage : public Package {
     ComponentJSIBinderByString createComponentJSIBinderByName() override {
       return {
         {"AutoLayoutView", std::make_shared<AutoLayoutViewJSIBinder>()},
-        {"CellContainer", std::make_shared<ViewComponentJSIBinder>()}
+        {"CellContainer", std::make_shared<CellContainerJSIBinder>()}
       };
     };
 

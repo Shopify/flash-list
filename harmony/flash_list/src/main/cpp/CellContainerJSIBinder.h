@@ -22,27 +22,18 @@
  * SOFTWARE.
  */
 
-#ifndef FLASH_SRC_MAIN_CPP_SHADOWNODES_H
-#define FLASH_SRC_MAIN_CPP_SHADOWNODES_H
+#ifndef FLASH_SRC_MAIN_CPP_CELLCONTAINERJSIBINDER_H
+#define FLASH_SRC_MAIN_CPP_CELLCONTAINERJSIBINDER_H
 
-#include <react/renderer/components/view/ConcreteViewShadowNode.h>
-#include <react/renderer/components/view/ViewShadowNode.h>
-#include <jsi/jsi.h>
-#include "EventEmitters.h"
-#include "Props.h"
+#include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
 
-namespace facebook {
-namespace react {
-
-JSI_EXPORT extern const char AutoLayoutViewComponentName[];
-JSI_EXPORT extern const char CellContainerComponentName[];
-
-using AutoLayoutViewShadowNode =
-    ConcreteViewShadowNode<AutoLayoutViewComponentName, AutoLayoutViewProps, AutoLayoutViewEventEmitter>;
-
-using CellContainerShadowNode =
-    ConcreteViewShadowNode<CellContainerComponentName, CellContainerProps, ViewEventEmitter>;
-
-} // namespace react
-} // namespace facebook
+namespace rnoh {
+    class CellContainerJSIBinder : public ViewComponentJSIBinder {
+        facebook::jsi::Object createNativeProps(facebook::jsi::Runtime &rt) override {
+            auto object = ViewComponentJSIBinder::createNativeProps(rt);
+            object.setProperty(rt, "index", "int");
+            return object;
+        }
+    };
+} // namespace rnoh
 #endif
