@@ -8,7 +8,7 @@ on:
 
 env:
   RUBY_VERSION: 3.0.3
-  NODE_VERSION: 16.13.0
+  NODE_VERSION: 20.4.0
 
 jobs:
   build-ts:
@@ -86,11 +86,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: |
+          yarn
+          yarn build
           cd fixture
           yarn
-          cd android
           mkdir -p /tmp/artifacts
-          ./gradlew bundleDebugJsAndAssets
+          yarn react-native bundle --entry-file index.js --platform android --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
       - name: Archive Android bundle artifacts
         uses: actions/upload-artifact@v3
         with:
