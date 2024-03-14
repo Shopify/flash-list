@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Do not show render size unsuable warning in better layout changes
+  - https://github.com/Shopify/flash-list/pull/1092
+
 ## [1.6.3] - 2023-11-09
 
 - Changes for RN 0.73 support
