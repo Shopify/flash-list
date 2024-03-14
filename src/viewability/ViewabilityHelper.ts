@@ -138,7 +138,8 @@ class ViewabilityHelper {
       Math.min(itemTop + itemSize, listMainSize) - Math.max(itemTop, 0);
 
     // Always consider item fully viewable if it is fully visible, regardless of the `viewAreaCoveragePercentThreshold`
-    if (pixelsVisible === itemSize) {
+    // Account for floating point imprecision.
+    if (Math.abs(pixelsVisible - itemSize) <= 0.001) {
       return true;
     }
     // Skip checking item if it's not visible at all

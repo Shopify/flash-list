@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Make `onViewableItemsChanged` better handle floating-point error.
+
 ## [1.6.3] - 2023-11-09
 
 - Changes for RN 0.73 support
