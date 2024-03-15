@@ -856,4 +856,31 @@ describe("FlashList", () => {
     expect(hasLayoutItems).toBe(true);
     flashList.unmount();
   });
+  it("warns if rendered size is too small but only when it remain small for a duration", () => {
+    const flashList = mountFlashList({
+      data: new Array(1).fill("1"),
+    });
+    const warn = jest.spyOn(console, "warn").mockReturnValue();
+
+    const triggerLayout = (height: number, time: number) => {
+      flashList.find(ScrollView)?.trigger("onLayout", {
+        nativeEvent: { layout: { height, width: 900 } },
+      });
+      jest.advanceTimersByTime(time);
+    };
+
+    triggerLayout(0, 500);
+    triggerLayout(100, 1000);
+    triggerLayout(0, 1200);
+
+    expect(warn).toHaveBeenCalledTimes(1);
+
+    triggerLayout(100, 500);
+    triggerLayout(0, 500);
+
+    flashList.unmount();
+    jest.advanceTimersByTime(1200);
+
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
 });
