@@ -40,11 +40,11 @@ class FlashListComponentInstanceFactoryDelegate : public ComponentInstanceFactor
 public:
     using ComponentInstanceFactoryDelegate::ComponentInstanceFactoryDelegate;
 
-    ComponentInstance::Shared create(ComponentInstanceFactoryContext ctx) override {
+    ComponentInstance::Shared create(ComponentInstance::Context ctx) override {
         if (ctx.componentName == "AutoLayoutView") {
-            return std::make_shared<AutoLayoutViewComponentInstance>(m_ctx, ctx.tag);
+            return std::make_shared<AutoLayoutViewComponentInstance>(std::move(ctx));
         } else if (ctx.componentName == "CellContainer") {
-            return std::make_shared<CellContainerComponentInstance>(m_ctx, ctx.tag);
+            return std::make_shared<CellContainerComponentInstance>(std::move(ctx));
         }
         return nullptr;
     }
@@ -55,7 +55,7 @@ class FlashListPackage : public Package {
     FlashListPackage(Package::Context ctx) : Package(ctx) {}
 
     ComponentInstanceFactoryDelegate::Shared createComponentInstanceFactoryDelegate() override {
-        return std::make_shared<FlashListComponentInstanceFactoryDelegate>(m_ctx);
+        return std::make_shared<FlashListComponentInstanceFactoryDelegate>();
     }
 
     std::vector<facebook::react::ComponentDescriptorProvider> createComponentDescriptorProviders() override {

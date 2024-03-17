@@ -1,9 +1,7 @@
 {
-  "module": {
-    "name": "flash_list",
-    "type": "har",
-    "deviceTypes": [
-      'default'
-    ],
+  module: {
+    name: 'flash_list',
+    type: 'har',
+    deviceTypes: ['default'],
   },
 }

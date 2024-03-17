@@ -10,12 +10,15 @@
 #include "react/renderer/graphics/Float.h"
 #include "CellContainerComponentInstance.h"
 
+using namespace facebook;
+using namespace react;
+
 namespace rnoh {
 
     class AutoLayoutShadow {
     private:
-        facebook::react::Float lastMaxBound; // Tracks where the last pixel is drawn in the visible window
-        facebook::react::Float lastMinBound;
+        Float lastMaxBound;  // Tracks where the last pixel is drawn in the visible window
+        Float lastMinBound;  // Tracks where first pixel is drawn in the visible window
         bool isWithinBounds(CellContainerComponentInstance &);
 
     public:
@@ -23,15 +26,15 @@ namespace rnoh {
         int scrollOffset{0};
         int offsetFromStart{0};
         int windowSize{0};
-        facebook::react::Float renderOffset{0};
-        facebook::react::Float blankOffsetAtStart{0}; // Tracks blank area from the top
-        facebook::react::Float blankOffsetAtEnd{0};   // Tracks blank area from the bottom
-        int lastMaxBoundOverall{0}; // Tracks where the last pixel is drawn in the overall
+        Float renderOffset{0};
+        Float blankOffsetAtStart{0};  // Tracks blank area from the top
+        Float blankOffsetAtEnd{0};    // Tracks blank area from the bottom
+        Float lastMaxBoundOverall{0}; // Tracks where the last pixel is drawn in the overall
 
-        AutoLayoutShadow() {};
-        ~AutoLayoutShadow() {};
-        void clearGapsAndOverlaps(std::vector<CellContainerComponentInstance> &sortedItems);
-        int computeBlankFromGivenOffset(int &actualScrollOffset, int &distanceFromWindowStart, int &distanceFromWindowEnd);
+        AutoLayoutShadow(){};
+        ~AutoLayoutShadow(){};
+        void clearGapsAndOverlaps(std::vector<ComponentInstance::Shared> sortedItems);
+        int computeBlankFromGivenOffset(int actualScrollOffset, int distanceFromWindowStart, int distanceFromWindowEnd);
     };
 } // namespace rnoh
 

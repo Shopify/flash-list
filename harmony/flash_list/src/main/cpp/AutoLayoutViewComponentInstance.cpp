@@ -1,46 +1,104 @@
 #include "AutoLayoutViewComponentInstance.h"
-#include "ComponentDescriptors.h"
+#include "RNOHCorePackage/ComponentInstances/ViewComponentInstance.h"
+#include "folly/Synchronized.h"
+#include "folly/synchronization/Lock.h"
+#include <mutex>
 #include <sys/param.h>
-
 namespace rnoh {
 
-    AutoLayoutViewComponentInstance::AutoLayoutViewComponentInstance(Context context, facebook::react::Tag tag)
-        : CppComponentInstance(std::move(context), tag) {}
+    AutoLayoutViewComponentInstance::AutoLayoutViewComponentInstance(Context context)
+        : CppComponentInstance(std::move(context)) {
+        m_autoLayoutNode.setAutoLayoutNodeDelegate(this);
+    }
 
     void AutoLayoutViewComponentInstance::insertChild(ComponentInstance::Shared childComponentInstance,
                                                       std::size_t index) {
         CppComponentInstance::insertChild(childComponentInstance, index);
-        m_stackNode.insertChild(childComponentInstance->getLocalRootArkUINode(), index);
+        m_autoLayoutNode.insertChild(childComponentInstance->getLocalRootArkUINode(), index);
     }
 
-    StackNode &AutoLayoutViewComponentInstance::getLocalRootArkUINode() { return m_stackNode; }
+    AutoLayoutNode &AutoLayoutViewComponentInstance::getLocalRootArkUINode() { return m_autoLayoutNode; }
 
     void AutoLayoutViewComponentInstance::removeChild(ComponentInstance::Shared childComponentInstance) {
         CppComponentInstance::removeChild(childComponentInstance);
-        m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+        m_autoLayoutNode.removeChild(childComponentInstance->getLocalRootArkUINode());
     };
 
     void AutoLayoutViewComponentInstance::finalizeUpdates() {
-        int i = 0;
-        for (const auto &child : getChildren()) {
-            if (child != nullptr) {
-                if (auto cellContainer = std::dynamic_pointer_cast<rnoh::CellContainerComponentInstance>(child)) {
-                    LOG(INFO) << "[clx] AutoLayoutViewComponentInstance::finalizeUpdates index:" << cellContainer->getIndex() << ", child numer: " << i;
-                }
-            }
-            i ++;
+        if (parentScrollView != nullptr) {
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::finalizeUpdates>";
+            onAppear();
         }
-
-
         this->getLocalRootArkUINode().markDirty();
+    }
+
+    void AutoLayoutViewComponentInstance::setLeft(facebook::react::Float const &left) {
+        m_layoutMetrics.frame.origin.x = left;
+    }
+    facebook::react::Float AutoLayoutViewComponentInstance::getLeft() { return m_layoutMetrics.frame.origin.x; }
+    void AutoLayoutViewComponentInstance::setTop(facebook::react::Float const &top) {
+        m_layoutMetrics.frame.origin.y = top;
+    }
+    facebook::react::Float AutoLayoutViewComponentInstance::getTop() { return m_layoutMetrics.frame.origin.y; }
+    void AutoLayoutViewComponentInstance::setRight(facebook::react::Float const &right) {
+        m_layoutMetrics.frame.origin.x = right - m_layoutMetrics.frame.size.width;
+    }
+    facebook::react::Float AutoLayoutViewComponentInstance::getRight() {
+        return m_layoutMetrics.frame.origin.x + m_layoutMetrics.frame.size.width;
+    }
+    void AutoLayoutViewComponentInstance::setBottom(facebook::react::Float const &bottom) {
+        m_layoutMetrics.frame.origin.y = bottom - m_layoutMetrics.frame.size.height;
+    }
+    facebook::react::Float AutoLayoutViewComponentInstance::getBottom() {
+        return m_layoutMetrics.frame.origin.y + m_layoutMetrics.frame.size.height;
+    }
+    void AutoLayoutViewComponentInstance::setHeight(facebook::react::Float const &height) {
+        m_layoutMetrics.frame.size.height = height;
+    }
+    facebook::react::Float AutoLayoutViewComponentInstance::getHeight() { return m_layoutMetrics.frame.size.height; }
+    void AutoLayoutViewComponentInstance::setWidth(facebook::react::Float const &width) {
+        m_layoutMetrics.frame.size.width = width;
+    }
+    facebook::react::Float AutoLayoutViewComponentInstance::getWidth() { return m_layoutMetrics.frame.size.width; }
+
+    void AutoLayoutViewComponentInstance::onAppear() {
+        fixLayout();
+        fixFooter();
+//         getLocalRootArkUINode().markDirty();
+
+        parentScrollView = getParentScrollView();
+        if (enableInstrumentation && parentScrollView != nullptr) {
+            auto scrollContainerSize = alShadow.horizontal
+                                           ? parentScrollView->getScrollViewMetrics().containerSize.width
+                                           : parentScrollView->getScrollViewMetrics().containerSize.height;
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::onAppear> scrollContainerSize:"
+                      << scrollContainerSize;
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::onAppear> parentScrollView node address:"
+                      << &parentScrollView->getLocalRootArkUINode();
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::onAppear> parentScrollView nodeHandle address:"
+                      << parentScrollView->getLocalRootArkUINode().getArkUINodeHandle();
+            auto scrollOffset = alShadow.horizontal ? parentScrollView->getLocalRootArkUINode().getScrollOffset().x
+                                                    : parentScrollView->getLocalRootArkUINode().getScrollOffset().y;
+            
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::onAppear> scrollOffset:" << scrollOffset;
+            auto startOffset = alShadow.horizontal ? getLeft() : getTop();
+            auto endOffset = alShadow.horizontal ? getRight() : getBottom();
+
+            auto distanceFromWindowStart = MAX(startOffset - scrollOffset, 0);
+            auto distanceFromWindowEnd = MAX(scrollOffset + scrollContainerSize - endOffset, 0);
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::onAppear> distanceFromWindowStart:"
+                      << distanceFromWindowStart;
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::onAppear> distanceFromWindowEnd:"
+                      << distanceFromWindowEnd;
+            alShadow.computeBlankFromGivenOffset(static_cast<int>(scrollOffset),
+                                                 static_cast<int>(distanceFromWindowStart),
+                                                 static_cast<int>(distanceFromWindowEnd));
+            emitBlankAreaEvent();
+        }
     }
 
     void AutoLayoutViewComponentInstance::setProps(facebook::react::Props::Shared props) {
         CppComponentInstance::setProps(props);
-
-        //         auto childProp = std::dynamic_pointer_cast<const
-        //         facebook::react::AutoLayoutViewProps>(getChildren()[0]->getProps());
-
         auto autoLayoutViewProps = std::dynamic_pointer_cast<const facebook::react::AutoLayoutViewProps>(props);
         if (autoLayoutViewProps == nullptr) {
             return;
@@ -55,79 +113,102 @@ namespace rnoh {
         LOG(INFO) << "[clx] autoLayoutViewProps" << autoLayoutViewProps->renderAheadOffset;
     }
 
-    void AutoLayoutViewComponentInstance::setLayout(facebook::react::LayoutMetrics layoutMetrics) {
-        this->top = layoutMetrics.frame.origin.y;
-        this->bottom = layoutMetrics.frame.origin.y + layoutMetrics.frame.size.height;
-        this->left = layoutMetrics.frame.origin.x;
-        this->right = layoutMetrics.frame.origin.x + layoutMetrics.frame.size.width;
-        this->height = layoutMetrics.frame.size.height;
-        this->width = layoutMetrics.frame.size.width;
-        
-        // TODO this->fixLayout();
-        // TODO this->fixFooter();
-        // TODO get parent scroll view: if (this->enableInstrumentation && parentScrollView != null) {}
-        // TODO auto scrollContainerSize = alShadow.horizontal : parentScrollView->width : parentScrollView->height;
-        // TODO auto scrollOffset = alShadow.horizontal : parentScrollView->contentOffsetX :
-        // parentScrollView->contentOffsetY;
-        auto startOffset = alShadow.horizontal ? this->left : this->top;
-        auto endOffset = alShadow.horizontal ? this->right : this->bottom;
-        // TODO auto distanceFromWindowStart = MAX(startOffset - scrollOffset, 0);
-        // TODO auto distanceFromWindowEnd = MAX(scrollOffset + this.scrollContainerSize - endOffset, 0);
-        // TODO alShadow.computeBlankFromGivenOffset(scrollOffset, distanceFromWindowStart, distanceFromWindowEnd);
-        // TODO emitBlankAreaEvent();
-
-        this->getLocalRootArkUINode().setPosition({this->left, this->top});
-        this->getLocalRootArkUINode().setSize({this->height, this->width});
-    }
-
     void AutoLayoutViewComponentInstance::fixLayout() {
-        // TODO get children nodes and sorted by index
-        for (auto child : this->getChildren()) {
-            
-            if (typeid(child) == typeid(CellContainerComponentInstance)) {
-                
-            }
-        }
-        alShadow.offsetFromStart = alShadow.horizontal ? this->left : this->top;
-        // TODO pass sortedItems into alShadow.clearGapsAndOverlaps(sortedItems)
+        LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::fixLayout>";
+        alShadow.offsetFromStart = alShadow.horizontal ? getLeft() : getTop();
+        alShadow.clearGapsAndOverlaps(getChildren());
+        setLayout(m_layoutMetrics);
     }
 
     void AutoLayoutViewComponentInstance::fixFooter() {
-        // TODO get parentScrollView
-        ComponentInstance *parentScrollView; // tmp
-        if (this->disableAutoLayout || parentScrollView == nullptr) {
+        LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::fixFooter>";
+        parentScrollView = getParentScrollView();
+        LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::fixFooter> get parentScrollView success!"
+                  << &parentScrollView->getLocalRootArkUINode();
+        if (disableAutoLayout || parentScrollView == nullptr) {
             return;
         }
-        // TODO get parentScrollView's width and height
-        bool isAutoLayoutEndVisible = true; // tmp
-        // TODO auto isAutoLayoutEndVisible = alShadow.horizontal ? (this->right <= parentScrollView->width) :
-        // (this->bottom <= parentScrollView->height);
+        auto isAutoLayoutEndVisible = alShadow.horizontal
+                                          ? getRight() <= parentScrollView->getLayoutMetrics().frame.size.width
+                                          : getBottom() <= parentScrollView->getLayoutMetrics().frame.size.height;
         if (!isAutoLayoutEndVisible) {
             return;
         }
-        // TODO get parentView
-        ComponentInstance *autoLayoutParent; // tmp
-        // TODO get footerView
-        CellContainerComponentInstance *footer; // tmp
-        auto diff = this->getFooterDiff();
+        auto autoLayoutParent = getParent().lock();
+        auto footer = getFooter();
+        auto diff = static_cast<facebook::react::Float>(getFooterDiff());
         if (diff == 0 || footer == nullptr || autoLayoutParent == nullptr) {
             return;
         }
 
         if (alShadow.horizontal) {
-            footer->setLeft(footer->getLeft() + static_cast<facebook::react::Float>(diff));
-            this->left += diff;
+            footer->setLeft(footer->getLeft() + diff);
+            m_layoutMetrics.frame.origin.x += diff;
             // TODO autoLayoutParent.layoutMetrics.frame.origin.x += diff
         } else {
-            footer->setTop(footer->getTop() + static_cast<facebook::react::Float>(diff));
-            this->top += diff;
+            footer->setTop(footer->getTop() + diff);
+            m_layoutMetrics.frame.origin.y += diff;
             // TODO autoLayoutParent.layoutMetrics.frame.origin.y += diff
         }
+        footer->setLayout(footer->getLayoutMetrics());
     }
 
     int AutoLayoutViewComponentInstance::getFooterDiff() {
-        // TODO if children number == 0 {} else if children number ==1  {}
-        auto autoLayoutEnd = alShadow.horizontal ? this->right - this->left : this->bottom - this->top;
+        LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::getFooterDiff>";
+        if (getChildren().empty()) {
+            alShadow.lastMaxBoundOverall = 0;
+        } else if (getChildren().size() == 1) {
+            auto firstChild = std::dynamic_pointer_cast<rnoh::CellContainerComponentInstance>(getChildren()[0]);
+            alShadow.lastMaxBoundOverall = alShadow.horizontal ? firstChild->getRight() : firstChild->getBottom();
+        }
+        auto autoLayoutEnd = alShadow.horizontal ? getRight() - getLeft() : getBottom() - getTop();
         return alShadow.lastMaxBoundOverall - autoLayoutEnd;
+    }
+
+    std::shared_ptr<rnoh::CellContainerComponentInstance> AutoLayoutViewComponentInstance::getFooter() {
+        LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::getFooter>";
+        for (auto const child : getChildren()) {
+            auto childInstance = std::dynamic_pointer_cast<rnoh::CellContainerComponentInstance>(child);
+            if (childInstance != nullptr && childInstance->getIndex() == -1) {
+                return childInstance;
+            }
+        }
+        return nullptr;
+    }
+
+    std::shared_ptr<rnoh::ScrollViewComponentInstance> AutoLayoutViewComponentInstance::getParentScrollView() {
+        LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::getParentScrollView>";
+        auto autoLayoutParent = getParent().lock();
+        while (autoLayoutParent) {
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::getParentScrollView> Loop!";
+            auto scrollView = std::dynamic_pointer_cast<rnoh::ScrollViewComponentInstance>(autoLayoutParent);
+            if (scrollView) {
+                LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::getParentScrollView> scrollView address: "
+                          << &scrollView->getLocalRootArkUINode();
+                return scrollView;
+            }
+            autoLayoutParent = autoLayoutParent->getParent().lock();
+        }
+        return nullptr;
+    }
+
+    void AutoLayoutViewComponentInstance::setEventEmitter(facebook::react::SharedEventEmitter eventEmitter) {
+        CppComponentInstance::setEventEmitter(eventEmitter);
+        auto autoLayoutViewEventEmitter =
+            std::dynamic_pointer_cast<const facebook::react::AutoLayoutViewEventEmitter>(eventEmitter);
+        if (autoLayoutViewEventEmitter == nullptr) {
+            return;
+        }
+        m_autoLayoutViewEventEmitter = autoLayoutViewEventEmitter;
+    }
+
+    void AutoLayoutViewComponentInstance::emitBlankAreaEvent() {
+        LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::emitBlankAreaEvent>";
+        AutoLayoutViewEventEmitter::OnBlankAreaEvent blankAreaEvent;
+        blankAreaEvent.offsetStart = static_cast<int>(alShadow.blankOffsetAtStart / pixelDensity);
+        blankAreaEvent.offsetEnd = static_cast<int>(alShadow.blankOffsetAtEnd / pixelDensity);
+        LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::emitBlankAreaEvent> :" << blankAreaEvent.offsetStart
+                  << ", " << blankAreaEvent.offsetEnd;
+        m_autoLayoutViewEventEmitter->onBlankAreaEvent(blankAreaEvent);
     }
 } // namespace rnoh

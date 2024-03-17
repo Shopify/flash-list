@@ -2,8 +2,8 @@
 
 namespace rnoh {
 
-    CellContainerComponentInstance::CellContainerComponentInstance(Context context, facebook::react::Tag tag)
-        : CppComponentInstance(std::move(context), tag) {}
+    CellContainerComponentInstance::CellContainerComponentInstance(Context context)
+        : CppComponentInstance(std::move(context)) {}
 
     void CellContainerComponentInstance::insertChild(ComponentInstance::Shared childComponentInstance,
                                                      std::size_t index) {
@@ -18,21 +18,37 @@ namespace rnoh {
 
     StackNode &CellContainerComponentInstance::getLocalRootArkUINode() { return m_stackNode; }
 
-    void CellContainerComponentInstance::setIndex(int const &) { this->index = index; }
+    void CellContainerComponentInstance::setIndex(int const &index) { this->index = index; }
+    int CellContainerComponentInstance::getIndex() { return index; }
 
-    int CellContainerComponentInstance::getIndex() { return this->index; }
-    void CellContainerComponentInstance::setLeft(facebook::react::Float const &left) { this->left = left; }
-    facebook::react::Float CellContainerComponentInstance::getLeft() { return this->left; }
-    void CellContainerComponentInstance::setTop(facebook::react::Float const &top) { this->top = top; }
-    facebook::react::Float CellContainerComponentInstance::getTop() { return this->top; }
-    void CellContainerComponentInstance::setRight(facebook::react::Float const &right) { this->right = right; }
-    facebook::react::Float CellContainerComponentInstance::getRight() { return this->right; }
-    void CellContainerComponentInstance::setBottom(facebook::react::Float const &bottom) { this->bottom = bottom; }
-    facebook::react::Float CellContainerComponentInstance::getBottom() { return this->bottom; }
-    void CellContainerComponentInstance::setHeight(facebook::react::Float const &height) { this->height = height; }
-    facebook::react::Float CellContainerComponentInstance::getHeight() { return this->height; }
-    void CellContainerComponentInstance::setWidth(facebook::react::Float const &width) { this->width = width; }
-    facebook::react::Float CellContainerComponentInstance::getWidth() { return this->width; }
+    void CellContainerComponentInstance::setLeft(facebook::react::Float const &left) {
+        m_layoutMetrics.frame.origin.x = left;
+    }
+    facebook::react::Float CellContainerComponentInstance::getLeft() { return m_layoutMetrics.frame.origin.x; }
+    void CellContainerComponentInstance::setTop(facebook::react::Float const &top) {
+        m_layoutMetrics.frame.origin.y = top;
+    }
+    facebook::react::Float CellContainerComponentInstance::getTop() { return m_layoutMetrics.frame.origin.y; }
+    void CellContainerComponentInstance::setRight(facebook::react::Float const &right) {
+        m_layoutMetrics.frame.origin.x = right - m_layoutMetrics.frame.size.width;
+    }
+    facebook::react::Float CellContainerComponentInstance::getRight() {
+        return m_layoutMetrics.frame.origin.x + m_layoutMetrics.frame.size.width;
+    }
+    void CellContainerComponentInstance::setBottom(facebook::react::Float const &bottom) {
+        m_layoutMetrics.frame.origin.y = bottom - m_layoutMetrics.frame.size.height;
+    }
+    facebook::react::Float CellContainerComponentInstance::getBottom() {
+        return m_layoutMetrics.frame.origin.y + m_layoutMetrics.frame.size.height;
+    }
+    void CellContainerComponentInstance::setHeight(facebook::react::Float const &height) {
+        m_layoutMetrics.frame.size.height = height;
+    }
+    facebook::react::Float CellContainerComponentInstance::getHeight() { return m_layoutMetrics.frame.size.height; }
+    void CellContainerComponentInstance::setWidth(facebook::react::Float const &width) {
+        m_layoutMetrics.frame.size.width = width;
+    }
+    facebook::react::Float CellContainerComponentInstance::getWidth() { return m_layoutMetrics.frame.size.width; }
 
     void CellContainerComponentInstance::setProps(facebook::react::Props::Shared props) {
         CppComponentInstance::setProps(props);
@@ -40,18 +56,6 @@ namespace rnoh {
             LOG(INFO) << "[clx] CellContainerComponentInstance::setProps" << p->index;
             this->setIndex(p->index);
         }
-    }
-
-    void CellContainerComponentInstance::setLayout(facebook::react::LayoutMetrics layoutMetrics) {
-        this->setTop(layoutMetrics.frame.origin.y);
-        this->setBottom(layoutMetrics.frame.origin.y + layoutMetrics.frame.size.height);
-        this->setLeft(layoutMetrics.frame.origin.x);
-        this->setRight(layoutMetrics.frame.origin.x + layoutMetrics.frame.size.width);
-        this->setHeight(layoutMetrics.frame.size.height);
-        this->setWidth(layoutMetrics.frame.size.width);
-
-        this->getLocalRootArkUINode().setPosition(layoutMetrics.frame.origin);
-        this->getLocalRootArkUINode().setSize(layoutMetrics.frame.size);
     }
 
 } // namespace rnoh
