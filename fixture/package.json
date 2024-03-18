@@ -21,7 +21,7 @@
     "react": "18.2.0",
     "react-native": "0.72.10",
     "react-native-fast-image": "^8.5.11",
-    "react-native-flipper": "^0.212.0",
+    "react-native-flipper": "0.182.0",
     "react-native-gesture-handler": "^2.5.0",
     "react-native-reanimated": "3.6.1",
     "react-native-safe-area-context": "^3.3.2",

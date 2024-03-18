@@ -1,9 +1,8 @@
 /* eslint-disable @shopify/strict-component-boundaries */
-import { DebugOption } from "../src/Debug/DebugOptions";
-
-import { assertSnapshotsEqual, assertSnapshot } from "./utils/SnapshotAsserts";
-import { wipeArtifactsLocation, reference } from "./utils/SnapshotLocation";
-import goBack from "./utils/goBack";
+import { DebugOption } from "../../src/Debug/DebugOptions";
+import { assertSnapshotsEqual, assertSnapshot } from "../utils/SnapshotAsserts";
+import { wipeArtifactsLocation, reference } from "../utils/SnapshotLocation";
+import goBack from "../utils/goBack";
 
 describe("Twitter", () => {
   const flashListReferenceTestName = "Twitter_with_FlashList_looks_the_same";
@@ -48,8 +47,7 @@ describe("Twitter", () => {
     );
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip("looks the same after orientation change", async () => {
+  it("looks the same after orientation change", async () => {
     const testName = "Twitter_looks_the_same_after_orientation_change";
     const flatListTestName = `with_FlatList_${testName}`;
 
@@ -95,8 +93,8 @@ describe("Twitter", () => {
   });
 
   // Temporarily disabled due to failures, can be fixed after RN upgrade
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip("loads a new page when gets to the bottom of the list", async () => {
+
+  it("loads a new page when gets to the bottom of the list", async () => {
     const testName =
       "Twitter_loads_a_new_page_when_gets_to_the_bottom_of_the_list";
     await enableDebugOption(DebugOption.PagingEnabled);

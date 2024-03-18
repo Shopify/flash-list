@@ -8,7 +8,7 @@ module.exports = {
   testRunner: {
     $0: "jest",
     args: {
-      config: "e2e/config.js",
+      config: "e2e/jest.config.js",
     },
   },
   apps: {
@@ -30,7 +30,7 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 11",
+        type: "iPhone 14",
       },
     },
     emulator: {

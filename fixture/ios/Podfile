@@ -19,7 +19,8 @@ inhibit_all_warnings!
 #   dependencies: {
 #     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
 # ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+# We Enable Flipper in Release builds as well so we can run E2E tests due to our dependency on `react-native-flipper`
+flipper_config = FlipperConfiguration.enabled(["Debug", "Release"], { 'Flipper' => '0.182.0'})
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
