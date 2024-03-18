@@ -103,12 +103,16 @@ namespace rnoh {
         if (autoLayoutViewProps == nullptr) {
             return;
         }
-        this->horizontal = autoLayoutViewProps->horizontal;
-        this->scrollOffset = autoLayoutViewProps->scrollOffset;
-        this->windowSize = autoLayoutViewProps->windowSize;
-        this->renderAheadOffset = autoLayoutViewProps->renderAheadOffset;
-        this->enableInstrumentation = autoLayoutViewProps->enableInstrumentation;
-        this->disableAutoLayout = autoLayoutViewProps->disableAutoLayout;
+        horizontal = autoLayoutViewProps->horizontal;
+        scrollOffset = autoLayoutViewProps->scrollOffset;
+        windowSize = autoLayoutViewProps->windowSize;
+        renderAheadOffset = autoLayoutViewProps->renderAheadOffset;
+        enableInstrumentation = autoLayoutViewProps->enableInstrumentation;
+        disableAutoLayout = autoLayoutViewProps->disableAutoLayout;
+        if (parentScrollView != nullptr) {
+            LOG(INFO) << "[clx] <AutoLayoutViewComponentInstance::setProps> onAppear";
+            onAppear();
+        }
 
         LOG(INFO) << "[clx] autoLayoutViewProps" << autoLayoutViewProps->renderAheadOffset;
     }

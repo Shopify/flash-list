@@ -55,7 +55,7 @@ class FlashListPackage : public Package {
     FlashListPackage(Package::Context ctx) : Package(ctx) {}
 
     ComponentInstanceFactoryDelegate::Shared createComponentInstanceFactoryDelegate() override {
-        return std::make_shared<FlashListComponentInstanceFactoryDelegate>();
+        return std::make_shared<FlashListComponentInstanceFactoryDelegate>(m_ctx);
     }
 
     std::vector<facebook::react::ComponentDescriptorProvider> createComponentDescriptorProviders() override {
