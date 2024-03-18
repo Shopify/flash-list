@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.6.4] - 2024-03-18
+
 - Fix `ItemSeparatorComponent ` position for the `inverted` flashlist
   - https://github.com/Shopify/flash-list/pull/1046
 - Do not show render size unsuable warning in better layout changes
