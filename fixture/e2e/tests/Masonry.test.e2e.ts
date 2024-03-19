@@ -1,5 +1,5 @@
-import { assertSnapshot } from "./utils/SnapshotAsserts";
-import { wipeArtifactsLocation } from "./utils/SnapshotLocation";
+import { assertSnapshot } from "../utils/SnapshotAsserts";
+import { wipeArtifactsLocation } from "../utils/SnapshotLocation";
 
 describe("Masonry", () => {
   const testNameLoad = "Masonry_with_FlashList_can_load";

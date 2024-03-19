@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Update internal dependency and fixture app to `react-native@0.72`.
+  - https://github.com/Shopify/flash-list/pull/1076
+
 ## [1.6.4] - 2024-03-18
 
 - Fix `ItemSeparatorComponent ` position for the `inverted` flashlist

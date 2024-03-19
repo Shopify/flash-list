@@ -11,7 +11,7 @@ import {
   Pressable,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import Animated, { FadeOut, Layout } from "react-native-reanimated";
+import Animated, { FadeOut, LinearTransition } from "react-native-reanimated";
 
 interface Reminder {
   id: string;
@@ -66,7 +66,7 @@ const ReminderCell = ({
     <Animated.View
       onLayout={onLayout}
       style={styles.cell}
-      layout={Layout}
+      layout={LinearTransition}
       exiting={FadeOut}
     >
       <View style={styles.checkbox}>

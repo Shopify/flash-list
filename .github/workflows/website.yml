@@ -8,7 +8,7 @@ on:
 
 env:
   RUBY_VERSION: 3.0.3
-  NODE_VERSION: 16.13.0
+  NODE_VERSION: 20.4.0
 
 jobs:
   build-documentation:

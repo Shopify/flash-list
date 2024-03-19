@@ -1,6 +1,6 @@
-import goBack from "./utils/goBack";
-import { assertSnapshot, assertSnapshotsEqual } from "./utils/SnapshotAsserts";
-import { reference, wipeArtifactsLocation } from "./utils/SnapshotLocation";
+import goBack from "../utils/goBack";
+import { assertSnapshot, assertSnapshotsEqual } from "../utils/SnapshotAsserts";
+import { reference, wipeArtifactsLocation } from "../utils/SnapshotLocation";
 
 describe("Contacts", () => {
   beforeAll(async () => {
