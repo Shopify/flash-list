@@ -6,15 +6,17 @@ const exclusionList = require("metro-config/src/defaults/exclusionList");
 // eslint-disable-next-line import/no-extraneous-dependencies
 const escape = require("escape-string-regexp");
 
-const packageJSON = require("../package.json");
-
+const root = path.resolve(__dirname, "../..");
+const packageJSON = require(path.join(root, "package.json"));
 const modules = Object.keys({ ...packageJSON.peerDependencies });
 
-const root = path.resolve(__dirname, "..");
-
-const watchFolders = [root]
-  .concat([path.join(__dirname, "./node_modules")])
-  .concat([path.join(__dirname, "../node_modules")]);
+const watchFolders = [
+  root,
+  // Local node_modules
+  path.join(__dirname, "node_modules"),
+  // Root node_modules
+  path.join(root, "node_modules"),
+];
 
 /**
  * Metro configuration
