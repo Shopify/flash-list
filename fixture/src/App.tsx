@@ -8,7 +8,6 @@
 
 import "react-native-gesture-handler";
 import React from "react";
-import { ListsProfiler } from "@shopify/react-native-performance-lists-profiler";
 import { Platform, UIManager } from "react-native";
 
 import { DebugContextProvider } from "./Debug";
@@ -22,18 +21,9 @@ const App = () => {
   }
 
   return (
-    <ListsProfiler
-      onInteractive={(TTI) => {
-        console.log(`TTI in millis: ${TTI}`);
-      }}
-      onBlankArea={(offsetStart, offsetEnd) => {
-        console.log(`Blank area: ${Math.max(offsetStart, offsetEnd)}`);
-      }}
-    >
-      <DebugContextProvider>
-        <NavigationTree />
-      </DebugContextProvider>
-    </ListsProfiler>
+    <DebugContextProvider>
+      <NavigationTree />
+    </DebugContextProvider>
   );
 };
 
