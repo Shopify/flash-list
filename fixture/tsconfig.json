@@ -1,9 +1,0 @@
-{
-  "extends": "../shared/tsconfig.base.json",
-  "references": [
-    {
-      "path": "../"
-    }
-  ],
-  "include": ["src/**/*", "e2e/**/*"]
-}
