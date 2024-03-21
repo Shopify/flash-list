@@ -66,7 +66,7 @@
     "@types/react": "^18.0.24",
     "babel-jest": "^28.1.1",
     "enhanced-resolve": "^5.9.3",
-    "eslint": "8.18.0",
+    "eslint": "8.57.0",
     "gh-pages": "^4.0.0",
     "jest": "^29.7.0",
     "metro-react-native-babel-preset": "^0.71.1",
