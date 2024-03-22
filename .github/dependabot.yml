@@ -1,19 +1,4 @@
 version: 2
-registries:
-  rubygems-server-pkgs-shopify-io:
-    type: rubygems-server
-    url: https://pkgs.shopify.io
-    username: ${{secrets.RUBYGEMS_SERVER_PKGS_SHOPIFY_IO_USERNAME}}
-    password: ${{secrets.RUBYGEMS_SERVER_PKGS_SHOPIFY_IO_PASSWORD}}
-  github-com:
-    type: git
-    url: https://github.com
-    username: ${{secrets.DEPENDENCIES_GITHUB_USER}}
-    password: ${{secrets.DEPENDENCIES_GITHUB_TOKEN}}
-  npm-registry-npm-shopify-io-node:
-    type: npm-registry
-    url: https://npm.shopify.io/node
-    token: ${{secrets.NPM_REGISTRY_NPM_SHOPIFY_IO_NODE_TOKEN}}
 updates:
   - package-ecosystem: bundler
     directory: "/"
@@ -24,7 +9,6 @@ updates:
       timezone: Europe/Berlin
     open-pull-requests-limit: 100
     insecure-external-code-execution: allow
-    registries: "*"
   - package-ecosystem: npm
     directory: "/"
     schedule:
@@ -33,7 +17,6 @@ updates:
       time: "10:00"
       timezone: Europe/Berlin
     open-pull-requests-limit: 100
-    registries: "*"
   - package-ecosystem: bundler
     directory: "/fixture"
     schedule:
@@ -43,7 +26,6 @@ updates:
       timezone: Europe/Berlin
     open-pull-requests-limit: 100
     insecure-external-code-execution: allow
-    registries: "*"
   - package-ecosystem: npm
     directory: "/fixture"
     schedule:
@@ -52,4 +34,3 @@ updates:
       time: "10:00"
       timezone: Europe/Berlin
     open-pull-requests-limit: 100
-    registries: "*"

@@ -4,6 +4,7 @@ import {
   RefreshControl,
   LayoutChangeEvent,
   NativeSyntheticEvent,
+  StyleSheet,
   NativeScrollEvent,
 } from "react-native";
 import {
@@ -68,8 +69,10 @@ class FlashList<T> extends React.PureComponent<
   private rlvRef?: RecyclerListView<RecyclerListViewProps, any>;
   private stickyContentContainerRef?: PureComponentWrapper;
   private listFixedDimensionSize = 0;
-  private transformStyle = { transform: [{ scaleY: -1 }] };
-  private transformStyleHorizontal = { transform: [{ scaleX: -1 }] };
+  private transformStyle = PlatformConfig.invertedTransformStyle;
+  private transformStyleHorizontal =
+    PlatformConfig.invertedTransformStyleHorizontal;
+
   private distanceFromWindow = 0;
   private contentStyle: ContentStyleExplicit = {
     paddingBottom: 0,
@@ -91,7 +94,8 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private postLoadTimeoutId?: ReturnType<typeof setTimeout>;
-  private sizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
+  private itemSizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
+  private renderedSizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
 
   private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
@@ -137,7 +141,11 @@ class FlashList<T> extends React.PureComponent<
     }
 
     // `createAnimatedComponent` always passes a blank style object. To avoid warning while using AnimatedFlashList we've modified the check
-    if (Object.keys(this.props.style || {}).length > 0) {
+    // `style` prop can be an array. So we need to validate every object in array. Check: https://github.com/Shopify/flash-list/issues/651
+    if (
+      __DEV__ &&
+      Object.keys(StyleSheet.flatten(this.props.style ?? {})).length > 0
+    ) {
       console.warn(WarningList.styleUnsupported);
     }
     if (
@@ -166,10 +174,14 @@ class FlashList<T> extends React.PureComponent<
         newState.numColumns,
         nextProps
       );
-      // RLV retries to reposition the first visible item on layout provider change.
-      // It's not required in our case so we're disabling it
-      newState.layoutProvider.shouldRefreshWithAnchoring = false;
     }
+
+    // RLV retries to reposition the first visible item on layout provider change.
+    // It's not required in our case so we're disabling it
+    newState.layoutProvider.shouldRefreshWithAnchoring = Boolean(
+      !prevState.layoutProvider?.hasExpired
+    );
+
     if (nextProps.data !== prevState.data) {
       newState.data = nextProps.data;
       newState.dataProvider = prevState.dataProvider.cloneWithRows(
@@ -280,8 +292,9 @@ class FlashList<T> extends React.PureComponent<
   componentWillUnmount() {
     this.viewabilityManager.dispose();
     this.clearPostLoadTimeout();
-    if (this.sizeWarningTimeoutId !== undefined) {
-      clearTimeout(this.sizeWarningTimeoutId);
+    this.clearRenderSizeWarningTimeout();
+    if (this.itemSizeWarningTimeoutId !== undefined) {
+      clearTimeout(this.itemSizeWarningTimeoutId);
     }
   }
 
@@ -321,7 +334,7 @@ class FlashList<T> extends React.PureComponent<
         style={
           this.props.horizontal
             ? { ...this.getTransform() }
-            : { flex: 1, ...this.getTransform() }
+            : { flex: 1, overflow: "hidden", ...this.getTransform() }
         }
       >
         <ProgressiveListView
@@ -419,8 +432,11 @@ class FlashList<T> extends React.PureComponent<
 
   private validateListSize(event: LayoutChangeEvent) {
     const { height, width } = event.nativeEvent.layout;
+    this.clearRenderSizeWarningTimeout();
     if (Math.floor(height) <= 1 || Math.floor(width) <= 1) {
-      console.warn(WarningList.unusableRenderedSize);
+      this.renderedSizeWarningTimeoutId = setTimeout(() => {
+        console.warn(WarningList.unusableRenderedSize);
+      }, 1000);
     }
   }
 
@@ -651,6 +667,7 @@ class FlashList<T> extends React.PureComponent<
   private getCellContainerChild = (index: number) => {
     return (
       <>
+        {this.props.inverted ? this.separator(index) : null}
         <View
           style={{
             flexDirection:
@@ -661,7 +678,7 @@ class FlashList<T> extends React.PureComponent<
         >
           {this.rowRendererWithIndex(index, RenderTargetOptions.Cell)}
         </View>
-        {this.separator(index)}
+        {this.props.inverted ? null : this.separator(index)}
       </>
     );
   };
@@ -713,7 +730,7 @@ class FlashList<T> extends React.PureComponent<
 
   private runAfterOnLoad = () => {
     if (this.props.estimatedItemSize === undefined) {
-      this.sizeWarningTimeoutId = setTimeout(() => {
+      this.itemSizeWarningTimeoutId = setTimeout(() => {
         const averageItemSize = Math.floor(
           this.state.layoutProvider.averageItemSize
         );
@@ -738,6 +755,13 @@ class FlashList<T> extends React.PureComponent<
     if (this.postLoadTimeoutId !== undefined) {
       clearTimeout(this.postLoadTimeoutId);
       this.postLoadTimeoutId = undefined;
+    }
+  };
+
+  private clearRenderSizeWarningTimeout = () => {
+    if (this.renderedSizeWarningTimeoutId !== undefined) {
+      clearTimeout(this.renderedSizeWarningTimeoutId);
+      this.renderedSizeWarningTimeoutId = undefined;
     }
   };
 
@@ -830,6 +854,13 @@ class FlashList<T> extends React.PureComponent<
    */
   public get firstItemOffset() {
     return this.distanceFromWindow;
+  }
+
+  /**
+   * FlashList will skip using layout cache on next update. Can be useful when you know the layout will change drastically for example, orientation change when used as a carousel.
+   */
+  public clearLayoutCacheOnUpdate() {
+    this.state.layoutProvider.markExpired();
   }
 
   /**
