@@ -1,6 +1,6 @@
 name: FlashList
 
 up:
-  - ruby: 3.0.3
+  - ruby
   - bundler
   - yarn_install
