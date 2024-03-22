@@ -8,67 +8,84 @@ on:
 
 env:
   RUBY_VERSION: 3.0.3
-  NODE_VERSION: 16.13.0
+  NODE_VERSION: 20.4.0
 
 jobs:
   build-ts:
     name: "Build Typescript"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
       - run: |
           yarn
           yarn build
+
   build-fixture-ts:
     name: "Build fixture Typescript"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
       - run: |
           yarn
-          cd fixture
+          cd fixture/react-native
           yarn
           yarn build
+
   lint-ts:
     name: "Lint Typescript"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: |
           yarn
           yarn lint
+
   test-ts:
     name: "Test Typescript"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
       - run: |
           yarn
           yarn test --forceExit
+
   metro-ios:
     name: "Metro bundling for iOS"
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
       - run: |
           yarn
           yarn build
-          cd fixture
+          cd fixture/react-native
           yarn
           mkdir -p /tmp/artifacts
           yarn react-native bundle --entry-file index.js --platform ios --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
@@ -77,88 +94,115 @@ jobs:
         with:
           name: ios-bundle-artifacts
           path: /tmp/artifacts
+
   metro-android:
     name: "Metro bundling for Android"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
       - run: |
-          cd fixture
           yarn
-          cd android
+          yarn build
+          cd fixture/react-native
+          yarn
           mkdir -p /tmp/artifacts
-          ./gradlew bundleDebugJsAndAssets
+          yarn react-native bundle --entry-file index.js --platform android --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
       - name: Archive Android bundle artifacts
         uses: actions/upload-artifact@v3
         with:
           name: android-bundle-artifacts
           path: /tmp/artifacts
+
   build-ios:
     name: "Build iOS"
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: ruby setup
+          cache: "yarn"
+      - name: Ruby setup
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-      - run: |
-          bundle install
-          cd fixture
+      - name: Install dependencies
+        run: |
+          yarn
+          yarn build
+          cd fixture/react-native
           yarn
           cd ios
           bundle exec pod install
+      - name: Build iOS
+        run: |
           mkdir -p /tmp/artifacts
-          set -o pipefail && env NSUnbufferedIO=YES xcodebuild clean build -scheme FlatListPro -workspace FlatListPro.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' | tee /tmp/artifacts/ios_build.log
+          cd fixture/react-native/ios
+          set -o pipefail && env NSUnbufferedIO=YES xcodebuild clean build -scheme FlatListPro -workspace FlatListPro.xcworkspace -destination 'generic/platform=iOS Simulator' | tee /tmp/artifacts/ios_build.log
+
   build-android:
     name: "Build Android"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: ruby setup
+          cache: "yarn"
+      - name: Ruby setup
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-      - run: |
-          bundle install
-          cd fixture
+      - name: Install dependencies
+        run: |
+          cd fixture/react-native
           yarn
-          cd android
+      - name: Build Android
+        run: |
+          cd fixture/react-native/android
           ./gradlew assembleDebug
+
   run-e2e-ios:
     name: "Run iOS e2e tests"
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Repository checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
       - name: ruby setup
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-      - run: |
-          bundle install
+      - name: Install dependencies
+        run: |
           yarn
           brew tap wix/brew
           brew install applesimutils
           yarn build
-          cd fixture
+          cd fixture/react-native
           yarn
           cd ios
           bundle exec pod install
+      - name: Build and Run e2e tests
+        run: |
+          cd fixture/react-native
           yarn e2e:build:ios
           yarn e2e:test:ios
       - name: Archive iOS e2e artifacts

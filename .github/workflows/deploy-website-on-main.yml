@@ -6,7 +6,7 @@ on:
 
 env:
   RUBY_VERSION: 3.0.3
-  NODE_VERSION: 16.13.0
+  NODE_VERSION: 20.4.0
 
 jobs:
   release:
@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo gem install bundler
           cd website
-          bundle install
+          sudo bundle install
       - name: Publish website and docs
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git

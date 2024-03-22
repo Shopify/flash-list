@@ -60,7 +60,7 @@ describe("ContentContainerUtils", () => {
       paddingRight: 0,
     });
     expect(
-      updateContentStyle({}, { paddingLeft: "1", paddingVertical: "1" })
+      updateContentStyle({}, { paddingLeft: 1, paddingVertical: 1 })
     ).toEqual({
       paddingTop: 1,
       paddingBottom: 1,
