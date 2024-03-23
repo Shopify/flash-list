@@ -86,6 +86,6 @@
   ],
   "dependencies": {
     "recyclerlistview": "4.2.0",
-    "tslib": "2.4.0"
+    "tslib": "2.6.2"
   }
 }
