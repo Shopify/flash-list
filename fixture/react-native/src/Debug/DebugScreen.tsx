@@ -34,7 +34,10 @@ const DebugScreen = () => {
       ListFooterComponent={
         <View>
           <Text>Hermes {global.HermesInternal ? "Enabled" : "Disabled"}</Text>
-          <Text>New architecture: {global?.nativeFabricUIManager ? "Enabled" : "Disabled"}</Text>
+          <Text>
+            New architecture:{" "}
+            {global?.nativeFabricUIManager ? "Enabled" : "Disabled"}
+          </Text>
         </View>
       }
     />
