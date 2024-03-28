@@ -9,6 +9,7 @@ ios/*.xcodeproj/*
 !ios/*.xcodeproj/xcshareddata/
 !ios/*.xcworkspace/contents.xcworkspacedata
 ios/**/xcshareddata/WorkspaceSettings.xcsettings
+ios/.xcode.env.local
 
 # Android
 
