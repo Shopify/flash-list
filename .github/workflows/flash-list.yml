@@ -142,6 +142,7 @@ jobs:
           cd fixture/react-native
           yarn
           cd ios
+          gem install bundler:2.4.8
           bundle install
           bundle exec pod install
       - name: Build iOS
@@ -205,6 +206,7 @@ jobs:
           cd fixture/react-native
           yarn
           cd ios
+          gem install bundler:2.4.8
           bundle install
           bundle exec pod install
       - name: Build and Run e2e tests
