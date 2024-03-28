@@ -3,12 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --active-arch-only",
     "ios": "react-native run-ios",
     "pod-install": "npx pod-install",
-    "fabric:pod-install": "RCT_NEW_ARCH_ENABLED=1 npx pod-install",
-    "fabric:ios": "yarn fabric:pod-install && react-native run-ios",
-    "fabric:android": "react-native run-ios",
     "start": "react-native start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "build": "tsc -b",
@@ -18,7 +15,7 @@
     "e2e:build:android": "detox build -c android.emu.release"
   },
   "dependencies": {
-    "@react-navigation/native": "^6.0.10",
+    "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
     "@shopify/flash-list": "link:../../",
     "react": "18.2.0",
@@ -43,7 +40,6 @@
     "detox": "^20.20.0",
     "glob": "^10.3.12",
     "jest": "^29.2.1",
-    "prettier": "2.8.8",
     "patch-package": "^8.0.0",
     "pixelmatch": "^5.3.0",
     "pngjs": "^7.0.0",
