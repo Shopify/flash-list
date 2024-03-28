@@ -9,7 +9,12 @@
 #import <react/renderer/components/rnflashlist/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
+
+#if __has_include(<RNFlashList/RNFlashList-Swift.h>)
 #import <RNFlashList/RNFlashList-Swift.h>
+#else
+#import "RNFlashList-Swift.h"
+#endif
 
 using namespace facebook::react;
 
