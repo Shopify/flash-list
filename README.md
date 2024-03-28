@@ -62,3 +62,17 @@ To avoid common pitfalls, you can also follow these steps for migrating from `Fl
 ## App / Playground
 
 The [fixture](https://github.com/Shopify/flash-list/tree/main/fixture) is an example app showing how to use the library.
+
+To get started clone the repository and run `yarn` in the root directory
+
+#### If using expo:
+
+`yarn fixture:expo:up && yarn fixture:expo:start`
+
+#### If using bare react-native:
+
+`yarn fixture:rn:up && yarn fixture:rn:ios` or `yarn fixture:rn:android`
+
+#### For the new architecture:
+
+`yarn fixture:rn:fabric:up && fixture:rn:ios:fabric` or `yarn fixture:rn:android:fabric`
