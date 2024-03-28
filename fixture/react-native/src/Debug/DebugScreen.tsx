@@ -6,6 +6,9 @@ import { TextInput } from "react-native-gesture-handler";
 import { DebugContext, DebugContextInterface } from "./DebugContext";
 import { getDebugItems, DebugItem, DebugOptionType } from "./DebugOptions";
 
+// Fix the global typescript issue:
+declare const global: { HermesInternal: any; nativeFabricUIManager: any };
+
 const DebugScreen = () => {
   const debugContext = useContext<DebugContextInterface>(DebugContext);
   const debugItems = getDebugItems(debugContext);
@@ -28,6 +31,12 @@ const DebugScreen = () => {
       estimatedItemSize={44}
       ItemSeparatorComponent={Divider}
       data={debugItems}
+      ListFooterComponent={
+        <View>
+          <Text>Hermes {global.HermesInternal ? "Enabled" : "Disabled"}</Text>
+          <Text>New architecture: {global?.nativeFabricUIManager ? "Enabled" : "Disabled"}</Text>
+        </View>
+      }
     />
   );
 };
