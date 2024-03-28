@@ -627,6 +627,9 @@ class FlashList<T> extends React.PureComponent<
     const PassedComponent = component;
     return (
       (React.isValidElement(PassedComponent) && PassedComponent) ||
+      // TODO: Needs refactor to avoid ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       (PassedComponent && <PassedComponent />) ||
       null
     );

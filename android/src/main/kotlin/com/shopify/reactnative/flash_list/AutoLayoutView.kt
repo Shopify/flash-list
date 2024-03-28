@@ -2,8 +2,6 @@ package com.shopify.reactnative.flash_list
 
 import android.content.Context
 import android.graphics.Canvas
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.HorizontalScrollView
@@ -11,9 +9,11 @@ import android.widget.ScrollView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
-import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.facebook.react.views.view.ReactViewGroup
-
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.events.Event
+import com.facebook.react.uimanager.events.EventDispatcher
+import com.shopify.reactnative.flash_list.events.OnBlankAreaEvent
 
 /** Container for all RecyclerListView children. This will automatically remove all gaps and overlaps for GridLayouts with flexible spans.
  * Note: This cannot work for masonry layouts i.e, pinterest like layout */
@@ -136,15 +136,12 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         return null
     }
 
-
-    /** TODO: Check migration to Fabric */
     private fun emitBlankAreaEvent() {
-        val event: WritableMap = Arguments.createMap()
-        event.putDouble("offsetStart", alShadow.blankOffsetAtStart / pixelDensity)
-        event.putDouble("offsetEnd", alShadow.blankOffsetAtEnd / pixelDensity)
-        val reactContext = context as ReactContext
-        reactContext
-                .getJSModule(RCTEventEmitter::class.java)
-                .receiveEvent(id, "onBlankAreaEvent", event)
+        val eventDispatcher: EventDispatcher? =
+            UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+        if(eventDispatcher != null) {
+            val surfaceId = UIManagerHelper.getSurfaceId(context as ReactContext)
+            eventDispatcher.dispatchEvent(OnBlankAreaEvent(surfaceId, id, alShadow.blankOffsetAtStart / pixelDensity, alShadow.blankOffsetAtEnd / pixelDensity))
+        }
     }
 }

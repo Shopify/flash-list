@@ -35,10 +35,13 @@
     "lint:fix": "yarn eslint . --ext .ts,.tsx --fix",
     "type-check": "yarn tsc --pretty --noEmit",
     "build": "tsc -b",
-    "fixture:rn:up": "cd fixture/react-native && yarn && cd ios && bundle exec pod install && cd ../../../",
+    "fixture:rn:up": "cd fixture/react-native && yarn && sed -i '' 's/newArchEnabled=true/newArchEnabled=false/g' ./android/gradle.properties && cd ios && bundle exec pod install && cd ../../../",
+    "fixture:rn:fabric:up": "cd fixture/react-native && yarn && sed -i '' 's/newArchEnabled=false/newArchEnabled=true/g' ./android/gradle.properties && cd ios && RCT_NEW_ARCH_ENABLED=1 USE_FRAMEWORKS=static bundle exec pod install && cd ../../../",
     "fixture:expo:up": "cd fixture/expo && yarn && cd ../../",
-    "fixture:rn:android": "cd fixture/react-native && yarn react-native run-android && yarn build --watch",
+    "fixture:rn:android": "cd fixture/react-native && yarn react-native run-android --active-arch-only && yarn build --watch",
+    "fixture:rn:android:fabric": "cd fixture/react-native && yarn react-native run-android --active-arch-only && yarn build --watch",
     "fixture:rn:ios": "cd fixture/react-native && yarn react-native run-ios && yarn build --watch",
+    "fixture:rn:ios:fabric": "cd fixture/react-native && yarn react-native run-ios && yarn build --watch",
     "ra": "yarn fixture:rn:android",
     "ri": "yarn fixture:rn:ios",
     "fixture:expo:start": "cd fixture/expo && yarn start",
@@ -61,6 +64,7 @@
     "@babel/runtime": "^7.18.3",
     "@quilted/react-testing": "0.5.27",
     "@react-native-community/eslint-config": "^3.0.3",
+    "@react-native/eslint-config": "^0.73.2",
     "@shopify/eslint-plugin": "^41.3.1",
     "@types/jest": "^29.5.10",
     "@types/react": "^18.0.24",
@@ -87,5 +91,11 @@
   "dependencies": {
     "recyclerlistview": "4.2.0",
     "tslib": "2.4.0"
+  },
+  "react-native": "src/index.ts",
+  "codegenConfig": {
+    "name": "rnflashlist",
+    "type": "components",
+    "jsSrcsDir": "./src/fabric"
   }
 }

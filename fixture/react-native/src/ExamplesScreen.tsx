@@ -57,7 +57,7 @@ export const ExamplesScreen = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <FlatList
+      <FlatList<ExampleItem>
         testID="ExamplesFlatList"
         keyExtractor={(item) => item.destination}
         data={data}
@@ -65,6 +65,8 @@ export const ExamplesScreen = () => {
           <Pressable
             style={styles.row}
             onPress={() => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               navigate(item.destination);
             }}
             testID={item.title}
