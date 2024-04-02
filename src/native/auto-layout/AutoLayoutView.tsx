@@ -28,7 +28,9 @@ export interface AutoLayoutViewProps {
   children?: ReactNode;
   onBlankAreaEvent?: BlankAreaEventHandler;
   onLayout?: (event: LayoutChangeEvent) => void;
+  innerRef?: any;
   disableAutoLayout?: boolean;
+  preservedIndex?: number;
 }
 
 class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
@@ -58,11 +60,17 @@ class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
     return (
       <AutoLayoutViewNativeComponent
         {...this.props}
+        ref={this.props.innerRef}
         onBlankAreaEvent={this.onBlankAreaEventCallback}
         enableInstrumentation={
           listeners.length !== 0 || Boolean(this.props.onBlankAreaEvent)
         }
-        disableAutoLayout={this.props.disableAutoLayout}
+        disableAutoLayout={
+          this.props.disableAutoLayout ||
+          (this.props.preservedIndex !== undefined &&
+            this.props.preservedIndex > -1)
+        }
+        preservedIndex={this.props.preservedIndex}
       >
         {this.props.children}
       </AutoLayoutViewNativeComponent>
