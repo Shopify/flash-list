@@ -17,17 +17,56 @@ class AutoLayoutShadow {
 
     /** Checks for overlaps or gaps between adjacent items and then applies a correction (Only Grid layouts with varying spans)
      * Performance: RecyclerListView renders very small number of views and this is not going to trigger multiple layouts on Android side. Not expecting any major perf issue. */
-    fun clearGapsAndOverlaps(sortedItems: Array<CellContainer>) {
+    fun clearGapsAndOverlaps(preservedIndex: Int, sortedItems: Array<CellContainer>) {
         var maxBound = 0
         var minBound = Int.MAX_VALUE
         var maxBoundNeighbour = 0
         lastMaxBoundOverall = 0
-        for (i in 0 until sortedItems.size - 1) {
+
+        var preservedOffset = 0
+        if (preservedIndex > -1) {
+            if (preservedIndex <= sortedItems[0].index) {
+                preservedOffset = 0
+            } else if (preservedIndex >= sortedItems[sortedItems.size - 1].index) {
+                preservedOffset = sortedItems.size - 1
+            } else {
+                for (i in 1 until sortedItems.size - 1) {
+                    if (sortedItems[i].index == preservedIndex) {
+                        preservedOffset = i
+                        break
+                    }
+                }
+            }
+        }
+
+        if (preservedOffset > 0) {
+            for (i in preservedOffset downTo 1) {
+                val cell = sortedItems[i]
+                val neighbour = sortedItems[i - 1]
+
+                // Only apply correction if the next cell is consecutive.
+                val isNeighbourConsecutive = cell.index == neighbour.index + 1
+
+                if (isNeighbourConsecutive) {
+                    neighbour.top = cell.top - neighbour.height
+                    neighbour.bottom = cell.top
+                }
+            }
+            // this implementation essentially ignores visibility; this will cause onBlankAreaEvent of preserveVisiblePosition
+            // to be inconsistent with flash list without preserveVisiblePosition
+            minBound = sortedItems[0].top
+            maxBoundNeighbour = sortedItems[preservedOffset].bottom
+
+            lastMaxBoundOverall = kotlin.math.max(lastMaxBoundOverall, sortedItems[0].bottom)
+            lastMaxBoundOverall = kotlin.math.max(lastMaxBoundOverall, sortedItems[preservedOffset].bottom)
+        }
+
+        for (i in preservedOffset until sortedItems.size - 1) {
             val cell = sortedItems[i]
             val neighbour = sortedItems[i + 1]
             // Only apply correction if the next cell is consecutive.
             val isNeighbourConsecutive = neighbour.index == cell.index + 1
-            if (isWithinBounds(cell)) {
+            if ((preservedIndex > -1) || isWithinBounds(cell)) {
                 if (!horizontal) {
                     maxBound = kotlin.math.max(maxBound, cell.bottom);
                     minBound = kotlin.math.min(minBound, cell.top);
@@ -47,7 +86,7 @@ class AutoLayoutShadow {
                             neighbour.top = maxBound
                         }
                     }
-                    if (isWithinBounds(neighbour)) {
+                    if ((preservedIndex > -1) || isWithinBounds(neighbour)) {
                         maxBoundNeighbour = kotlin.math.max(maxBound, neighbour.bottom)
                     }
                 } else {
@@ -69,7 +108,7 @@ class AutoLayoutShadow {
                             neighbour.left = maxBound
                         }
                     }
-                    if (isWithinBounds(neighbour)) {
+                    if ((preservedIndex > -1) || isWithinBounds(neighbour)) {
                         maxBoundNeighbour = kotlin.math.max(maxBound, neighbour.right)
                     }
                 }

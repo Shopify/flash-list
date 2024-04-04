@@ -21,6 +21,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     val alShadow = AutoLayoutShadow()
     var enableInstrumentation = false
     var disableAutoLayout = false
+    var preservedIndex = 0
 
     var pixelDensity = 1.0;
 
@@ -55,7 +56,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     /** Sorts views by index and then invokes clearGaps which does the correction.
      * Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.*/
     private fun fixLayout() {
-        if (childCount > 1 && !disableAutoLayout) {
+        if (childCount > 1 && !(disableAutoLayout && preservedIndex == -1)) {
             val positionSortedViews: Array<CellContainer> = Array(childCount) {
                 val child = getChildAt(it)
                 if (child is CellContainer) {
@@ -66,14 +67,14 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
             }
             positionSortedViews.sortBy { it.index }
             alShadow.offsetFromStart = if (alShadow.horizontal) left else top
-            alShadow.clearGapsAndOverlaps(positionSortedViews)
+            alShadow.clearGapsAndOverlaps(preservedIndex, positionSortedViews)
         }
     }
 
     /** Fixes footer position along with rest of the items */
     private fun fixFooter() {
         val parentScrollView = getParentScrollView()
-        if (disableAutoLayout || parentScrollView == null) {
+        if ((disableAutoLayout && preservedIndex == -1) || parentScrollView == null) {
             return
         }
         val isAutoLayoutEndVisible = if (alShadow.horizontal) right <= parentScrollView.width else bottom <= parentScrollView.height

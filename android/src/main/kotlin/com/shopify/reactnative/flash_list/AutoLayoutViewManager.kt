@@ -43,6 +43,11 @@ class AutoLayoutViewManager: ReactViewManager() {
         view.disableAutoLayout = disableAutoLayout
     }
 
+    @ReactProp(name = "preservedIndex")
+    fun setPreservedIndex(view: AutoLayoutView, preservedIndex: Int) {
+        view.preservedIndex = preservedIndex
+    }
+
     @ReactProp(name = "scrollOffset")
     fun setScrollOffset(view: AutoLayoutView, scrollOffset: Double) {
         view.alShadow.scrollOffset = convertToPixelLayout(scrollOffset, view.pixelDensity)

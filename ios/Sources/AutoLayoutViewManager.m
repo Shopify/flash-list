@@ -9,6 +9,7 @@ RCT_EXPORT_VIEW_PROPERTY(windowSize, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(renderAheadOffset, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(enableInstrumentation, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableAutoLayout, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(preservedIndex, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(onBlankAreaEvent, RCTDirectEventBlock)
 
 @end

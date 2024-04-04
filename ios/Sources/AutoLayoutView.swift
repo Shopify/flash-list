@@ -32,12 +32,17 @@ import UIKit
         self.disableAutoLayout = disableAutoLayout
     }
 
+    @objc func setPreservedIndex(_ preservedIndex: Int) {
+        self.preservedIndex = preservedIndex
+    }
+
     private var horizontal = false
     private var scrollOffset: CGFloat = 0
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
     private var enableInstrumentation = false
     private var disableAutoLayout = false
+    private var preservedIndex = -1
 
     /// Tracks where the last pixel is drawn in the overall
     private var lastMaxBoundOverall: CGFloat = 0
@@ -88,7 +93,7 @@ import UIKit
             subviews.count > 1,
             // Fixing layout during animation can interfere with it.
             layer.animationKeys()?.isEmpty ?? true,
-            !disableAutoLayout
+            !(disableAutoLayout && preservedIndex == -1)
         else { return }
         let cellContainers = subviews
             .compactMap { subview -> CellContainer? in
@@ -112,7 +117,48 @@ import UIKit
         var maxBoundNextCell: CGFloat = 0
         let correctedScrollOffset = scrollOffset - (horizontal ? frame.minX : frame.minY)
         lastMaxBoundOverall = 0
-        cellContainers.indices.dropLast().forEach { index in
+
+        var preservedOffset: Int = 0
+        if preservedIndex > -1 {
+            if preservedIndex <= cellContainers[0].index {
+                preservedOffset = 0
+            }
+            else if preservedIndex >= cellContainers[cellContainers.count - 1].index {
+                preservedOffset = cellContainers.count - 1
+            }
+            else {
+                for index in 1..<(cellContainers.count - 1) {
+                    if cellContainers[index].index == preservedIndex {
+                        preservedOffset = index
+                        break
+                    }
+                }
+            }
+        }
+
+        if preservedOffset > 0 {
+            for index in (1..<preservedOffset + 1).reversed() {
+                let cellContainer = cellContainers[index]
+                let cellTop = cellContainer.frame.minY
+
+                let nextCell = cellContainers[index - 1]
+
+                // Only apply correction if the next cell is consecutive.
+                let isNextCellConsecutive = cellContainer.index == nextCell.index + 1
+
+                if isNextCellConsecutive {
+                    nextCell.frame.origin.y = cellTop - nextCell.frame.height
+                }
+            }
+            // this implementation essentially ignores visibility; this will cause onBlankAreaEvent of preserveVisiblePosition
+            // to be inconsistent with flash list without preserveVisiblePosition
+            minBound = cellContainers[0].frame.minY
+            maxBoundNextCell = cellContainers[preservedOffset].frame.maxY
+
+            updateLastMaxBoundOverall(currentCell: cellContainers[0], nextCell: cellContainers[preservedOffset])
+        }
+
+        for index in preservedOffset..<(cellContainers.count - 1) {
             let cellContainer = cellContainers[index]
             let cellTop = cellContainer.frame.minY
             let cellBottom = cellContainer.frame.maxY
@@ -127,6 +173,7 @@ import UIKit
 			let isNextCellConsecutive = nextCell.index == cellContainer.index + 1
 
             guard
+                (preservedIndex > -1) ||
                 isWithinBounds(
                     cellContainer,
                     scrollOffset: correctedScrollOffset,
@@ -136,15 +183,17 @@ import UIKit
                 )
             else {
                 updateLastMaxBoundOverall(currentCell: cellContainer, nextCell: nextCell)
-                return
+                continue
             }
-            let isNextCellVisible = isWithinBounds(
-                nextCell,
-                scrollOffset: correctedScrollOffset,
-                renderAheadOffset: renderAheadOffset,
-                windowSize: windowSize,
-                isHorizontal: horizontal
-            )
+            let isNextCellVisible =
+                (preservedIndex > -1) ||
+                isWithinBounds(
+                    nextCell,
+                    scrollOffset: correctedScrollOffset,
+                    renderAheadOffset: renderAheadOffset,
+                    windowSize: windowSize,
+                    isHorizontal: horizontal
+                )
 
             if horizontal {
                 maxBound = max(maxBound, cellRight)
@@ -236,7 +285,7 @@ import UIKit
 
     /// Fixes footer position along with rest of the items
     private func fixFooter() {
-        guard !disableAutoLayout, let parentScrollView = getScrollView() else {
+        guard !(disableAutoLayout && preservedIndex == -1), let parentScrollView = getScrollView() else {
             return
         }
 
