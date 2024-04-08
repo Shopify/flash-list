@@ -114,6 +114,9 @@ const MasonryFlashListComponent = React.forwardRef(
 
     const totalColumnFlex = useTotalColumnFlex(dataSet, props);
 
+    const propsRef = useRef(props);
+    propsRef.current = props;
+
     const onScrollRef = useRef<OnScrollCallback[]>([]);
     const emptyScrollEvent = useRef(getEmptyScrollEvent())
       .current as NativeSyntheticEvent<MasonryFlashListScrollEvent>;
@@ -135,7 +138,7 @@ const MasonryFlashListComponent = React.forwardRef(
           onScrollCallback?.(emptyScrollEvent);
         });
         if (!scrollEvent.nativeEvent.doNotPropagate) {
-          props.onScroll?.(scrollEvent);
+          propsRef.current.onScroll?.(scrollEvent);
         }
       }
     ).current;
@@ -151,7 +154,7 @@ const MasonryFlashListComponent = React.forwardRef(
         onScrollProxy?.(emptyScrollEvent);
         emptyScrollEvent.nativeEvent.doNotPropagate = false;
       }, 32);
-      props.onLoad?.(args);
+      propsRef.current.onLoad?.(args);
     }).current;
 
     const [parentFlashList, getFlashList] =
