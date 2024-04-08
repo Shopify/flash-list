@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.10",
-    "@react-navigation/stack": "^6.2.1",
+    "@react-navigation/stack": "^6.3.29",
     "@shopify/flash-list": "link:../../",
     "react": "18.2.0",
     "react-native": "0.72.10",
