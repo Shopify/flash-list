@@ -37,6 +37,7 @@ jobs:
               pullRequestNumber: context.issue.number,
             }
             const response = await github.graphql(getPullRequestIdQuery, repoInfo)
+            console.log(response)
             await github.rest.pulls.createReview({
               pull_number: context.issue.number,
               owner: context.repo.owner,
