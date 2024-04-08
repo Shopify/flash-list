@@ -1,1 +1,1 @@
-expo install @shopify/flash-list
+npx expo install @shopify/flash-list

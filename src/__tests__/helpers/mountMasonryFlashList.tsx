@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "react-native";
 import "@quilted/react-testing/matchers";
-import { mount, Root } from "@quilted/react-testing";
+import { render, Root } from "@quilted/react-testing";
 
 import { ListRenderItem } from "../../FlashListProps";
 import {
@@ -44,7 +44,7 @@ export const mountMasonryFlashList = (
   props?: MockMasonryFlashListProps,
   ref?: React.RefObject<MasonryFlashListRef<string>>
 ) => {
-  const flashList = mount(renderMasonryFlashList(props, ref)) as Omit<
+  const flashList = render(renderMasonryFlashList(props, ref)) as Omit<
     Root<MasonryFlashListProps<string>>,
     "instance"
   > & {

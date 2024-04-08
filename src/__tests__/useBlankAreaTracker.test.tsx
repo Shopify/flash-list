@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { mount } from "@quilted/react-testing";
+import { render } from "@quilted/react-testing";
 
 import {
   BlankAreaTrackerConfig,
@@ -44,7 +44,7 @@ const mountBlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
   const flashListRef: React.RefObject<FlashList<any>> = {
     current: null,
   };
-  const blankTrackingFlashList = mount(
+  const blankTrackingFlashList = render(
     <BlankTrackingFlashList {...props} instance={flashListRef} />
   );
   return {
