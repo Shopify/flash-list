@@ -125,26 +125,29 @@ import UIKit
 
 			// Only apply correction if the next cell is consecutive.
 			let isNextCellConsecutive = nextCell.index == cellContainer.index + 1
+			
+			let isCellVisible = isWithinBounds(
+				cellContainer,
+				scrollOffset: correctedScrollOffset,
+				renderAheadOffset: renderAheadOffset,
+				windowSize: windowSize,
+				isHorizontal: horizontal
+			)
+			let isNextCellVisible = isWithinBounds(
+				nextCell,
+				scrollOffset: correctedScrollOffset,
+				renderAheadOffset: renderAheadOffset,
+				windowSize: windowSize,
+				isHorizontal: horizontal
+			)
 
             guard
-                isWithinBounds(
-                    cellContainer,
-                    scrollOffset: correctedScrollOffset,
-                    renderAheadOffset: renderAheadOffset,
-                    windowSize: windowSize,
-                    isHorizontal: horizontal
-                )
+                isCellVisible || isNextCellVisible
             else {
                 updateLastMaxBoundOverall(currentCell: cellContainer, nextCell: nextCell)
                 return
             }
-            let isNextCellVisible = isWithinBounds(
-                nextCell,
-                scrollOffset: correctedScrollOffset,
-                renderAheadOffset: renderAheadOffset,
-                windowSize: windowSize,
-                isHorizontal: horizontal
-            )
+           
 
             if horizontal {
                 maxBound = max(maxBound, cellRight)
