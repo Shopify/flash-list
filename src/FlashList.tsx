@@ -806,11 +806,15 @@ class FlashList<T> extends React.PureComponent<
           0,
           itemOffset - (params.viewPosition ?? 0) * (fixedDimension - itemSize)
         ) - (params.viewOffset ?? 0);
-      this.rlvRef?.scrollToOffset(
+      // `as any` to make use relativeIndex parameter introduced by preserveVisiblePosition patches when possible
+      (this.rlvRef?.scrollToOffset as any)(
         scrollOffset,
         scrollOffset,
         Boolean(params.animated),
-        true
+        true,
+        // the calculated offset may be wrong if the height estimate of the item is wrong. if viewPosition is 1 after rounding,
+        // we align it by the following item instead, which is not affected by the height estimate of the item in question
+        params.index + (params.viewPosition ?? 0 >= 0.5 ? 1 : 0)
       );
     }
   }
