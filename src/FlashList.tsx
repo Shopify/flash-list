@@ -365,6 +365,9 @@ class FlashList<T> extends React.PureComponent<
             ...this.props.overrideProps,
           }}
           forceNonDeterministicRendering
+          nonDeterministicMode={
+            this.props.preserveVisiblePosition ? "autolayout" : "normal"
+          }
           renderItemContainer={this.itemContainer}
           renderContentContainer={this.container}
           onEndReached={this.onEndReached}

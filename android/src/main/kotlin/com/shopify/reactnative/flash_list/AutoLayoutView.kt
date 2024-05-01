@@ -10,6 +10,7 @@ import android.widget.HorizontalScrollView
 import android.widget.ScrollView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.facebook.react.views.view.ReactViewGroup
@@ -20,8 +21,10 @@ import com.facebook.react.views.view.ReactViewGroup
 class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     val alShadow = AutoLayoutShadow()
     var enableInstrumentation = false
+    var enableAutoLayoutInfo = false
     var disableAutoLayout = false
-    var preservedIndex = 0
+    var autoLayoutId = -1
+    var preservedIndex = -1
 
     var pixelDensity = 1.0;
 
@@ -56,7 +59,7 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     /** Sorts views by index and then invokes clearGaps which does the correction.
      * Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.*/
     private fun fixLayout() {
-        if (childCount > 1 && !(disableAutoLayout && preservedIndex == -1)) {
+        if (childCount > 1 && !disableAutoLayout) {
             val positionSortedViews: Array<CellContainer> = Array(childCount) {
                 val child = getChildAt(it)
                 if (child is CellContainer) {
@@ -68,13 +71,17 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
             positionSortedViews.sortBy { it.index }
             alShadow.offsetFromStart = if (alShadow.horizontal) left else top
             alShadow.clearGapsAndOverlaps(preservedIndex, positionSortedViews)
+
+            if (enableAutoLayoutInfo) {
+                emitAutoLayout(positionSortedViews)
+            }
         }
     }
 
     /** Fixes footer position along with rest of the items */
     private fun fixFooter() {
         val parentScrollView = getParentScrollView()
-        if ((disableAutoLayout && preservedIndex == -1) || parentScrollView == null) {
+        if (disableAutoLayout || parentScrollView == null) {
             return
         }
         val isAutoLayoutEndVisible = if (alShadow.horizontal) right <= parentScrollView.width else bottom <= parentScrollView.height
@@ -147,5 +154,25 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         reactContext
                 .getJSModule(RCTEventEmitter::class.java)
                 .receiveEvent(id, "onBlankAreaEvent", event)
+    }
+    /** TODO: Check migration to Fabric */
+    private fun emitAutoLayout(sortedItems: Array<CellContainer>) {
+        val event: WritableMap = Arguments.createMap()
+        event.putInt("autoLayoutId", autoLayoutId)
+
+        val layoutsArray: WritableArray = Arguments.createArray()
+        for (cell in sortedItems) {
+            val cellMap: WritableMap = Arguments.createMap()
+            cellMap.putInt("key", cell.index)
+            cellMap.putDouble("y", cell.top / pixelDensity)
+            cellMap.putDouble("height", cell.height / pixelDensity)
+            layoutsArray.pushMap(cellMap)
+	}
+        event.putArray("layouts", layoutsArray)
+
+        val reactContext = context as ReactContext
+        reactContext
+                .getJSModule(RCTEventEmitter::class.java)
+                .receiveEvent(id, "onAutoLayout", event)
     }
 }

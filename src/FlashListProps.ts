@@ -332,4 +332,9 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * `false` again.
    */
   disableAutoLayout?: boolean;
+
+  preserveVisiblePosition?: boolean;
+  edgeVisibleThreshold?: number;
+  startEdgePreserved?: boolean;
+  shiftPreservedLayouts?: boolean;
 }

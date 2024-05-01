@@ -8,6 +8,9 @@ import UIKit
     @objc(onBlankAreaEvent)
     var onBlankAreaEvent: RCTDirectEventBlock?
 
+    @objc(onAutoLayout)
+    var onAutoLayout: RCTDirectEventBlock?
+
     @objc func setHorizontal(_ horizontal: Bool) {
         self.horizontal = horizontal
     }
@@ -28,12 +31,22 @@ import UIKit
         self.enableInstrumentation = enableInstrumentation
     }
 
+    @objc func setEnableAutoLayoutInfo(_ enableAutoLayoutInfo: Bool) {
+        self.enableAutoLayoutInfo = enableAutoLayoutInfo
+    }
+
     @objc func setDisableAutoLayout(_ disableAutoLayout: Bool) {
         self.disableAutoLayout = disableAutoLayout
     }
 
+    @objc func setAutoLayoutId(_ autoLayoutId: Int) {
+        self.autoLayoutId = autoLayoutId
+	setNeedsLayout()
+    }
+
     @objc func setPreservedIndex(_ preservedIndex: Int) {
         self.preservedIndex = preservedIndex
+	setNeedsLayout()
     }
 
     private var horizontal = false
@@ -41,8 +54,10 @@ import UIKit
     private var windowSize: CGFloat = 0
     private var renderAheadOffset: CGFloat = 0
     private var enableInstrumentation = false
+    private var enableAutoLayoutInfo = false
     private var disableAutoLayout = false
     private var preservedIndex = -1
+    private var autoLayoutId = -1
 
     /// Tracks where the last pixel is drawn in the overall
     private var lastMaxBoundOverall: CGFloat = 0
@@ -52,8 +67,8 @@ import UIKit
     private var lastMinBound: CGFloat = 0
 
     override func layoutSubviews() {
-        fixLayout()
         super.layoutSubviews()
+        fixLayout()
 
         guard enableInstrumentation, let scrollView = getScrollView() else { return }
 
@@ -93,7 +108,7 @@ import UIKit
             subviews.count > 1,
             // Fixing layout during animation can interfere with it.
             layer.animationKeys()?.isEmpty ?? true,
-            !(disableAutoLayout && preservedIndex == -1)
+            !disableAutoLayout
         else { return }
         let cellContainers = subviews
             .compactMap { subview -> CellContainer? in
@@ -107,6 +122,10 @@ import UIKit
             .sorted(by: { $0.index < $1.index })
         clearGaps(for: cellContainers)
         fixFooter()
+
+	if enableAutoLayoutInfo {
+            emitAutoLayout(for: cellContainers)
+	}
     }
 
     /// Checks for overlaps or gaps between adjacent items and then applies a correction.
@@ -265,6 +284,7 @@ import UIKit
     }
 
     /// It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between unused items will cause algorithm to fail.
+    /// However, when the preservedIndex is in effect, isWithinBounds should not be considered. The preserveVisiblePosition algorithm works fine regardless of bounds; conversely, if only the items within bounds are considered, since the scrollOffset here can be badly out of date, overlapped items may be shown; if items are excluded by isWithinBounds, incorrect offsets of items may also be passed in onAutoLayout events.
     func isWithinBounds(
         _ cellContainer: CellContainer,
         scrollOffset: CGFloat,
@@ -285,7 +305,7 @@ import UIKit
 
     /// Fixes footer position along with rest of the items
     private func fixFooter() {
-        guard !(disableAutoLayout && preservedIndex == -1), let parentScrollView = getScrollView() else {
+        guard !disableAutoLayout, let parentScrollView = getScrollView() else {
             return
         }
 
@@ -321,5 +341,16 @@ import UIKit
 
     private func footer() -> UIView? {
         return superview?.subviews.first(where:{($0 as? CellContainer)?.index == -1})
+    }
+
+    private func emitAutoLayout(for cellContainers: [CellContainer]) {
+	let autoRenderedLayouts: [String: Any] = [
+	    "autoLayoutId": autoLayoutId,
+	    "layouts": cellContainers.map { 
+	        [ "key": $0.index, "y": $0.frame.origin.y, "height": $0.frame.height ]
+	    },
+	] 
+
+        onAutoLayout?(autoRenderedLayouts)
     }
 }

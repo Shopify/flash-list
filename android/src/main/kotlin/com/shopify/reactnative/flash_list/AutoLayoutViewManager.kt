@@ -30,6 +30,10 @@ class AutoLayoutViewManager: ReactViewManager() {
                 "onBlankAreaEvent",
                 MapBuilder.of(
                         "registrationName", "onBlankAreaEvent")
+        ).put(
+                "onAutoLayout",
+                MapBuilder.of(
+                        "registrationName", "onAutoLayout")
         ).build();
     }
 
@@ -41,6 +45,11 @@ class AutoLayoutViewManager: ReactViewManager() {
     @ReactProp(name = "disableAutoLayout")
     fun setDisableAutoLayout(view: AutoLayoutView, disableAutoLayout: Boolean) {
         view.disableAutoLayout = disableAutoLayout
+    }
+
+    @ReactProp(name = "autoLayoutId")
+    fun setAutoLayoutId(view: AutoLayoutView, autoLayoutId: Int) {
+        view.autoLayoutId = autoLayoutId
     }
 
     @ReactProp(name = "preservedIndex")
@@ -66,6 +75,11 @@ class AutoLayoutViewManager: ReactViewManager() {
     @ReactProp(name = "enableInstrumentation")
     fun setEnableInstrumentation(view: AutoLayoutView, enableInstrumentation: Boolean) {
         view.enableInstrumentation = enableInstrumentation
+    }
+
+    @ReactProp(name = "enableAutoLayoutInfo")
+    fun setEnableAutoLayoutInfo(view: AutoLayoutView, enableAutoLayoutInfo: Boolean) {
+        view.enableAutoLayoutInfo = enableAutoLayoutInfo
     }
 
     private fun convertToPixelLayout(dp: Double, density: Double): Int {

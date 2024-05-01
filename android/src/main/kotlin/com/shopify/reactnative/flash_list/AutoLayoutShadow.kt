@@ -130,7 +130,10 @@ class AutoLayoutShadow {
     }
 
     /** It's important to avoid correcting views outside the render window. An item that isn't being recycled might still remain in the view tree. If views outside get considered then gaps between
-     * unused items will cause algorithm to fail.*/
+     * unused items will cause algorithm to fail.
+     * However, when the preservedIndex is in effect, isWithinBounds should not be considered. The preserveVisiblePosition algorithm works fine regardless of bounds; conversely, if only the items
+     * within bounds are considered, since the scrollOffset here can be badly out of date, overlapped items may be shown; if items are excluded by isWithinBounds, incorrect offsets of items may also
+     * be passed in onAutoLayout events. */
     private fun isWithinBounds(cell: CellContainer): Boolean {
         val scrollOffset = scrollOffset - offsetFromStart;
         return if (!horizontal) {
