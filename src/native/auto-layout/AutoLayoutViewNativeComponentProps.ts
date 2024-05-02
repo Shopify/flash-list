@@ -7,14 +7,14 @@ export interface OnBlankAreaEvent {
   };
 }
 export interface OnAutoLayoutEvent {
-    nativeEvent: {
-      layouts: Array<{
-          key: number,
-          height: number,
-          y: number,
-      }>;
-      autoLayoutId: number
-    };
+  nativeEvent: {
+    layouts: {
+      key: number;
+      height: number;
+      y: number;
+    }[];
+    autoLayoutId: number;
+  };
 }
 
 type OnBlankAreaEventHandler = (event: OnBlankAreaEvent) => void;
