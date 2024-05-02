@@ -85,7 +85,7 @@
     "jestSetup.js"
   ],
   "dependencies": {
-    "recyclerlistview": "4.2.0",
+    "recyclerlistview": "https://github.com/irisjae/recyclerlistview/tarball/debug-dist",
     "tslib": "2.4.0"
   }
 }
