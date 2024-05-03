@@ -41,11 +41,13 @@ import UIKit
 
     @objc func setAutoLayoutId(_ autoLayoutId: Int) {
         self.autoLayoutId = autoLayoutId
-	setNeedsLayout()
     }
 
     @objc func setPreservedIndex(_ preservedIndex: Int) {
         self.preservedIndex = preservedIndex
+    }
+
+    @objc func setRenderId(_ renderId: Int) {
 	setNeedsLayout()
     }
 

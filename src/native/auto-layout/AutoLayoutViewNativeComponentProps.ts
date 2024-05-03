@@ -29,4 +29,5 @@ export interface AutoLayoutViewNativeComponentProps {
   disableAutoLayout?: boolean;
   autoLayoutId?: number;
   preservedIndex?: number;
+  renderId?: number;
 }

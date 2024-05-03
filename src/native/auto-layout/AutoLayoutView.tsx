@@ -38,6 +38,8 @@ export interface AutoLayoutViewProps {
 }
 
 class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
+  private _renderId: number = 0x00000000;
+
   private onBlankAreaEventCallback = ({
     nativeEvent,
   }: OnBlankAreaEvent): void => {
@@ -61,6 +63,12 @@ class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
   }
 
   render() {
+    if (!this.props.disableAutoLayout &&
+      this.props.preservedIndex !== undefined &&
+      this.props.preservedIndex > -1) {
+      this._renderId = (this._renderId + 1) & 0xFFFFFFFF;
+    }
+
     return (
       <AutoLayoutViewNativeComponent
         {...this.props}
@@ -74,6 +82,7 @@ class AutoLayoutView extends React.Component<AutoLayoutViewProps> {
         enableAutoLayoutInfo={Boolean(this.props.onAutoLayout)}
         disableAutoLayout={this.props.disableAutoLayout}
         preservedIndex={this.props.preservedIndex}
+	renderId={this._renderId}
       >
         {this.props.children}
       </AutoLayoutViewNativeComponent>
