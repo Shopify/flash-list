@@ -1,5 +1,5 @@
 {
-  "name": "@shopify/flash-list",
+  "name": "@irisjae/flash-list",
   "version": "1.6.4",
   "keywords": [
     "react-native",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Shopify/flash-list"
+    "url": "https://github.com/irisjae/flash-list"
   },
   "description": "FlashList is a more performant FlatList replacement",
   "author": "shopify",
@@ -85,7 +85,7 @@
     "jestSetup.js"
   ],
   "dependencies": {
-    "recyclerlistview": "https://github.com/irisjae/recyclerlistview/tarball/debug-dist",
+    "recyclerlistview": "@irisjae/recyclerlistview",
     "tslib": "2.4.0"
   }
 }
