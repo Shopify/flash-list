@@ -35,7 +35,7 @@
     "@types/pngjs": "^6.0.1",
     "@types/react": "^18.0.24",
     "babel-jest": "^29.2.1",
-    "babel-plugin-module-resolver": "^5.0.0",
+    "babel-plugin-module-resolver": "^5.0.2",
     "detox": "^20.20.3",
     "glob": "^10.3.12",
     "jest": "^29.2.1",
