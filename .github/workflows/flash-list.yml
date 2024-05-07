@@ -7,7 +7,6 @@ on:
   pull_request:
 
 env:
-  RUBY_VERSION: 3.0.3
   NODE_VERSION: 20.4.0
 
 jobs:
@@ -133,7 +132,6 @@ jobs:
       - name: Ruby setup
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
       - name: Install dependencies
         run: |
