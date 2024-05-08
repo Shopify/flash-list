@@ -1,6 +1,6 @@
 {
   "name": "@irisjae/flash-list",
-  "version": "1.6.4",
+  "version": "1.0.0",
   "keywords": [
     "react-native",
     "recyclerview",
@@ -85,7 +85,7 @@
     "jestSetup.js"
   ],
   "dependencies": {
-    "recyclerlistview": "@irisjae/recyclerlistview",
+    "recyclerlistview": "npm:@irisjae/recyclerlistview@1.0.0",
     "tslib": "2.4.0"
   }
 }
