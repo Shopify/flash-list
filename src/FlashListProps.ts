@@ -6,6 +6,7 @@ import {
   ViewabilityConfigCallbackPairs,
   ViewStyle,
 } from "react-native";
+import { NativeViewGestureHandlerProps } from "react-native-gesture-handler";
 
 import { BlankAreaEventHandler } from "./native/auto-layout/AutoLayoutView";
 import ViewToken from "./viewability/ViewToken";
@@ -144,7 +145,8 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    */
   renderScrollComponent?:
     | React.ComponentType<ScrollViewProps>
-    | React.FC<ScrollViewProps>;
+    | React.FC<ScrollViewProps>
+    | NativeViewGestureHandlerProps;
 
   /**
    * You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself.
