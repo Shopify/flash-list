@@ -202,6 +202,7 @@ export type ContentStyle = Pick<
   | "padding"
   | "paddingVertical"
   | "paddingHorizontal"
+  | "flex"
 >;
 ```
 
