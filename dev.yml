@@ -3,4 +3,9 @@ name: FlashList
 up:
   - ruby
   - bundler
+  - node:
+      version: 20.11.0
+      yarn: 1.22.17
+      packages:
+        - ./
   - yarn_install
