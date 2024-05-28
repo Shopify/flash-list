@@ -11,6 +11,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/1076
 - Fix stale reference to onScroll and onLoad
   - https://github.com/Shopify/flash-list/pull/1112
+- Fix Android RN 0.73 namespace requirement
+  - https://github.com/Shopify/flash-list/pull/1216
 
 ## [1.6.4] - 2024-03-18
 
