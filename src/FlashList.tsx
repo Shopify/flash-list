@@ -799,25 +799,29 @@ class FlashList<T> extends React.PureComponent<
     const listSize = this.rlvRef?.getRenderedSize();
 
     if (layout && listSize) {
-      const itemOffset = this.props.horizontal ? layout.x : layout.y;
-      const fixedDimension = this.props.horizontal
-        ? listSize.width
-        : listSize.height;
-      const itemSize = this.props.horizontal ? layout.width : layout.height;
-      const scrollOffset =
-        Math.max(
-          0,
-          itemOffset - (params.viewPosition ?? 0) * (fixedDimension - itemSize)
-        ) - (params.viewOffset ?? 0);
-      // `as any` to make use relativeIndex parameter introduced by preserveVisiblePosition patches when possible
-      (this.rlvRef?.scrollToOffset as any)(
-        scrollOffset,
-        scrollOffset,
+      const getScrollCoords = () => {
+          const itemOffset = this.props.horizontal ? layout.x : layout.y;
+          const fixedDimension = this.props.horizontal
+            ? listSize.width
+            : listSize.height;
+          const itemSize = this.props.horizontal ? layout.width : layout.height;
+          const scrollOffset =
+            Math.max(
+              0,
+              itemOffset - (params.viewPosition ?? 0) * (fixedDimension - itemSize)
+            ) - (params.viewOffset ?? 0);
+          return { x: scrollOffset, y: scrollOffset };
+      };
+      const { x, y } = getScrollCoords();
+      this.rlvRef?.scrollToOffset(
+        x,
+        y,
         Boolean(params.animated),
         true,
         // the calculated offset may be wrong if the height estimate of the item is wrong. if viewPosition is 1 after rounding,
         // we align it by the following item instead, which is not affected by the height estimate of the item in question
-        params.index + (params.viewPosition ?? 0 >= 0.5 ? 1 : 0)
+        params.index + (params.viewPosition ?? 0 >= 0.5 ? 1 : 0),
+        getScrollCoords
       );
     }
   }
