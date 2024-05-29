@@ -25,6 +25,6 @@ class OnBlankAreaEvent(surfaceId: Int, viewId: Int, val offsetStart: Double, val
   }
 
   companion object {
-    const val EVENT_NAME: String = "emitBlankAreaEvent"
+    const val EVENT_NAME: String = "onBlankAreaEvent"
   }
 }
