@@ -33,7 +33,7 @@ using namespace facebook::react;
     _props = defaultProps;
     _autoLayoutView = [[AutoLayoutView alloc] initWithFrame:self.bounds];
       
-    // Due to view flattening, AutoLayoutView's children get moved to its parent (AutoLayoutViewComponentView) and
+    // Due to using ComponentView as wrapper, AutoLayoutView's children get moved to the ComponentView and
     // AutoLayoutView is positioned above them consuming all events. Turning off userInteraction prevents that.
     _autoLayoutView.userInteractionEnabled = false;
 

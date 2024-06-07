@@ -111,10 +111,10 @@ import UIKit
                 if let cellContainer = subview as? CellContainerComponentView {
                     return cellContainer
                 } else if subview is AutoLayoutView {
-                    // On the new architecture, due to view flattening children of AutoLayoutView are moved one level up,
-                    // so they appear as children of AutoLayoutViewComponentView in view hierarchy. viewsToLayout property
-                    // takes it under consideration, returning children of AutoLayoutViewComponentView when on Fabric.
-                    // Because of that AutoLayoutView may be on the list, in which case we want to ignore it.
+                    // On the new architecture, AutoLayoutView is wrapped with the ComponentView and all children will
+                    // also be mounted under ComponentView. viewsToLayout property takes it under consideration,
+                    // returning children of AutoLayoutViewComponentView when on Fabric. Because of that AutoLayoutView
+                    // will be on the list and we want to ignore it.
                     return nil
                 } else {
                     assertionFailure("CellRendererComponent outer view should always be CellContainer. Learn more here: https://shopify.github.io/flash-list/docs/usage#cellrenderercomponent.")
