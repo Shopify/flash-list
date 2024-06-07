@@ -31,6 +31,9 @@ end
 
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 
+# Shouldn't be necessary in newer versions of React Native
+use_frameworks! :linkage => :static
+
 target 'FlatListPro' do
   config = use_native_modules!
 
