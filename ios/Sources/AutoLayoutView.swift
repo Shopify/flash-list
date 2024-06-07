@@ -49,14 +49,6 @@ import UIKit
     private var lastMaxBound: CGFloat = 0
     /// Tracks where first pixel is drawn in the visible window
     private var lastMinBound: CGFloat = 0
-    
-    private var viewsToLayout: [UIView] {
-        #if RCT_NEW_ARCH_ENABLED
-        return superview?.subviews ?? []
-        #else
-        return subviews
-        #endif
-    }
 
     override public func layoutSubviews() {
         fixLayout()
@@ -101,21 +93,15 @@ import UIKit
     /// Performance: Sort is needed. Given relatively low number of views in RecyclerListView render tree this should be a non issue.
     private func fixLayout() {
         guard
-            viewsToLayout.count > 1,
+            subviews.count > 1,
             // Fixing layout during animation can interfere with it.
             layer.animationKeys()?.isEmpty ?? true,
             !disableAutoLayout
         else { return }
-        let cellContainers = viewsToLayout
+        let cellContainers = subviews
             .compactMap { subview -> CellContainerComponentView? in
                 if let cellContainer = subview as? CellContainerComponentView {
                     return cellContainer
-                } else if subview is AutoLayoutView {
-                    // On the new architecture, AutoLayoutView is wrapped with the ComponentView and all children will
-                    // also be mounted under ComponentView. viewsToLayout property takes it under consideration,
-                    // returning children of AutoLayoutViewComponentView when on Fabric. Because of that AutoLayoutView
-                    // will be on the list and we want to ignore it.
-                    return nil
                 } else {
                     assertionFailure("CellRendererComponent outer view should always be CellContainer. Learn more here: https://shopify.github.io/flash-list/docs/usage#cellrenderercomponent.")
                     return nil
@@ -285,10 +271,10 @@ import UIKit
     }
 
     private func footerDiff() -> CGFloat {
-        if viewsToLayout.count == 0 {
+        if subviews.count == 0 {
             lastMaxBoundOverall = 0
-        } else if viewsToLayout.count == 1 {
-            let firstChild = viewsToLayout[0]
+        } else if subviews.count == 1 {
+            let firstChild = subviews[0]
             lastMaxBoundOverall = horizontal ? firstChild.frame.maxX : firstChild.frame.maxY
         }
         let autoLayoutEnd = horizontal ? frame.width : frame.height

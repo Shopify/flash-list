@@ -32,13 +32,8 @@ using namespace facebook::react;
     static const auto defaultProps = std::make_shared<const AutoLayoutViewProps>();
     _props = defaultProps;
     _autoLayoutView = [[AutoLayoutView alloc] initWithFrame:self.bounds];
-      
-    // Due to using ComponentView as wrapper, AutoLayoutView's children get moved to the ComponentView and
-    // AutoLayoutView is positioned above them consuming all events. Turning off userInteraction prevents that.
-    _autoLayoutView.userInteractionEnabled = false;
-
     self.contentView = _autoLayoutView;
-      
+
     __weak AutoLayoutViewComponentView* weakSelf = self;
     _autoLayoutView.onBlankAreaEventHandler = ^(CGFloat start, CGFloat end) {
       AutoLayoutViewComponentView *strongSelf = weakSelf;
@@ -53,6 +48,16 @@ using namespace facebook::react;
   }
 
   return self;
+}
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [_autoLayoutView mountChildComponentView:childComponentView index:index];
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [_autoLayoutView unmountChildComponentView:childComponentView index:index];
 }
 
 #pragma mark - RCTComponentViewProtocol
