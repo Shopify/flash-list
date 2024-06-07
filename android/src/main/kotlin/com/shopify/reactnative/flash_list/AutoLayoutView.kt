@@ -143,8 +143,6 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
         event.putDouble("offsetStart", alShadow.blankOffsetAtStart / pixelDensity)
         event.putDouble("offsetEnd", alShadow.blankOffsetAtEnd / pixelDensity)
         val reactContext = context as ReactContext
-        reactContext
-                .getJSModule(RCTEventEmitter::class.java)
-                .receiveEvent(id, "onBlankAreaEvent", event)
+        reactContext.dispatchEvent(id, "onBlankAreaEvent", event)
     }
 }
