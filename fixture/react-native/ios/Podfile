@@ -29,6 +29,8 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+
 target 'FlatListPro' do
   config = use_native_modules!
 
