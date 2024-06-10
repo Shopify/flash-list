@@ -4,6 +4,7 @@ import {
   RefreshControl,
   LayoutChangeEvent,
   NativeSyntheticEvent,
+  ScrollViewComponent,
   StyleSheet,
   NativeScrollEvent,
 } from "react-native";
@@ -840,7 +841,7 @@ class FlashList<T> extends React.PureComponent<
     return this.rlvRef?.getScrollableNode?.() || null;
   }
 
-  public getNativeScrollRef(): number | null {
+  public getNativeScrollRef(): React.ElementRef<typeof ScrollViewComponent> | null {
     return this.rlvRef?.getNativeScrollRef?.() || null;
   }
 
