@@ -11,6 +11,8 @@ import android.widget.ScrollView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.facebook.react.views.view.ReactViewGroup
 
@@ -137,12 +139,20 @@ class AutoLayoutView(context: Context) : ReactViewGroup(context) {
     }
 
 
-    /** TODO: Check migration to Fabric */
     private fun emitBlankAreaEvent() {
-        val event: WritableMap = Arguments.createMap()
-        event.putDouble("offsetStart", alShadow.blankOffsetAtStart / pixelDensity)
-        event.putDouble("offsetEnd", alShadow.blankOffsetAtEnd / pixelDensity)
-        val reactContext = context as ReactContext
-        reactContext.dispatchEvent(id, "onBlankAreaEvent", event)
+        val eventDispatcher: EventDispatcher? =
+            UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+
+        if (eventDispatcher != null) {
+            val surfaceId = UIManagerHelper.getSurfaceId(context as ReactContext)
+            eventDispatcher.dispatchEvent(
+                BlankAreaEvent(
+                    surfaceId,
+                    viewTag = id,
+                    offsetStart = alShadow.blankOffsetAtStart / pixelDensity,
+                    offsetEnd = alShadow.blankOffsetAtEnd / pixelDensity
+                )
+            )
+        }
     }
 }

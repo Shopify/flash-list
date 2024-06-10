@@ -32,7 +32,6 @@ class AutoLayoutViewManager: ViewGroupManager<AutoLayoutView>(), AutoLayoutViewM
 
     override fun getExportedCustomDirectEventTypeConstants() = mutableMapOf(
         "onBlankAreaEvent" to mutableMapOf("registrationName" to "onBlankAreaEvent"),
-        "topOnBlankAreaEvent" to mutableMapOf("registrationName" to "onBlankAreaEvent"),
     )
 
     @ReactProp(name = "horizontal")
