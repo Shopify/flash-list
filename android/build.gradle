@@ -49,9 +49,7 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
 
-        if (isNewArchitectureEnabled()) {
-            main.java.srcDirs += ['src/fabric/java']
-        } else {
+        if (!isNewArchitectureEnabled()) {
             main.java.srcDirs += ['src/paper/java']
         }
     }
