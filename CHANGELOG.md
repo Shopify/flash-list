@@ -11,6 +11,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/1076
 - Fix stale reference to onScroll and onLoad
   - https://github.com/Shopify/flash-list/pull/1112
+- Add flex prop to contentContainerStyle
+  - https://github.com/Shopify/flash-list/pull/1206
 
 ## [1.6.4] - 2024-03-18
 
