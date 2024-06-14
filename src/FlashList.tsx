@@ -841,7 +841,9 @@ class FlashList<T> extends React.PureComponent<
     return this.rlvRef?.getScrollableNode?.() || null;
   }
 
-  public getNativeScrollRef(): React.ElementRef<typeof ScrollViewComponent> | null {
+  public getNativeScrollRef(): React.ElementRef<
+    typeof ScrollViewComponent
+  > | null {
     return this.rlvRef?.getNativeScrollRef?.() || null;
   }
 
