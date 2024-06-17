@@ -85,7 +85,7 @@
     "jestSetup.js"
   ],
   "dependencies": {
-    "recyclerlistview": "4.2.0",
+    "recyclerlistview": "4.2.1",
     "tslib": "2.4.0"
   }
 }
