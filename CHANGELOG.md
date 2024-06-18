@@ -13,6 +13,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/1112
 - New architecture support
   - https://github.com/Shopify/flash-list/pull/550
+- Upgrade recyclerlistview to v4.2.1
+  - https://github.com/Shopify/flash-list/pull/1236
 
 ## [1.6.4] - 2024-03-18
 
