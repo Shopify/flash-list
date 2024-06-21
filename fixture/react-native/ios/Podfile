@@ -29,6 +29,9 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+# Shouldn't be necessary in newer versions of React Native
+use_frameworks! :linkage => :static
+
 target 'FlatListPro' do
   config = use_native_modules!
 
