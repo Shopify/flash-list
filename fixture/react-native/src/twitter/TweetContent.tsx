@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, View, Image, Text, ViewStyle } from "react-native";
-import FastImage from "react-native-fast-image";
 
 import Author from "./models/Author";
 import Tweet from "./models/Tweet";
@@ -43,8 +42,13 @@ const tweetActions = (
 };
 
 const avatar = (author: Author) => {
-  const imageUrl = author.avatar.replace("_normal", "");
-  return <FastImage style={styles.avatar} source={{ uri: imageUrl }} />;
+  return (
+    <View style={styles.avatar}>
+      <Text style={styles.avatarTextStyle}>
+        {author.name.toUpperCase().charAt(0)}
+      </Text>
+    </View>
+  );
 };
 interface GrayTextProps {
   children: React.ReactNode;
@@ -112,10 +116,17 @@ const styles = StyleSheet.create({
   avatar: {
     height: 44,
     width: 44,
-    borderRadius: 22,
+    backgroundColor: "#00A4EF",
     marginRight: 16,
     flexShrink: 0,
     marginTop: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarTextStyle: {
+    color: "#FFF",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   header: {
     fontSize: 14,
