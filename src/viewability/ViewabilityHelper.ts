@@ -89,8 +89,8 @@ class ViewabilityHelper {
       const timeoutId = setTimeout(() => {
         this.timers.delete(timeoutId);
         this.checkViewableIndicesChanges(newViewableIndices);
-        this.timers.add(timeoutId);
       }, minimumViewTime);
+      this.timers.add(timeoutId);
     } else {
       this.checkViewableIndicesChanges(newViewableIndices);
     }
