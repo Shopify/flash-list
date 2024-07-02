@@ -5,17 +5,17 @@ title: React Native Reanimated
 
 [React Native Reanimated](https://www.reanimated2.com/) is an alternative animation library to the [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) API provided by React Native.
 
-We support view animations and most of [layout animations](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/layout_animations/).
+We support view animations and most of [layout animations](https://docs.swmansion.com/react-native-reanimated/docs/category/layout-animations).
 
 ## Layout Animations
 
-For layout animations, similarly to the React Native API, you need to call [`prepareLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before removing or inserting an element that you want to animate. Note that we currently support only [entering](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/entryAnimations) and [exiting](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/exitAnimations) animations. **[Layout transitions](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/layoutTransitions) are not supported** as of now.
+For layout animations, similarly to the React Native API, you need to call [`prepareLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before removing or inserting an element that you want to animate. Note that we currently support only entering and exiting animations [Entering/Exiting](https://docs.swmansion.com/react-native-reanimated/docs/layout-animations/entering-exiting-animations). **[Layout transitions](https://docs.swmansion.com/react-native-reanimated/docs/layout-animations/layout-transitions) are not supported** as of now.
 
 ## Hooks
 
 ### Usage
 
-You can use hooks such as [`useSharedValue`](https://docs.swmansion.com/react-native-reanimated/docs/api/hooks/useSharedValue) as you would in a normal view. The difference is that since views get recycled, a value can transfer to an unrelated component. You will need to reset such values when a view is recycled - for this, you can pass a prop that uniquely identifies the cell (such as `id` of an item) and run a callback via `useEffect`. You can take inspiration from the following example:
+You can use hooks such as [`useSharedValue`](https://docs.swmansion.com/react-native-reanimated/docs/core/useSharedValue) as you would in a normal view. The difference is that since views get recycled, a value can transfer to an unrelated component. You will need to reset such values when a view is recycled - for this, you can pass a prop that uniquely identifies the cell (such as `id` of an item) and run a callback via `useEffect`. You can take inspiration from the following example:
 
 ```tsx
 import React, { useEffect } from "react";
