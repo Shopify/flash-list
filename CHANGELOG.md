@@ -9,6 +9,22 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Added `getNativeScrollRef`
   - https://github.com/Shopify/flash-list/pull/1041
+
+## [1.7.0] - 2024-07-03
+
+- Update internal dependency and fixture app to `react-native@0.72`.
+  - https://github.com/Shopify/flash-list/pull/1076
+- Fix stale reference to onScroll and onLoad
+  - https://github.com/Shopify/flash-list/pull/1112
+- Fix Android RN 0.73 namespace requirement
+  - https://github.com/Shopify/flash-list/pull/1216
+- New architecture support
+  - https://github.com/Shopify/flash-list/pull/550
+- Upgrade recyclerlistview to v4.2.1
+  - https://github.com/Shopify/flash-list/pull/1236
+
+## [1.6.4] - 2024-03-18
+
 - Fix `ItemSeparatorComponent ` position for the `inverted` flashlist
   - https://github.com/Shopify/flash-list/pull/1046
 - Do not show render size unsuable warning in better layout changes

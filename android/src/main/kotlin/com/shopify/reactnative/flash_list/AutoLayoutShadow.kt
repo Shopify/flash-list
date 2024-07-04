@@ -27,7 +27,7 @@ class AutoLayoutShadow {
             val neighbour = sortedItems[i + 1]
             // Only apply correction if the next cell is consecutive.
             val isNeighbourConsecutive = neighbour.index == cell.index + 1
-            if (isWithinBounds(cell)) {
+            if (isWithinBounds(cell) || isWithinBounds(neighbour)) {
                 if (!horizontal) {
                     maxBound = kotlin.math.max(maxBound, cell.bottom);
                     minBound = kotlin.math.min(minBound, cell.top);

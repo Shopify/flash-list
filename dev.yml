@@ -1,6 +1,11 @@
 name: FlashList
 
 up:
-  - ruby: 3.0.3
+  - ruby
   - bundler
+  - node:
+      version: 20.11.0
+      yarn: 1.22.17
+      packages:
+        - ./
   - yarn_install
