@@ -817,7 +817,12 @@ class FlashList<T> extends React.PureComponent<
         true,
         // the calculated offset may be wrong if the height estimate of the item is wrong. if viewPosition is 1 after rounding,
         // we align it by the following item instead, which is not affected by the height estimate of the item in question
-        params.index + (params.viewPosition ?? 0 >= 0.5 ? 1 : 0)
+        params.index + (
+          (params.viewPosition ?? 0 >= 0.5) &&
+            params.index !== (this.props.data?.length ?? -1) - 1
+          ? 1
+          : 0
+        )
       );
     }
   }
