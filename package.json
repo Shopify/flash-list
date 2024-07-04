@@ -85,7 +85,7 @@
     "jestSetup.js"
   ],
   "dependencies": {
-    "recyclerlistview": "npm:@irisjae/recyclerlistview@1.0.1",
+    "recyclerlistview": "npm:@irisjae/recyclerlistview@1.0.2",
     "tslib": "2.4.0"
   }
 }
