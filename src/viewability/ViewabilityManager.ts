@@ -55,6 +55,12 @@ export default class ViewabilityManager<T> {
     this.updateViewableItems(all);
   };
 
+  public resetViewableIndices() {
+    this.viewabilityHelpers.forEach((viewabilityHelper) =>
+      viewabilityHelper.resetViewableIndices()
+    );
+  }
+
   public recordInteraction = () => {
     if (this.hasInteracted) {
       return;

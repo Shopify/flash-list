@@ -45,6 +45,10 @@ class ViewabilityHelper {
     this.timers.forEach(clearTimeout);
   }
 
+  public resetViewableIndices() {
+    this.lastReportedViewableIndices = [];
+  }
+
   public updateViewableItems(
     horizontal: boolean,
     scrollOffset: number,
