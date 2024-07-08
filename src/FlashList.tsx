@@ -300,7 +300,10 @@ class FlashList<T> extends React.PureComponent<
 
   componentDidUpdate(prevProps: FlashListProps<T>) {
     // If data changes, we need to trigger onViewableItemsChanged
-    if (prevProps.data !== this.props.data) {
+    if (
+      prevProps.data !== this.props.data ||
+      prevProps.extraData !== this.props.extraData
+    ) {
       this.viewabilityManager.resetViewableIndices();
       this.viewabilityManager.updateViewableItems();
     }
