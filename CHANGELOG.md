@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix `onViewableItemsChanged` not firing when data changes.
+
 ## [1.7.0] - 2024-07-03
 
 - Update internal dependency and fixture app to `react-native@0.72`.
