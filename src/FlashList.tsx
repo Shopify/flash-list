@@ -304,7 +304,7 @@ class FlashList<T> extends React.PureComponent<
       prevProps.data !== this.props.data ||
       prevProps.extraData !== this.props.extraData
     ) {
-      this.viewabilityManager.resetViewableIndices();
+      this.viewabilityManager.resetLastReportedViewableIndices();
       this.viewabilityManager.updateViewableItems();
     }
   }

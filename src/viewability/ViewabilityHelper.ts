@@ -45,7 +45,7 @@ class ViewabilityHelper {
     this.timers.forEach(clearTimeout);
   }
 
-  public resetViewableIndices() {
+  public resetLastReportedViewableIndices() {
     this.lastReportedViewableIndices = [];
   }
 

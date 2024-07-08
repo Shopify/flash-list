@@ -55,9 +55,9 @@ export default class ViewabilityManager<T> {
     this.updateViewableItems(all);
   };
 
-  public resetViewableIndices() {
+  public resetLastReportedViewableIndices() {
     this.viewabilityHelpers.forEach((viewabilityHelper) =>
-      viewabilityHelper.resetViewableIndices()
+      viewabilityHelper.resetLastReportedViewableIndices()
     );
   }
 
