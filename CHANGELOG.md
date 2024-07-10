@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix first sticky header is not rendering when data changed
+  - https://github.com/Shopify/flash-list/issues/814
+
 ## [1.7.0] - 2024-07-03
 
 - Update internal dependency and fixture app to `react-native@0.72`.
