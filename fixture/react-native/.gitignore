@@ -14,7 +14,19 @@ ios/**/xcshareddata/WorkspaceSettings.xcsettings
 
 android/*.hprof
 
+**/.xcode.env.local
+**/*.xcprivacy
+
+
 # e2e
 
 e2e/artifacts/ios/diff
 e2e/artifacts/android/diff
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
