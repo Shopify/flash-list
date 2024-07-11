@@ -26,6 +26,7 @@
   "license": "MIT",
   "homepage": "https://shopify.github.io/flash-list/",
   "main": "dist/index.js",
+  "react-native": "src/index.ts",
   "types": "dist/index.d.ts",
   "scripts": {
     "up": "bundle install && yarn fixture:rn:up && yarn e2e:up && yarn build",

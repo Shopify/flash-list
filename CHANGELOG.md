@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Added library code loading from the `src` directory
+  - https://github.com/Shopify/flash-list/pull/1263
+
 ## [1.7.0] - 2024-07-03
 
 - Update internal dependency and fixture app to `react-native@0.72`.
