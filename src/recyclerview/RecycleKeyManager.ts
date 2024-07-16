@@ -5,6 +5,8 @@ export interface RecycleKeyManager {
   // when view is out of viewports, it should be recycled, this method should be called to recycle the key and add it back to the pool
   // Itemtype should already be known, as it was used to get the key
   recycleKey: (key: string) => void;
+  // Checks if a key is available for recycling (unused)
+  hasKeyInPool: (key: string) => boolean;
 }
 
 export class RecycleKeyManagerImpl implements RecycleKeyManager {
@@ -107,13 +109,9 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
     this.keyMap.delete(key);
   }
 
-  /**
-   * Creates a new instance of RecycleKeyManager with the specified maximum number of items.
-   * @param maxItems - The maximum number of items for the new manager.
-   * @returns A new instance of RecycleKeyManager.
-   */
-  public new(maxItems?: number): RecycleKeyManager {
-    return new RecycleKeyManagerImpl(maxItems);
+  // Checks if a key is available for recycling (unused)
+  public hasKeyInPool(key: string): boolean {
+    return this.keyMap.has(key);
   }
 
   /**
