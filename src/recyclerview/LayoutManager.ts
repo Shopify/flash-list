@@ -84,7 +84,7 @@ export class RVLayoutManagerImpl implements RVLayoutManager {
     return layout;
   }
 
-  // Returns visible indices, should be very fast.
+  // Returns visible indices, should be very fast. Return sorted indices.
   getVisibleLayouts(
     unboundDimensionStart: number,
     unboundDimensionEnd: number
