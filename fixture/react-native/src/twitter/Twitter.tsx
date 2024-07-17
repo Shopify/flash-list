@@ -6,7 +6,11 @@ import {
   ActivityIndicator,
   ViewabilityConfig,
 } from "react-native";
-import { BlankAreaEventHandler, FlashList } from "@shopify/flash-list";
+import {
+  BlankAreaEventHandler,
+  FlashList,
+  RecyclerView,
+} from "@shopify/flash-list";
 
 import { DebugContext } from "../Debug";
 
@@ -38,6 +42,15 @@ const Twitter = ({
     itemVisiblePercentThreshold: 50,
     minimumViewTime: 1000,
   }).current;
+
+  return (
+    <RecyclerView
+      data={debugContext.emptyListEnabled ? [] : tweets}
+      renderItem={({ item }) => {
+        return <TweetCell tweet={item} />;
+      }}
+    />
+  );
 
   return (
     <FlashList

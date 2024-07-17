@@ -5,7 +5,7 @@ import { RVLayout } from "./LayoutManager";
 
 export interface ViewHolderProps {
   index: number;
-  key: string;
+  reactKey: string;
   layout: RVLayout;
   style?: ViewStyle;
   refHolder: Map<number, RefObject<View | null>>;
@@ -14,7 +14,7 @@ export interface ViewHolderProps {
 export const ViewHolder = (props: ViewHolderProps) => {
   // create ref for View
   const viewRef = useRef<View>(null);
-  const { index, refHolder, key, style, layout } = props;
+  const { index, refHolder, reactKey, style, layout } = props;
 
   useLayoutEffect(() => {
     refHolder.set(index, viewRef);
@@ -24,13 +24,14 @@ export const ViewHolder = (props: ViewHolderProps) => {
       }
     };
   }, [index, refHolder]);
-
+  console.log("ViewHolder layout", layout);
   return (
     <View
       ref={viewRef}
-      key={key}
+      key={reactKey}
       style={{
         ...style,
+        position: "absolute",
         transform: [{ translateX: layout.x }, { translateY: layout.y }],
       }}
     >

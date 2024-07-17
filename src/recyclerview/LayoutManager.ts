@@ -42,12 +42,13 @@ export class RVLayoutManagerImpl implements RVLayoutManager {
     this.layouts = [];
   }
 
-  // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
+  // Updates layout information based on the provided layout info.
   modifyLayout(layoutInfo: RVLayoutInfo[], itemCount: number): void {
-    // Ensure the layouts array is large enough
-    if (this.layouts.length < itemCount) {
-      this.layouts.length = itemCount;
+    // only keep itemCount number of layouts, delete the rest using splice
+    if (this.layouts.length > itemCount) {
+      this.layouts.splice(itemCount, this.layouts.length - itemCount);
     }
+    let minRecomputeIndex = Number.MAX_VALUE;
 
     // Update layout information
     for (const info of layoutInfo) {
@@ -55,31 +56,20 @@ export class RVLayoutManagerImpl implements RVLayoutManager {
       const layout = this.layouts[index] || { x: 0, y: 0, width: 0, height: 0 };
       layout.width = dimensions.width;
       layout.height = dimensions.height;
-
-      // Compute x and y based on orientation and previous items
-      if (index > 0) {
-        const prevLayout = this.layouts[index - 1];
-        if (this.isHorizontal) {
-          layout.x = prevLayout.x + prevLayout.width;
-          layout.y = 0;
-        } else {
-          layout.x = 0;
-          layout.y = prevLayout.y + prevLayout.height;
-        }
-      } else {
-        layout.x = 0;
-        layout.y = 0;
-      }
-
       this.layouts[index] = layout;
+      minRecomputeIndex = Math.min(minRecomputeIndex, index);
     }
+
+    // Recompute layouts starting from the first modified index
+    this.recomputeLayouts(minRecomputeIndex);
   }
 
   // Fetch layout info, breaks if unavailable
   getLayout(index: number): RVLayout {
     const layout = this.layouts[index];
     if (!layout) {
-      throw new Error(`Layout for index ${index} is unavailable`);
+      // TODO
+      return { x: 0, y: 0, width: 0, height: 0 };
     }
     return layout;
   }
@@ -108,10 +98,16 @@ export class RVLayoutManagerImpl implements RVLayoutManager {
 
   // Remove layout values and recompute layout.
   deleteLayout(indices: number[]): void {
+    // Sort indices in descending order
+    indices.sort((num1, num2) => num2 - num1);
+
+    // Remove elements from the array
     for (const index of indices) {
-      delete this.layouts[index];
+      this.layouts.splice(index, 1);
     }
-    this.recomputeLayouts();
+
+    // Recompute layouts starting from the smallest index in the original indices array
+    this.recomputeLayouts(Math.min(...indices));
   }
 
   // Size of the rendered area
@@ -129,9 +125,9 @@ export class RVLayoutManagerImpl implements RVLayoutManager {
     };
   }
 
-  // Helper function to recompute layouts after deletion
-  private recomputeLayouts(): void {
-    for (let i = 0; i < this.layouts.length; i++) {
+  // Helper function to recompute layouts starting from a given index
+  private recomputeLayouts(startIndex = 0): void {
+    for (let i = startIndex; i < this.layouts.length; i++) {
       const layout = this.layouts[i];
       if (!layout) continue;
 

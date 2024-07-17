@@ -41,3 +41,4 @@ export { JSFPSMonitor, JSFPSResult } from "./benchmark/JSFPSMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
 export { default as ViewToken } from "./viewability/ViewToken";
 export { default as CellContainer } from "./native/cell-container/CellContainer";
+export { RecyclerView } from "./recyclerview/RecyclerView";

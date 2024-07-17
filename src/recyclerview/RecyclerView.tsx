@@ -44,6 +44,8 @@ export const RecyclerView = <T1,>(props: RecyclerViewProps<T1>) => {
 
   // Initialization effect
   useLayoutEffect(() => {
+    console.log("useLayoutEffect 1");
+
     internalViewRef.current?.measureInWindow((x, y, width, height) => {
       const newLayoutManager = new RVLayoutManagerImpl(
         horizontal ? height : width,
@@ -55,6 +57,8 @@ export const RecyclerView = <T1,>(props: RecyclerViewProps<T1>) => {
   }, [horizontal, recycleManager]);
 
   useLayoutEffect(() => {
+    console.log("useLayoutEffect 2", refHolder.size);
+
     // iterate refHolder and get measureInWindow dimensions for all objects. Don't call update but store all response in an array
     const layoutInfo = Array.from(refHolder, ([index, ref]) => {
       const layout = { x: 0, y: 0, width: 0, height: 0 };
@@ -65,8 +69,12 @@ export const RecyclerView = <T1,>(props: RecyclerViewProps<T1>) => {
       return { index, dimensions: layout };
     });
     layoutManager?.modifyLayout(layoutInfo, data?.length ?? 0);
-    setRenderStack(recycleManager.getRenderStack());
-  }, [data, layoutManager, recycleManager, refHolder]);
+    if (layoutManager) {
+      //TODO: improve
+      recycleManager.refresh();
+      setRenderStack(recycleManager.getRenderStack());
+    }
+  }, [data, layoutManager, recycleManager, renderStack]);
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -79,27 +87,27 @@ export const RecyclerView = <T1,>(props: RecyclerViewProps<T1>) => {
     },
     [horizontal, recycleManager]
   );
-
-  if (!layoutManager) return null;
-  if (!data) return null;
+  console.log("layout size", layoutManager?.getLayoutSize());
 
   return (
     <View style={{ flex: 1 }} ref={internalViewRef}>
       <ScrollView ref={scrollViewRef} onScroll={onScroll}>
-        <View>
-          {Array.from(renderStack, ([index, reactKey]) => {
-            const item = data[index];
-            return (
-              <ViewHolder
-                key={reactKey}
-                index={index}
-                layout={layoutManager.getLayout(index)}
-                refHolder={refHolder}
-              >
-                {renderItem?.({ item, index, target: "Cell" })}
-              </ViewHolder>
-            );
-          })}
+        <View style={layoutManager?.getLayoutSize()}>
+          {layoutManager && data
+            ? Array.from(renderStack, ([index, reactKey]) => {
+                const item = data[index];
+                return (
+                  <ViewHolder
+                    reactKey={reactKey}
+                    index={index}
+                    layout={layoutManager.getLayout(index)}
+                    refHolder={refHolder}
+                  >
+                    {renderItem?.({ item, index, target: "Cell" })}
+                  </ViewHolder>
+                );
+              })
+            : null}
         </View>
       </ScrollView>
     </View>

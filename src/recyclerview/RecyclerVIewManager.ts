@@ -20,6 +20,7 @@ export class RecyclerViewManager {
       this.updateRenderStack
     );
     this.recycleKeyManager = new RecycleKeyManagerImpl();
+    this.triggerInitialRender();
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
@@ -58,6 +59,21 @@ export class RecyclerViewManager {
   updateScrollOffset(offset: number) {
     this.viewabilityManager.updateScrollOffset(
       offset,
+      this.layoutManager,
+      this.windowSize
+    );
+  }
+
+  // TODO
+  triggerInitialRender() {
+    this.updateRenderStack(
+      new Array(this.INITIAL_NUM_TO_RENDER).fill(0).map((_, i) => i)
+    );
+  }
+
+  refresh() {
+    this.viewabilityManager.updateScrollOffset(
+      this.viewabilityManager.getScrollOffset(),
       this.layoutManager,
       this.windowSize
     );
