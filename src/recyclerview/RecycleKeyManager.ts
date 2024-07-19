@@ -1,7 +1,7 @@
 export interface RecycleKeyManager {
   // gets new key for the item type, every item has it's on pool. The managers tracks which key is rendering which stableId
   // if a stableId is provided, it will return the key for that stableId, otherwise it will return a new key
-  getKey: (itemType: string, stableId?: string) => string;
+  getKey: (itemType: string, stableId: string, currentKey?: string) => string;
   // when view is out of viewports, it should be recycled, this method should be called to recycle the key and add it back to the pool
   // Itemtype should already be known, as it was used to get the key
   recycleKey: (key: string) => void;
@@ -51,7 +51,11 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
    * @param stableId - Optional stable identifier for the item.
    * @returns The key for the item.
    */
-  public getKey(itemType: string, stableId?: string): string {
+  public getKey(
+    itemType: string,
+    stableId: string,
+    currentKey?: string
+  ): string {
     // If a stableId is provided and already exists, return the associated key.
     if (stableId && this.stableIdMap.has(stableId)) {
       return this.stableIdMap.get(stableId)!;
@@ -67,7 +71,10 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
     let key: string;
     // If the pool has available keys, reuse one.
     if (pool.size > 0) {
-      key = pool.values().next().value;
+      key =
+        currentKey && pool.has(currentKey)
+          ? currentKey
+          : pool.values().next().value;
       pool.delete(key);
     } else {
       // Otherwise, generate a new key using the counter.
@@ -92,7 +99,10 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
    */
   public recycleKey(key: string): void {
     const keyInfo = this.keyMap.get(key);
-    if (!keyInfo) return;
+
+    if (!keyInfo) {
+      return;
+    }
 
     const { itemType, stableId } = keyInfo;
     if (stableId) {
@@ -111,7 +121,7 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
 
   // Checks if a key is available for recycling (unused)
   public hasKeyInPool(key: string): boolean {
-    return this.keyMap.has(key);
+    return !this.keyMap.has(key);
   }
 
   /**

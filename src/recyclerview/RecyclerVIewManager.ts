@@ -6,7 +6,7 @@ import {
 } from "./ViewabilityManager";
 
 export class RecyclerViewManager {
-  INITIAL_NUM_TO_RENDER = 10;
+  INITIAL_NUM_TO_RENDER = 6;
   private viewabilityManager: RVViewabilityManager;
   private recycleKeyManager: RecycleKeyManager;
   private layoutManager: RVLayoutManager;
@@ -26,24 +26,29 @@ export class RecyclerViewManager {
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
   // TODO: Call getKey anyway if stableIds are present
   private updateRenderStack = (engagedIndices: number[]): void => {
+    const newRenderStack = new Map<number, string>();
+
     for (const [index, key] of this.renderStack) {
       if (!engagedIndices.includes(index)) {
         this.recycleKeyManager.recycleKey(key);
       }
     }
-    const newRenderStack = new Map<number, string>();
     for (const index of engagedIndices) {
-      const key = this.renderStack.get(index);
-      if (key) {
-        newRenderStack.set(index, key);
-      } else {
-        const newKey = this.recycleKeyManager.getKey("type1");
-        newRenderStack.set(index, newKey);
-      }
+      // TODO: connect key extractor
+      const newKey = this.recycleKeyManager.getKey(
+        "type1",
+        index.toString(),
+        this.renderStack.get(index)
+      );
+      newRenderStack.set(index, newKey);
     }
-    // DANGER
+
+    //  DANGER
     for (const [index, key] of this.renderStack) {
-      if (this.recycleKeyManager.hasKeyInPool(key)) {
+      if (
+        this.recycleKeyManager.hasKeyInPool(key) &&
+        !newRenderStack.has(index)
+      ) {
         newRenderStack.set(index, key);
       }
     }

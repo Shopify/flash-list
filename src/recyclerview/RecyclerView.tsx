@@ -9,6 +9,7 @@ import React, {
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
   ScrollView,
   View,
 } from "react-native";
@@ -44,21 +45,23 @@ export const RecyclerView = <T1,>(props: RecyclerViewProps<T1>) => {
 
   // Initialization effect
   useLayoutEffect(() => {
-    console.log("useLayoutEffect 1");
-
     internalViewRef.current?.measureInWindow((x, y, width, height) => {
+      const correctedHeight = Platform.OS === "ios" ? height : height * 1.176;
+      const correctedWidth = Platform.OS === "ios" ? width : width * 1.176;
       const newLayoutManager = new RVLayoutManagerImpl(
-        horizontal ? height : width,
+        horizontal ? correctedHeight : correctedWidth,
         horizontal ?? false
       );
+
       setLayoutManager(newLayoutManager);
-      recycleManager.updateLayoutManager(newLayoutManager, { width, height });
+      recycleManager.updateLayoutManager(newLayoutManager, {
+        width: correctedWidth,
+        height: correctedHeight,
+      });
     });
   }, [horizontal, recycleManager]);
 
   useLayoutEffect(() => {
-    console.log("useLayoutEffect 2", refHolder.size);
-
     // iterate refHolder and get measureInWindow dimensions for all objects. Don't call update but store all response in an array
     const layoutInfo = Array.from(refHolder, ([index, ref]) => {
       const layout = { x: 0, y: 0, width: 0, height: 0 };
@@ -70,11 +73,11 @@ export const RecyclerView = <T1,>(props: RecyclerViewProps<T1>) => {
     });
     layoutManager?.modifyLayout(layoutInfo, data?.length ?? 0);
     if (layoutManager) {
-      //TODO: improve
+      // TODO: improve
       recycleManager.refresh();
       setRenderStack(recycleManager.getRenderStack());
     }
-  }, [data, layoutManager, recycleManager, renderStack]);
+  }, [data, layoutManager, recycleManager, refHolder, renderStack]);
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -87,18 +90,22 @@ export const RecyclerView = <T1,>(props: RecyclerViewProps<T1>) => {
     },
     [horizontal, recycleManager]
   );
-  console.log("layout size", layoutManager?.getLayoutSize());
 
   return (
     <View style={{ flex: 1 }} ref={internalViewRef}>
-      <ScrollView ref={scrollViewRef} onScroll={onScroll}>
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={onScroll}
+        // TODO: evaluate perf
+        removeClippedSubviews={false}
+      >
         <View style={layoutManager?.getLayoutSize()}>
           {layoutManager && data
             ? Array.from(renderStack, ([index, reactKey]) => {
                 const item = data[index];
                 return (
                   <ViewHolder
-                    reactKey={reactKey}
+                    key={reactKey}
                     index={index}
                     layout={layoutManager.getLayout(index)}
                     refHolder={refHolder}

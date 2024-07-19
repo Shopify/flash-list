@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable } from "react-native";
 
 import { RootStackParamList } from "../constants";
@@ -15,6 +15,7 @@ export interface TweetCellProps {
 const TweetCell = ({ tweet }: TweetCellProps) => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Twitter">>();
+
   return (
     <Pressable
       onPress={() => {
@@ -26,4 +27,4 @@ const TweetCell = ({ tweet }: TweetCellProps) => {
   );
 };
 
-export default TweetCell;
+export default React.memo(TweetCell);
