@@ -29,7 +29,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
   // Current scroll offset
   private scrollOffset = 0;
   // Render ahead offset for pre-rendering items
-  private renderAheadOffset = 0;
+  private renderAheadOffset = 250;
   // Currently visible indices
   private visibleIndices: number[] = [];
   // Currently engaged indices (including render buffer)

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   ViewabilityConfig,
+  FlatList,
 } from "react-native";
 import {
   BlankAreaEventHandler,
@@ -45,6 +46,18 @@ const Twitter = ({
 
   return (
     <RecyclerView
+      ref={instance}
+      data={debugContext.emptyListEnabled ? [] : tweets}
+      renderItem={({ item }) => {
+        return <TweetCell tweet={item} />;
+      }}
+    />
+  );
+
+  return (
+    <FlatList
+      ref={instance}
+      // estimatedItemSize={150}
       data={debugContext.emptyListEnabled ? [] : tweets}
       renderItem={({ item }) => {
         return <TweetCell tweet={item} />;

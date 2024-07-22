@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 
 import { RootStackParamList } from "../constants";
@@ -15,14 +15,16 @@ export interface TweetCellProps {
 const TweetCell = ({ tweet }: TweetCellProps) => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Twitter">>();
+  const [showFullText, setShowFullText] = useState(false);
 
   return (
     <Pressable
       onPress={() => {
-        navigate("TweetDetailScreen", { tweet });
+        // navigate("TweetDetailScreen", { tweet });
+        setShowFullText(!showFullText);
       }}
     >
-      <TweetContent tweet={tweet} />
+      <TweetContent tweet={tweet} showFullText={showFullText} />
     </Pressable>
   );
 };

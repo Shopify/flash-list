@@ -91,4 +91,12 @@ export class RecyclerViewManager {
   getRenderStack() {
     return this.renderStack;
   }
+
+  getWindowSize() {
+    return this.windowSize;
+  }
+
+  getLastScrollOffset() {
+    return this.viewabilityManager.getScrollOffset();
+  }
 }
