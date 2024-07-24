@@ -9,7 +9,6 @@ export interface ViewHolderProps {
   style?: ViewStyle;
   refHolder: Map<number, RefObject<View | null>>;
   children?: React.ReactNode;
-  reportLayoutChange?: (index: number) => void;
 }
 export const ViewHolder = (props: ViewHolderProps) => {
   // create ref for View
@@ -30,16 +29,11 @@ export const ViewHolder = (props: ViewHolderProps) => {
   return (
     <View
       ref={viewRef}
-      //   onLayout={(event) => {
-      //     const { width, height } = event.nativeEvent.layout;
-      //     if (width !== layout.width || height !== layout.height) {
-      //       //props.reportLayoutChange?.(index);
-      //     }
-      //   }}
       style={{
         ...style,
         position: "absolute",
-        width: layout.width,
+        width: layout.enforcedWidth ? layout.width : undefined,
+        height: layout.enforcedHeight ? layout.height : undefined,
         transform: [{ translateX: layout.x }, { translateY: layout.y }],
       }}
     >

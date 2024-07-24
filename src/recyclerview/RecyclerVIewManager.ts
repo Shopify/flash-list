@@ -6,7 +6,7 @@ import {
 } from "./ViewabilityManager";
 
 export class RecyclerViewManager {
-  INITIAL_NUM_TO_RENDER = 6;
+  INITIAL_NUM_TO_RENDER = 1;
   private viewabilityManager: RVViewabilityManager;
   private recycleKeyManager: RecycleKeyManager;
   private layoutManager: RVLayoutManager;
@@ -20,7 +20,7 @@ export class RecyclerViewManager {
       this.updateRenderStack
     );
     this.recycleKeyManager = new RecycleKeyManagerImpl();
-    this.triggerInitialRender();
+    this.startInitialRender();
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
@@ -70,7 +70,21 @@ export class RecyclerViewManager {
   }
 
   // TODO
-  triggerInitialRender() {
+  completeFirstRender(lastMeasuredIndex: number) {
+    if (this.layoutManager) {
+      const layout = this.layoutManager.getLayout(lastMeasuredIndex);
+      const isWindowFilled = this.windowSize.height <= layout.y + layout.height;
+      if (!isWindowFilled) {
+        this.updateRenderStack(
+          new Array(++this.INITIAL_NUM_TO_RENDER).fill(0).map((_, i) => i)
+        );
+        return false;
+      }
+    }
+    return true;
+  }
+
+  startInitialRender() {
     this.updateRenderStack(
       new Array(this.INITIAL_NUM_TO_RENDER).fill(0).map((_, i) => i)
     );
@@ -98,5 +112,13 @@ export class RecyclerViewManager {
 
   getLastScrollOffset() {
     return this.viewabilityManager.getScrollOffset();
+  }
+
+  getViewabilityManager() {
+    return this.viewabilityManager;
+  }
+
+  getLayoutManager() {
+    return this.layoutManager;
   }
 }

@@ -1,4 +1,10 @@
 // Interface of layout manager for app's listviews
+
+import {
+  findFirstVisibleIndex,
+  findLastVisibleIndex,
+} from "./utils/findVisibleIndex";
+
 // TODO: Figure out how to estimate size of unrendered items and bidirectional item loading
 export interface RVLayoutManager {
   // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
@@ -24,6 +30,10 @@ export interface RVLayoutInfo {
 export interface RVLayout extends RVDimension {
   x: number;
   y: number;
+  isWidthMeasured?: boolean;
+  isHeightMeasured?: boolean;
+  enforcedHeight?: boolean;
+  enforcedWidth?: boolean;
 }
 
 export interface RVDimension {
@@ -31,7 +41,7 @@ export interface RVDimension {
   height: number;
 }
 
-export class RVLayoutManagerImpl implements RVLayoutManager {
+export class RVLinearLayoutManagerImpl implements RVLayoutManager {
   private boundedSize: number;
   private isHorizontal: boolean;
   private layouts: RVLayout[];
@@ -61,7 +71,8 @@ export class RVLayoutManagerImpl implements RVLayoutManager {
       const { index, dimensions } = info;
       const layout = this.layouts[index];
       layout.width = this.isHorizontal ? dimensions.width : this.boundedSize;
-      // layout.width = dimensions.width;
+      layout.isHeightMeasured = true;
+      layout.isWidthMeasured = true;
 
       layout.height = dimensions.height;
       this.layouts[index] = layout;
@@ -83,6 +94,8 @@ export class RVLayoutManagerImpl implements RVLayoutManager {
         // TODO: horizontal list size management required
         width: this.boundedSize,
         height: 200,
+        isWidthMeasured: true,
+        enforcedWidth: true,
       };
       return this.layouts[index];
     }
@@ -95,16 +108,23 @@ export class RVLayoutManagerImpl implements RVLayoutManager {
     unboundDimensionEnd: number
   ): number[] {
     const visibleIndices: number[] = [];
-    for (let i = 0; i < this.layouts.length; i++) {
-      const layout = this.layouts[i];
-      if (!layout) continue;
+    // Find the first visible index
+    const firstVisibleIndex = findFirstVisibleIndex(
+      this.layouts,
+      unboundDimensionStart,
+      this.isHorizontal
+    );
 
-      const start = this.isHorizontal ? layout.x : layout.y;
-      const end = this.isHorizontal
-        ? layout.x + layout.width
-        : layout.y + layout.height;
+    // Find the last visible index
+    const lastVisibleIndex = findLastVisibleIndex(
+      this.layouts,
+      unboundDimensionEnd,
+      this.isHorizontal
+    );
 
-      if (end >= unboundDimensionStart && start <= unboundDimensionEnd) {
+    // Collect the indices in the range
+    if (firstVisibleIndex !== -1 && lastVisibleIndex !== -1) {
+      for (let i = firstVisibleIndex; i <= lastVisibleIndex; i++) {
         visibleIndices.push(i);
       }
     }
