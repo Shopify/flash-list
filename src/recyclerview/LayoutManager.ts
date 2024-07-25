@@ -45,6 +45,7 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
   private boundedSize: number;
   private isHorizontal: boolean;
   private layouts: RVLayout[];
+  private tallestItem?: RVLayout;
 
   constructor(boundedSize: number, isHorizontal: boolean) {
     this.boundedSize = boundedSize;
@@ -92,10 +93,10 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
         x: 0,
         y: 0,
         // TODO: horizontal list size management required
-        width: this.boundedSize,
-        height: 200,
+        width: this.isHorizontal ? 200 : this.boundedSize,
+        height: this.isHorizontal ? 0 : 200,
         isWidthMeasured: true,
-        enforcedWidth: true,
+        enforcedWidth: !this.isHorizontal,
       };
       return this.layouts[index];
     }
@@ -148,14 +149,13 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
   // Size of the rendered area
   getLayoutSize(): RVDimension {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
-
     const lastLayout = this.layouts[this.layouts.length - 1];
     return {
       width: this.isHorizontal
         ? lastLayout.x + lastLayout.width
         : this.boundedSize,
       height: this.isHorizontal
-        ? this.boundedSize
+        ? this.tallestItem?.height ?? 0
         : lastLayout.y + lastLayout.height,
     };
   }
@@ -176,6 +176,9 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
       } else {
         layout.x = 0;
         layout.y = 0;
+      }
+      if (layout.height >= (this.tallestItem?.height ?? 0)) {
+        this.tallestItem = layout;
       }
     }
   }

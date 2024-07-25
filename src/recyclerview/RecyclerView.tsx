@@ -71,10 +71,14 @@ const RecyclerViewComponent = <T1,>(
       );
 
       setLayoutManager(newLayoutManager);
-      recycleManager.updateLayoutManager(newLayoutManager, {
-        width: correctedWidth,
-        height: correctedHeight,
-      });
+      recycleManager.updateLayoutManager(
+        newLayoutManager,
+        {
+          width: correctedWidth,
+          height: correctedHeight,
+        },
+        horizontal ?? false
+      );
     });
   }, [horizontal, recycleManager]);
 
@@ -146,8 +150,9 @@ const RecyclerViewComponent = <T1,>(
   }));
 
   return (
-    <View style={{ flex: 1 }} ref={internalViewRef}>
+    <View style={{ flex: horizontal ? undefined : 1 }} ref={internalViewRef}>
       <ScrollView
+        horizontal={horizontal}
         ref={scrollViewRef}
         onScroll={onScroll}
         // TODO: evaluate perf

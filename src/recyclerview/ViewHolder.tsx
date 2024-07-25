@@ -24,7 +24,7 @@ export const ViewHolder = (props: ViewHolderProps) => {
     };
   }, [index, refHolder]);
 
-  console.log("ViewHolder re-render");
+  console.log("ViewHolder re-render", index);
 
   return (
     <View

@@ -13,6 +13,7 @@ export class RecyclerViewManager {
   private windowSize: RVDimension;
   // Map of index to key
   private renderStack: Map<number, string> = new Map();
+  private isHorizontal = false;
 
   constructor() {
     this.viewabilityManager = new RVViewabilityManagerImpl();
@@ -56,9 +57,14 @@ export class RecyclerViewManager {
     this.renderStack = newRenderStack;
   };
 
-  updateLayoutManager(layoutManager: RVLayoutManager, windowSize: RVDimension) {
+  updateLayoutManager(
+    layoutManager: RVLayoutManager,
+    windowSize: RVDimension,
+    horizontal: boolean
+  ) {
     this.layoutManager = layoutManager;
     this.windowSize = windowSize;
+    this.isHorizontal = horizontal;
   }
 
   updateScrollOffset(offset: number) {
@@ -73,7 +79,9 @@ export class RecyclerViewManager {
   completeFirstRender(lastMeasuredIndex: number) {
     if (this.layoutManager) {
       const layout = this.layoutManager.getLayout(lastMeasuredIndex);
-      const isWindowFilled = this.windowSize.height <= layout.y + layout.height;
+      const isWindowFilled = this.isHorizontal
+        ? this.windowSize.width <= layout.x + layout.width
+        : this.windowSize.height <= layout.y + layout.height;
       if (!isWindowFilled) {
         this.updateRenderStack(
           new Array(++this.INITIAL_NUM_TO_RENDER).fill(0).map((_, i) => i)
