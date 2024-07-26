@@ -18,7 +18,7 @@ import {
 
 import { ListRenderItem } from "../FlashListProps";
 
-import { RVLayoutManager, RVLinearLayoutManagerImpl } from "./LayoutManager";
+import { RVLinearLayoutManagerImpl } from "./LayoutManager";
 import { RecyclerViewManager } from "./RecyclerVIewManager";
 import { ViewHolder } from "./ViewHolder";
 
@@ -43,13 +43,21 @@ const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
   ref: React.Ref<any>
 ) => {
-  const ifFistRenderComplete = useRef<boolean>(false);
   const { horizontal, renderItem, data } = props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
-  const [layoutManager, setLayoutManager] = useState<RVLayoutManager>();
   const [recycleManager] = useState<RecyclerViewManager>(
-    () => new RecyclerViewManager()
+    () =>
+      new RecyclerViewManager(
+        // when render stack changes
+        (renderStack) => setRenderStack(renderStack),
+        // on first render complete
+        () => {
+          requestAnimationFrame(() => {
+            recycleManager.refresh();
+          });
+        }
+      )
   );
   const [renderStack, setRenderStack] = useState<Map<number, string>>(
     new Map()
@@ -69,8 +77,6 @@ const RecyclerViewComponent = <T1,>(
         horizontal ? correctedHeight : correctedWidth,
         horizontal ?? false
       );
-
-      setLayoutManager(newLayoutManager);
       recycleManager.updateLayoutManager(
         newLayoutManager,
         {
@@ -79,12 +85,12 @@ const RecyclerViewComponent = <T1,>(
         },
         horizontal ?? false
       );
+      recycleManager.startRender();
     });
   }, [horizontal, recycleManager]);
 
   useLayoutEffect(() => {
     // iterate refHolder and get measureInWindow dimensions for all objects. Don't call update but store all response in an array
-    let maxIndex = -1;
 
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
       const layout = { x: 0, y: 0, width: 0, height: 0 };
@@ -92,33 +98,19 @@ const RecyclerViewComponent = <T1,>(
         layout.width = width;
         layout.height = height;
       });
-      maxIndex = Math.max(maxIndex, index);
       return { index, dimensions: layout };
     });
-
-    layoutManager?.modifyLayout(layoutInfo, data?.length ?? 0);
-
-    if (maxIndex >= 0 && maxIndex < (data?.length ?? 0)) {
-      if (layoutManager) {
-        if (recycleManager.completeFirstRender(maxIndex)) {
-          if (ifFistRenderComplete.current) {
-            recycleManager.refresh();
-          } else {
-            requestAnimationFrame(() => {
-              recycleManager.refresh();
-              setRenderStack(recycleManager.getRenderStack());
-            });
-          }
-          ifFistRenderComplete.current = true;
-          // TODO: improve
-        }
-        setRenderStack(recycleManager.getRenderStack());
+    if (recycleManager.getLayoutManager()) {
+      recycleManager
+        .getLayoutManager()
+        .modifyLayout(layoutInfo, data?.length ?? 0);
+      if (recycleManager.getIsFirstLayoutComplete()) {
+        recycleManager.refresh();
+      } else {
+        recycleManager.resumeProgressiveRender();
       }
-    } else if (layoutManager) {
-      // recycleManager.refresh();
-      setRenderStack(recycleManager.getRenderStack());
     }
-  }, [data, layoutManager, recycleManager, refHolder, renderStack]);
+  }, [data, recycleManager, refHolder, renderStack]);
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -148,6 +140,8 @@ const RecyclerViewComponent = <T1,>(
       }
     },
   }));
+
+  const layoutManager = recycleManager.getLayoutManager();
 
   return (
     <View style={{ flex: horizontal ? undefined : 1 }} ref={internalViewRef}>

@@ -25,22 +25,23 @@ function binarySearchVisibleIndex(
 
     // Check visibility based on the sorting criteria
     const position = isSortedByX ? layout.x : layout.y;
+    const size = isSortedByX ? layout.width : layout.height;
 
-    if (
-      (findFirst && position >= threshold) ||
-      (!findFirst && position <= threshold)
-    ) {
-      // Potential visible index
-      visibleIndex = mid;
-      if (findFirst) {
+    if (findFirst) {
+      // Logic for finding the first visible index
+      if (position >= threshold || position + size >= threshold) {
+        // Potential visible index
+        visibleIndex = mid;
         // Search in the left half for the first visible
         right = mid - 1;
       } else {
-        // Search in the right half for the last visible
+        // Search in the right half
         left = mid + 1;
       }
-    } else if (findFirst) {
-      // Search in the right half
+    } else if (position <= threshold) {
+      // Potential visible index
+      visibleIndex = mid;
+      // Search in the right half for the last visible
       left = mid + 1;
     } else {
       // Search in the left half

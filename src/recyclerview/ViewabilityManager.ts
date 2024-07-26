@@ -87,7 +87,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
    * @returns An array of visible indices.
    */
   getVisibleIndices(): number[] {
-    return this.visibleIndices;
+    return [...this.visibleIndices];
   }
 
   /**

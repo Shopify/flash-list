@@ -13,15 +13,21 @@ export class RecyclerViewManager {
   private windowSize: RVDimension;
   // Map of index to key
   private renderStack: Map<number, string> = new Map();
-  private isHorizontal = false;
+  private onRenderStackChanged: (renderStack: Map<number, string>) => void;
+  private onFirstLayoutComplete: () => void;
+  private isFirstLayoutComplete = false;
 
-  constructor() {
+  constructor(
+    onRenderStackChanged: (renderStack: Map<number, string>) => void,
+    onFirstLayoutComplete: () => void
+  ) {
+    this.onRenderStackChanged = onRenderStackChanged;
+    this.onFirstLayoutComplete = onFirstLayoutComplete;
     this.viewabilityManager = new RVViewabilityManagerImpl();
     this.viewabilityManager.setOnEngagedIndicesChangedListener(
       this.updateRenderStack
     );
     this.recycleKeyManager = new RecycleKeyManagerImpl();
-    this.startInitialRender();
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
@@ -55,6 +61,7 @@ export class RecyclerViewManager {
     }
 
     this.renderStack = newRenderStack;
+    this.onRenderStackChanged(this.renderStack);
   };
 
   updateLayoutManager(
@@ -64,7 +71,6 @@ export class RecyclerViewManager {
   ) {
     this.layoutManager = layoutManager;
     this.windowSize = windowSize;
-    this.isHorizontal = horizontal;
   }
 
   updateScrollOffset(offset: number) {
@@ -76,26 +82,40 @@ export class RecyclerViewManager {
   }
 
   // TODO
-  completeFirstRender(lastMeasuredIndex: number) {
-    if (this.layoutManager) {
-      const layout = this.layoutManager.getLayout(lastMeasuredIndex);
-      const isWindowFilled = this.isHorizontal
-        ? this.windowSize.width <= layout.x + layout.width
-        : this.windowSize.height <= layout.y + layout.height;
-      if (!isWindowFilled) {
+  resumeProgressiveRender() {
+    if (this.layoutManager && this.renderStack.size > 0) {
+      const visibleIndices = this.computeVisibleIndices();
+      const isFullyMeasured = visibleIndices.every(
+        (index) =>
+          this.layoutManager.getLayout(index).isHeightMeasured &&
+          this.layoutManager.getLayout(index).isWidthMeasured
+      );
+      if (!isFullyMeasured) {
         this.updateRenderStack(
-          new Array(++this.INITIAL_NUM_TO_RENDER).fill(0).map((_, i) => i)
+          // pick first n indices from visible ones and n is size of renderStack
+          visibleIndices.slice(
+            0,
+            Math.min(visibleIndices.length, this.renderStack.size + 1)
+          )
         );
-        return false;
       }
+      if (isFullyMeasured && !this.isFirstLayoutComplete) {
+        this.isFirstLayoutComplete = true;
+        this.onFirstLayoutComplete();
+      }
+      return isFullyMeasured;
     }
-    return true;
+    return false;
   }
 
-  startInitialRender() {
-    this.updateRenderStack(
-      new Array(this.INITIAL_NUM_TO_RENDER).fill(0).map((_, i) => i)
-    );
+  startRender() {
+    if (this.renderStack.size === 0) {
+      // TODO
+      const visibleIndices = [0];
+      this.updateRenderStack(
+        visibleIndices.slice(0, Math.min(1, visibleIndices.length))
+      );
+    }
   }
 
   refresh() {
@@ -104,6 +124,10 @@ export class RecyclerViewManager {
       this.layoutManager,
       this.windowSize
     );
+  }
+
+  getIsFirstLayoutComplete() {
+    return this.isFirstLayoutComplete;
   }
 
   getLayout(index: number) {
@@ -128,5 +152,9 @@ export class RecyclerViewManager {
 
   getLayoutManager() {
     return this.layoutManager;
+  }
+
+  computeVisibleIndices() {
+    return this.layoutManager.getVisibleLayouts(0, this.windowSize.height);
   }
 }
