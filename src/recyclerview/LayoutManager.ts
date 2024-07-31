@@ -32,8 +32,12 @@ export interface RVLayout extends RVDimension {
   y: number;
   isWidthMeasured?: boolean;
   isHeightMeasured?: boolean;
-  enforcedHeight?: boolean;
+  minHeight?: number;
+  minWidth?: number;
+  maxHeight?: number;
+  maxWidth?: number;
   enforcedWidth?: boolean;
+  enforcedHeight?: boolean;
 }
 
 export interface RVDimension {
@@ -160,8 +164,24 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
     };
   }
 
+  private updateTallestItem() {
+    let newTallestItem: RVLayout | undefined;
+    for (const layout of this.layouts) {
+      if (
+        layout.height > (layout.minHeight ?? 0) &&
+        layout.height > (newTallestItem?.height ?? 0)
+      ) {
+        newTallestItem = layout;
+      }
+    }
+    if (newTallestItem) {
+      this.tallestItem = newTallestItem;
+    }
+  }
+
   // Helper function to recompute layouts starting from a given index
   private recomputeLayouts(startIndex = 0): void {
+    this.updateTallestItem();
     for (let i = startIndex; i < this.layouts.length; i++) {
       const layout = this.getLayout(i);
       if (i > 0) {
@@ -169,6 +189,7 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
         if (this.isHorizontal) {
           layout.x = prevLayout.x + prevLayout.width;
           layout.y = 0;
+          layout.minHeight = this.tallestItem?.height ?? 0;
         } else {
           layout.x = 0;
           layout.y = prevLayout.y + prevLayout.height;
@@ -176,10 +197,13 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
       } else {
         layout.x = 0;
         layout.y = 0;
+        layout.minHeight = this.isHorizontal
+          ? this.tallestItem?.height ?? 0
+          : 0;
       }
-      if (layout.height >= (this.tallestItem?.height ?? 0)) {
-        this.tallestItem = layout;
-      }
+    }
+    if (this.tallestItem) {
+      this.tallestItem.minHeight = 0;
     }
   }
 }

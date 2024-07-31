@@ -46,6 +46,9 @@ const RecyclerViewComponent = <T1,>(
   const { horizontal, renderItem, data } = props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
+  const childContainerViewRef = useRef<View>(null);
+  const distanceFromWindow = useRef(0);
+
   const [recycleManager] = useState<RecyclerViewManager>(
     () =>
       new RecyclerViewManager(
@@ -70,22 +73,28 @@ const RecyclerViewComponent = <T1,>(
 
   // Initialization effect
   useLayoutEffect(() => {
-    internalViewRef.current?.measureInWindow((x, y, width, height) => {
-      const correctedHeight = Platform.OS === "ios" ? height : height * 1.176;
-      const correctedWidth = Platform.OS === "ios" ? width : width * 1.176;
-      const newLayoutManager = new RVLinearLayoutManagerImpl(
-        horizontal ? correctedHeight : correctedWidth,
-        horizontal ?? false
-      );
-      recycleManager.updateLayoutManager(
-        newLayoutManager,
-        {
-          width: correctedWidth,
-          height: correctedHeight,
-        },
-        horizontal ?? false
-      );
-      recycleManager.startRender();
+    internalViewRef.current?.measureInWindow((x1, y1, _, height) => {
+      childContainerViewRef.current?.measureInWindow((x2, y2, width, __) => {
+        distanceFromWindow.current = horizontal ? x2 - x1 : y2 - y1;
+        if (Platform.OS === "android") {
+          distanceFromWindow.current *= 1.176;
+        }
+        const correctedHeight = Platform.OS === "ios" ? height : height * 1.176;
+        const correctedWidth = Platform.OS === "ios" ? width : width * 1.176;
+        const newLayoutManager = new RVLinearLayoutManagerImpl(
+          horizontal ? correctedHeight : correctedWidth,
+          horizontal ?? false
+        );
+        recycleManager.updateLayoutManager(
+          newLayoutManager,
+          {
+            width: correctedWidth,
+            height: correctedHeight,
+          },
+          horizontal ?? false
+        );
+        recycleManager.startRender();
+      });
     });
   }, [horizontal, recycleManager]);
 
@@ -115,11 +124,10 @@ const RecyclerViewComponent = <T1,>(
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       recycleManager.updateScrollOffset(
-        horizontal
+        (horizontal
           ? event.nativeEvent.contentOffset.x
-          : event.nativeEvent.contentOffset.y
+          : event.nativeEvent.contentOffset.y) - distanceFromWindow.current
       );
-      setRenderStack(recycleManager.getRenderStack());
     },
     [horizontal, recycleManager]
   );
@@ -141,7 +149,17 @@ const RecyclerViewComponent = <T1,>(
     },
   }));
 
+  // TODO: Replace with sync onLayout and better way to refresh
+  const forceUpdate = useCallback(() => {
+    setRenderStack(new Map(recycleManager.getRenderStack()));
+    requestAnimationFrame(() => {
+      setRenderStack(new Map(recycleManager.getRenderStack()));
+    });
+  }, [recycleManager]);
+
   const layoutManager = recycleManager.getLayoutManager();
+
+  console.log("rendering RecyclerView", layoutManager?.getLayoutSize());
 
   return (
     <View style={{ flex: horizontal ? undefined : 1 }} ref={internalViewRef}>
@@ -152,7 +170,10 @@ const RecyclerViewComponent = <T1,>(
         // TODO: evaluate perf
         removeClippedSubviews={false}
       >
-        <View style={layoutManager?.getLayoutSize()}>
+        <View
+          ref={childContainerViewRef}
+          style={layoutManager?.getLayoutSize()}
+        >
           {layoutManager && data
             ? Array.from(renderStack, ([index, reactKey]) => {
                 const item = data[index];
@@ -162,6 +183,7 @@ const RecyclerViewComponent = <T1,>(
                     index={index}
                     layout={layoutManager.getLayout(index)}
                     refHolder={refHolder}
+                    onSizeChanged={forceUpdate}
                   >
                     {renderItem?.({ item, index, target: "Cell" })}
                   </ViewHolder>
