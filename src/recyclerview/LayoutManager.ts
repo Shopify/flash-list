@@ -6,21 +6,69 @@ import {
 } from "./utils/findVisibleIndex";
 
 // TODO: Figure out how to estimate size of unrendered items and bidirectional item loading
-export interface RVLayoutManager {
-  // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
-  modifyLayout: (layoutInfo: RVLayoutInfo[], itemCount: number) => void;
+export abstract class RVLayoutManager {
+  protected isHorizontal: boolean;
+  protected layouts: RVLayout[];
+
+  constructor(params: LayoutParams) {
+    this.isHorizontal = Boolean(params.horizontal);
+    this.layouts = [];
+  }
+
   // fetch layout info, breaks if unavailable
-  getLayout: (index: number) => RVLayout;
+  getLayout(index: number): RVLayout {
+    return this.layouts[index];
+  }
+
   // returns visible indices, should be very fast. Use binary search to find the first visible index.
-  getVisibleLayouts: (
+  // Returns visible indices, should be very fast. Return sorted indices.
+  getVisibleLayouts(
     unboundDimensionStart: number,
     unboundDimensionEnd: number
-  ) => number[];
+  ): number[] {
+    const visibleIndices: number[] = [];
+    // Find the first visible index
+    const firstVisibleIndex = findFirstVisibleIndex(
+      this.layouts,
+      unboundDimensionStart,
+      this.isHorizontal
+    );
+
+    // Find the last visible index
+    const lastVisibleIndex = findLastVisibleIndex(
+      this.layouts,
+      unboundDimensionEnd,
+      this.isHorizontal
+    );
+
+    // Collect the indices in the range
+    if (firstVisibleIndex !== -1 && lastVisibleIndex !== -1) {
+      for (let i = firstVisibleIndex; i <= lastVisibleIndex; i++) {
+        visibleIndices.push(i);
+      }
+    }
+    return visibleIndices;
+  }
+
   // remove layout values and recompute layout. Avoid complete recomputation if possible.
-  deleteLayout: (index: number[]) => void;
+  deleteLayout(indices: number[]): void {
+    // Sort indices in descending order
+    indices.sort((num1, num2) => num2 - num1);
+
+    // Remove elements from the array
+    for (const index of indices) {
+      this.layouts.splice(index, 1);
+    }
+  }
+
+  // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
+  abstract modifyLayout(layoutInfo: RVLayoutInfo[], itemCount: number): void;
+
   // Size of the rendered area
-  getLayoutSize: () => RVDimension;
-  updateLayoutParams: (params: LayoutParams) => void;
+  abstract getLayoutSize(): RVDimension;
+
+  // recompute if critical layout information changes
+  abstract updateLayoutParams(params: LayoutParams): void;
 }
 
 export interface LayoutParams {
@@ -58,20 +106,16 @@ export interface RVDimension {
   height: number;
 }
 
-export class RVLinearLayoutManagerImpl implements RVLayoutManager {
+export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   private boundedSize: number;
-  private isHorizontal: boolean;
-  private layouts: RVLayout[];
+
   private tallestItem?: RVLayout;
 
   constructor(params: LayoutParams) {
-    this.isHorizontal = Boolean(params.horizontal);
-
+    super(params);
     this.boundedSize = this.isHorizontal
       ? params.windowSize.height
       : params.windowSize.width;
-
-    this.layouts = [];
   }
 
   updateLayoutParams(params: LayoutParams): void {
@@ -128,44 +172,9 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
     return layout;
   }
 
-  // Returns visible indices, should be very fast. Return sorted indices.
-  getVisibleLayouts(
-    unboundDimensionStart: number,
-    unboundDimensionEnd: number
-  ): number[] {
-    const visibleIndices: number[] = [];
-    // Find the first visible index
-    const firstVisibleIndex = findFirstVisibleIndex(
-      this.layouts,
-      unboundDimensionStart,
-      this.isHorizontal
-    );
-
-    // Find the last visible index
-    const lastVisibleIndex = findLastVisibleIndex(
-      this.layouts,
-      unboundDimensionEnd,
-      this.isHorizontal
-    );
-
-    // Collect the indices in the range
-    if (firstVisibleIndex !== -1 && lastVisibleIndex !== -1) {
-      for (let i = firstVisibleIndex; i <= lastVisibleIndex; i++) {
-        visibleIndices.push(i);
-      }
-    }
-    return visibleIndices;
-  }
-
   // Remove layout values and recompute layout.
   deleteLayout(indices: number[]): void {
-    // Sort indices in descending order
-    indices.sort((num1, num2) => num2 - num1);
-
-    // Remove elements from the array
-    for (const index of indices) {
-      this.layouts.splice(index, 1);
-    }
+    super.deleteLayout(indices);
 
     // Recompute layouts starting from the smallest index in the original indices array
     this.recomputeLayouts(Math.min(...indices));
