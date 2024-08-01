@@ -47,6 +47,9 @@ const Twitter = ({
   return (
     <RecyclerView
       ref={instance}
+      keyExtractor={(item) => {
+        return item.id;
+      }}
       data={debugContext.emptyListEnabled ? [] : tweets}
       renderItem={({ item }) => {
         return <TweetCell tweet={item} />;

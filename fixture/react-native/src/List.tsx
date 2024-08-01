@@ -10,7 +10,7 @@ import {
   LayoutAnimation,
   StyleSheet,
 } from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, RecyclerView } from "@shopify/flash-list";
 
 const generateArray = (size: number) => {
   const arr = new Array(size);
@@ -59,7 +59,7 @@ const List = () => {
   };
 
   return (
-    <FlashList
+    <RecyclerView
       ref={list}
       refreshing={refreshing}
       onRefresh={() => {
@@ -72,7 +72,7 @@ const List = () => {
         return item.toString();
       }}
       getItemType={(item: number) => {
-        return item > 97 ? "even" : "odd";
+        return item % 2 === 0 ? "even" : "odd";
       }}
       renderItem={renderItem}
       estimatedItemSize={100}

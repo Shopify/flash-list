@@ -16,6 +16,8 @@ export class RecyclerViewManager {
   private onRenderStackChanged: (renderStack: Map<number, string>) => void;
   private onFirstLayoutComplete: () => void;
   private isFirstLayoutComplete = false;
+  private stableIdProvider: (index: number) => string;
+  private getItemType: (index: number) => string;
 
   constructor(
     onRenderStackChanged: (renderStack: Map<number, string>) => void,
@@ -28,6 +30,8 @@ export class RecyclerViewManager {
       this.updateRenderStack
     );
     this.recycleKeyManager = new RecycleKeyManagerImpl();
+    this.stableIdProvider = (index) => index.toString();
+    this.getItemType = () => "type1";
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
@@ -43,8 +47,8 @@ export class RecyclerViewManager {
     for (const index of engagedIndices) {
       // TODO: connect key extractor
       const newKey = this.recycleKeyManager.getKey(
-        "type1",
-        index.toString(),
+        this.getItemType(index),
+        this.stableIdProvider(index),
         this.renderStack.get(index)
       );
       newRenderStack.set(index, newKey);
@@ -71,6 +75,14 @@ export class RecyclerViewManager {
   ) {
     this.layoutManager = layoutManager;
     this.windowSize = windowSize;
+  }
+
+  updateKeyExtractor(stableIdProvider: (index: number) => string) {
+    this.stableIdProvider = stableIdProvider;
+  }
+
+  updateGetItemType(getItemType: (index: number) => string) {
+    this.getItemType = getItemType;
   }
 
   updateScrollOffset(offset: number) {

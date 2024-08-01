@@ -18,14 +18,28 @@ import {
 
 import { ListRenderItem } from "../FlashListProps";
 
-import { RVLinearLayoutManagerImpl } from "./LayoutManager";
+import { RVLinearLayoutManagerImpl, SpanSizeInfo } from "./LayoutManager";
 import { RecyclerViewManager } from "./RecyclerVIewManager";
 import { ViewHolder } from "./ViewHolder";
 
 export interface RecyclerViewProps<TItem> {
   horizontal?: boolean;
   data: ReadonlyArray<TItem> | null | undefined;
+  numColumns?: number;
   renderItem: ListRenderItem<TItem> | null | undefined;
+  keyExtractor?: ((item: TItem, index: number) => string) | undefined;
+  getItemType?: (
+    item: TItem,
+    index: number,
+    extraData?: any
+  ) => string | number | undefined;
+  overrideItemLayout?: (
+    layout: SpanSizeInfo,
+    item: TItem,
+    index: number,
+    maxColumns: number,
+    extraData?: any
+  ) => void;
 }
 
 export interface ScrollToOffsetParams {
@@ -43,7 +57,14 @@ const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
   ref: React.Ref<any>
 ) => {
-  const { horizontal, renderItem, data } = props;
+  const {
+    horizontal,
+    renderItem,
+    data,
+    keyExtractor,
+    getItemType,
+    numColumns,
+  } = props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
   const childContainerViewRef = useRef<View>(null);
@@ -71,6 +92,31 @@ const RecyclerViewComponent = <T1,>(
     []
   );
 
+  const layoutManager = recycleManager.getLayoutManager();
+
+  recycleManager.updateKeyExtractor((index) => {
+    // TODO: choose smart default key extractor
+    return keyExtractor?.(data![index], index) ?? index.toString();
+  });
+
+  recycleManager.updateGetItemType((index) => {
+    return (getItemType?.(data![index], index) ?? "default").toString();
+  });
+
+  layoutManager?.updateLayoutParams({
+    overrideItemLayout: (index, layout) => {
+      return props.overrideItemLayout?.(
+        layout,
+        data![index],
+        index,
+        numColumns ?? 1
+      );
+    },
+    horizontal,
+    maxColumns: numColumns,
+    windowSize: recycleManager.getWindowSize(),
+  });
+
   // Initialization effect
   useLayoutEffect(() => {
     internalViewRef.current?.measureInWindow((x1, y1, _, height) => {
@@ -81,10 +127,9 @@ const RecyclerViewComponent = <T1,>(
         }
         const correctedHeight = Platform.OS === "ios" ? height : height * 1.176;
         const correctedWidth = Platform.OS === "ios" ? width : width * 1.176;
-        const newLayoutManager = new RVLinearLayoutManagerImpl(
-          horizontal ? correctedHeight : correctedWidth,
-          horizontal ?? false
-        );
+        const newLayoutManager = new RVLinearLayoutManagerImpl({
+          windowSize: { width: correctedWidth, height: correctedHeight },
+        });
         recycleManager.updateLayoutManager(
           newLayoutManager,
           {
@@ -156,10 +201,6 @@ const RecyclerViewComponent = <T1,>(
       setRenderStack(new Map(recycleManager.getRenderStack()));
     });
   }, [recycleManager]);
-
-  const layoutManager = recycleManager.getLayoutManager();
-
-  console.log("rendering RecyclerView", layoutManager?.getLayoutSize());
 
   return (
     <View style={{ flex: horizontal ? undefined : 1 }} ref={internalViewRef}>

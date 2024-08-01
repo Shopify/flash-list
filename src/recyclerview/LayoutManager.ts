@@ -20,11 +20,24 @@ export interface RVLayoutManager {
   deleteLayout: (index: number[]) => void;
   // Size of the rendered area
   getLayoutSize: () => RVDimension;
+  updateLayoutParams: (params: LayoutParams) => void;
+}
+
+export interface LayoutParams {
+  windowSize: RVDimension;
+  horizontal?: boolean;
+  maxColumns?: number;
+  overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
 }
 
 export interface RVLayoutInfo {
   index: number;
   dimensions: RVDimension;
+}
+
+export interface SpanSizeInfo {
+  span?: number;
+  size?: number;
 }
 
 export interface RVLayout extends RVDimension {
@@ -51,10 +64,18 @@ export class RVLinearLayoutManagerImpl implements RVLayoutManager {
   private layouts: RVLayout[];
   private tallestItem?: RVLayout;
 
-  constructor(boundedSize: number, isHorizontal: boolean) {
-    this.boundedSize = boundedSize;
-    this.isHorizontal = isHorizontal;
+  constructor(params: LayoutParams) {
+    this.isHorizontal = Boolean(params.horizontal);
+
+    this.boundedSize = this.isHorizontal
+      ? params.windowSize.height
+      : params.windowSize.width;
+
     this.layouts = [];
+  }
+
+  updateLayoutParams(params: LayoutParams): void {
+    // TODO: Implement this
   }
 
   // Updates layout information based on the provided layout info.
