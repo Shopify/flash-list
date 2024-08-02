@@ -7,12 +7,16 @@ import {
 
 // TODO: Figure out how to estimate size of unrendered items and bidirectional item loading
 export abstract class RVLayoutManager {
-  protected isHorizontal: boolean;
+  protected horizontal: boolean;
   protected layouts: RVLayout[];
 
   constructor(params: LayoutParams) {
-    this.isHorizontal = Boolean(params.horizontal);
+    this.horizontal = Boolean(params.horizontal);
     this.layouts = [];
+  }
+
+  isHorizontal(): boolean {
+    return this.horizontal;
   }
 
   // fetch layout info, breaks if unavailable
@@ -31,14 +35,14 @@ export abstract class RVLayoutManager {
     const firstVisibleIndex = findFirstVisibleIndex(
       this.layouts,
       unboundDimensionStart,
-      this.isHorizontal
+      this.horizontal
     );
 
     // Find the last visible index
     const lastVisibleIndex = findLastVisibleIndex(
       this.layouts,
       unboundDimensionEnd,
-      this.isHorizontal
+      this.horizontal
     );
 
     // Collect the indices in the range
@@ -67,7 +71,7 @@ export abstract class RVLayoutManager {
   // Size of the rendered area
   abstract getLayoutSize(): RVDimension;
 
-  // recompute if critical layout information changes
+  // recompute if critical layout information changes, can be called with same values repeatedly so only recompute if necessary
   abstract updateLayoutParams(params: LayoutParams): void;
 }
 
@@ -76,6 +80,7 @@ export interface LayoutParams {
   horizontal?: boolean;
   maxColumns?: number;
   overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
+  matchHeightsWithNeighbours?: boolean;
 }
 
 export interface RVLayoutInfo {
@@ -113,7 +118,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
 
   constructor(params: LayoutParams) {
     super(params);
-    this.boundedSize = this.isHorizontal
+    this.boundedSize = this.horizontal
       ? params.windowSize.height
       : params.windowSize.width;
   }
@@ -140,7 +145,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
       const layout = this.layouts[index];
-      layout.width = this.isHorizontal ? dimensions.width : this.boundedSize;
+      layout.width = this.horizontal ? dimensions.width : this.boundedSize;
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
 
@@ -162,10 +167,10 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
         x: 0,
         y: 0,
         // TODO: horizontal list size management required
-        width: this.isHorizontal ? 200 : this.boundedSize,
-        height: this.isHorizontal ? 0 : 200,
+        width: this.horizontal ? 200 : this.boundedSize,
+        height: this.horizontal ? 0 : 200,
         isWidthMeasured: true,
-        enforcedWidth: !this.isHorizontal,
+        enforcedWidth: !this.horizontal,
       };
       return this.layouts[index];
     }
@@ -185,10 +190,10 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
     const lastLayout = this.layouts[this.layouts.length - 1];
     return {
-      width: this.isHorizontal
+      width: this.horizontal
         ? lastLayout.x + lastLayout.width
         : this.boundedSize,
-      height: this.isHorizontal
+      height: this.horizontal
         ? this.tallestItem?.height ?? 0
         : lastLayout.y + lastLayout.height,
     };
@@ -216,7 +221,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       const layout = this.getLayout(i);
       if (i > 0) {
         const prevLayout = this.layouts[i - 1];
-        if (this.isHorizontal) {
+        if (this.horizontal) {
           layout.x = prevLayout.x + prevLayout.width;
           layout.y = 0;
           layout.minHeight = this.tallestItem?.height ?? 0;
@@ -227,9 +232,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       } else {
         layout.x = 0;
         layout.y = 0;
-        layout.minHeight = this.isHorizontal
-          ? this.tallestItem?.height ?? 0
-          : 0;
+        layout.minHeight = this.horizontal ? this.tallestItem?.height ?? 0 : 0;
       }
     }
     if (this.tallestItem) {

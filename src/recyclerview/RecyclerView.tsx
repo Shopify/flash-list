@@ -18,9 +18,10 @@ import {
 
 import { ListRenderItem } from "../FlashListProps";
 
-import { RVLinearLayoutManagerImpl, SpanSizeInfo } from "./LayoutManager";
+import { SpanSizeInfo } from "./LayoutManager";
 import { RecyclerViewManager } from "./RecyclerVIewManager";
 import { ViewHolder } from "./ViewHolder";
+import { RVGridLayoutManagerImpl } from "./GridLayoutManager";
 
 export interface RecyclerViewProps<TItem> {
   horizontal?: boolean;
@@ -105,12 +106,7 @@ const RecyclerViewComponent = <T1,>(
 
   layoutManager?.updateLayoutParams({
     overrideItemLayout: (index, layout) => {
-      return props.overrideItemLayout?.(
-        layout,
-        data![index],
-        index,
-        numColumns ?? 1
-      );
+      props.overrideItemLayout?.(layout, data![index], index, numColumns ?? 1);
     },
     horizontal,
     maxColumns: numColumns,
@@ -127,8 +123,10 @@ const RecyclerViewComponent = <T1,>(
         }
         const correctedHeight = Platform.OS === "ios" ? height : height * 1.176;
         const correctedWidth = Platform.OS === "ios" ? width : width * 1.176;
-        const newLayoutManager = new RVLinearLayoutManagerImpl({
+        const newLayoutManager = new RVGridLayoutManagerImpl({
           windowSize: { width: correctedWidth, height: correctedHeight },
+          maxColumns: numColumns ?? 1,
+          matchHeightsWithNeighbours: true,
         });
         recycleManager.updateLayoutManager(
           newLayoutManager,
@@ -196,10 +194,10 @@ const RecyclerViewComponent = <T1,>(
 
   // TODO: Replace with sync onLayout and better way to refresh
   const forceUpdate = useCallback(() => {
-    setRenderStack(new Map(recycleManager.getRenderStack()));
-    requestAnimationFrame(() => {
-      setRenderStack(new Map(recycleManager.getRenderStack()));
-    });
+    // setRenderStack(new Map(recycleManager.getRenderStack()));
+    // requestAnimationFrame(() => {
+    //   setRenderStack(new Map(recycleManager.getRenderStack()));
+    // });
   }, [recycleManager]);
 
   return (

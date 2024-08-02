@@ -28,6 +28,7 @@ export const ViewHolder = (props: ViewHolderProps) => {
   const onLayout = useCallback(
     (event: LayoutChangeEvent) => {
       // height width don't match layot call
+      // TODO: manage precision problems
       if (
         layout.height !== event.nativeEvent.layout.height ||
         layout.width !== event.nativeEvent.layout.width

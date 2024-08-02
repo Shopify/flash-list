@@ -63,10 +63,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
     const unboundStart = offset;
     const unboundEnd =
       offset +
-      (layoutManager.getLayoutSize().width >
-      layoutManager.getLayoutSize().height
-        ? windowSize.width
-        : windowSize.height);
+      (layoutManager.isHorizontal() ? windowSize.width : windowSize.height);
 
     // Get new visible and engaged indices
     const newVisibleIndices = layoutManager.getVisibleLayouts(
