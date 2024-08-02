@@ -549,6 +549,14 @@ recordInteraction();
 
 Tells the list an interaction has occurred, which should trigger viewability calculations, e.g. if `waitForInteractions` is true and the user has not scrolled. You should typically call `recordInteraction()` when user for example taps on an item or invokes a navigation action.
 
+### `recomputeViewableItems()`
+
+```tsx
+recomputeViewableItems();
+```
+
+Retriggers viewability calculations. Useful to imperatively trigger viewability calculations.
+
 ### `scrollToEnd()`
 
 ```tsx
