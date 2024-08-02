@@ -194,10 +194,10 @@ const RecyclerViewComponent = <T1,>(
 
   // TODO: Replace with sync onLayout and better way to refresh
   const forceUpdate = useCallback(() => {
-    // setRenderStack(new Map(recycleManager.getRenderStack()));
-    // requestAnimationFrame(() => {
-    //   setRenderStack(new Map(recycleManager.getRenderStack()));
-    // });
+    setRenderStack(new Map(recycleManager.getRenderStack()));
+    requestAnimationFrame(() => {
+      setRenderStack(new Map(recycleManager.getRenderStack()));
+    });
   }, [recycleManager]);
 
   return (
