@@ -54,7 +54,8 @@ export const ViewHolder = (props: ViewHolderProps) => {
         minWidth: layout.minWidth,
         maxHeight: layout.maxHeight,
         maxWidth: layout.maxWidth,
-        transform: [{ translateX: layout.x }, { translateY: layout.y }],
+        left: layout.x,
+        top: layout.y,
       }}
     >
       {props.children}

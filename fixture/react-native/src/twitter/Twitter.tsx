@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   ViewabilityConfig,
   FlatList,
+  I18nManager,
 } from "react-native";
 import {
   BlankAreaEventHandler,
@@ -50,6 +51,7 @@ const Twitter = ({
       keyExtractor={(item) => {
         return item.id;
       }}
+      horizontal
       data={debugContext.emptyListEnabled ? [] : tweets}
       renderItem={({ item }) => {
         return <TweetCell tweet={item} />;

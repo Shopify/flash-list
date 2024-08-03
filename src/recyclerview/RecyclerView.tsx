@@ -9,6 +9,7 @@ import React, {
   useImperativeHandle,
 } from "react";
 import {
+  I18nManager,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Platform,
@@ -18,10 +19,9 @@ import {
 
 import { ListRenderItem } from "../FlashListProps";
 
-import { SpanSizeInfo } from "./LayoutManager";
+import { RVLinearLayoutManagerImpl, SpanSizeInfo } from "./LayoutManager";
 import { RecyclerViewManager } from "./RecyclerVIewManager";
 import { ViewHolder } from "./ViewHolder";
-import { RVGridLayoutManagerImpl } from "./GridLayoutManager";
 
 export interface RecyclerViewProps<TItem> {
   horizontal?: boolean;
@@ -123,10 +123,11 @@ const RecyclerViewComponent = <T1,>(
         }
         const correctedHeight = Platform.OS === "ios" ? height : height * 1.176;
         const correctedWidth = Platform.OS === "ios" ? width : width * 1.176;
-        const newLayoutManager = new RVGridLayoutManagerImpl({
+        const newLayoutManager = new RVLinearLayoutManagerImpl({
           windowSize: { width: correctedWidth, height: correctedHeight },
           maxColumns: numColumns ?? 1,
           matchHeightsWithNeighbours: true,
+          horizontal,
         });
         recycleManager.updateLayoutManager(
           newLayoutManager,
@@ -139,7 +140,7 @@ const RecyclerViewComponent = <T1,>(
         recycleManager.startRender();
       });
     });
-  }, [horizontal, recycleManager]);
+  }, [horizontal, numColumns, recycleManager]);
 
   useLayoutEffect(() => {
     // iterate refHolder and get measureInWindow dimensions for all objects. Don't call update but store all response in an array
@@ -166,11 +167,22 @@ const RecyclerViewComponent = <T1,>(
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      recycleManager.updateScrollOffset(
-        (horizontal
-          ? event.nativeEvent.contentOffset.x
-          : event.nativeEvent.contentOffset.y) - distanceFromWindow.current
-      );
+      let scrollOffset = horizontal
+        ? event.nativeEvent.contentOffset.x
+        : event.nativeEvent.contentOffset.y;
+
+      if (I18nManager.isRTL && horizontal) {
+        scrollOffset =
+          event.nativeEvent.contentSize.width -
+          scrollOffset -
+          2 * event.nativeEvent.layoutMeasurement.width +
+          distanceFromWindow.current;
+        scrollOffset = Math.ceil(scrollOffset);
+        console.log("RTL", scrollOffset, distanceFromWindow.current);
+      } else {
+        scrollOffset -= distanceFromWindow.current;
+      }
+      recycleManager.updateScrollOffset(scrollOffset);
     },
     [horizontal, recycleManager]
   );
@@ -194,10 +206,10 @@ const RecyclerViewComponent = <T1,>(
 
   // TODO: Replace with sync onLayout and better way to refresh
   const forceUpdate = useCallback(() => {
-    setRenderStack(new Map(recycleManager.getRenderStack()));
-    requestAnimationFrame(() => {
-      setRenderStack(new Map(recycleManager.getRenderStack()));
-    });
+    // setRenderStack(new Map(recycleManager.getRenderStack()));
+    // requestAnimationFrame(() => {
+    //   setRenderStack(new Map(recycleManager.getRenderStack()));
+    // });
   }, [recycleManager]);
 
   return (

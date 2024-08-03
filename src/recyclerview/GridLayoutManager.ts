@@ -150,7 +150,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
 
   private checkBounds(itemX: number, width: number): boolean {
     // TODO: Manage precision problems
-    return itemX + width <= Math.ceil(this.boundedSize);
+    return itemX + width <= this.boundedSize + 0.9;
   }
 
   private locateFirstNeighbourIndex(startIndex: number): number {
