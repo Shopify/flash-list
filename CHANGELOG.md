@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add recomputeViewableItems method
+  - https://github.com/Shopify/flash-list/pull/1296
 - Fix first sticky header is not rendering when data changed
   - https://github.com/Shopify/flash-list/issues/814
 

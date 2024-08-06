@@ -872,6 +872,13 @@ class FlashList<T> extends React.PureComponent<
   public recordInteraction = () => {
     this.viewabilityManager.recordInteraction();
   };
+
+  /**
+   * Retriggers viewability calculations. Useful to imperatively trigger viewability calculations.
+   */
+  public recomputeViewableItems = () => {
+    this.viewabilityManager.recomputeViewableItems();
+  };
 }
 
 export default FlashList;
