@@ -695,7 +695,7 @@ class FlashList<T> extends React.PureComponent<
     _: any,
     __: any,
     index: number,
-    ___: any
+    extraData: any
   ) => {
     return (
       <PureComponentWrapper
@@ -703,6 +703,7 @@ class FlashList<T> extends React.PureComponent<
         enabled={this.isStickyEnabled}
         arg={index}
         renderer={this.rowRendererSticky}
+        extraData={extraData}
       />
     );
   };
