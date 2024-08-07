@@ -15,7 +15,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@react-navigation/native": "^6.0.10",
+    "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.0",
     "@shopify/flash-list": "link:../../",
     "react": "18.2.0",
