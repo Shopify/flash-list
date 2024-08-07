@@ -22,6 +22,8 @@ import { ListRenderItem } from "../FlashListProps";
 import { RVLinearLayoutManagerImpl, SpanSizeInfo } from "./LayoutManager";
 import { RecyclerViewManager } from "./RecyclerVIewManager";
 import { ViewHolder } from "./ViewHolder";
+import { measureLayout } from "./utils/measureLayout";
+import { RVGridLayoutManagerImpl } from "./GridLayoutManager";
 
 export interface RecyclerViewProps<TItem> {
   horizontal?: boolean;
@@ -115,42 +117,50 @@ const RecyclerViewComponent = <T1,>(
 
   // Initialization effect
   useLayoutEffect(() => {
-    internalViewRef.current?.measureInWindow((x1, y1, _, height) => {
-      childContainerViewRef.current?.measureInWindow((x2, y2, width, __) => {
-        distanceFromWindow.current = horizontal ? x2 - x1 : y2 - y1;
-        if (Platform.OS === "android") {
-          distanceFromWindow.current *= 1.176;
-        }
-        const correctedHeight = Platform.OS === "ios" ? height : height * 1.176;
-        const correctedWidth = Platform.OS === "ios" ? width : width * 1.176;
-        const newLayoutManager = new RVLinearLayoutManagerImpl({
-          windowSize: { width: correctedWidth, height: correctedHeight },
-          maxColumns: numColumns ?? 1,
-          matchHeightsWithNeighbours: true,
-          horizontal,
-        });
-        recycleManager.updateLayoutManager(
-          newLayoutManager,
-          {
-            width: correctedWidth,
-            height: correctedHeight,
-          },
-          horizontal ?? false
-        );
-        recycleManager.startRender();
+    if (internalViewRef.current && childContainerViewRef.current) {
+      const outerViewLayout = measureLayout(internalViewRef.current);
+      const childViewLayout = measureLayout(childContainerViewRef.current);
+      distanceFromWindow.current = horizontal
+        ? childViewLayout.x - outerViewLayout.x
+        : childViewLayout.y - outerViewLayout.y;
+      if (Platform.OS === "android") {
+        distanceFromWindow.current *= 1.176;
+      }
+      const correctedHeight =
+        Platform.OS === "ios"
+          ? outerViewLayout.height
+          : outerViewLayout.height * 1.176;
+      const correctedWidth =
+        Platform.OS === "ios"
+          ? childViewLayout.width
+          : childViewLayout.width * 1.176;
+      const LayoutManagerClass =
+        (numColumns ?? 1) > 1 && !horizontal
+          ? RVGridLayoutManagerImpl
+          : RVLinearLayoutManagerImpl;
+      const newLayoutManager = new LayoutManagerClass({
+        windowSize: { width: correctedWidth, height: correctedHeight },
+        maxColumns: numColumns ?? 1,
+        matchHeightsWithNeighbours: true,
+        horizontal,
       });
-    });
+      recycleManager.updateLayoutManager(
+        newLayoutManager,
+        {
+          width: correctedWidth,
+          height: correctedHeight,
+        },
+        horizontal ?? false
+      );
+      recycleManager.startRender();
+    }
   }, [horizontal, numColumns, recycleManager]);
 
   useLayoutEffect(() => {
     // iterate refHolder and get measureInWindow dimensions for all objects. Don't call update but store all response in an array
 
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
-      const layout = { x: 0, y: 0, width: 0, height: 0 };
-      viewHolderRef.current?.measureInWindow((x, y, width, height) => {
-        layout.width = width;
-        layout.height = height;
-      });
+      const layout = measureLayout(viewHolderRef.current!);
       return { index, dimensions: layout };
     });
     if (recycleManager.getLayoutManager()) {
@@ -170,13 +180,13 @@ const RecyclerViewComponent = <T1,>(
       let scrollOffset = horizontal
         ? event.nativeEvent.contentOffset.x
         : event.nativeEvent.contentOffset.y;
-
       if (I18nManager.isRTL && horizontal) {
         scrollOffset =
           event.nativeEvent.contentSize.width -
           scrollOffset -
           2 * event.nativeEvent.layoutMeasurement.width +
           distanceFromWindow.current;
+        // TODO: not rounding off is leading to repeated onScroll events
         scrollOffset = Math.ceil(scrollOffset);
         console.log("RTL", scrollOffset, distanceFromWindow.current);
       } else {
