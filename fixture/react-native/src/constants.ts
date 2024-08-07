@@ -5,6 +5,7 @@ import { TweetContentProps } from "./twitter/TweetContent";
 export type RootStackParamList = {
   Examples: undefined;
   List: undefined;
+  SectionList: undefined;
   Reminders: undefined;
   PaginatedList: undefined;
   Twitter: undefined;
