@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 
-import { ListRenderItem } from "../FlashListProps";
+import { FlashListProps } from "../FlashListProps";
 
 import { RVLinearLayoutManagerImpl, SpanSizeInfo } from "./LayoutManager";
 import { RecyclerViewManager } from "./RecyclerVIewManager";
@@ -29,7 +29,8 @@ export interface RecyclerViewProps<TItem> {
   horizontal?: boolean;
   data: ReadonlyArray<TItem> | null | undefined;
   numColumns?: number;
-  renderItem: ListRenderItem<TItem> | null | undefined;
+  extraData?: any;
+  renderItem: FlashListProps<TItem>["renderItem"];
   keyExtractor?: ((item: TItem, index: number) => string) | undefined;
   getItemType?: (
     item: TItem,
@@ -67,6 +68,7 @@ const RecyclerViewComponent = <T1,>(
     keyExtractor,
     getItemType,
     numColumns,
+    extraData,
   } = props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
@@ -144,14 +146,7 @@ const RecyclerViewComponent = <T1,>(
         matchHeightsWithNeighbours: true,
         horizontal,
       });
-      recycleManager.updateLayoutManager(
-        newLayoutManager,
-        {
-          width: correctedWidth,
-          height: correctedHeight,
-        },
-        horizontal ?? false
-      );
+      recycleManager.updateLayoutManager(newLayoutManager);
       recycleManager.startRender();
     }
   }, [horizontal, numColumns, recycleManager]);
@@ -166,7 +161,7 @@ const RecyclerViewComponent = <T1,>(
     if (recycleManager.getLayoutManager()) {
       recycleManager
         .getLayoutManager()
-        .modifyLayout(layoutInfo, data?.length ?? 0);
+        ?.modifyLayout(layoutInfo, data?.length ?? 0);
       if (recycleManager.getIsFirstLayoutComplete()) {
         recycleManager.refresh();
       } else {
@@ -186,7 +181,7 @@ const RecyclerViewComponent = <T1,>(
           scrollOffset -
           2 * event.nativeEvent.layoutMeasurement.width +
           distanceFromWindow.current;
-        // TODO: not rounding off is leading to repeated onScroll events
+        // TODO: not rounding off is leading to repeated onScroll events, precision issue
         scrollOffset = Math.ceil(scrollOffset);
         console.log("RTL", scrollOffset, distanceFromWindow.current);
       } else {
@@ -242,12 +237,15 @@ const RecyclerViewComponent = <T1,>(
                   <ViewHolder
                     key={reactKey}
                     index={index}
-                    layout={layoutManager.getLayout(index)}
+                    item={item}
+                    // Since we mutate layout objects, we want to pass a copy. We do a custom comparison so new object here doesn't matter.
+                    layout={{ ...layoutManager.getLayout(index) }}
                     refHolder={refHolder}
                     onSizeChanged={forceUpdate}
-                  >
-                    {renderItem?.({ item, index, target: "Cell" })}
-                  </ViewHolder>
+                    target="Cell"
+                    renderItem={renderItem}
+                    extraData={extraData}
+                  />
                 );
               })
             : null}

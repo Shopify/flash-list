@@ -1,20 +1,40 @@
-import { LayoutChangeEvent, View, ViewStyle } from "react-native";
-import React, { RefObject, useCallback, useLayoutEffect, useRef } from "react";
+import { LayoutChangeEvent, View } from "react-native";
+import React, {
+  RefObject,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
+
+import { FlashListProps, RenderTarget } from "../FlashListProps";
 
 import { RVLayout } from "./LayoutManager";
+import { areDimensionsEqual } from "./utils/measureLayout";
 
-export interface ViewHolderProps {
+export interface ViewHolderProps<TItem> {
   index: number;
   layout: RVLayout;
-  style?: ViewStyle;
   refHolder: Map<number, RefObject<View | null>>;
-  children?: React.ReactNode;
-  onSizeChanged?: (index: number) => void;
+  onSizeChanged: (index: number) => void;
+  extraData: any;
+  target: RenderTarget;
+  item: TItem;
+  renderItem: FlashListProps<TItem>["renderItem"];
 }
-export const ViewHolder = (props: ViewHolderProps) => {
+const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   // create ref for View
   const viewRef = useRef<View>(null);
-  const { index, refHolder, style, layout, onSizeChanged } = props;
+  const {
+    index,
+    refHolder,
+    layout,
+    onSizeChanged,
+    renderItem,
+    extraData,
+    item,
+    target,
+  } = props;
 
   useLayoutEffect(() => {
     refHolder.set(index, viewRef);
@@ -28,12 +48,19 @@ export const ViewHolder = (props: ViewHolderProps) => {
   const onLayout = useCallback(
     (event: LayoutChangeEvent) => {
       // height width don't match layot call
-      // TODO: manage precision problems
       if (
-        layout.height !== event.nativeEvent.layout.height ||
-        layout.width !== event.nativeEvent.layout.width
+        !areDimensionsEqual(layout.height, event.nativeEvent.layout.height) ||
+        !areDimensionsEqual(layout.width, event.nativeEvent.layout.width)
       ) {
-        onSizeChanged?.(index);
+        const diff = layout.height - event.nativeEvent.layout.height;
+        if (Math.abs(diff) < 1) {
+          console.log(
+            "Layout height mismatch",
+            layout.height - event.nativeEvent.layout.height,
+            index
+          );
+        }
+        onSizeChanged(index);
       }
     },
     [index, layout.height, layout.width, onSizeChanged]
@@ -41,12 +68,15 @@ export const ViewHolder = (props: ViewHolderProps) => {
 
   console.log("ViewHolder re-render", index);
 
+  const children = useMemo(() => {
+    return renderItem?.({ item, index, extraData, target }) ?? null;
+  }, [item, index, extraData, target, renderItem]);
+
   return (
     <View
       ref={viewRef}
       onLayout={onLayout}
       style={{
-        ...style,
         position: "absolute",
         width: layout.enforcedWidth ? layout.width : undefined,
         height: layout.enforcedHeight ? layout.height : undefined,
@@ -58,7 +88,39 @@ export const ViewHolder = (props: ViewHolderProps) => {
         top: layout.y,
       }}
     >
-      {props.children}
+      {children}
     </View>
   );
 };
+
+export const ViewHolder = React.memo(
+  ViewHolderInternal,
+  (prevProps, nextProps) => {
+    // compare all props and spread layout
+    return (
+      prevProps.index === nextProps.index &&
+      areLayoutsEqual(prevProps.layout, nextProps.layout) &&
+      prevProps.refHolder === nextProps.refHolder &&
+      prevProps.onSizeChanged === nextProps.onSizeChanged &&
+      prevProps.extraData === nextProps.extraData &&
+      prevProps.target === nextProps.target &&
+      prevProps.item === nextProps.item &&
+      prevProps.renderItem === nextProps.renderItem
+    );
+  }
+);
+
+function areLayoutsEqual(prevLayout: RVLayout, nextLayout: RVLayout): boolean {
+  return (
+    prevLayout.x === nextLayout.x &&
+    prevLayout.y === nextLayout.y &&
+    prevLayout.width === nextLayout.width &&
+    prevLayout.height === nextLayout.height &&
+    prevLayout.minHeight === nextLayout.minHeight &&
+    prevLayout.minWidth === nextLayout.minWidth &&
+    prevLayout.maxHeight === nextLayout.maxHeight &&
+    prevLayout.maxWidth === nextLayout.maxWidth &&
+    prevLayout.enforcedWidth === nextLayout.enforcedWidth &&
+    prevLayout.enforcedHeight === nextLayout.enforcedHeight
+  );
+}

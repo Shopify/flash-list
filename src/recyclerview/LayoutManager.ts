@@ -9,9 +9,11 @@ import {
 export abstract class RVLayoutManager {
   protected horizontal: boolean;
   protected layouts: RVLayout[];
+  protected windowSize: RVDimension;
 
   constructor(params: LayoutParams) {
     this.horizontal = Boolean(params.horizontal);
+    this.windowSize = params.windowSize;
     this.layouts = [];
   }
 
@@ -22,6 +24,10 @@ export abstract class RVLayoutManager {
   // fetch layout info, breaks if unavailable
   getLayout(index: number): RVLayout {
     return this.layouts[index];
+  }
+
+  getWindowsSize(): RVDimension {
+    return this.windowSize;
   }
 
   // returns visible indices, should be very fast. Use binary search to find the first visible index.
@@ -93,6 +99,7 @@ export interface SpanSizeInfo {
   size?: number;
 }
 
+// update compareLayout method if anything changes here.
 export interface RVLayout extends RVDimension {
   x: number;
   y: number;

@@ -16,7 +16,6 @@ const TweetCell = ({ tweet }: TweetCellProps) => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Twitter">>();
   const [showFullText, setShowFullText] = useState(false);
-
   return (
     <Pressable
       onPress={() => {

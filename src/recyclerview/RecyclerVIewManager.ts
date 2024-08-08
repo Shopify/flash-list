@@ -1,4 +1,4 @@
-import { RVDimension, RVLayoutManager } from "./LayoutManager";
+import { RVLayoutManager } from "./LayoutManager";
 import { RecycleKeyManagerImpl, RecycleKeyManager } from "./RecycleKeyManager";
 import {
   RVViewabilityManager,
@@ -9,8 +9,7 @@ export class RecyclerViewManager {
   INITIAL_NUM_TO_RENDER = 1;
   private viewabilityManager: RVViewabilityManager;
   private recycleKeyManager: RecycleKeyManager;
-  private layoutManager: RVLayoutManager;
-  private windowSize: RVDimension;
+  private layoutManager?: RVLayoutManager;
   // Map of index to key
   private renderStack: Map<number, string> = new Map();
   private onRenderStackChanged: (renderStack: Map<number, string>) => void;
@@ -68,13 +67,8 @@ export class RecyclerViewManager {
     this.onRenderStackChanged(this.renderStack);
   };
 
-  updateLayoutManager(
-    layoutManager: RVLayoutManager,
-    windowSize: RVDimension,
-    horizontal: boolean
-  ) {
+  updateLayoutManager(layoutManager: RVLayoutManager) {
     this.layoutManager = layoutManager;
-    this.windowSize = windowSize;
   }
 
   updateKeyExtractor(stableIdProvider: (index: number) => string) {
@@ -86,21 +80,20 @@ export class RecyclerViewManager {
   }
 
   updateScrollOffset(offset: number) {
-    this.viewabilityManager.updateScrollOffset(
-      offset,
-      this.layoutManager,
-      this.windowSize
-    );
+    if (this.layoutManager) {
+      this.viewabilityManager.updateScrollOffset(offset, this.layoutManager);
+    }
   }
 
   // TODO
   resumeProgressiveRender() {
-    if (this.layoutManager && this.renderStack.size > 0) {
-      const visibleIndices = this.computeVisibleIndices();
+    const layoutManager = this.layoutManager;
+    if (layoutManager && this.renderStack.size > 0) {
+      const visibleIndices = this.getVisibleIndices();
       const isFullyMeasured = visibleIndices.every(
         (index) =>
-          this.layoutManager.getLayout(index).isHeightMeasured &&
-          this.layoutManager.getLayout(index).isWidthMeasured
+          layoutManager.getLayout(index).isHeightMeasured &&
+          layoutManager.getLayout(index).isWidthMeasured
       );
       if (!isFullyMeasured) {
         this.updateRenderStack(
@@ -131,11 +124,12 @@ export class RecyclerViewManager {
   }
 
   refresh() {
-    this.viewabilityManager.updateScrollOffset(
-      this.viewabilityManager.getScrollOffset(),
-      this.layoutManager,
-      this.windowSize
-    );
+    if (this.layoutManager) {
+      this.viewabilityManager.updateScrollOffset(
+        this.viewabilityManager.getScrollOffset(),
+        this.layoutManager
+      );
+    }
   }
 
   getIsFirstLayoutComplete() {
@@ -143,6 +137,11 @@ export class RecyclerViewManager {
   }
 
   getLayout(index: number) {
+    if (!this.layoutManager) {
+      throw new Error(
+        "LayoutManager is not initialized, layout info is unavailable"
+      );
+    }
     return this.layoutManager.getLayout(index);
   }
 
@@ -151,7 +150,12 @@ export class RecyclerViewManager {
   }
 
   getWindowSize() {
-    return this.windowSize;
+    if (!this.layoutManager) {
+      throw new Error(
+        "LayoutManager is not initialized, window size is unavailable"
+      );
+    }
+    return this.layoutManager.getWindowsSize();
   }
 
   getLastScrollOffset() {
@@ -166,7 +170,19 @@ export class RecyclerViewManager {
     return this.layoutManager;
   }
 
-  computeVisibleIndices() {
-    return this.layoutManager.getVisibleLayouts(0, this.windowSize.height);
+  getVisibleIndices() {
+    if (!this.layoutManager) {
+      throw new Error(
+        "LayoutManager is not initialized, visible indices are not unavailable"
+      );
+    }
+    if (this.isFirstLayoutComplete) {
+      return this.viewabilityManager.getVisibleIndices();
+    } else {
+      return this.layoutManager.getVisibleLayouts(
+        this.getLastScrollOffset(),
+        this.layoutManager.getWindowsSize().height
+      );
+    }
   }
 }

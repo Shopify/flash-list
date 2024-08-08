@@ -1,11 +1,7 @@
 import { RVDimension, RVLayoutManager } from "./LayoutManager";
 
 export interface RVViewabilityManager {
-  updateScrollOffset: (
-    offset: number,
-    layoutManager: RVLayoutManager,
-    windowSize: RVDimension
-  ) => void;
+  updateScrollOffset: (offset: number, layoutManager: RVLayoutManager) => void;
   getVisibleIndices: () => number[];
   // can be used to get visible indices
   setOnVisibleIndicesChangedListener: (
@@ -54,13 +50,10 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
    * @param layoutManager - The layout manager to fetch visible layouts.
    * @param windowSize - The size of the visible window.
    */
-  updateScrollOffset(
-    offset: number,
-    layoutManager: RVLayoutManager,
-    windowSize: RVDimension
-  ): void {
+  updateScrollOffset(offset: number, layoutManager: RVLayoutManager): void {
     this.scrollOffset = offset;
     const unboundStart = offset;
+    const windowSize = layoutManager.getWindowsSize();
     const unboundEnd =
       offset +
       (layoutManager.isHorizontal() ? windowSize.width : windowSize.height);
@@ -121,11 +114,10 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
    */
   updateRenderAheadOffset(
     renderAheadOffset: number,
-    layoutManager: RVLayoutManager,
-    windowSize: RVDimension
+    layoutManager: RVLayoutManager
   ): void {
     this.renderAheadOffset = renderAheadOffset;
-    this.updateScrollOffset(this.scrollOffset, layoutManager, windowSize);
+    this.updateScrollOffset(this.scrollOffset, layoutManager);
   }
 
   /**

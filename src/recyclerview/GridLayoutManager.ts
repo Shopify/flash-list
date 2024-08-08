@@ -118,6 +118,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     const y = this.layouts[startIndex].y;
     let tallestItem = this.layouts[startIndex];
     let i = startIndex;
+    // TODO: Manage precision problems
     while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
       const layout = this.layouts[i];
       if (layout.minHeight === 0 && layout.height >= tallestItem.height) {
