@@ -12,7 +12,6 @@ import {
   I18nManager,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Platform,
   ScrollView,
   View,
 } from "react-native";
@@ -125,23 +124,15 @@ const RecyclerViewComponent = <T1,>(
       distanceFromWindow.current = horizontal
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
-      if (Platform.OS === "android") {
-        distanceFromWindow.current *= 1.176;
-      }
-      const correctedHeight =
-        Platform.OS === "ios"
-          ? outerViewLayout.height
-          : outerViewLayout.height * 1.176;
-      const correctedWidth =
-        Platform.OS === "ios"
-          ? childViewLayout.width
-          : childViewLayout.width * 1.176;
       const LayoutManagerClass =
         (numColumns ?? 1) > 1 && !horizontal
           ? RVGridLayoutManagerImpl
           : RVLinearLayoutManagerImpl;
       const newLayoutManager = new LayoutManagerClass({
-        windowSize: { width: correctedWidth, height: correctedHeight },
+        windowSize: {
+          width: childViewLayout.width,
+          height: outerViewLayout.height,
+        },
         maxColumns: numColumns ?? 1,
         matchHeightsWithNeighbours: true,
         horizontal,
@@ -212,9 +203,9 @@ const RecyclerViewComponent = <T1,>(
   // TODO: Replace with sync onLayout and better way to refresh
   const forceUpdate = useCallback(() => {
     // setRenderStack(new Map(recycleManager.getRenderStack()));
-    // requestAnimationFrame(() => {
+    // setTimeout(() => {
     //   setRenderStack(new Map(recycleManager.getRenderStack()));
-    // });
+    // }, 1000);
   }, [recycleManager]);
 
   return (
