@@ -290,7 +290,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   ) => void;
 
   /**
-   * For debugging and exception use cases, internal props will be overriden with these values if used
+   * For debugging and exception use cases, internal props will be overridden with these values if used.
    */
   overrideProps?: object;
 

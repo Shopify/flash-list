@@ -425,7 +425,7 @@ This method is called very frequently. Keep it fast.
 overrideProps?: object;
 ```
 
-We do not recommend using this prop for anything else than debugging. Internal props of the list will be overriden with the provided values.
+We do not recommend using this prop for anything else than debugging. Internal props of the list will be overridden with the provided values.
 
 ### `progressViewOffset`
 
