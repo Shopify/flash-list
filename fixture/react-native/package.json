@@ -23,7 +23,7 @@
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.16.2",
     "react-native-reanimated": "3.14.0",
-    "react-native-safe-area-context": "4.10.8",
+    "react-native-safe-area-context": "4.10.9",
     "react-native-screens": "3.32.0"
   },
   "devDependencies": {
