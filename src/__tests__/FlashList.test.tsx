@@ -551,6 +551,121 @@ describe("FlashList", () => {
     });
   });
 
+  it("retrigers viewability events when recomputeViewableItems is called", () => {
+    const onViewableItemsChanged = jest.fn();
+    const flashList = mountFlashList({
+      estimatedItemSize: 300,
+      onViewableItemsChanged,
+      viewabilityConfig: {
+        itemVisiblePercentThreshold: 50,
+        minimumViewTime: 0,
+      },
+    });
+
+    // Initial viewable items
+    expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+
+    onViewableItemsChanged.mockClear();
+
+    flashList.instance.recomputeViewableItems();
+
+    expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+  });
+
   it("should not overlap header with sitcky index 0", () => {
     const HeaderComponent = () => {
       return <Text>Empty</Text>;

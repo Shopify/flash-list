@@ -88,6 +88,14 @@ export default class ViewabilityManager<T> {
     });
   };
 
+  public recomputeViewableItems = () => {
+    this.viewabilityHelpers.forEach((viewabilityHelper) =>
+      viewabilityHelper.clearLastReportedViewableIndices()
+    );
+
+    this.updateViewableItems();
+  };
+
   /**
    * Creates a new `ViewabilityHelper` instance with `onViewableItemsChanged` callback and `ViewabilityConfig`
    * @returns `ViewabilityHelper` instance
