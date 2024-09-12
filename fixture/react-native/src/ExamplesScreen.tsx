@@ -21,6 +21,7 @@ export const ExamplesScreen = () => {
 
   const data: ExampleItem[] = [
     { title: "List", destination: "List" },
+    { title: "SectionList", destination: "SectionList" },
     { title: "PaginatedList", destination: "PaginatedList" },
     { title: "Reminders", destination: "Reminders" },
     { title: "Twitter Timeline", destination: "Twitter" },
