@@ -181,9 +181,10 @@ Since `MyHeavyComponent` does not directly depend on the `item` prop, `memo` can
 const MyHeavyComponent = () => {
   return ...;
 };
+  
+const MemoizedMyHeavyComponent = memo(MyHeavyComponent);
 
 const MyItem = ({ item }: { item: any }) => {
-  const MemoizedMyHeavyComponent = memo(MyHeavyComponent);
   return (
     <>
       <MemoizedMyHeavyComponent />
