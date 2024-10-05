@@ -93,7 +93,7 @@ When using `MasonryFlashList` the `renderItem` prop callback will be called with
 
 ## Methods
 
-`MasonryFlashList` exposes the some methods that `FlashList` does. These are:
+`MasonryFlashList` exposes the same methods that `FlashList` does. These are:
 
 ### `scrollToEnd()`
 
