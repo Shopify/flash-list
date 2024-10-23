@@ -7,12 +7,28 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add flex prop to contentContainerStyle
+  - https://github.com/Shopify/flash-list/pull/1206
+
+## [1.7.1] - 2024-08-07
+
+- Add recomputeViewableItems method
+  - https://github.com/Shopify/flash-list/pull/1296
+- Fix first sticky header is not rendering when data changed
+  - https://github.com/Shopify/flash-list/issues/814
+
+## [1.7.0] - 2024-07-03
+
 - Update internal dependency and fixture app to `react-native@0.72`.
   - https://github.com/Shopify/flash-list/pull/1076
 - Fix stale reference to onScroll and onLoad
   - https://github.com/Shopify/flash-list/pull/1112
-- Add flex prop to contentContainerStyle
-  - https://github.com/Shopify/flash-list/pull/1206
+- Fix Android RN 0.73 namespace requirement
+  - https://github.com/Shopify/flash-list/pull/1216
+- New architecture support
+  - https://github.com/Shopify/flash-list/pull/550
+- Upgrade recyclerlistview to v4.2.1
+  - https://github.com/Shopify/flash-list/pull/1236
 
 ## [1.6.4] - 2024-03-18
 
