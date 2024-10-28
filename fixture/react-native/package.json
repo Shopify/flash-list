@@ -30,7 +30,7 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.24.7",
     "@babel/runtime": "^7.20.0",
-    "@react-native/metro-config": "^0.74.85",
+    "@react-native/metro-config": "^0.76.0",
     "@types/jest": "^27.5.0",
     "@types/pixelmatch": "^5.2.6",
     "@types/pngjs": "^6.0.5",
