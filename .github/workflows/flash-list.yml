@@ -158,6 +158,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: "17"
       - name: Ruby setup
         uses: ruby/setup-ruby@v1
         with:

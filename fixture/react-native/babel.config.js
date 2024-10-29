@@ -15,4 +15,16 @@ module.exports = {
     // Reanimated plugin has to be listed last
     "react-native-reanimated/plugin",
   ],
+  overrides: [
+    {
+      plugins: [
+        [
+          "@babel/plugin-transform-private-methods",
+          {
+            loose: true,
+          },
+        ],
+      ],
+    },
+  ],
 };
