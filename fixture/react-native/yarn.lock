@@ -2114,7 +2114,7 @@
     rimraf "^3.0.2"
 
 "@shopify/flash-list@link:../..":
-  version "1.7.1"
+  version "1.7.2"
   dependencies:
     recyclerlistview "4.2.1"
     tslib "2.6.3"
@@ -3100,10 +3100,15 @@ detect-newline@^3.0.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-3.1.0.tgz#576f5dfc63ae1a192ff192d8ad3af6308991b651"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
 
-detox@^20.25.1:
-  version "20.25.1"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-20.25.1.tgz#72bfe34260388870ef4f7afd8171a475cf0c1146"
-  integrity sha512-l+VhhtwfIR8DR4Htvo3KUIx1VPQkYanwjxsKUlXrOM60e47GB45U87la3VYVpFEvUQ5liD46tWWDkY0fkhoOOw==
+detox-copilot@^0.0.24:
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/detox-copilot/-/detox-copilot-0.0.24.tgz#e505073866d1f4ff00641f2e48ef441a4dff6bbc"
+  integrity sha512-42g0QyJS31URl28YRxc4hGozSXhbbB1sKwzxEjZR9WtLoSx6WYDsQkQD8+yP5t1NExiSCZAfvNmBw8PYQwDKwg==
+
+detox@^20.28.0:
+  version "20.28.0"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-20.28.0.tgz#7ae848e8df028c17d65cd0672040cd1c18338b25"
+  integrity sha512-JeUkWNnYE7lqby3S9AeYJP3ttCBKH+qZWACjWXwvSbe3tm6JeXvecVUYkzSoNfC4IzTX5p+rWvG0IPsfOsZSFw==
   dependencies:
     ajv "^8.6.3"
     bunyan "^1.8.12"
@@ -3111,6 +3116,7 @@ detox@^20.25.1:
     caf "^15.0.1"
     chalk "^4.0.0"
     child-process-promise "^2.2.0"
+    detox-copilot "^0.0.24"
     execa "^5.1.1"
     find-up "^5.0.0"
     fs-extra "^11.0.0"
