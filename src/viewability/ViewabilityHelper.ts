@@ -122,6 +122,10 @@ class ViewabilityHelper {
     }
   }
 
+  public clearLastReportedViewableIndices() {
+    this.lastReportedViewableIndices = [];
+  }
+
   private isItemViewable(
     index: number,
     horizontal: boolean,

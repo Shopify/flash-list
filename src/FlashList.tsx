@@ -704,7 +704,7 @@ class FlashList<T> extends React.PureComponent<
 
   private stickyOverrideRowRenderer = (
     _: any,
-    __: any,
+    rowData: any,
     index: number,
     ___: any
   ) => {
@@ -712,6 +712,8 @@ class FlashList<T> extends React.PureComponent<
       <PureComponentWrapper
         ref={this.stickyContentRef}
         enabled={this.isStickyEnabled}
+        // We're passing rowData to ensure that sticky headers are updated when data changes
+        rowData={rowData}
         arg={index}
         renderer={this.rowRendererSticky}
       />
@@ -880,6 +882,13 @@ class FlashList<T> extends React.PureComponent<
    */
   public recordInteraction = () => {
     this.viewabilityManager.recordInteraction();
+  };
+
+  /**
+   * Retriggers viewability calculations. Useful to imperatively trigger viewability calculations.
+   */
+  public recomputeViewableItems = () => {
+    this.viewabilityManager.recomputeViewableItems();
   };
 }
 
