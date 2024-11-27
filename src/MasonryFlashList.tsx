@@ -186,6 +186,27 @@ const MasonryFlashListComponent = React.forwardRef(
       false
     );
 
+    /*
+     * Add a Ref object to track all FlashList instances.
+     * So that we can call all their recomputeViewableItems method
+    */
+    const allColumnFlashListsRef = useRef<{ [columnIndex: number]: FlashList<T> | null }>({});
+
+    const recomputeAllViewableItems = useCallback(() => {
+      for (const columnIndex in allColumnFlashListsRef.current) {
+        allColumnFlashListsRef.current[columnIndex]?.recomputeViewableItems();
+      }
+    }, []);
+
+    useEffect(() => {
+      if (forwardRef) {
+        forwardRef.current = {
+          ...forwardRef.current,
+          recomputeViewableItems: recomputeAllViewableItems,
+        };
+      }
+    }, [forwardRef, recomputeAllViewableItems]);
+
     return (
       <FlashList
         ref={getFlashList}
@@ -198,6 +219,7 @@ const MasonryFlashListComponent = React.forwardRef(
         renderItem={(args) => {
           return (
             <FlashList
+              ref={(r) => allColumnFlashListsRef.current[Number(args.index)] = r}
               renderScrollComponent={ScrollComponent}
               estimatedItemSize={props.estimatedItemSize}
               data={args.item}
