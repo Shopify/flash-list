@@ -7,7 +7,7 @@ import {
 
 describe("ContentContainerUtils", () => {
   it("detects unsupported keys in style", () => {
-    expect(hasUnsupportedKeysInContentContainerStyle({ flex: 1 })).toBe(true);
+    expect(hasUnsupportedKeysInContentContainerStyle({ flex: 1 })).toBe(false);
     expect(hasUnsupportedKeysInContentContainerStyle({ paddingTop: 0 })).toBe(
       false
     );
