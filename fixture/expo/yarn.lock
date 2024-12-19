@@ -2353,7 +2353,7 @@
     join-component "^1.1.0"
 
 "@shopify/flash-list@link:../..":
-  version "1.7.1"
+  version "1.7.2"
   dependencies:
     recyclerlistview "4.2.1"
     tslib "2.6.3"
@@ -4442,10 +4442,10 @@ expo-pwa@0.0.127:
     commander "2.20.0"
     update-check "1.5.3"
 
-expo-status-bar@~1.12.1:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.12.1.tgz#52ce594aab5064a0511d14375364d718ab78aa66"
-  integrity sha512-/t3xdbS8KB0prj5KG5w7z+wZPFlPtkgs95BsmrP/E7Q0xHXTcDcQ6Cu2FkFuRM+PKTb17cJDnLkawyS5vDLxMA==
+expo-status-bar@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-2.0.0.tgz#dd99adc2ace12a24c92718cd0f97b93347103393"
+  integrity sha512-vxxdpvpNDMTEc5uTiIrbTvySKKUsOACmfl8OZuUdjNle05oGqwtq3v5YObwym/njSByjoyuZX8UpXBZnxvarwQ==
 
 expo@~50.0.21:
   version "50.0.21"
@@ -5096,9 +5096,9 @@ http-parser-js@>=0.5.1:
   integrity sha512-SGeBX54F94Wgu5RH3X5jsDtf4eHyRogWX1XGT3b4HuW3tQPM4AaBzoUji/4AAJNXCEOWZ5O0DgZmJw1947gD5Q==
 
 http-proxy-middleware@^2.0.3:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/http-proxy-middleware/-/http-proxy-middleware-2.0.6.tgz#e1a4dd6979572c7ab5a4e4b55095d1f32a74963f"
-  integrity sha512-ya/UeJ6HVBYxrgYotAZo1KvPWlgB48kUJLDePFeneHsVujFaW5WNj2NgWCAE//B1Dl02BIfYlpNgBy8Kf8Rjmw==
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/http-proxy-middleware/-/http-proxy-middleware-2.0.7.tgz#915f236d92ae98ef48278a95dedf17e991936ec6"
+  integrity sha512-fgVY8AV7qU7z/MmXJ/rxwbrtQH4jBQ9m7kp3llF0liB7glmFeVZFBepQb32T3y8n8k2+AEYuMPCpinYW+/CuRA==
   dependencies:
     "@types/http-proxy" "^1.17.8"
     http-proxy "^1.18.1"
