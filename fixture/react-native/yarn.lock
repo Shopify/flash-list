@@ -3043,10 +3043,15 @@ detect-newline@^3.0.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-3.1.0.tgz#576f5dfc63ae1a192ff192d8ad3af6308991b651"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
 
-detox@^20.25.1:
-  version "20.25.1"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-20.25.1.tgz#72bfe34260388870ef4f7afd8171a475cf0c1146"
-  integrity sha512-l+VhhtwfIR8DR4Htvo3KUIx1VPQkYanwjxsKUlXrOM60e47GB45U87la3VYVpFEvUQ5liD46tWWDkY0fkhoOOw==
+detox-copilot@^0.0.27:
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/detox-copilot/-/detox-copilot-0.0.27.tgz#350ee91ae6ba77acac78513ccbda7aafcb3c6faf"
+  integrity sha512-H2febTNp0arVx2A8rvM1C2BwDiBEP/2Ya8Hd1mVyV66rR5u8om1gdIypaRGm+plpTLCHhlefe4+7qLtHgVzpng==
+
+detox@^20.31.0:
+  version "20.31.0"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-20.31.0.tgz#55a286b7431b150d23d25702e13ad977fc005c6c"
+  integrity sha512-6Vsm/o8hElUYuZrBOYDNfkxEU+8q1CZ38wg/st8e1guOaDamIO/5u4hVUHVmId381/3bxfTvC6cO5WgW6BXmUQ==
   dependencies:
     ajv "^8.6.3"
     bunyan "^1.8.12"
@@ -3054,6 +3059,7 @@ detox@^20.25.1:
     caf "^15.0.1"
     chalk "^4.0.0"
     child-process-promise "^2.2.0"
+    detox-copilot "^0.0.27"
     execa "^5.1.1"
     find-up "^5.0.0"
     fs-extra "^11.0.0"
