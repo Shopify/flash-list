@@ -175,7 +175,7 @@ const MyItem = ({ item }) => {
 };
 ```
 
-Since `MyHeavyComponent` does not directly depend on the `item` prop, `memo` can be used to skip re-rending `MyHeavyComponent` when the item is recycled and thus re-rendered:
+Since `MyHeavyComponent` does not directly depend on the `item` prop, `memo` can be used to skip re-rendering `MyHeavyComponent` when the item is recycled and thus re-rendered:
 
 ```tsx
 const MyHeavyComponent = () => {
