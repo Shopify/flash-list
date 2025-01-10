@@ -29,7 +29,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-#'RCT_NEW_ARCH_ENABLED'] = '1'
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 
 # Shouldn't be necessary in newer versions of React Native
 use_frameworks! :linkage => :static
@@ -46,7 +46,7 @@ target 'FlatListPro' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod "RNFlashList", path: "../../../RNFlashList.podspec", testspecs: ['Tests'], inhibit_warnings: false
+  #pod "RNFlashList", path: "../../../RNFlashList.podspec", testspecs: ['Tests'], inhibit_warnings: false
 
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
