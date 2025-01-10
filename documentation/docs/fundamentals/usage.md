@@ -624,7 +624,6 @@ Unsupported methods:
 - [`flashScrollIndicators()`](https://reactnative.dev/docs/flatlist#flashscrollindicators)
 - [`hasMore`](https://reactnative.dev/docs/virtualizedlist#hasmore)
 - [`getChildContext`](https://reactnative.dev/docs/virtualizedlist#getchildcontext)
-- [`getNativeScrollRef()`​](https://reactnative.dev/docs/flatlist#getnativescrollref)
 - [`getScrollRef`](https://reactnative.dev/docs/virtualizedlist#getscrollref)
 - [`getScrollResponder()`](https://reactnative.dev/docs/flatlist#getscrollresponder)
 
