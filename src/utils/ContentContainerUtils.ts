@@ -9,6 +9,7 @@ export interface ContentStyleExplicit {
   paddingLeft: number;
   paddingRight: number;
   backgroundColor?: string;
+  flex?: number;
 }
 
 export const updateContentStyle = (
@@ -24,6 +25,7 @@ export const updateContentStyle = (
     paddingVertical,
     paddingHorizontal,
     backgroundColor,
+    flex,
   } = (contentContainerStyleSource ?? {}) as ViewStyle;
   contentStyle.paddingLeft = Number(
     paddingLeft || paddingHorizontal || padding || 0
@@ -38,6 +40,7 @@ export const updateContentStyle = (
     paddingBottom || paddingVertical || padding || 0
   );
   contentStyle.backgroundColor = backgroundColor;
+  contentStyle.flex = flex;
   return contentStyle as ContentStyleExplicit;
 };
 
@@ -53,6 +56,7 @@ export const hasUnsupportedKeysInContentContainerStyle = (
     paddingVertical,
     paddingHorizontal,
     backgroundColor,
+    flex,
     ...rest
   } = (contentContainerStyleSource ?? {}) as ViewStyle;
   return Object.keys(rest).length > 0;
