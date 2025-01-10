@@ -57,17 +57,15 @@ GEM
     rb-fsevent (0.11.1)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rexml (3.2.8)
-      strscan (>= 3.0.9)
+    rexml (3.3.9)
     rouge (3.28.0)
     safe_yaml (1.0.5)
     sassc (2.4.0)
       ffi (~> 1.9)
-    strscan (3.1.0)
     terminal-table (2.0.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     unicode-display_width (1.8.0)
-    webrick (1.7.0)
+    webrick (1.8.2)
 
 PLATFORMS
   arm64-darwin-21
@@ -81,7 +79,7 @@ DEPENDENCIES
   tzinfo (~> 1.2)
   tzinfo-data
   wdm (~> 0.1.1)
-  webrick (~> 1.7)
+  webrick (~> 1.8)
 
 BUNDLED WITH
    2.3.7

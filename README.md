@@ -16,6 +16,10 @@ Swap from FlatList in seconds. Get instant performance.
 
 </div>
 
+## React Native's new architecture support
+
+FlashList is compatible with React Native's new architecture however, it's not fully optimized for it yet. You will still gain performance benefits from using FlashList over FlatList. Stayed tuned for more improvements.
+
 ## Installation
 
 Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
