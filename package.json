@@ -73,7 +73,7 @@
     "prettier": "^2.7.1",
     "react": "18.3.1",
     "react-native": "0.76.5",
-    "react-test-renderer": "18.2.0",
+    "react-test-renderer": "18.3.1",
     "typescript": "^4.7.4"
   },
   "files": [
