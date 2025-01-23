@@ -727,14 +727,21 @@ class FlashList<T> extends React.PureComponent<
     ___: any
   ) => {
     return (
-      <PureComponentWrapper
-        ref={this.stickyContentRef}
-        enabled={this.isStickyEnabled}
-        // We're passing rowData to ensure that sticky headers are updated when data changes
-        rowData={rowData}
-        arg={index}
-        renderer={this.rowRendererSticky}
-      />
+      <View
+        style={{
+          flexDirection: this.props.horizontal ? "row" : "column",
+          ...this.getTransform(),
+        }}
+      >
+        <PureComponentWrapper
+          ref={this.stickyContentRef}
+          enabled={this.isStickyEnabled}
+          // We're passing rowData to ensure that sticky headers are updated when data changes
+          rowData={rowData}
+          arg={index}
+          renderer={this.rowRendererSticky}
+        />
+      </View>
     );
   };
 
