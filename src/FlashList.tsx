@@ -6,6 +6,7 @@ import {
   NativeSyntheticEvent,
   StyleSheet,
   NativeScrollEvent,
+  Platform,
 } from "react-native";
 import {
   BaseItemAnimator,
@@ -99,6 +100,8 @@ class FlashList<T> extends React.PureComponent<
 
   private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
+
+  private hasInvertedWheelHandler = false;
 
   private itemAnimator?: BaseItemAnimator;
 
@@ -283,10 +286,26 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
+  private updateWebScrollHandler() {
+    if (Platform.OS !== "web" || !this.rlvRef) return;
+
+    if (this.props.inverted !== this.hasInvertedWheelHandler) {
+      if (this.props.inverted) {
+        PlatformConfig.addInvertedWheelHandler(this.rlvRef);
+        this.hasInvertedWheelHandler = true;
+      } else {
+        PlatformConfig.removeInvertedWheelHandler(this.rlvRef);
+        this.hasInvertedWheelHandler = false;
+      }
+    }
+  }
+
   componentDidMount() {
     if (this.props.data?.length === 0) {
       this.raiseOnLoadEventIfNeeded();
     }
+
+    this.updateWebScrollHandler();
   }
 
   componentWillUnmount() {
@@ -296,6 +315,14 @@ class FlashList<T> extends React.PureComponent<
     if (this.itemSizeWarningTimeoutId !== undefined) {
       clearTimeout(this.itemSizeWarningTimeoutId);
     }
+
+    if (this.hasInvertedWheelHandler) {
+      PlatformConfig.removeInvertedWheelHandler(this.rlvRef);
+    }
+  }
+
+  componentDidUpdate() {
+    this.updateWebScrollHandler();
   }
 
   render() {
