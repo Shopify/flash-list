@@ -671,7 +671,16 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private rowRendererSticky = (index: number) => {
-    return this.rowRendererWithIndex(index, RenderTargetOptions.StickyHeader);
+    return (
+      <View
+        style={{
+          flexDirection: this.props.horizontal ? "row" : "column",
+          ...this.getTransform(),
+        }}
+      >
+        {this.rowRendererWithIndex(index, RenderTargetOptions.StickyHeader)}
+      </View>
+    );
   };
 
   private rowRendererWithIndex = (index: number, target: RenderTarget) => {
@@ -727,21 +736,14 @@ class FlashList<T> extends React.PureComponent<
     ___: any
   ) => {
     return (
-      <View
-        style={{
-          flexDirection: this.props.horizontal ? "row" : "column",
-          ...this.getTransform(),
-        }}
-      >
-        <PureComponentWrapper
-          ref={this.stickyContentRef}
-          enabled={this.isStickyEnabled}
-          // We're passing rowData to ensure that sticky headers are updated when data changes
-          rowData={rowData}
-          arg={index}
-          renderer={this.rowRendererSticky}
-        />
-      </View>
+      <PureComponentWrapper
+        ref={this.stickyContentRef}
+        enabled={this.isStickyEnabled}
+        // We're passing rowData to ensure that sticky headers are updated when data changes
+        rowData={rowData}
+        arg={index}
+        renderer={this.rowRendererSticky}
+      />
     );
   };
 
