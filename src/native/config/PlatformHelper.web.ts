@@ -7,52 +7,32 @@ import {
 } from "recyclerlistview";
 import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platform/reactnative/itemanimators/defaultjsanimator/DefaultJSItemAnimator";
 
-const invertedWheelEventHandler = (event: globalThis.WheelEvent) => {
-  const node = event.currentTarget as HTMLElement;
+const createInvertedWheelEventHandler = (type: "horizontal" | "vertical") => {
+  return (event: globalThis.WheelEvent) => {
+    const node = event.currentTarget as HTMLElement;
 
-  // For inverted lists, we want to scroll in the opposite direction
-  // So when deltaY is positive (scroll down), we want to scroll up
-  const deltaY = -event.deltaY;
-  const deltaX = -event.deltaX;
+    const deltaX = type === "horizontal" ? -event.deltaX : event.deltaX;
+    const deltaY = type === "vertical" ? -event.deltaY : event.deltaY;
 
-  // Scroll by the inverted delta
-  node.scrollBy({
-    top: deltaY,
-    left: deltaX,
-    behavior: "auto",
-  });
+    node.scrollBy({
+      top: deltaY,
+      left: deltaX,
+      behavior: "auto",
+    });
 
-  // Prevent the default scroll
-  event.preventDefault();
+    event.preventDefault();
+  };
 };
+
+const verticalInvertedWheelEventHandler =
+  createInvertedWheelEventHandler("vertical");
+const horizontalInvertedWheelEventHandler =
+  createInvertedWheelEventHandler("horizontal");
 
 const PlatformConfig = {
   defaultDrawDistance: 2000,
   invertedTransformStyle: { transform: [{ scaleY: -1 }] },
   invertedTransformStyleHorizontal: { transform: [{ scaleX: -1 }] },
-  addInvertedWheelHandler: (
-    ref: RecyclerListView<RecyclerListViewProps, any> | undefined
-  ): ((event: globalThis.WheelEvent) => void) | undefined => {
-    if (!ref) return undefined;
-    const node = findNodeHandle(ref) as unknown as HTMLElement;
-    if (node) {
-      node.addEventListener("wheel", invertedWheelEventHandler, {
-        passive: false,
-      });
-      return invertedWheelEventHandler;
-    }
-    return undefined;
-  },
-  removeInvertedWheelHandler: (
-    ref: RecyclerListView<RecyclerListViewProps, any> | undefined
-  ): ((event: globalThis.WheelEvent) => void) | undefined => {
-    if (!ref) return undefined;
-    const node = findNodeHandle(ref) as unknown as HTMLElement;
-    if (node) {
-      node.removeEventListener("wheel", invertedWheelEventHandler);
-    }
-    return undefined;
-  },
 };
 const getCellContainerPlatformStyles = (
   inverted: boolean,
@@ -71,10 +51,41 @@ const getItemAnimator = (): BaseItemAnimator | undefined => {
 const getFooterContainer = (): React.ComponentClass | undefined => {
   return View;
 };
+const addInvertedWheelHandler = (
+  ref: RecyclerListView<RecyclerListViewProps, any> | undefined,
+  type: "horizontal" | "vertical"
+): ((event: globalThis.WheelEvent) => void) | undefined => {
+  if (!ref) return undefined;
+  const node = findNodeHandle(ref) as unknown as HTMLElement;
+  if (node) {
+    const handler =
+      type === "horizontal"
+        ? horizontalInvertedWheelEventHandler
+        : verticalInvertedWheelEventHandler;
+    node.addEventListener("wheel", handler, {
+      passive: false,
+    });
+    return handler;
+  }
+  return undefined;
+};
+const removeInvertedWheelHandler = (
+  ref: RecyclerListView<RecyclerListViewProps, any> | undefined
+): ((event: globalThis.WheelEvent) => void) | undefined => {
+  if (!ref) return undefined;
+  const node = findNodeHandle(ref) as unknown as HTMLElement;
+  if (node) {
+    node.removeEventListener("wheel", verticalInvertedWheelEventHandler);
+    node.removeEventListener("wheel", horizontalInvertedWheelEventHandler);
+  }
+  return undefined;
+};
 
 export {
   PlatformConfig,
   getCellContainerPlatformStyles,
   getItemAnimator,
   getFooterContainer,
+  addInvertedWheelHandler,
+  removeInvertedWheelHandler,
 };

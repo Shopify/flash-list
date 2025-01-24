@@ -32,10 +32,12 @@ import {
   RenderTargetOptions,
 } from "./FlashListProps";
 import {
+  addInvertedWheelHandler,
   getCellContainerPlatformStyles,
   getFooterContainer,
   getItemAnimator,
   PlatformConfig,
+  removeInvertedWheelHandler,
 } from "./native/config/PlatformHelper";
 import {
   ContentStyleExplicit,
@@ -289,14 +291,15 @@ class FlashList<T> extends React.PureComponent<
   private updateWebScrollHandler() {
     if (Platform.OS !== "web" || !this.rlvRef) return;
 
-    if (this.props.inverted !== this.hasInvertedWheelHandler) {
-      if (this.props.inverted) {
-        PlatformConfig.addInvertedWheelHandler(this.rlvRef);
-        this.hasInvertedWheelHandler = true;
-      } else {
-        PlatformConfig.removeInvertedWheelHandler(this.rlvRef);
-        this.hasInvertedWheelHandler = false;
-      }
+    removeInvertedWheelHandler(this.rlvRef);
+    this.hasInvertedWheelHandler = false;
+
+    if (this.props.inverted) {
+      addInvertedWheelHandler(
+        this.rlvRef,
+        this.props.horizontal ? "horizontal" : "vertical"
+      );
+      this.hasInvertedWheelHandler = true;
     }
   }
 
@@ -317,12 +320,17 @@ class FlashList<T> extends React.PureComponent<
     }
 
     if (this.hasInvertedWheelHandler) {
-      PlatformConfig.removeInvertedWheelHandler(this.rlvRef);
+      removeInvertedWheelHandler(this.rlvRef);
     }
   }
 
-  componentDidUpdate() {
-    this.updateWebScrollHandler();
+  componentDidUpdate(prevProps: FlashListProps<T>) {
+    if (
+      prevProps.inverted !== this.props.inverted ||
+      prevProps.horizontal !== this.props.horizontal
+    ) {
+      this.updateWebScrollHandler();
+    }
   }
 
   render() {
