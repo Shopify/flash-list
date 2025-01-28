@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Changes for RN 0.77 support
+
 ## [1.7.1] - 2024-08-07
 
 - Add recomputeViewableItems method
