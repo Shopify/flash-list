@@ -215,7 +215,7 @@ class FlashList<T> extends React.PureComponent<
         ).toString();
     }
     return {
-      data: null,
+      data: [],
       layoutProvider: null!!,
       dataProvider: new DataProvider((r1, r2) => {
         return r1 !== r2;
