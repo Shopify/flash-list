@@ -7,7 +7,15 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.7.3] - 2025-01-30
+
 - Changes for RN 0.77 support
+  - https://github.com/Shopify/flash-list/pull/1484
+
+## [1.7.2] - 2024-11-07
+
+- Update sticky headers when data changes without changing stickyHeaderIndices updated
+  - https://github.com/Shopify/flash-list/pull/1267
 
 ## [1.7.1] - 2024-08-07
 
