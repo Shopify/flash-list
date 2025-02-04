@@ -23,6 +23,8 @@ import { RecyclerViewManager } from "./RecyclerVIewManager";
 import { ViewHolder } from "./ViewHolder";
 import { measureLayout } from "./utils/measureLayout";
 import { RVGridLayoutManagerImpl } from "./GridLayoutManager";
+import { RecyclerViewContextProvider } from "./RecyclerViewContextProvider";
+import { useLayoutState } from "./hooks/useLayoutState";
 
 export interface RecyclerViewProps<TItem> {
   horizontal?: boolean;
@@ -73,6 +75,8 @@ const RecyclerViewComponent = <T1,>(
   const internalViewRef = useRef<View>(null);
   const childContainerViewRef = useRef<View>(null);
   const distanceFromWindow = useRef(0);
+  const [renderId, setRenderId] = useLayoutState(0);
+  const [commitId, setCommitId] = useState(0);
 
   const [recycleManager] = useState<RecyclerViewManager>(
     () =>
@@ -159,7 +163,8 @@ const RecyclerViewComponent = <T1,>(
         recycleManager.resumeProgressiveRender();
       }
     }
-  }, [data, recycleManager, refHolder, renderStack]);
+    setCommitId(renderId);
+  }, [data, recycleManager, refHolder, renderStack, renderId, commitId]);
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -202,47 +207,57 @@ const RecyclerViewComponent = <T1,>(
 
   // TODO: Replace with sync onLayout and better way to refresh
   const forceUpdate = useCallback(() => {
-    // setRenderStack(new Map(recycleManager.getRenderStack()));
+    setRenderStack(new Map(recycleManager.getRenderStack()));
     // setTimeout(() => {
     //   setRenderStack(new Map(recycleManager.getRenderStack()));
     // }, 1000);
   }, [recycleManager]);
 
+  const context = useMemo(() => {
+    return {
+      layout: () => {
+        setRenderId((prev) => prev + 1);
+      },
+    };
+  }, [setRenderId]);
+
   return (
-    <View style={{ flex: horizontal ? undefined : 1 }} ref={internalViewRef}>
-      <ScrollView
-        horizontal={horizontal}
-        ref={scrollViewRef}
-        onScroll={onScroll}
-        // TODO: evaluate perf
-        removeClippedSubviews={false}
-      >
-        <View
-          ref={childContainerViewRef}
-          style={layoutManager?.getLayoutSize()}
+    <RecyclerViewContextProvider value={context}>
+      <View style={{ flex: horizontal ? undefined : 1 }} ref={internalViewRef}>
+        <ScrollView
+          horizontal={horizontal}
+          ref={scrollViewRef}
+          onScroll={onScroll}
+          // TODO: evaluate perf
+          removeClippedSubviews={false}
         >
-          {layoutManager && data
-            ? Array.from(renderStack, ([index, reactKey]) => {
-                const item = data[index];
-                return (
-                  <ViewHolder
-                    key={reactKey}
-                    index={index}
-                    item={item}
-                    // Since we mutate layout objects, we want to pass a copy. We do a custom comparison so new object here doesn't matter.
-                    layout={{ ...layoutManager.getLayout(index) }}
-                    refHolder={refHolder}
-                    onSizeChanged={forceUpdate}
-                    target="Cell"
-                    renderItem={renderItem}
-                    extraData={extraData}
-                  />
-                );
-              })
-            : null}
-        </View>
-      </ScrollView>
-    </View>
+          <View
+            ref={childContainerViewRef}
+            style={layoutManager?.getLayoutSize()}
+          >
+            {layoutManager && data
+              ? Array.from(renderStack, ([index, reactKey]) => {
+                  const item = data[index];
+                  return (
+                    <ViewHolder
+                      key={reactKey}
+                      index={index}
+                      item={item}
+                      // Since we mutate layout objects, we want to pass a copy. We do a custom comparison so new object here doesn't matter.
+                      layout={{ ...layoutManager.getLayout(index) }}
+                      refHolder={refHolder}
+                      onSizeChanged={forceUpdate}
+                      target="Cell"
+                      renderItem={renderItem}
+                      extraData={extraData}
+                    />
+                  );
+                })
+              : null}
+          </View>
+        </ScrollView>
+      </View>
+    </RecyclerViewContextProvider>
   );
 };
 

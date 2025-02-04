@@ -37,6 +37,7 @@ export {
   MasonryListRenderItem,
   MasonryListRenderItemInfo,
 } from "./MasonryFlashList";
+export { useLayoutState } from "./recyclerview/hooks/useLayoutState";
 export { JSFPSMonitor, JSFPSResult } from "./benchmark/JSFPSMonitor";
 export { autoScroll, Cancellable } from "./benchmark/AutoScrollHelper";
 export { default as ViewToken } from "./viewability/ViewToken";

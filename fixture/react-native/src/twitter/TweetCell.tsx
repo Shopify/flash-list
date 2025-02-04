@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
+import { useLayoutState } from "@shopify/flash-list";
 import { Pressable } from "react-native";
 
 import { RootStackParamList } from "../constants";
@@ -15,7 +16,7 @@ export interface TweetCellProps {
 const TweetCell = ({ tweet }: TweetCellProps) => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Twitter">>();
-  const [showFullText, setShowFullText] = useState(false);
+  const [showFullText, setShowFullText] = useLayoutState(false);
   return (
     <Pressable
       onPress={() => {
