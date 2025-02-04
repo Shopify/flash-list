@@ -1,4 +1,4 @@
-import { LayoutChangeEvent, View } from "react-native";
+import { LayoutChangeEvent, PixelRatio, View } from "react-native";
 import React, {
   RefObject,
   useCallback,
@@ -10,7 +10,7 @@ import React, {
 import { FlashListProps, RenderTarget } from "../FlashListProps";
 
 import { RVLayout } from "./LayoutManager";
-import { areDimensionsEqual } from "./utils/measureLayout";
+import { areDimensionsEqual, measureLayout } from "./utils/measureLayout";
 
 export interface ViewHolderProps<TItem> {
   index: number;
@@ -57,10 +57,14 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
           console.log(
             "Layout height mismatch",
             layout.height - event.nativeEvent.layout.height,
+            layout.height,
+            event.nativeEvent.layout.height,
+            PixelRatio.roundToNearestPixel(event.nativeEvent.layout.height),
+            measureLayout(viewRef.current!),
             index
           );
         }
-        onSizeChanged(index);
+        //onSizeChanged(index);
       }
     },
     [index, layout.height, layout.width, onSizeChanged]
