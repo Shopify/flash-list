@@ -16,36 +16,13 @@ import {
   View,
 } from "react-native";
 
-import { FlashListProps } from "../FlashListProps";
-
-import { RVLinearLayoutManagerImpl, SpanSizeInfo } from "./LayoutManager";
-import { RecyclerViewManager } from "./RecyclerVIewManager";
+import { RVDimension } from "./LayoutManager";
 import { ViewHolder } from "./ViewHolder";
-import { measureLayout } from "./utils/measureLayout";
-import { RVGridLayoutManagerImpl } from "./GridLayoutManager";
+import { areDimensionsNotEqual, measureLayout } from "./utils/measureLayout";
 import { RecyclerViewContextProvider } from "./RecyclerViewContextProvider";
 import { useLayoutState } from "./hooks/useLayoutState";
-
-export interface RecyclerViewProps<TItem> {
-  horizontal?: boolean;
-  data: ReadonlyArray<TItem> | null | undefined;
-  numColumns?: number;
-  extraData?: any;
-  renderItem: FlashListProps<TItem>["renderItem"];
-  keyExtractor?: ((item: TItem, index: number) => string) | undefined;
-  getItemType?: (
-    item: TItem,
-    index: number,
-    extraData?: any
-  ) => string | number | undefined;
-  overrideItemLayout?: (
-    layout: SpanSizeInfo,
-    item: TItem,
-    index: number,
-    maxColumns: number,
-    extraData?: any
-  ) => void;
-}
+import { useRecyclerViewManager } from "./hooks/useRecyclerViewManager";
+import { RecyclerViewProps } from "./RecyclerViewProps";
 
 export interface ScrollToOffsetParams {
   // The offset to scroll to
@@ -62,15 +39,8 @@ const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
   ref: React.Ref<any>
 ) => {
-  const {
-    horizontal,
-    renderItem,
-    data,
-    keyExtractor,
-    getItemType,
-    numColumns,
-    extraData,
-  } = props;
+  const { horizontal, renderItem, data, keyExtractor, getItemType, extraData } =
+    props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
   const childContainerViewRef = useRef<View>(null);
@@ -78,47 +48,30 @@ const RecyclerViewComponent = <T1,>(
   const [renderId, setRenderId] = useLayoutState(0);
   const [commitId, setCommitId] = useState(0);
 
-  const [recycleManager] = useState<RecyclerViewManager>(
-    () =>
-      new RecyclerViewManager(
-        // when render stack changes
-        (renderStack) => setRenderStack(renderStack),
-        // on first render complete
-        () => {
-          requestAnimationFrame(() => {
-            recycleManager.refresh();
-          });
-        }
-      )
-  );
-  const [renderStack, setRenderStack] = useState<Map<number, string>>(
-    new Map()
-  );
-
   const refHolder = useMemo(
     () => new Map<number, RefObject<View | null>>(),
     []
   );
 
-  const layoutManager = recycleManager.getLayoutManager();
+  const { recyclerViewManager, renderStack } = useRecyclerViewManager(props);
 
-  recycleManager.updateKeyExtractor((index) => {
+  recyclerViewManager.updateKeyExtractor((index) => {
     // TODO: choose smart default key extractor
     return keyExtractor?.(data![index], index) ?? index.toString();
   });
 
-  recycleManager.updateGetItemType((index) => {
+  recyclerViewManager.updateGetItemType((index) => {
     return (getItemType?.(data![index], index) ?? "default").toString();
   });
 
-  layoutManager?.updateLayoutParams({
-    overrideItemLayout: (index, layout) => {
-      props.overrideItemLayout?.(layout, data![index], index, numColumns ?? 1);
-    },
-    horizontal,
-    maxColumns: numColumns,
-    windowSize: recycleManager.getWindowSize(),
-  });
+  // layoutManager?.updateLayoutParams({
+  //   overrideItemLayout: (index, layout) => {
+  //     props.overrideItemLayout?.(layout, data![index], index, numColumns ?? 1);
+  //   },
+  //   horizontal,
+  //   maxColumns: numColumns,
+  //   windowSize: recycleManager.getWindowSize(),
+  // });
 
   // Initialization effect
   useLayoutEffect(() => {
@@ -128,43 +81,27 @@ const RecyclerViewComponent = <T1,>(
       distanceFromWindow.current = horizontal
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
-      const LayoutManagerClass =
-        (numColumns ?? 1) > 1 && !horizontal
-          ? RVGridLayoutManagerImpl
-          : RVLinearLayoutManagerImpl;
-      const newLayoutManager = new LayoutManagerClass({
-        windowSize: {
-          width: childViewLayout.width,
-          height: outerViewLayout.height,
-        },
-        maxColumns: numColumns ?? 1,
-        matchHeightsWithNeighbours: true,
-        horizontal,
+
+      recyclerViewManager.updateWindowSize({
+        width: childViewLayout.width,
+        height: outerViewLayout.height,
       });
-      recycleManager.updateLayoutManager(newLayoutManager);
-      recycleManager.startRender();
     }
-  }, [horizontal, numColumns, recycleManager]);
+  });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    // iterate refHolder and get measureInWindow dimensions for all objects. Don't call update but store all response in an array
-
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
       const layout = measureLayout(viewHolderRef.current!);
       return { index, dimensions: layout };
     });
-    if (recycleManager.getLayoutManager()) {
-      recycleManager
-        .getLayoutManager()
-        ?.modifyLayout(layoutInfo, data?.length ?? 0);
-      if (recycleManager.getIsFirstLayoutComplete()) {
-        recycleManager.refresh();
-      } else {
-        recycleManager.resumeProgressiveRender();
-      }
+
+    recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0);
+
+    if (commitId !== renderId) {
+      setCommitId(renderId);
     }
-    setCommitId(renderId);
-  }, [data, recycleManager, refHolder, renderStack, renderId, commitId]);
+  });
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -183,9 +120,9 @@ const RecyclerViewComponent = <T1,>(
       } else {
         scrollOffset -= distanceFromWindow.current;
       }
-      recycleManager.updateScrollOffset(scrollOffset);
+      recyclerViewManager.updateScrollOffset(scrollOffset);
     },
-    [horizontal, recycleManager]
+    [horizontal, recyclerViewManager]
   );
 
   // Expose scrollToOffset method to parent component
@@ -205,21 +142,22 @@ const RecyclerViewComponent = <T1,>(
     },
   }));
 
-  // TODO: Replace with sync onLayout and better way to refresh
-  const forceUpdate = useCallback(() => {
-    setRenderStack(new Map(recycleManager.getRenderStack()));
-    // setTimeout(() => {
-    //   setRenderStack(new Map(recycleManager.getRenderStack()));
-    // }, 1000);
-  }, [recycleManager]);
-
   const context = useMemo(() => {
     return {
       layout: () => {
         setRenderId((prev) => prev + 1);
       },
+      validateItemSize: (index: number, size: RVDimension) => {
+        const layout = recyclerViewManager.getLayout(index);
+        if (
+          areDimensionsNotEqual(layout.width, size.width) ||
+          areDimensionsNotEqual(layout.height, size.height)
+        ) {
+          context.layout();
+        }
+      },
     };
-  }, [setRenderId]);
+  }, [recyclerViewManager, setRenderId]);
 
   return (
     <RecyclerViewContextProvider value={context}>
@@ -233,9 +171,13 @@ const RecyclerViewComponent = <T1,>(
         >
           <View
             ref={childContainerViewRef}
-            style={layoutManager?.getLayoutSize()}
+            style={
+              recyclerViewManager.hasLayout()
+                ? recyclerViewManager.getChildContainerLayout()
+                : undefined
+            }
           >
-            {layoutManager && data
+            {recyclerViewManager.hasLayout() && data
               ? Array.from(renderStack, ([index, reactKey]) => {
                   const item = data[index];
                   return (
@@ -244,9 +186,11 @@ const RecyclerViewComponent = <T1,>(
                       index={index}
                       item={item}
                       // Since we mutate layout objects, we want to pass a copy. We do a custom comparison so new object here doesn't matter.
-                      layout={{ ...layoutManager.getLayout(index) }}
+                      layout={{
+                        ...recyclerViewManager.getLayout(index),
+                      }}
                       refHolder={refHolder}
-                      onSizeChanged={forceUpdate}
+                      onSizeChanged={context.validateItemSize}
                       target="Cell"
                       renderItem={renderItem}
                       extraData={extraData}

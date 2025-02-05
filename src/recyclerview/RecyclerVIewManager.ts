@@ -1,11 +1,19 @@
-import { RVLayoutManager } from "./LayoutManager";
+import { RVGridLayoutManagerImpl } from "./GridLayoutManager";
+import {
+  RVDimension,
+  RVLayoutInfo,
+  RVLayoutManager,
+  RVLinearLayoutManagerImpl,
+} from "./LayoutManager";
 import { RecycleKeyManagerImpl, RecycleKeyManager } from "./RecycleKeyManager";
+import { RecyclerViewProps } from "./RecyclerViewProps";
 import {
   RVViewabilityManager,
   RVViewabilityManagerImpl,
 } from "./ViewabilityManager";
 
-export class RecyclerViewManager {
+// Abstracts layout manager and viewability manager
+export class RecyclerViewManager<T> {
   INITIAL_NUM_TO_RENDER = 1;
   private viewabilityManager: RVViewabilityManager;
   private recycleKeyManager: RecycleKeyManager;
@@ -13,17 +21,17 @@ export class RecyclerViewManager {
   // Map of index to key
   private renderStack: Map<number, string> = new Map();
   private onRenderStackChanged: (renderStack: Map<number, string>) => void;
-  private onFirstLayoutComplete: () => void;
   private isFirstLayoutComplete = false;
   private stableIdProvider: (index: number) => string;
   private getItemType: (index: number) => string;
+  private props: RecyclerViewProps<T>;
 
   constructor(
     onRenderStackChanged: (renderStack: Map<number, string>) => void,
-    onFirstLayoutComplete: () => void
+    props: RecyclerViewProps<T>
   ) {
     this.onRenderStackChanged = onRenderStackChanged;
-    this.onFirstLayoutComplete = onFirstLayoutComplete;
+    this.props = props;
     this.viewabilityManager = new RVViewabilityManagerImpl();
     this.viewabilityManager.setOnEngagedIndicesChangedListener(
       this.updateRenderStack
@@ -67,6 +75,10 @@ export class RecyclerViewManager {
     this.onRenderStackChanged(this.renderStack);
   };
 
+  updateProps(props: RecyclerViewProps<T>) {
+    this.props = props;
+  }
+
   updateLayoutManager(layoutManager: RVLayoutManager) {
     this.layoutManager = layoutManager;
   }
@@ -106,7 +118,6 @@ export class RecyclerViewManager {
       }
       if (isFullyMeasured && !this.isFirstLayoutComplete) {
         this.isFirstLayoutComplete = true;
-        this.onFirstLayoutComplete();
       }
       return isFullyMeasured;
     }
@@ -123,7 +134,7 @@ export class RecyclerViewManager {
     }
   }
 
-  refresh() {
+  recomputeEngagedIndices() {
     if (this.layoutManager) {
       this.viewabilityManager.updateScrollOffset(
         this.viewabilityManager.getScrollOffset(),
@@ -145,6 +156,15 @@ export class RecyclerViewManager {
     return this.layoutManager.getLayout(index);
   }
 
+  getChildContainerLayout() {
+    if (!this.layoutManager) {
+      throw new Error(
+        "LayoutManager is not initialized, child container layout is unavailable"
+      );
+    }
+    return this.layoutManager.getLayoutSize();
+  }
+
   getRenderStack() {
     return this.renderStack;
   }
@@ -162,12 +182,28 @@ export class RecyclerViewManager {
     return this.viewabilityManager.getScrollOffset();
   }
 
-  getViewabilityManager() {
-    return this.viewabilityManager;
+  updateWindowSize(windowSize: RVDimension) {
+    if (this.layoutManager) {
+      this.layoutManager.updateLayoutParams({ windowSize });
+    } else {
+      const LayoutManagerClass =
+        (this.props.numColumns ?? 1) > 1 && !this.props.horizontal
+          ? RVGridLayoutManagerImpl
+          : RVLinearLayoutManagerImpl;
+      // TODO: Check if params can just be forwarded
+      const newLayoutManager = new LayoutManagerClass({
+        windowSize,
+        maxColumns: this.props.numColumns ?? 1,
+        matchHeightsWithNeighbours: true,
+        horizontal: this.props.horizontal,
+      });
+      this.layoutManager = newLayoutManager;
+      this.startRender();
+    }
   }
 
-  getLayoutManager() {
-    return this.layoutManager;
+  hasLayout() {
+    return this.layoutManager !== undefined;
   }
 
   getVisibleIndices() {
@@ -183,6 +219,15 @@ export class RecyclerViewManager {
         this.getLastScrollOffset(),
         this.layoutManager.getWindowsSize().height
       );
+    }
+  }
+
+  modifyChildrenLayout(layoutInfo: RVLayoutInfo[], dataLength: number) {
+    this.layoutManager?.modifyLayout(layoutInfo, dataLength);
+    if (this.getIsFirstLayoutComplete()) {
+      this.recomputeEngagedIndices();
+    } else {
+      this.resumeProgressiveRender();
     }
   }
 }

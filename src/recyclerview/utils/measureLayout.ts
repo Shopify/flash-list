@@ -11,9 +11,9 @@ export function measureLayout(view: View) {
   return layout;
 }
 
-export function areDimensionsEqual(value1: number, value2: number): boolean {
+export function areDimensionsNotEqual(value1: number, value2: number): boolean {
   return (
-    PixelRatio.roundToNearestPixel(value1) ===
+    PixelRatio.roundToNearestPixel(value1) !==
     PixelRatio.roundToNearestPixel(value2)
   );
 }
