@@ -18,7 +18,7 @@ const TwitterBenchmark = () => {
         alert(res.formattedString);
       }
     },
-    { targetOffset: 200 * 100, speedMultiplier: 8, repeatCount: 10 }
+    { targetOffset: 200 * 100, speedMultiplier: 8, repeatCount: 20 }
   );
   return <Twitter instance={ref} blankAreaTracker={blankAreaTracker} />;
 };
