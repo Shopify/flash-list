@@ -142,6 +142,8 @@ const RecyclerViewComponent = <T1,>(
     },
   }));
 
+  // const contentOffset = useContentOffsetManagement(recyclerViewManager);
+
   const context = useMemo(() => {
     return {
       layout: () => {
@@ -165,6 +167,7 @@ const RecyclerViewComponent = <T1,>(
         <ScrollView
           horizontal={horizontal}
           ref={scrollViewRef}
+          //contentOffset={contentOffset}
           onScroll={onScroll}
           // TODO: evaluate perf
           removeClippedSubviews={false}

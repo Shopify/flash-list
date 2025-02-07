@@ -3,9 +3,9 @@ import { useState, useCallback } from "react";
 import { useRecyclerViewContext } from "../RecyclerViewContextProvider";
 
 export function useLayoutState<T>(
-  initialValue: T | (() => T)
+  initialState: T | (() => T)
 ): [T, (newValue: T | ((prevValue: T) => T)) => void] {
-  const [state, setState] = useState<T>(initialValue);
+  const [state, setState] = useState<T>(initialState);
   const recyclerViewContext = useRecyclerViewContext();
 
   const setLayoutState = useCallback(
