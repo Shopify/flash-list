@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  Animated,
+} from "react";
 import {
   View,
   Text,
@@ -11,7 +17,6 @@ import {
   Pressable,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import Animated, { FadeOut, LinearTransition } from "react-native-reanimated";
 
 interface Reminder {
   id: string;
@@ -63,12 +68,7 @@ const ReminderCell = ({
   }, [checked, item, onCompleted]);
 
   return (
-    <Animated.View
-      onLayout={onLayout}
-      style={styles.cell}
-      layout={LinearTransition}
-      exiting={FadeOut}
-    >
+    <Animated.View onLayout={onLayout} style={styles.cell}>
       <View style={styles.checkbox}>
         <Pressable onPress={toggle}>
           <Checkbox checked={checked} />

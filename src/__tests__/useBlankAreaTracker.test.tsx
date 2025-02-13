@@ -41,11 +41,12 @@ const BlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
 };
 
 const mountBlankTrackingFlashList = (props?: BlankTrackingFlashListProps) => {
-  const flashListRef: React.RefObject<FlashList<any>> = {
-    current: null,
-  };
+  const flashListRef = React.createRef<FlashList<any>>();
   const blankTrackingFlashList = render(
-    <BlankTrackingFlashList {...props} instance={flashListRef} />
+    <BlankTrackingFlashList
+      {...props}
+      instance={flashListRef as React.RefObject<FlashList<any>>}
+    />
   );
   return {
     root: blankTrackingFlashList,

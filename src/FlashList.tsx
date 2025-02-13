@@ -652,7 +652,7 @@ class FlashList<T> extends React.PureComponent<
       index,
       target,
       extraData: this.state.extraData?.value,
-    }) as JSX.Element;
+    }) as React.JSX.Element;
   };
 
   /**
