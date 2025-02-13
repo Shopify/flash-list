@@ -62,7 +62,7 @@ describe("MasonryFlashList", () => {
       {
         onLoad: onLoadMock,
       },
-      ref
+      ref as React.RefObject<MasonryFlashListRef<string>>
     );
     expect(onLoadMock).not.toHaveBeenCalled();
     masonryFlashList.findAll(ProgressiveListView)[1]?.instance.onItemLayout(0);
@@ -123,7 +123,10 @@ describe("MasonryFlashList", () => {
   });
   it("has a valid ref object", () => {
     const ref = React.createRef<MasonryFlashListRef<string>>();
-    const masonryFlashList = mountMasonryFlashList({}, ref);
+    const masonryFlashList = mountMasonryFlashList(
+      {},
+      ref as React.RefObject<MasonryFlashListRef<string>>
+    );
     expect(ref.current).toBeDefined();
     masonryFlashList.unmount();
   });
