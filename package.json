@@ -91,6 +91,12 @@
   "codegenConfig": {
     "name": "rnflashlist",
     "type": "components",
-    "jsSrcsDir": "./src/specs"
+    "jsSrcsDir": "./src/specs",
+    "ios": {
+      "componentProvider": {
+        "CellContainer": "CellContainerComponentView",
+        "AutoLayoutView": "AutoLayoutViewComponentView"
+      }
+    }
   }
 }
