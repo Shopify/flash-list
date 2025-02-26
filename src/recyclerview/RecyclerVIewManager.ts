@@ -1,10 +1,11 @@
-import { RVGridLayoutManagerImpl } from "./GridLayoutManager";
+import { RVGridLayoutManagerImpl } from "./layout-managers/GridLayoutManager";
 import {
   RVDimension,
   RVLayoutInfo,
   RVLayoutManager,
-  RVLinearLayoutManagerImpl,
-} from "./LayoutManager";
+} from "./layout-managers/LayoutManager";
+import { RVLinearLayoutManagerImpl } from "./layout-managers/LinearLayoutManager";
+import { RVMasonryLayoutManagerImpl } from "./layout-managers/MasonryLayoutManager";
 import { RecycleKeyManagerImpl, RecycleKeyManager } from "./RecycleKeyManager";
 import { RecyclerViewProps } from "./RecyclerViewProps";
 import {
@@ -186,8 +187,9 @@ export class RecyclerViewManager<T> {
     if (this.layoutManager) {
       this.layoutManager.updateLayoutParams({ windowSize });
     } else {
-      const LayoutManagerClass =
-        (this.props.numColumns ?? 1) > 1 && !this.props.horizontal
+      const LayoutManagerClass = this.props.masonry
+        ? RVMasonryLayoutManagerImpl
+        : (this.props.numColumns ?? 1) > 1 && !this.props.horizontal
           ? RVGridLayoutManagerImpl
           : RVLinearLayoutManagerImpl;
       // TODO: Check if params can just be forwarded
@@ -196,6 +198,7 @@ export class RecyclerViewManager<T> {
         maxColumns: this.props.numColumns ?? 1,
         matchHeightsWithNeighbours: true,
         horizontal: this.props.horizontal,
+        optimizeItemArrangement: true,
       });
       this.layoutManager = newLayoutManager;
       this.startRender();

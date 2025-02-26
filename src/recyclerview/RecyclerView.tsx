@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 
-import { RVDimension } from "./LayoutManager";
+import { RVDimension } from "./layout-managers/LayoutManager";
 import { ViewHolder } from "./ViewHolder";
 import { areDimensionsNotEqual, measureLayout } from "./utils/measureLayout";
 import { RecyclerViewContextProvider } from "./RecyclerViewContextProvider";
