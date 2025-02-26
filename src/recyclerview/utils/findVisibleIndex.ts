@@ -1,4 +1,4 @@
-import { RVLayout } from "../LayoutManager";
+import { RVLayout } from "../layout-managers/LayoutManager";
 
 /**
  * A helper function to perform binary search for the first or last visible index.

@@ -1,4 +1,4 @@
-import { RVDimension, RVLayoutManager } from "./LayoutManager";
+import { RVDimension, RVLayoutManager } from "./layout-managers/LayoutManager";
 
 export interface RVViewabilityManager {
   updateScrollOffset: (offset: number, layoutManager: RVLayoutManager) => void;

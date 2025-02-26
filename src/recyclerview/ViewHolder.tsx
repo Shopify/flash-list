@@ -9,7 +9,7 @@ import React, {
 
 import { FlashListProps, RenderTarget } from "../FlashListProps";
 
-import { RVDimension, RVLayout } from "./LayoutManager";
+import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 
 export interface ViewHolderProps<TItem> {
   index: number;

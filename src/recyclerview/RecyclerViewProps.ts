@@ -1,12 +1,13 @@
 import { FlashListProps } from "../FlashListProps";
 
-import { SpanSizeInfo } from "./LayoutManager";
+import { SpanSizeInfo } from "./layout-managers/LayoutManager";
 
 export interface RecyclerViewProps<TItem> {
   horizontal?: boolean;
   data: ReadonlyArray<TItem> | null | undefined;
   numColumns?: number;
   extraData?: any;
+  masonry?: boolean;
   renderItem: FlashListProps<TItem>["renderItem"];
   keyExtractor?: ((item: TItem, index: number) => string) | undefined;
   getItemType?: (
