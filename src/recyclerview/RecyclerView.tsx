@@ -23,6 +23,7 @@ import { RecyclerViewContextProvider } from "./RecyclerViewContextProvider";
 import { useLayoutState } from "./hooks/useLayoutState";
 import { useRecyclerViewManager } from "./hooks/useRecyclerViewManager";
 import { RecyclerViewProps } from "./RecyclerViewProps";
+import { useOnLoad } from "./hooks/useOnLoad";
 
 export interface ScrollToOffsetParams {
   // The offset to scroll to
@@ -39,7 +40,7 @@ const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
   ref: React.Ref<any>
 ) => {
-  const { horizontal, renderItem, data, keyExtractor, getItemType, extraData } =
+  const { horizontal, renderItem, data, keyExtractor, getItemType, extraData, onLoad } =
     props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
@@ -54,6 +55,8 @@ const RecyclerViewComponent = <T1,>(
   );
 
   const { recyclerViewManager, renderStack } = useRecyclerViewManager(props);
+
+  useOnLoad(recyclerViewManager, onLoad);
 
   recyclerViewManager.updateKeyExtractor((index) => {
     // TODO: choose smart default key extractor

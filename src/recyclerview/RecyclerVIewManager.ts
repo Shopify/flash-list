@@ -119,6 +119,7 @@ export class RecyclerViewManager<T> {
       }
       if (isFullyMeasured && !this.isFirstLayoutComplete) {
         this.isFirstLayoutComplete = true;
+        this.recomputeEngagedIndices();
       }
       return isFullyMeasured;
     }
