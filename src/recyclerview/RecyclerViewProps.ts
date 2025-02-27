@@ -8,6 +8,7 @@ export interface RecyclerViewProps<TItem> {
   numColumns?: number;
   extraData?: any;
   masonry?: boolean;
+  onLoad?: FlashListProps<TItem>["onLoad"];
   renderItem: FlashListProps<TItem>["renderItem"];
   keyExtractor?: ((item: TItem, index: number) => string) | undefined;
   getItemType?: (
