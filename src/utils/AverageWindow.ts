@@ -51,9 +51,15 @@ export class AverageWindow {
 export class MultiTypeAverageWindow {
   private averageWindows: Map<string | number, AverageWindow>;
   private windowSize: number;
-  constructor(windowSize: number) {
+  private defaultValue?: number;
+  /**
+   * @param windowSize Size of the average window
+   * @param defaultValue Default value to return if no value is available
+   */
+  constructor(windowSize: number, defaultValue?: number) {
     this.averageWindows = new Map<string | number, AverageWindow>();
     this.windowSize = windowSize;
+    this.defaultValue = defaultValue;
   }
 
   public addValue(value: number, type: string | number): void {
@@ -67,7 +73,7 @@ export class MultiTypeAverageWindow {
 
   public getCurrentValue(type: string | number): number {
     const averageWindow = this.averageWindows.get(type);
-    return averageWindow?.currentValue ?? 0;
+    return averageWindow?.currentValue ?? this.defaultValue ?? 0;
   }
 
   public reset(): void {
