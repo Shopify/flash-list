@@ -13,7 +13,7 @@ import {
   RVViewabilityManagerImpl,
 } from "./ViewabilityManager";
 
-// Abstracts layout manager and viewability manager
+// Abstracts layout manager, key manager and viewability manager and generates render stack
 export class RecyclerViewManager<T> {
   INITIAL_NUM_TO_RENDER = 1;
   private viewabilityManager: RVViewabilityManager;
@@ -39,12 +39,12 @@ export class RecyclerViewManager<T> {
     );
     this.recycleKeyManager = new RecycleKeyManagerImpl();
     this.stableIdProvider = (index) => index.toString();
-    this.getItemType = () => "type1";
+    this.getItemType = () => "default";
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
   // TODO: Call getKey anyway if stableIds are present
-  private updateRenderStack = (engagedIndices: number[]): void => {
+  public updateRenderStack = (engagedIndices: number[]): void => {
     const newRenderStack = new Map<number, string>();
 
     for (const [index, key] of this.renderStack) {

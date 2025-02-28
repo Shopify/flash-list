@@ -24,30 +24,13 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     this.overrideItemLayout = params.overrideItemLayout;
   }
 
-  modifyLayout(layoutInfo: RVLayoutInfo[], itemCount: number): void {
-    if (this.layouts.length > itemCount) {
-      this.layouts.splice(itemCount, this.layouts.length - itemCount);
-    } else if (this.layouts.length < itemCount) {
-      const startIndex = this.layouts.length;
-      for (let i = this.layouts.length; i < itemCount; i++) {
-        this.layouts[i] = this.getLayout(i);
-      }
-      this.recomputeLayouts(startIndex);
-    }
-
-    let minRecomputeIndex = Number.MAX_VALUE;
-
+  processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
       const layout = this.layouts[index];
       layout.height = dimensions.height;
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
-      this.layouts[index] = layout;
-      minRecomputeIndex = Math.min(minRecomputeIndex, index);
-    }
-    if (layoutInfo.length > 0) {
-      this.recomputeLayouts(minRecomputeIndex);
     }
   }
 
@@ -68,11 +51,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     return layout;
   }
 
-  deleteLayout(indices: number[]): void {
-    super.deleteLayout(indices);
-    this.recomputeLayouts(Math.min(...indices));
-  }
-
   // Size of the rendered area
   getLayoutSize(): RVDimension {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
@@ -85,7 +63,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     };
   }
 
-  private recomputeLayouts(startIndex = 0): void {
+  recomputeLayouts(startIndex = 0): void {
     const newStartIndex = this.locateFirstNeighbourIndex(startIndex);
 
     const startVal = this.layouts[newStartIndex];
