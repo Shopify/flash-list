@@ -13,6 +13,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     super(params);
     this.boundedSize = params.windowSize.width;
     this.matchHeightsWithNeighbours = params.matchHeightsWithNeighbours ?? true;
+    console.log("matchHeightsWithNeighbours", this.matchHeightsWithNeighbours);
   }
 
   updateLayoutParams(params: LayoutParams): void {
@@ -101,6 +102,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       }
     }
     if (this.matchHeightsWithNeighbours) {
+      // rconsole.log("tallestItem", tallestItem);
       i = startIndex;
       // TODO: Manage precision problems
       while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
