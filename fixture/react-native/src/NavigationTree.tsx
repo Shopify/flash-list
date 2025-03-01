@@ -17,6 +17,7 @@ import TwitterCustomCellContainer from "./twitter/CustomCellRendererComponent";
 import { Masonry } from "./Masonry";
 import { SectionList } from "./SectionList";
 import { Grid } from "./Grid";
+import HorizontalList from "./HorizontalList";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -56,6 +57,7 @@ const NavigationTree = () => {
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
+        <Stack.Screen name="HorizontalList" component={HorizontalList} />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />
         </Stack.Group>
