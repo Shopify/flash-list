@@ -4,19 +4,14 @@ import {
   RVLayout,
   RVLayoutInfo,
   RVLayoutManager,
-  SpanSizeInfo,
 } from "./LayoutManager";
 export class RVGridLayoutManagerImpl extends RVLayoutManager {
-  private maxColumns: number;
   private boundedSize: number;
-  private overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
   private matchHeightsWithNeighbours = true;
 
   constructor(params: LayoutParams) {
     super(params);
     this.boundedSize = params.windowSize.width;
-    this.maxColumns = params.maxColumns ?? 1;
-    this.overrideItemLayout = params.overrideItemLayout;
     this.matchHeightsWithNeighbours = params.matchHeightsWithNeighbours ?? true;
   }
 
@@ -34,21 +29,18 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
-  getLayout(index: number): RVLayout {
+  estimateLayout(index: number) {
     const layout = this.layouts[index];
-    if (!layout) {
-      this.layouts[index] = {
-        x: 0,
-        y: 0,
-        width: this.boundedSize / this.maxColumns,
-        height: 200,
-        isWidthMeasured: false,
-        isHeightMeasured: false,
-        enforcedWidth: true,
-      };
-      return this.layouts[index];
-    }
-    return layout;
+
+    // Apply span information if available
+    const span = this.getSpanSizeInfo(index).span ?? 1;
+
+    // Set width based on columns and span
+    layout.width = (this.boundedSize / this.maxColumns) * span;
+    layout.height = this.getEstimatedHeight(index);
+
+    layout.isWidthMeasured = true;
+    layout.enforcedWidth = true;
   }
 
   // Size of the rendered area
@@ -66,19 +58,15 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   recomputeLayouts(startIndex = 0): void {
     const newStartIndex = this.locateFirstNeighbourIndex(startIndex);
 
-    const startVal = this.layouts[newStartIndex];
+    const startVal = this.getLayout(newStartIndex);
 
     let startX = startVal.x;
     let startY = startVal.y;
 
     const itemCount = this.layouts.length;
-    const itemSpan: SpanSizeInfo = {};
 
     for (let i = newStartIndex; i < itemCount; i++) {
-      const layout = this.layouts[i];
-      this.overrideItemLayout?.(i, itemSpan);
-      const span = itemSpan.span ?? 1;
-      layout.width = (this.boundedSize / this.maxColumns) * span;
+      const layout = this.getLayout(i);
       if (!this.checkBounds(startX, layout.width)) {
         const tallestItem = this.processAndReturnTallestItemInRow(i);
         startY = tallestItem.y + tallestItem.height;

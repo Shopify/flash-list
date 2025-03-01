@@ -31,21 +31,14 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
-  // Fetch layout info, breaks if unavailable
-  getLayout(index: number): RVLayout {
+  estimateLayout(index: number) {
     const layout = this.layouts[index];
-    if (!layout) {
-      const newLayout = super.getLayout(index);
-      newLayout.x = 0;
-      newLayout.y = 0;
-      if (!this.horizontal) {
-        newLayout.width = this.boundedSize;
-      }
-      newLayout.isWidthMeasured = true;
-      newLayout.enforcedWidth = !this.horizontal;
-      return newLayout;
-    }
-    return layout;
+    layout.width = this.horizontal
+      ? this.getEstimatedWidth(index)
+      : this.boundedSize;
+    layout.height = this.getEstimatedHeight(index);
+    layout.isWidthMeasured = !this.horizontal;
+    layout.enforcedWidth = !this.horizontal;
   }
 
   // Size of the rendered area
@@ -83,7 +76,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     for (let i = startIndex; i < this.layouts.length; i++) {
       const layout = this.getLayout(i);
       if (i > 0) {
-        const prevLayout = this.layouts[i - 1];
+        const prevLayout = this.getLayout(i - 1);
         if (this.horizontal) {
           layout.x = prevLayout.x + prevLayout.width;
           layout.y = 0;
