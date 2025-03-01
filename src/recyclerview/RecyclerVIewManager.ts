@@ -191,8 +191,8 @@ export class RecyclerViewManager<T> {
       const LayoutManagerClass = this.props.masonry
         ? RVMasonryLayoutManagerImpl
         : (this.props.numColumns ?? 1) > 1 && !this.props.horizontal
-          ? RVGridLayoutManagerImpl
-          : RVLinearLayoutManagerImpl;
+        ? RVGridLayoutManagerImpl
+        : RVLinearLayoutManagerImpl;
       // TODO: Check if params can just be forwarded
       const newLayoutManager = new LayoutManagerClass({
         windowSize,

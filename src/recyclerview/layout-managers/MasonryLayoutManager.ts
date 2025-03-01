@@ -4,7 +4,6 @@ import {
   RVLayout,
   RVLayoutInfo,
   RVLayoutManager,
-  SpanSizeInfo,
 } from "./LayoutManager";
 
 export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
@@ -12,7 +11,6 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   private boundedSize: number;
   private columnHeights: number[];
   private optimizeItemArrangement: boolean;
-  private overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
   private currentColumn: number = 0;
 
   constructor(params: LayoutParams) {
@@ -20,7 +18,6 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     this.boundedSize = params.windowSize.width;
     this.numColumns = params.maxColumns ?? 2;
     this.optimizeItemArrangement = params.optimizeItemArrangement ?? false;
-    this.overrideItemLayout = params.overrideItemLayout;
     this.columnHeights = Array(this.numColumns).fill(0);
   }
 
@@ -38,26 +35,17 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
-  getLayout(index: number): RVLayout {
+  estimateLayout(index: number) {
     const layout = this.layouts[index];
-    if (!layout) {
-      // Create a default layout for new items
-      const itemSpan: SpanSizeInfo = {};
-      this.overrideItemLayout?.(index, itemSpan);
-      const span = Math.min(itemSpan.span ?? 1, this.numColumns);
+    // Get span information if available
+    const span = this.getSpanSizeInfo(index).span ?? 1;
 
-      this.layouts[index] = {
-        x: 0,
-        y: 0,
-        width: (this.boundedSize / this.numColumns) * span,
-        height: 200, // Default height, will be updated when measured
-        isWidthMeasured: true,
-        isHeightMeasured: false,
-        enforcedWidth: true,
-      };
-      return this.layouts[index];
-    }
-    return layout;
+    // Set width based on columns and span
+    layout.width = (this.boundedSize / this.numColumns) * span;
+    layout.height = this.getEstimatedHeight(index);
+
+    layout.isWidthMeasured = true;
+    layout.enforcedWidth = true;
   }
 
   getLayoutSize(): RVDimension {
@@ -84,17 +72,10 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
 
     const itemCount = this.layouts.length;
-    const itemSpan: SpanSizeInfo = {};
 
     for (let i = startIndex; i < itemCount; i++) {
-      const layout = this.layouts[i];
-
-      // Get span information if available
-      this.overrideItemLayout?.(i, itemSpan);
-      const span = Math.min(itemSpan.span ?? 1, this.numColumns);
-
-      // Update width based on span
-      layout.width = (this.boundedSize / this.numColumns) * span;
+      const layout = this.getLayout(i);
+      const span = this.getSpanSizeInfo(i).span ?? 1;
 
       if (this.optimizeItemArrangement) {
         if (span === 1) {
