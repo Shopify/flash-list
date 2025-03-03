@@ -40,8 +40,15 @@ const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
   ref: React.Ref<any>
 ) => {
-  const { horizontal, renderItem, data, keyExtractor, getItemType, extraData, onLoad } =
-    props;
+  const {
+    horizontal,
+    renderItem,
+    data,
+    keyExtractor,
+    getItemType,
+    extraData,
+    onLoad,
+  } = props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
   const childContainerViewRef = useRef<View>(null);
@@ -86,7 +93,7 @@ const RecyclerViewComponent = <T1,>(
         : childViewLayout.y - outerViewLayout.y;
 
       recyclerViewManager.updateWindowSize({
-        width: childViewLayout.width,
+        width: horizontal ? outerViewLayout.width : childViewLayout.width,
         height: outerViewLayout.height,
       });
     }
@@ -158,6 +165,7 @@ const RecyclerViewComponent = <T1,>(
           areDimensionsNotEqual(layout.width, size.width) ||
           areDimensionsNotEqual(layout.height, size.height)
         ) {
+          console.log("invalid size", index, size);
           context.layout();
         }
       },

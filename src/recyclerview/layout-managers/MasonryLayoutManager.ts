@@ -21,8 +21,6 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     this.columnHeights = Array(this.numColumns).fill(0);
   }
 
-  updateLayoutParams(params: LayoutParams): void {}
-
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
     // Update layout information
     for (const info of layoutInfo) {

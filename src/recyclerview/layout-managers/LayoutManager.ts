@@ -194,15 +194,17 @@ export abstract class RVLayoutManager {
     return layout;
   }
 
+  // recompute if critical layout information changes, can be called with same values repeatedly so only recompute if necessary
+  updateLayoutParams(params: LayoutParams) {
+    this.windowSize = params.windowSize;
+  }
+
   abstract estimateLayout(index: number): void;
 
   abstract recomputeLayouts(startIndex: number): void;
 
   // Size of the rendered area
   abstract getLayoutSize(): RVDimension;
-
-  // recompute if critical layout information changes, can be called with same values repeatedly so only recompute if necessary
-  abstract updateLayoutParams(params: LayoutParams): void;
 
   protected getSpanSizeInfo(index: number): SpanSizeInfo {
     this.spanSizeInfo.span = undefined;

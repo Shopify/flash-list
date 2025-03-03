@@ -15,10 +15,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     this.matchHeightsWithNeighbours = params.matchHeightsWithNeighbours ?? true;
   }
 
-  updateLayoutParams(params: LayoutParams): void {
-    this.overrideItemLayout = params.overrideItemLayout;
-  }
-
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
