@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Alert,
-  StatusBar,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, StatusBar } from "react-native";
 import { RecyclerView } from "@shopify/flash-list";
 
 interface Item {
@@ -44,15 +37,24 @@ const generateItems = (count: number): Item[] => {
 
 const HorizontalList = () => {
   const [data] = useState<Item[]>(generateItems(20));
+  const [expanded, setExpanded] = useState(false);
 
   const handleItemPress = (item: Item) => {
-    Alert.alert("Item Pressed", `You selected ${item.title}`);
+    setExpanded(!expanded);
   };
 
   const renderItem = ({ item }: { item: Item }) => {
+    const isSelected = expanded;
     return (
       <Pressable
-        style={[styles.itemContainer, { backgroundColor: item.color }]}
+        style={[
+          styles.itemContainer,
+          { backgroundColor: item.color },
+          isSelected && {
+            width: 200,
+            height: 230,
+          },
+        ]}
         onPress={() => handleItemPress(item)}
       >
         <Text style={styles.itemText}>{item.title}</Text>
@@ -64,14 +66,12 @@ const HorizontalList = () => {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <Text style={styles.header}>Horizontal List Example</Text>
-      <View style={styles.listContainer}>
-        <RecyclerView
-          horizontal
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-        />
-      </View>
+      <RecyclerView
+        horizontal
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+      />
 
       <Text style={styles.description}>
         This example demonstrates a horizontal scrolling list using
