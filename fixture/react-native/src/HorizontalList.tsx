@@ -50,10 +50,11 @@ const HorizontalList = () => {
         style={[
           styles.itemContainer,
           { backgroundColor: item.color },
-          isSelected && {
-            width: 200,
-            height: 230,
-          },
+          isSelected &&
+            item.id === 0 && {
+              width: 200,
+              height: 230,
+            },
         ]}
         onPress={() => handleItemPress(item)}
       >
