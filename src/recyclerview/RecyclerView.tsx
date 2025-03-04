@@ -184,6 +184,7 @@ const RecyclerViewComponent = <T1,>(
           removeClippedSubviews={false}
         >
           <View
+            // TODO: Take care of web scroll bar here
             ref={childContainerViewRef}
             style={
               recyclerViewManager.hasLayout()
