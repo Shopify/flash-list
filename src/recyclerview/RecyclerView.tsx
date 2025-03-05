@@ -4,7 +4,6 @@ import React, {
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
   forwardRef,
   useImperativeHandle,
 } from "react";
@@ -17,13 +16,16 @@ import {
 } from "react-native";
 
 import { RVDimension } from "./layout-managers/LayoutManager";
-import { ViewHolder } from "./ViewHolder";
 import { areDimensionsNotEqual, measureLayout } from "./utils/measureLayout";
 import { RecyclerViewContextProvider } from "./RecyclerViewContextProvider";
 import { useLayoutState } from "./hooks/useLayoutState";
 import { useRecyclerViewManager } from "./hooks/useRecyclerViewManager";
 import { RecyclerViewProps } from "./RecyclerViewProps";
 import { useOnLoad } from "./hooks/useOnLoad";
+import {
+  ViewHolderCollection,
+  ViewHolderCollectionRef,
+} from "./ViewHolderCollection";
 
 export interface ScrollToOffsetParams {
   // The offset to scroll to
@@ -53,8 +55,7 @@ const RecyclerViewComponent = <T1,>(
   const internalViewRef = useRef<View>(null);
   const childContainerViewRef = useRef<View>(null);
   const distanceFromWindow = useRef(0);
-  const [renderId, setRenderId] = useLayoutState(0);
-  const [commitId, setCommitId] = useState(0);
+  const [_, setRenderId] = useLayoutState(0);
 
   const refHolder = useMemo(
     () => new Map<number, RefObject<View | null>>(),
@@ -62,6 +63,8 @@ const RecyclerViewComponent = <T1,>(
   );
 
   const { recyclerViewManager, renderStack } = useRecyclerViewManager(props);
+
+  const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
 
   useOnLoad(recyclerViewManager, onLoad);
 
@@ -107,10 +110,7 @@ const RecyclerViewComponent = <T1,>(
     });
 
     recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0);
-
-    if (commitId !== renderId) {
-      setCommitId(renderId);
-    }
+    viewHolderCollectionRef.current?.commitLayout();
   });
 
   const onScroll = useCallback(
@@ -192,27 +192,18 @@ const RecyclerViewComponent = <T1,>(
                 : undefined
             }
           >
-            {recyclerViewManager.hasLayout() && data
-              ? Array.from(renderStack, ([index, reactKey]) => {
-                  const item = data[index];
-                  return (
-                    <ViewHolder
-                      key={reactKey}
-                      index={index}
-                      item={item}
-                      // Since we mutate layout objects, we want to pass a copy. We do a custom comparison so new object here doesn't matter.
-                      layout={{
-                        ...recyclerViewManager.getLayout(index),
-                      }}
-                      refHolder={refHolder}
-                      onSizeChanged={context.validateItemSize}
-                      target="Cell"
-                      renderItem={renderItem}
-                      extraData={extraData}
-                    />
-                  );
-                })
-              : null}
+            {recyclerViewManager.hasLayout() && data ? (
+              <ViewHolderCollection
+                viewHolderCollectionRef={viewHolderCollectionRef}
+                data={data}
+                renderStack={renderStack}
+                getLayout={(index) => recyclerViewManager.getLayout(index)}
+                refHolder={refHolder}
+                onSizeChanged={context.validateItemSize}
+                renderItem={renderItem}
+                extraData={extraData}
+              />
+            ) : null}
           </View>
         </ScrollView>
       </View>

@@ -123,12 +123,6 @@ export abstract class RVLayoutManager {
       );
     }
 
-    console.log(
-      "average sizes",
-      this.heightAverageWindow.getCurrentValue(this.getItemType(0)),
-      this.widthAverageWindow.getCurrentValue(this.getItemType(0))
-    );
-
     // console.log(
     //   "layouts",
     //   this.layouts.map((l) => l.height)
