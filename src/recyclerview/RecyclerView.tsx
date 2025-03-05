@@ -163,11 +163,26 @@ const RecyclerViewComponent = <T1,>(
       },
       validateItemSize: (index: number, size: RVDimension) => {
         const layout = recyclerViewManager.getLayout(index);
+        const width = Math.max(
+          Math.min(layout.width, layout.maxWidth ?? Infinity),
+          layout.minWidth ?? 0
+        );
+        const height = Math.max(
+          Math.min(layout.height, layout.maxHeight ?? Infinity),
+          layout.minHeight ?? 0
+        );
         if (
-          areDimensionsNotEqual(layout.width, size.width) ||
-          areDimensionsNotEqual(layout.height, size.height)
+          areDimensionsNotEqual(width, size.width) ||
+          areDimensionsNotEqual(height, size.height)
         ) {
-          console.log("invalid size", index, size);
+          console.log(
+            "invalid size",
+            index,
+            width,
+            size.width,
+            height,
+            size.height
+          );
           context.layout();
         }
       },
@@ -185,28 +200,22 @@ const RecyclerViewComponent = <T1,>(
           // TODO: evaluate perf
           removeClippedSubviews={false}
         >
-          <View
-            // TODO: Take care of web scroll bar here
-            ref={childContainerViewRef}
-            style={
+          <ViewHolderCollection
+            viewHolderCollectionRef={viewHolderCollectionRef}
+            data={data}
+            renderStack={renderStack}
+            getLayout={(index) => recyclerViewManager.getLayout(index)}
+            refHolder={refHolder}
+            onSizeChanged={context.validateItemSize}
+            renderItem={renderItem}
+            extraData={extraData}
+            childContainerViewRef={childContainerViewRef}
+            getChildContainerLayout={() =>
               recyclerViewManager.hasLayout()
                 ? recyclerViewManager.getChildContainerLayout()
                 : undefined
             }
-          >
-            {recyclerViewManager.hasLayout() && data ? (
-              <ViewHolderCollection
-                viewHolderCollectionRef={viewHolderCollectionRef}
-                data={data}
-                renderStack={renderStack}
-                getLayout={(index) => recyclerViewManager.getLayout(index)}
-                refHolder={refHolder}
-                onSizeChanged={context.validateItemSize}
-                renderItem={renderItem}
-                extraData={extraData}
-              />
-            ) : null}
-          </View>
+          />
         </ScrollView>
       </View>
     </RecyclerViewContextProvider>

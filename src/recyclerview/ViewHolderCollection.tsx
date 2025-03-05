@@ -2,9 +2,10 @@ import React, { useImperativeHandle } from "react";
 import { ViewHolder, ViewHolderProps } from "./ViewHolder";
 import { RVLayout } from "./layout-managers/LayoutManager";
 import { FlashListProps } from "../FlashListProps";
+import { View, ViewStyle } from "react-native";
 
 export interface ViewHolderCollectionProps<TItem> {
-  data: ReadonlyArray<TItem>;
+  data: FlashListProps<TItem>["data"];
   renderStack: Map<number, string>;
   getLayout: (index: number) => RVLayout;
   viewHolderCollectionRef: React.Ref<ViewHolderCollectionRef>;
@@ -12,6 +13,8 @@ export interface ViewHolderCollectionProps<TItem> {
   onSizeChanged: ViewHolderProps<TItem>["onSizeChanged"];
   renderItem: FlashListProps<TItem>["renderItem"];
   extraData: any;
+  getChildContainerLayout: () => ViewStyle | undefined;
+  childContainerViewRef?: React.RefObject<View>;
 }
 
 export interface ViewHolderCollectionRef {
@@ -30,6 +33,8 @@ export const ViewHolderCollection = <TItem,>(
     renderItem,
     extraData,
     viewHolderCollectionRef,
+    getChildContainerLayout,
+    childContainerViewRef,
   } = props;
 
   // Expose forceUpdate through ref
@@ -42,26 +47,34 @@ export const ViewHolderCollection = <TItem,>(
 
   const [_, setRenderId] = React.useState(0);
 
+  const containerStyle = getChildContainerLayout();
+
   return (
-    <>
-      {Array.from(renderStack, ([index, reactKey]) => {
-        const item = data[index];
-        return (
-          <ViewHolder
-            key={reactKey}
-            index={index}
-            item={item}
-            layout={{
-              ...getLayout(index),
-            }}
-            refHolder={refHolder}
-            onSizeChanged={onSizeChanged}
-            target="Cell"
-            renderItem={renderItem}
-            extraData={extraData}
-          />
-        );
-      })}
-    </>
+    <View
+      // TODO: Take care of web scroll bar here
+      ref={childContainerViewRef}
+      style={containerStyle}
+    >
+      {containerStyle &&
+        data &&
+        Array.from(renderStack, ([index, reactKey]) => {
+          const item = data[index];
+          return (
+            <ViewHolder
+              key={reactKey}
+              index={index}
+              item={item}
+              layout={{
+                ...getLayout(index),
+              }}
+              refHolder={refHolder}
+              onSizeChanged={onSizeChanged}
+              target="Cell"
+              renderItem={renderItem}
+              extraData={extraData}
+            />
+          );
+        })}
+    </View>
   );
 };
