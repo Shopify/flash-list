@@ -110,6 +110,8 @@ const RecyclerViewComponent = <T1,>(
     });
 
     recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0);
+
+    // TODO: reduce perf impact of commitLayout
     viewHolderCollectionRef.current?.commitLayout();
   });
 
