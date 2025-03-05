@@ -17,7 +17,6 @@ const TweetCell = ({ tweet }: TweetCellProps) => {
   const { navigate } =
     useNavigation<StackNavigationProp<RootStackParamList, "Twitter">>();
   const [showFullText, setShowFullText] = useRecyclingState(false, [tweet]);
-  console.log("tweet render", tweet.author.screenName);
   return (
     <Pressable
       onPress={() => {
