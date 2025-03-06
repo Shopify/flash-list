@@ -108,7 +108,7 @@ const RecyclerViewComponent = <T1,>(
       const layout = measureLayout(viewHolderRef.current!);
       return { index, dimensions: layout };
     });
-
+    console.log("render effect");
     recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0);
 
     // TODO: reduce perf impact of commitLayout
@@ -183,7 +183,7 @@ const RecyclerViewComponent = <T1,>(
             height,
             size.height
           );
-          context.layout();
+          //context.layout();
         }
       },
     };

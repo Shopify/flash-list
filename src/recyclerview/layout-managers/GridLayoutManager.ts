@@ -53,7 +53,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
 
   recomputeLayouts(startIndex = 0): void {
     const newStartIndex = this.locateFirstNeighbourIndex(startIndex);
-
     const startVal = this.getLayout(newStartIndex);
 
     let startX = startVal.x;
@@ -78,16 +77,14 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   private processAndReturnTallestItemInRow(index: number): RVLayout {
     const startIndex = this.locateFirstNeighbourIndex(index);
     const y = this.layouts[startIndex].y;
-    let tallestItem = this.layouts[startIndex];
+    let tallestItem: RVLayout | undefined;
     let i = startIndex;
     // TODO: Manage precision problems
     while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
       const layout = this.layouts[i];
-      if (layout.minHeight === 0 && layout.height >= tallestItem.height) {
-        tallestItem = layout;
-      } else if (
+      if (
         layout.height > (layout.minHeight ?? 0) &&
-        layout.height > tallestItem.height
+        layout.height > (tallestItem?.height ?? 0)
       ) {
         tallestItem = layout;
       }
@@ -96,11 +93,14 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
         break;
       }
     }
-    if (this.matchHeightsWithNeighbours) {
+    tallestItem = tallestItem ?? this.layouts[startIndex];
+
+    if (this.matchHeightsWithNeighbours && tallestItem) {
       i = startIndex;
       // TODO: Manage precision problems
       while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
         this.layouts[i].minHeight = tallestItem.height;
+        this.layouts[i].height = tallestItem.height;
         i++;
         if (i >= this.layouts.length) {
           break;
