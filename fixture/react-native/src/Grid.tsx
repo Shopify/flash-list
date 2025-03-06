@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { Text, View, StyleSheet, Platform } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { Text, View, StyleSheet, Platform, Pressable } from "react-native";
+import { RecyclerView, useLayoutState } from "@shopify/flash-list";
 
 interface GridItem {
   id: number;
@@ -66,29 +66,32 @@ export function Grid() {
 }
 
 const GridItem = ({ item }: { item: GridItem }) => {
-  // Fixed height for all items
-  const height = 150;
+  const [isExpanded, setIsExpanded] = useLayoutState(false);
+  const baseHeight = 150;
+  const height = isExpanded ? 250 : baseHeight;
 
   return (
-    <View
-      style={[
-        styles.itemWrapper,
-        {
-          backgroundColor: item.color,
-        },
-      ]}
-    >
+    <Pressable onPress={() => setIsExpanded(!isExpanded)}>
       <View
         style={[
-          styles.item,
+          styles.itemWrapper,
           {
-            height: item.id % 15 === 0 ? 180 : height,
+            backgroundColor: item.color,
           },
         ]}
       >
-        <Text style={styles.itemText}>{item.title}</Text>
+        <View
+          style={[
+            styles.item,
+            {
+              height,
+            },
+          ]}
+        >
+          <Text style={styles.itemText}>{item.title}</Text>
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

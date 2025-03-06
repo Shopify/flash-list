@@ -46,20 +46,22 @@ const HorizontalList = () => {
   const renderItem = ({ item }: { item: Item }) => {
     const isSelected = expanded;
     return (
-      <Pressable
-        style={[
-          styles.itemContainer,
-          { backgroundColor: item.color },
-          isSelected &&
-            item.id === 0 && {
-              width: 200,
-              height: 230,
-            },
-        ]}
-        onPress={() => handleItemPress(item)}
-      >
-        <Text style={styles.itemText}>{item.title}</Text>
-      </Pressable>
+      <View style={{ flex: 1 }}>
+        <Pressable
+          style={[
+            styles.itemContainer,
+            { backgroundColor: item.color },
+            isSelected &&
+              item.id === 0 && {
+                width: 200,
+                height: 230,
+              },
+          ]}
+          onPress={() => handleItemPress(item)}
+        >
+          <Text style={styles.itemText}>{item.title}</Text>
+        </Pressable>
+      </View>
     );
   };
 
