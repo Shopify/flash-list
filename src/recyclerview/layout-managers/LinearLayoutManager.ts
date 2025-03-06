@@ -6,6 +6,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   private boundedSize: number;
 
   private tallestItem?: RVLayout;
+  private tallestItemHeight: number = 0;
 
   constructor(params: LayoutParams) {
     super(params);
@@ -28,6 +29,10 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
       layout.height = dimensions.height;
+    }
+
+    if (this.horizontal) {
+      this.normalizeLayoutHeights(layoutInfo);
     }
   }
 
@@ -55,9 +60,11 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     };
   }
 
-  private updateTallestItem() {
+  private normalizeLayoutHeights(layoutInfo: RVLayoutInfo[]) {
     let newTallestItem: RVLayout | undefined;
-    for (const layout of this.layouts) {
+    for (const info of layoutInfo) {
+      const { index } = info;
+      const layout = this.layouts[index];
       if (
         layout.height > (layout.minHeight ?? 0) &&
         layout.height > (newTallestItem?.height ?? 0)
@@ -65,14 +72,20 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
         newTallestItem = layout;
       }
     }
-    if (newTallestItem) {
+    if (newTallestItem && newTallestItem.height !== this.tallestItemHeight) {
+      //set minHeight for all layouts
+      for (const layout of this.layouts) {
+        layout.height = newTallestItem.height;
+        layout.minHeight = newTallestItem.height;
+      }
+      newTallestItem.minHeight = 0;
       this.tallestItem = newTallestItem;
+      this.tallestItemHeight = newTallestItem.height;
     }
   }
 
   // Helper function to recompute layouts starting from a given index
   recomputeLayouts(startIndex = 0): void {
-    this.updateTallestItem();
     for (let i = startIndex; i < this.layouts.length; i++) {
       const layout = this.getLayout(i);
       if (i > 0) {
@@ -80,7 +93,6 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
         if (this.horizontal) {
           layout.x = prevLayout.x + prevLayout.width;
           layout.y = 0;
-          layout.minHeight = this.tallestItem?.height ?? 0;
         } else {
           layout.x = 0;
           layout.y = prevLayout.y + prevLayout.height;
@@ -88,11 +100,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       } else {
         layout.x = 0;
         layout.y = 0;
-        layout.minHeight = this.horizontal ? this.tallestItem?.height ?? 0 : 0;
       }
-    }
-    if (this.tallestItem) {
-      this.tallestItem.minHeight = 0;
     }
   }
 }
