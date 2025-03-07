@@ -23,10 +23,15 @@ export const ExamplesScreen = () => {
     { title: "List", destination: "List" },
     { title: "Horizontal List", destination: "HorizontalList" },
     { title: "Grid", destination: "Grid" },
+    { title: "Masonry", destination: "Masonry" },
     { title: "SectionList", destination: "SectionList" },
     { title: "PaginatedList", destination: "PaginatedList" },
     { title: "Reminders", destination: "Reminders" },
     { title: "Twitter Timeline", destination: "Twitter" },
+    {
+      title: "Twitter Benchmark",
+      destination: "TwitterBenchmark",
+    },
     {
       title: "Twitter FlatList Timeline",
       destination: "TwitterFlatList",
@@ -47,15 +52,11 @@ export const ExamplesScreen = () => {
       title: "Messages FlatList",
       destination: "MessagesFlatList",
     },
-    {
-      title: "Twitter Benchmark",
-      destination: "TwitterBenchmark",
-    },
+
     {
       title: "Twitter Custom Cell Container",
       destination: "TwitterCustomCellContainer",
     },
-    { title: "Masonry", destination: "Masonry" },
   ];
   return (
     <>

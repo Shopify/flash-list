@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import { RecyclerViewManager } from "../RecyclerVIewManager";
 import { RecyclerViewProps } from "../RecyclerViewProps";
+import { RecyclerViewManager } from "../RecyclerViewManager";
 
 export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   const [renderStack, setRenderStack] = useState<Map<number, string>>(

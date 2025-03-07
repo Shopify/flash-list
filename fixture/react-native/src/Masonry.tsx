@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, View, StyleSheet, Platform } from "react-native";
-import { MasonryFlashList } from "@shopify/flash-list";
 import { RecyclerView } from "@shopify/flash-list";
 interface MasonryData {
   index: number;
