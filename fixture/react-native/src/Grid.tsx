@@ -39,7 +39,7 @@ export function Grid() {
       items.push({
         id: i,
         title: `Item ${i}`,
-        span: i % 20 === 0 ? 2 : 1,
+        span: i % 9 === 0 ? 2 : 1,
         color: colors[(i - 1) % colors.length], // Cycle through colors
       });
     }
