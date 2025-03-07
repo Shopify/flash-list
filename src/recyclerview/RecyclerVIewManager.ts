@@ -197,7 +197,6 @@ export class RecyclerViewManager<T> {
       const newLayoutManager = new LayoutManagerClass({
         windowSize,
         maxColumns: this.props.numColumns ?? 1,
-        matchHeightsWithNeighbours: true,
         horizontal: this.props.horizontal,
         optimizeItemArrangement: true,
       });
