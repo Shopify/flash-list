@@ -33,7 +33,7 @@ export const useOnLoad = <T>(
       //   `onLoad called after ${dataCollectorString}`,
       //   ToastAndroid.SHORT
       // );
-      console.log("----------> dataCollector", dataCollectorString);
+      //console.log("----------> dataCollector", dataCollectorString);
       console.log("----------> elapsedTimeInMs", elapsedTimeInMs);
       onLoad?.({ elapsedTimeInMs });
       setIsLoaded(true);
