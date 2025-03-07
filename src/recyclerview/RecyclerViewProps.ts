@@ -1,27 +1,15 @@
 import { FlashListProps } from "../FlashListProps";
 
-import { SpanSizeInfo } from "./layout-managers/LayoutManager";
-
 export interface RecyclerViewProps<TItem> {
-  horizontal?: boolean;
-  data: ReadonlyArray<TItem> | null | undefined;
-  numColumns?: number;
-  extraData?: any;
+  horizontal?: FlashListProps<TItem>["horizontal"];
+  data: FlashListProps<TItem>["data"];
+  numColumns?: FlashListProps<TItem>["numColumns"];
+  extraData?: FlashListProps<TItem>["extraData"];
   masonry?: boolean;
   initialScrollIndex?: FlashListProps<TItem>["initialScrollIndex"];
   onLoad?: FlashListProps<TItem>["onLoad"];
   renderItem: FlashListProps<TItem>["renderItem"];
-  keyExtractor?: ((item: TItem, index: number) => string) | undefined;
-  getItemType?: (
-    item: TItem,
-    index: number,
-    extraData?: any
-  ) => string | number | undefined;
-  overrideItemLayout?: (
-    layout: SpanSizeInfo,
-    item: TItem,
-    index: number,
-    maxColumns: number,
-    extraData?: any
-  ) => void;
+  keyExtractor?: FlashListProps<TItem>["keyExtractor"];
+  getItemType?: FlashListProps<TItem>["getItemType"];
+  overrideItemLayout?: FlashListProps<TItem>["overrideItemLayout"];
 }

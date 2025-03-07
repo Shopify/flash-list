@@ -42,15 +42,7 @@ const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
   ref: React.Ref<any>
 ) => {
-  const {
-    horizontal,
-    renderItem,
-    data,
-    keyExtractor,
-    getItemType,
-    extraData,
-    onLoad,
-  } = props;
+  const { horizontal, renderItem, data, extraData, onLoad } = props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
   const childContainerViewRef = useRef<View>(null);
@@ -67,15 +59,6 @@ const RecyclerViewComponent = <T1,>(
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
 
   useOnLoad(recyclerViewManager, onLoad);
-
-  recyclerViewManager.updateKeyExtractor((index) => {
-    // TODO: choose smart default key extractor
-    return keyExtractor?.(data![index], index) ?? index.toString();
-  });
-
-  recyclerViewManager.updateGetItemType((index) => {
-    return (getItemType?.(data![index], index) ?? "default").toString();
-  });
 
   // layoutManager?.updateLayoutParams({
   //   overrideItemLayout: (index, layout) => {

@@ -16,5 +16,7 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
       )
   );
 
+  recyclerViewManager.updateProps(props);
+
   return { recyclerViewManager, renderStack };
 };
