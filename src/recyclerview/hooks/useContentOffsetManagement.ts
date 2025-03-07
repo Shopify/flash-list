@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState } from "react";
 
-import { RecyclerViewManager } from "../RecyclerVIewManager";
+import { RecyclerViewManager } from "../RecyclerViewManager";
 
 export function useContentOffsetManagement<T>(
   recyclerViewManager: RecyclerViewManager<T>

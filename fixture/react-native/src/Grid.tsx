@@ -67,8 +67,8 @@ export function Grid() {
 
 const GridItem = ({ item }: { item: GridItem }) => {
   const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
-  const baseHeight = 150;
-  const height = isExpanded ? (item.id % 2 == 0 ? 230 : 250) : baseHeight;
+  const baseHeight = 50;
+  const height = isExpanded ? (item.id % 2 == 0 ? 80 : 100) : baseHeight;
 
   return (
     <Pressable onPress={() => setIsExpanded(!isExpanded)}>

@@ -13,9 +13,9 @@ import {
   RVViewabilityManagerImpl,
 } from "./ViewabilityManager";
 
-// Abstracts layout manager, key manager and viewability manager and generates render stack
+// Abstracts layout manager, key manager and viewability manager and generates render stack (progressively on load)
 export class RecyclerViewManager<T> {
-  INITIAL_NUM_TO_RENDER = 1;
+  private initialDrawBatchSize = 1;
   private viewabilityManager: RVViewabilityManager;
   private recycleKeyManager: RecycleKeyManager;
   private layoutManager?: RVLayoutManager;
@@ -74,6 +74,7 @@ export class RecyclerViewManager<T> {
 
   updateProps(props: RecyclerViewProps<T>) {
     this.props = props;
+    this.initialDrawBatchSize = (props.numColumns ?? 1) * 2;
   }
 
   updateScrollOffset(offset: number) {
@@ -147,7 +148,6 @@ export class RecyclerViewManager<T> {
         },
       });
       this.layoutManager = newLayoutManager;
-      this.startRender();
     }
   }
 
@@ -164,10 +164,17 @@ export class RecyclerViewManager<T> {
     if (this.isFirstLayoutComplete) {
       return this.viewabilityManager.getVisibleIndices();
     } else {
-      return this.layoutManager.getVisibleLayouts(
-        this.getLastScrollOffset(),
-        this.layoutManager.getWindowsSize().height
-      );
+      if (this.props.horizontal) {
+        return this.layoutManager.getVisibleLayouts(
+          this.getLayout(this.props.initialScrollIndex ?? 0).x,
+          this.layoutManager.getWindowsSize().width
+        );
+      } else {
+        return this.layoutManager.getVisibleLayouts(
+          this.getLayout(this.props.initialScrollIndex ?? 0).y,
+          this.layoutManager.getWindowsSize().height
+        );
+      }
     }
   }
 
@@ -191,38 +198,26 @@ export class RecyclerViewManager<T> {
   // TODO
   private resumeProgressiveRender() {
     const layoutManager = this.layoutManager;
-    if (layoutManager && this.renderStack.size > 0) {
+    if (layoutManager) {
       const visibleIndices = this.getVisibleIndices();
-      const isFullyMeasured = visibleIndices.every(
+      this.isFirstLayoutComplete = visibleIndices.every(
         (index) =>
           layoutManager.getLayout(index).isHeightMeasured &&
           layoutManager.getLayout(index).isWidthMeasured
       );
-      if (!isFullyMeasured) {
+      // If everything is measured then render stack will be in sync. The buffer items will get rendered in the next update
+      // triggered by the useOnLoad hook.
+      !this.isFirstLayoutComplete &&
         this.updateRenderStack(
           // pick first n indices from visible ones and n is size of renderStack
           visibleIndices.slice(
             0,
-            Math.min(visibleIndices.length, this.renderStack.size + 1)
+            Math.min(
+              visibleIndices.length,
+              this.renderStack.size + this.initialDrawBatchSize
+            )
           )
         );
-      }
-      if (isFullyMeasured && !this.isFirstLayoutComplete) {
-        this.isFirstLayoutComplete = true;
-        this.recomputeEngagedIndices();
-      }
-      return isFullyMeasured;
-    }
-    return false;
-  }
-
-  private startRender() {
-    if (this.renderStack.size === 0) {
-      // TODO
-      const visibleIndices = [0];
-      this.updateRenderStack(
-        visibleIndices.slice(0, Math.min(1, visibleIndices.length))
-      );
     }
   }
 
