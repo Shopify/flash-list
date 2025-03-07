@@ -109,10 +109,14 @@ const RecyclerViewComponent = <T1,>(
       return { index, dimensions: layout };
     });
     console.log("render effect");
-    recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0);
-
-    // TODO: reduce perf impact of commitLayout
-    viewHolderCollectionRef.current?.commitLayout();
+    if (
+      recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
+    ) {
+      setRenderId((prev) => prev + 1);
+    } else {
+      // TODO: reduce perf impact of commitLayout
+      viewHolderCollectionRef.current?.commitLayout();
+    }
   });
 
   const onScroll = useCallback(

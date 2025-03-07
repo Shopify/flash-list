@@ -226,12 +226,20 @@ export class RecyclerViewManager<T> {
     }
   }
 
-  modifyChildrenLayout(layoutInfo: RVLayoutInfo[], dataLength: number) {
+  modifyChildrenLayout(
+    layoutInfo: RVLayoutInfo[],
+    dataLength: number
+  ): boolean {
     this.layoutManager?.modifyLayout(layoutInfo, dataLength);
+    if (this.layoutManager?.requiresRepaint) {
+      this.layoutManager.requiresRepaint = false;
+      return true;
+    }
     if (this.getIsFirstLayoutComplete()) {
       this.recomputeEngagedIndices();
     } else {
       this.resumeProgressiveRender();
     }
+    return false;
   }
 }

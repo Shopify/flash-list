@@ -14,6 +14,9 @@ export abstract class RVLayoutManager {
   protected spanSizeInfo: SpanSizeInfo = {};
   protected maxColumns: number;
   protected overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
+
+  public requiresRepaint: boolean = false;
+
   private _getItemType?: (index: number) => string | number;
   private heightAverageWindow: MultiTypeAverageWindow;
   private widthAverageWindow: MultiTypeAverageWindow;
@@ -240,12 +243,6 @@ export interface LayoutParams {
    * Allows custom control over span and size for individual items
    */
   overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
-
-  /**
-   * When true, attempts to match heights of neighboring items
-   * Helps create a more uniform appearance in grid layouts
-   */
-  matchHeightsWithNeighbours?: boolean;
 
   /**
    * Function to determine the type of an item at a specific index

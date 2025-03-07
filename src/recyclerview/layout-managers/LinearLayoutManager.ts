@@ -73,10 +73,17 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       }
     }
     if (newTallestItem && newTallestItem.height !== this.tallestItemHeight) {
+      let targetMinHeight = newTallestItem.height;
+      if (newTallestItem.height < this.tallestItemHeight) {
+        this.requiresRepaint = true;
+        targetMinHeight = 0;
+      }
       //set minHeight for all layouts
       for (const layout of this.layouts) {
-        layout.height = newTallestItem.height;
-        layout.minHeight = newTallestItem.height;
+        if (targetMinHeight > 0) {
+          layout.height = newTallestItem.height;
+        }
+        layout.minHeight = targetMinHeight;
       }
       newTallestItem.minHeight = 0;
       this.tallestItem = newTallestItem;

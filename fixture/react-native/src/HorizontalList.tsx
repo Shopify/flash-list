@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable, StatusBar } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
 
 interface Item {
   id: number;
@@ -35,35 +35,34 @@ const generateItems = (count: number): Item[] => {
   }));
 };
 
+// ListItem component that manages its own expanded state
+const ListItem = ({ item }: { item: Item }) => {
+  const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
+
+  const handlePress = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Pressable
+        style={[
+          styles.itemContainer,
+          { backgroundColor: item.color },
+          isExpanded && {
+            height: 230,
+          },
+        ]}
+        onPress={handlePress}
+      >
+        <Text style={styles.itemText}>{item.title}</Text>
+      </Pressable>
+    </View>
+  );
+};
+
 const HorizontalList = () => {
   const [data] = useState<Item[]>(generateItems(20));
-  const [expanded, setExpanded] = useState(false);
-
-  const handleItemPress = (item: Item) => {
-    setExpanded(!expanded);
-  };
-
-  const renderItem = ({ item }: { item: Item }) => {
-    const isSelected = expanded;
-    return (
-      <View style={{ flex: 1 }}>
-        <Pressable
-          style={[
-            styles.itemContainer,
-            { backgroundColor: item.color },
-            isSelected &&
-              item.id === 0 && {
-                width: 200,
-                height: 230,
-              },
-          ]}
-          onPress={() => handleItemPress(item)}
-        >
-          <Text style={styles.itemText}>{item.title}</Text>
-        </Pressable>
-      </View>
-    );
-  };
 
   return (
     <View style={styles.container}>
@@ -72,7 +71,7 @@ const HorizontalList = () => {
       <RecyclerView
         horizontal
         data={data}
-        renderItem={renderItem}
+        renderItem={({ item }) => <ListItem item={item} />}
         keyExtractor={(item) => item.id.toString()}
       />
 
