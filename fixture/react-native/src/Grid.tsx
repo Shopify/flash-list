@@ -35,12 +35,12 @@ export function Grid() {
   // Generate data using a loop
   const generateData = (count: number): GridItem[] => {
     const items: GridItem[] = [];
-    for (let i = 1; i <= count; i++) {
+    for (let i = 0; i < count; i++) {
       items.push({
         id: i,
         title: `Item ${i}`,
         span: i % 9 === 0 ? 2 : 1,
-        color: colors[(i - 1) % colors.length], // Cycle through colors
+        color: colors[i % colors.length], // Cycle through colors
       });
     }
     return items;
@@ -53,6 +53,7 @@ export function Grid() {
       <RecyclerView
         data={data}
         numColumns={2}
+        initialScrollIndex={5}
         overrideItemLayout={(layout, item) => {
           layout.span = item.span;
         }}

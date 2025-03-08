@@ -119,7 +119,7 @@ export class RecyclerViewManager<T> {
   }
 
   getLastScrollOffset() {
-    return this.viewabilityManager.getScrollOffset();
+    return this.viewabilityManager.scrollOffset;
   }
 
   updateWindowSize(windowSize: RVDimension) {
@@ -164,17 +164,19 @@ export class RecyclerViewManager<T> {
     if (this.isFirstLayoutComplete) {
       return this.viewabilityManager.getVisibleIndices();
     } else {
-      if (this.props.horizontal) {
-        return this.layoutManager.getVisibleLayouts(
-          this.getLayout(this.props.initialScrollIndex ?? 0).x,
-          this.layoutManager.getWindowsSize().width
-        );
-      } else {
-        return this.layoutManager.getVisibleLayouts(
-          this.getLayout(this.props.initialScrollIndex ?? 0).y,
-          this.layoutManager.getWindowsSize().height
-        );
-      }
+      const initialIndex = this.props.initialScrollIndex ?? 0;
+      const layout = this.getLayout(initialIndex);
+      const windowSize = this.layoutManager.getWindowsSize();
+
+      const unboundDimensionStart = this.props.horizontal ? layout.x : layout.y;
+      const unboundDimensionEnd =
+        unboundDimensionStart +
+        (this.props.horizontal ? windowSize.width : windowSize.height);
+
+      return this.layoutManager.getVisibleLayouts(
+        unboundDimensionStart,
+        unboundDimensionEnd
+      );
     }
   }
 
@@ -200,6 +202,7 @@ export class RecyclerViewManager<T> {
     const layoutManager = this.layoutManager;
     if (layoutManager) {
       const visibleIndices = this.getVisibleIndices();
+      // console.log("visibleIndices", visibleIndices);
       this.isFirstLayoutComplete = visibleIndices.every(
         (index) =>
           layoutManager.getLayout(index).isHeightMeasured &&
@@ -218,13 +221,20 @@ export class RecyclerViewManager<T> {
             )
           )
         );
+      const initialItemLayout = this.layoutManager?.getLayout(
+        this.props.initialScrollIndex ?? 0
+      );
+      const initialItemOffset = this.props.horizontal
+        ? initialItemLayout?.x
+        : initialItemLayout?.y;
+      this.viewabilityManager.scrollOffset = initialItemOffset ?? 0;
     }
   }
 
   private recomputeEngagedIndices() {
     if (this.layoutManager) {
       this.viewabilityManager.updateScrollOffset(
-        this.viewabilityManager.getScrollOffset(),
+        this.viewabilityManager.scrollOffset,
         this.layoutManager
       );
     }
