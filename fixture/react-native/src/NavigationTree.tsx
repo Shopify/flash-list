@@ -18,6 +18,7 @@ import { Masonry } from "./Masonry";
 import { SectionList } from "./SectionList";
 import { Grid } from "./Grid";
 import HorizontalList from "./HorizontalList";
+import { Chat } from "./Chat";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -55,6 +56,7 @@ const NavigationTree = () => {
             name="TwitterCustomCellContainer"
             component={TwitterCustomCellContainer}
           />
+          <Stack.Screen name="Chat" component={Chat} />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
         <Stack.Screen name="HorizontalList" component={HorizontalList} />
