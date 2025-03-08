@@ -51,7 +51,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     [index, onSizeChanged]
   );
 
-  console.log("ViewHolder re-render", index);
+  //console.log("ViewHolder re-render", index);
 
   const children = useMemo(() => {
     return renderItem?.({ item, index, extraData, target }) ?? null;

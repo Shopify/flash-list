@@ -21,11 +21,12 @@ import { RecyclerViewContextProvider } from "./RecyclerViewContextProvider";
 import { useLayoutState } from "./hooks/useLayoutState";
 import { useRecyclerViewManager } from "./hooks/useRecyclerViewManager";
 import { RecyclerViewProps } from "./RecyclerViewProps";
-import { useOnLoad } from "./hooks/useOnLoad";
+import { useOnListLoad } from "./hooks/useOnLoad";
 import {
   ViewHolderCollection,
   ViewHolderCollectionRef,
 } from "./ViewHolderCollection";
+import { useContentOffsetManagement } from "./hooks/useContentOffsetManagement";
 
 export interface ScrollToOffsetParams {
   // The offset to scroll to
@@ -55,10 +56,15 @@ const RecyclerViewComponent = <T1,>(
   );
 
   const { recyclerViewManager, renderStack } = useRecyclerViewManager(props);
-
+  const { contentOffset } = useContentOffsetManagement(
+    recyclerViewManager,
+    props
+  );
+  // console.log("contentOffset", contentOffset);
+  // console.log("render stack", renderStack);
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
 
-  useOnLoad(recyclerViewManager, onLoad);
+  useOnListLoad(recyclerViewManager, onLoad);
 
   // layoutManager?.updateLayoutParams({
   //   overrideItemLayout: (index, layout) => {
@@ -183,7 +189,7 @@ const RecyclerViewComponent = <T1,>(
         <ScrollView
           horizontal={horizontal}
           ref={scrollViewRef}
-          //contentOffset={contentOffset}
+          contentOffset={contentOffset}
           onScroll={onScroll}
           // TODO: evaluate perf
           removeClippedSubviews={false}

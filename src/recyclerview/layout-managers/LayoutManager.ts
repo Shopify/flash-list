@@ -196,12 +196,12 @@ export abstract class RVLayoutManager {
     this.windowSize = params.windowSize;
   }
 
-  abstract estimateLayout(index: number): void;
-
   abstract recomputeLayouts(startIndex: number): void;
 
   // Size of the rendered area
   abstract getLayoutSize(): RVDimension;
+
+  protected abstract estimateLayout(index: number): void;
 
   protected getSpanSizeInfo(index: number): SpanSizeInfo {
     this.spanSizeInfo.span = undefined;

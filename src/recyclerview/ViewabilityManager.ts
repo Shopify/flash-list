@@ -1,6 +1,8 @@
 import { RVDimension, RVLayoutManager } from "./layout-managers/LayoutManager";
 
 export interface RVViewabilityManager {
+  // current scroll offset, setting this driectly will not trigger visible indices change
+  scrollOffset: number;
   updateScrollOffset: (offset: number, layoutManager: RVLayoutManager) => void;
   getVisibleIndices: () => number[];
   // can be used to get visible indices
@@ -11,8 +13,6 @@ export interface RVViewabilityManager {
   setOnEngagedIndicesChangedListener: (
     callback: (all: number[], now: number[], notNow: number[]) => void
   ) => void;
-  // get last updated offset
-  getScrollOffset: () => number;
   // Adds render buffer, only impacts engaged indices
   updateRenderAheadOffset: (
     renderAheadOffset: number,
@@ -23,7 +23,7 @@ export interface RVViewabilityManager {
 
 export class RVViewabilityManagerImpl implements RVViewabilityManager {
   // Current scroll offset
-  private scrollOffset = 0;
+  public scrollOffset = 0;
   // Render ahead offset for pre-rendering items
   private renderAheadOffset = 250;
   // Currently visible indices
@@ -98,14 +98,6 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
     callback: (all: number[], now: number[], notNow: number[]) => void
   ): void {
     this.onEngagedIndicesChanged = callback;
-  }
-
-  /**
-   * Returns the current scroll offset.
-   * @returns The current scroll offset.
-   */
-  getScrollOffset(): number {
-    return this.scrollOffset;
   }
 
   /**
