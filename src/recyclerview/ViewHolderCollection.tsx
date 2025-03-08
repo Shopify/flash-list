@@ -1,4 +1,4 @@
-import React, { useImperativeHandle } from "react";
+import React, { useImperativeHandle, useLayoutEffect } from "react";
 import { ViewHolder, ViewHolderProps } from "./ViewHolder";
 import { RVLayout } from "./layout-managers/LayoutManager";
 import { FlashListProps } from "../FlashListProps";
@@ -15,6 +15,7 @@ export interface ViewHolderCollectionProps<TItem> {
   extraData: any;
   getChildContainerLayout: () => ViewStyle | undefined;
   childContainerViewRef?: React.RefObject<View>;
+  onCommitLayoutEffect: () => void;
 }
 
 export interface ViewHolderCollectionRef {
@@ -35,7 +36,16 @@ export const ViewHolderCollection = <TItem,>(
     viewHolderCollectionRef,
     getChildContainerLayout,
     childContainerViewRef,
+    onCommitLayoutEffect,
   } = props;
+
+  const [renderId, setRenderId] = React.useState(0);
+
+  const containerStyle = getChildContainerLayout();
+
+  useLayoutEffect(() => {
+    onCommitLayoutEffect();
+  }, [renderId]);
 
   // Expose forceUpdate through ref
   useImperativeHandle(viewHolderCollectionRef, () => ({
@@ -44,10 +54,6 @@ export const ViewHolderCollection = <TItem,>(
       setRenderId((prev) => prev + 1);
     },
   }));
-
-  const [_, setRenderId] = React.useState(0);
-
-  const containerStyle = getChildContainerLayout();
 
   return (
     <View

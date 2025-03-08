@@ -56,10 +56,8 @@ const RecyclerViewComponent = <T1,>(
   );
 
   const { recyclerViewManager, renderStack } = useRecyclerViewManager(props);
-  const { contentOffset } = useContentOffsetManagement(
-    recyclerViewManager,
-    props
-  );
+  const { contentOffset, handleCommitLayoutEffect } =
+    useContentOffsetManagement(recyclerViewManager, props);
   // console.log("contentOffset", contentOffset);
   // console.log("render stack", renderStack);
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
@@ -85,7 +83,7 @@ const RecyclerViewComponent = <T1,>(
         : childViewLayout.y - outerViewLayout.y;
 
       recyclerViewManager.updateWindowSize({
-        width: horizontal ? outerViewLayout.width : childViewLayout.width,
+        width: outerViewLayout.width,
         height: outerViewLayout.height,
       });
     }
@@ -101,7 +99,7 @@ const RecyclerViewComponent = <T1,>(
     if (
       recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
     ) {
-      setRenderId((prev) => prev + 1);
+      context.layout();
     } else {
       // TODO: reduce perf impact of commitLayout
       viewHolderCollectionRef.current?.commitLayout();
@@ -185,7 +183,13 @@ const RecyclerViewComponent = <T1,>(
 
   return (
     <RecyclerViewContextProvider value={context}>
-      <View style={{ flex: horizontal ? undefined : 1 }} ref={internalViewRef}>
+      <View
+        style={{ flex: horizontal ? undefined : 1 }}
+        ref={internalViewRef}
+        onLayout={() => {
+          //context.layout();
+        }}
+      >
         <ScrollView
           horizontal={horizontal}
           ref={scrollViewRef}
@@ -204,6 +208,7 @@ const RecyclerViewComponent = <T1,>(
             renderItem={renderItem}
             extraData={extraData}
             childContainerViewRef={childContainerViewRef}
+            onCommitLayoutEffect={handleCommitLayoutEffect}
             getChildContainerLayout={() =>
               recyclerViewManager.hasLayout()
                 ? recyclerViewManager.getChildContainerLayout()

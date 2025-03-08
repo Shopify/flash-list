@@ -21,4 +21,5 @@ export type RootStackParamList = {
   Masonry: undefined;
   Grid: undefined;
   HorizontalList: undefined;
+  Chat: undefined;
 };

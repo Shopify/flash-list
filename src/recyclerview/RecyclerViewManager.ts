@@ -52,7 +52,7 @@ export class RecyclerViewManager<T> {
       // TODO: connect key extractor
       const newKey = this.recycleKeyManager.getKey(
         this.getItemType(index),
-        this.stableIdProvider(index),
+        this.getStableId(index),
         this.renderStack.get(index)
       );
       newRenderStack.set(index, newKey);
@@ -246,7 +246,7 @@ export class RecyclerViewManager<T> {
     ).toString();
   }
 
-  private stableIdProvider(index: number): string {
+  private getStableId(index: number): string {
     return (
       this.props.keyExtractor?.(this.props.data![index], index) ??
       index.toString()

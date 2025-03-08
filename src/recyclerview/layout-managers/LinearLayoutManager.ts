@@ -15,8 +15,15 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       : params.windowSize.width;
   }
 
+  //TODO: check if this is needed
   updateLayoutParams(params: LayoutParams): void {
-    // TODO: Implement this
+    if (params.windowSize.width !== this.windowSize.width) {
+      console.log("updateLayoutParams", params.windowSize.width);
+      this.boundedSize = this.horizontal
+        ? params.windowSize.height
+        : params.windowSize.width;
+      this.recomputeLayouts(0);
+    }
   }
 
   // Updates layout information based on the provided layout info.

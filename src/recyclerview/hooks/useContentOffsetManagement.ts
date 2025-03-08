@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { RecyclerViewProps } from "../RecyclerViewProps";
@@ -10,9 +10,11 @@ export function useContentOffsetManagement<T>(
 ) {
   const [contentOffset, setContentOffset] = useState({ x: 0, y: 0 });
   const isUnmounted = useUnmountFlag();
+
   useOnLoad(recyclerViewManager, () => {
     const initialScrollIndex = props.initialScrollIndex ?? 0;
     if (initialScrollIndex > 0) {
+      //TODO: remove setTimeout somehow
       setTimeout(() => {
         if (!isUnmounted.current) {
           setContentOffset({
@@ -23,29 +25,52 @@ export function useContentOffsetManagement<T>(
       }, 0);
     }
   });
-  // const firstVisibleItem = recyclerViewManager.hasLayout()
-  //   ? recyclerViewManager.getVisibleIndices()[0]
-  //   : 0;
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const firstVisibleItemLayout = recyclerViewManager.hasLayout()
-  //   ? {
-  //       ...recyclerViewManager.getLayout(firstVisibleItem),
-  //     }
-  //   : undefined;
-  // // const firstVisibleItemKey = recyclerViewManager.getStableId(firstVisibleItem);
-  // useLayoutEffect(() => {
-  //   if (!firstVisibleItemLayout) return;
-  //   const newLayout = recyclerViewManager.getLayout(firstVisibleItem);
-  //   if (newLayout.y !== firstVisibleItemLayout.y) {
-  //     console.log("ContentOffset", newLayout.y, firstVisibleItemLayout.y);
-  //     setContentOffset({
-  //       x: 0,
-  //       y:
-  //         recyclerViewManager.getLastScrollOffset() +
-  //         (newLayout.y - firstVisibleItemLayout.y),
-  //     });
-  //   }
-  // }, [firstVisibleItem, firstVisibleItemLayout, recyclerViewManager]);
+  // TODO: exp chat app support. Needs to be polished.
 
-  return { contentOffset };
+  // const firstVisibleItemKey = useRef<string | undefined>(undefined);
+  // const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
+  const handleCommitLayoutEffect = useCallback(() => {
+    // if (recyclerViewManager.getIsFirstLayoutComplete()) {
+    //   if (firstVisibleItemKey.current) {
+    //     const currentIndexOfFirstVisibleItem = props.data?.findIndex(
+    //       (item, index) =>
+    //         props.keyExtractor?.(item, index) === firstVisibleItemKey.current
+    //     );
+    //     if (currentIndexOfFirstVisibleItem !== undefined) {
+    //       console.log(
+    //         "currentIndexOfFirstVisibleItem",
+    //         firstVisibleItemKey.current
+    //       );
+    //       const diff =
+    //         firstVisibleItemLayout.current!.y -
+    //         recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y;
+    //       console.log("diff", diff);
+    //       firstVisibleItemLayout.current = {
+    //         ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
+    //       };
+    //       console.log("diff--------->", diff);
+    //       if (diff !== 0) {
+    //         setContentOffset({
+    //           x: 0,
+    //           y: recyclerViewManager.getLastScrollOffset() - diff,
+    //         });
+    //       }
+    //     }
+    //   }
+    //   const firstVisibleIndex = recyclerViewManager.getVisibleIndices()[0];
+    //   if (firstVisibleIndex !== undefined) {
+    //     console.log("firstVisibleIndex", firstVisibleIndex);
+    //     firstVisibleItemKey.current =
+    //       props.keyExtractor?.(
+    //         props.data![firstVisibleIndex],
+    //         firstVisibleIndex
+    //       ) ?? "0";
+    //     firstVisibleItemLayout.current = {
+    //       ...recyclerViewManager.getLayout(firstVisibleIndex),
+    //     };
+    //   }
+    // }
+  }, [props.data, props.keyExtractor, recyclerViewManager]);
+
+  return { contentOffset, handleCommitLayoutEffect };
 }

@@ -24,6 +24,10 @@ export const ExamplesScreen = () => {
     { title: "Horizontal List", destination: "HorizontalList" },
     { title: "Grid", destination: "Grid" },
     { title: "Masonry", destination: "Masonry" },
+    {
+      title: "Chat",
+      destination: "Chat",
+    },
     { title: "SectionList", destination: "SectionList" },
     { title: "PaginatedList", destination: "PaginatedList" },
     { title: "Reminders", destination: "Reminders" },
