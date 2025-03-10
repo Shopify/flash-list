@@ -12,4 +12,5 @@ export interface RecyclerViewProps<TItem> {
   keyExtractor?: FlashListProps<TItem>["keyExtractor"];
   getItemType?: FlashListProps<TItem>["getItemType"];
   overrideItemLayout?: FlashListProps<TItem>["overrideItemLayout"];
+  drawDistance?: FlashListProps<TItem>["drawDistance"];
 }
