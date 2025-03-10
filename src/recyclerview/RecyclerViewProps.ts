@@ -6,6 +6,10 @@ export interface RecyclerViewProps<TItem> {
   numColumns?: FlashListProps<TItem>["numColumns"];
   extraData?: FlashListProps<TItem>["extraData"];
   masonry?: boolean;
+  /**
+   * If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order.
+   */
+  optimizeItemArrangement?: boolean; //TODO: Check if this breaks on item resize or is glitchy
   initialScrollIndex?: FlashListProps<TItem>["initialScrollIndex"];
   onLoad?: FlashListProps<TItem>["onLoad"];
   renderItem: FlashListProps<TItem>["renderItem"];

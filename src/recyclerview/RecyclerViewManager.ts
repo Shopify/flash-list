@@ -146,7 +146,7 @@ export class RecyclerViewManager<T> {
         windowSize,
         maxColumns: this.props.numColumns ?? 1,
         horizontal: !!this.props.horizontal,
-        optimizeItemArrangement: true,
+        optimizeItemArrangement: this.props.optimizeItemArrangement ?? true,
         overrideItemLayout: (index, layout) => {
           this.props?.overrideItemLayout?.(
             layout,
