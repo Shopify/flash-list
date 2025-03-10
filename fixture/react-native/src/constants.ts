@@ -22,4 +22,5 @@ export type RootStackParamList = {
   Grid: undefined;
   HorizontalList: undefined;
   Chat: undefined;
+  CellRendererExamples: undefined;
 };

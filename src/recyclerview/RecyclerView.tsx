@@ -43,7 +43,14 @@ const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
   ref: React.Ref<any>
 ) => {
-  const { horizontal, renderItem, data, extraData, onLoad } = props;
+  const {
+    horizontal,
+    renderItem,
+    data,
+    extraData,
+    onLoad,
+    CellRendererComponent,
+  } = props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
   const childContainerViewRef = useRef<View>(null);
@@ -212,6 +219,7 @@ const RecyclerViewComponent = <T1,>(
             extraData={extraData}
             childContainerViewRef={childContainerViewRef}
             onCommitLayoutEffect={handleCommitLayoutEffect}
+            CellRendererComponent={CellRendererComponent}
             getChildContainerLayout={() =>
               recyclerViewManager.hasLayout()
                 ? recyclerViewManager.getChildContainerLayout()

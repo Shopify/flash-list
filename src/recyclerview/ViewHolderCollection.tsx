@@ -16,6 +16,7 @@ export interface ViewHolderCollectionProps<TItem> {
   getChildContainerLayout: () => ViewStyle | undefined;
   childContainerViewRef?: React.RefObject<View>;
   onCommitLayoutEffect: () => void;
+  CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
 }
 
 export interface ViewHolderCollectionRef {
@@ -37,6 +38,7 @@ export const ViewHolderCollection = <TItem,>(
     getChildContainerLayout,
     childContainerViewRef,
     onCommitLayoutEffect,
+    CellRendererComponent,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -78,6 +80,7 @@ export const ViewHolderCollection = <TItem,>(
               target="Cell"
               renderItem={renderItem}
               extraData={extraData}
+              CellRendererComponent={CellRendererComponent}
             />
           );
         })}

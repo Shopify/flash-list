@@ -13,12 +13,12 @@ import { ExamplesScreen } from "./ExamplesScreen";
 import { DebugScreen } from "./Debug";
 import { Messages, MessagesFlatList } from "./Messages";
 import TwitterBenchmark from "./twitter/TwitterBenchmark";
-import TwitterCustomCellContainer from "./twitter/CustomCellRendererComponent";
 import { Masonry } from "./Masonry";
 import { SectionList } from "./SectionList";
 import { Grid } from "./Grid";
 import HorizontalList from "./HorizontalList";
 import { Chat } from "./Chat";
+import FlashListCellRenderer from "./CellRendererExamples";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -52,14 +52,15 @@ const NavigationTree = () => {
           <Stack.Screen name="Messages" component={Messages} />
           <Stack.Screen name="MessagesFlatList" component={MessagesFlatList} />
           <Stack.Screen name="TwitterBenchmark" component={TwitterBenchmark} />
-          <Stack.Screen
-            name="TwitterCustomCellContainer"
-            component={TwitterCustomCellContainer}
-          />
           <Stack.Screen name="Chat" component={Chat} />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
         <Stack.Screen name="HorizontalList" component={HorizontalList} />
+        <Stack.Screen
+          name="CellRendererExamples"
+          component={FlashListCellRenderer}
+          options={{ title: "CellRenderer Examples" }}
+        />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />
         </Stack.Group>
