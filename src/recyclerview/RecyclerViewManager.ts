@@ -11,6 +11,7 @@ import { RecyclerViewProps } from "./RecyclerViewProps";
 import {
   RVViewabilityManager,
   RVViewabilityManagerImpl,
+  Velocity,
 } from "./ViewabilityManager";
 
 // Abstracts layout manager, key manager and viewability manager and generates render stack (progressively on load)
@@ -74,12 +75,20 @@ export class RecyclerViewManager<T> {
 
   updateProps(props: RecyclerViewProps<T>) {
     this.props = props;
-    this.initialDrawBatchSize = (props.numColumns ?? 1) * 2;
+    if (this.props.drawDistance === 0) {
+      this.initialDrawBatchSize = 1;
+    } else {
+      this.initialDrawBatchSize = (props.numColumns ?? 1) * 2;
+    }
   }
 
-  updateScrollOffset(offset: number) {
+  updateScrollOffset(offset: number, velocity?: Velocity) {
     if (this.layoutManager) {
-      this.viewabilityManager.updateScrollOffset(offset, this.layoutManager);
+      this.viewabilityManager.updateScrollOffset(
+        offset,
+        velocity,
+        this.layoutManager
+      );
     }
   }
 
@@ -235,6 +244,7 @@ export class RecyclerViewManager<T> {
     if (this.layoutManager) {
       this.viewabilityManager.updateScrollOffset(
         this.viewabilityManager.scrollOffset,
+        null,
         this.layoutManager
       );
     }

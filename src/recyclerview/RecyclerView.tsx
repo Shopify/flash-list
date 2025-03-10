@@ -123,7 +123,10 @@ const RecyclerViewComponent = <T1,>(
       } else {
         scrollOffset -= distanceFromWindow.current;
       }
-      recyclerViewManager.updateScrollOffset(scrollOffset);
+      recyclerViewManager.updateScrollOffset(
+        scrollOffset,
+        event.nativeEvent.velocity
+      );
     },
     [horizontal, recyclerViewManager]
   );
