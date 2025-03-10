@@ -201,15 +201,14 @@ const styles = StyleSheet.create({
     maxWidth: "80%",
     padding: 12,
     borderRadius: 16,
-    elevation: 1,
   },
   userMessage: {
     backgroundColor: "#dcf8c6",
-    borderBottomRightRadius: 4,
+    borderBottomRightRadius: 1,
   },
   otherMessage: {
     backgroundColor: "#ffffff",
-    borderBottomLeftRadius: 4,
+    borderBottomLeftRadius: 1,
   },
   messageText: {
     fontSize: 16,
