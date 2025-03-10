@@ -24,6 +24,7 @@ export const ExamplesScreen = () => {
     { title: "Horizontal List", destination: "HorizontalList" },
     { title: "Grid", destination: "Grid" },
     { title: "Masonry", destination: "Masonry" },
+    { title: "Complex Masonry", destination: "ComplexMasonry" },
     {
       title: "Chat",
       destination: "Chat",
@@ -55,11 +56,6 @@ export const ExamplesScreen = () => {
     {
       title: "Messages FlatList",
       destination: "MessagesFlatList",
-    },
-
-    {
-      title: "Twitter Custom Cell Container",
-      destination: "TwitterCustomCellContainer",
     },
     {
       title: "CellRenderer Examples",

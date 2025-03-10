@@ -15,12 +15,12 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@d11/react-native-fast-image": "^8.9.2",
     "@react-navigation/native": "^7.0.15",
     "@react-navigation/stack": "^7.1.2",
     "@shopify/flash-list": "link:../../",
     "react": "19.0.0",
     "react-native": "0.78.0",
-    "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.24.0",
     "react-native-reanimated": "^3.17.1",
     "react-native-safe-area-context": "^5.3.0",

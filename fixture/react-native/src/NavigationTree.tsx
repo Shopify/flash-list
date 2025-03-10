@@ -14,6 +14,7 @@ import { DebugScreen } from "./Debug";
 import { Messages, MessagesFlatList } from "./Messages";
 import TwitterBenchmark from "./twitter/TwitterBenchmark";
 import { Masonry } from "./Masonry";
+import { ComplexMasonry } from "./ComplexMasonry";
 import { SectionList } from "./SectionList";
 import { Grid } from "./Grid";
 import HorizontalList from "./HorizontalList";
@@ -55,6 +56,7 @@ const NavigationTree = () => {
           <Stack.Screen name="Chat" component={Chat} />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
+        <Stack.Screen name="ComplexMasonry" component={ComplexMasonry} />
         <Stack.Screen name="HorizontalList" component={HorizontalList} />
         <Stack.Screen
           name="CellRendererExamples"
