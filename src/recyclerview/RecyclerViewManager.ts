@@ -75,6 +75,7 @@ export class RecyclerViewManager<T> {
 
   updateProps(props: RecyclerViewProps<T>) {
     this.props = props;
+    this.viewabilityManager.renderAheadOffset = props.drawDistance;
     if (this.props.drawDistance === 0) {
       this.initialDrawBatchSize = 1;
     } else {

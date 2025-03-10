@@ -3,6 +3,7 @@ import { RVLayoutManager } from "./layout-managers/LayoutManager";
 export interface RVViewabilityManager {
   // current scroll offset, setting this driectly will not trigger visible indices change
   scrollOffset: number;
+  renderAheadOffset: number | undefined;
   updateScrollOffset: (
     offset: number,
     velocity: Velocity | null | undefined,
@@ -17,11 +18,6 @@ export interface RVViewabilityManager {
   setOnEngagedIndicesChangedListener: (
     callback: (all: number[], now: number[], notNow: number[]) => void
   ) => void;
-  // Adds render buffer, only impacts engaged indices
-  updateRenderAheadOffset: (
-    renderAheadOffset: number,
-    layoutManager: RVLayoutManager
-  ) => void;
 }
 
 export interface Velocity {
@@ -33,7 +29,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
   // Current scroll offset
   public scrollOffset = 0;
   // Render ahead offset for pre-rendering items
-  private renderAheadOffset: number | undefined = undefined;
+  public renderAheadOffset: number | undefined = undefined;
 
   // Currently visible indices
   private visibleIndices: number[] = [];
@@ -144,19 +140,6 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
     callback: (all: number[], now: number[], notNow: number[]) => void
   ): void {
     this.onEngagedIndicesChanged = callback;
-  }
-
-  /**
-   * Updates the render ahead offset.
-   * @param renderAheadOffset - The new render ahead offset.
-   * @param layoutManager - The layout manager to fetch visible layouts.
-   */
-  updateRenderAheadOffset(
-    renderAheadOffset: number,
-    layoutManager: RVLayoutManager
-  ): void {
-    this.renderAheadOffset = renderAheadOffset;
-    this.updateScrollOffset(this.scrollOffset, null, layoutManager);
   }
 
   /**
