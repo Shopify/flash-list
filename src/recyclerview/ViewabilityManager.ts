@@ -63,9 +63,12 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
       unboundStart,
       unboundEnd
     );
+
     const newEngagedIndices = layoutManager.getVisibleLayouts(
       Math.max(0, unboundStart - this.renderAheadOffset),
-      unboundEnd + this.renderAheadOffset
+      unboundEnd +
+        this.renderAheadOffset -
+        Math.min(0, unboundStart - this.renderAheadOffset)
     );
 
     // Update indices and trigger callbacks if necessary
