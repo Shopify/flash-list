@@ -32,7 +32,7 @@ const List = () => {
         return dataItem !== item;
       })
     );
-    list.current?.prepareForLayoutAnimationRender();
+    //list.current?.prepareForLayoutAnimationRender();
     // after removing the item, we start animation
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
