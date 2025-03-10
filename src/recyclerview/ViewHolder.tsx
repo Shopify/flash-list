@@ -20,6 +20,7 @@ export interface ViewHolderProps<TItem> {
   target: RenderTarget;
   item: TItem;
   renderItem: FlashListProps<TItem>["renderItem"];
+  CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
 }
 const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   // create ref for View
@@ -33,6 +34,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     extraData,
     item,
     target,
+    CellRendererComponent,
   } = props;
 
   useLayoutEffect(() => {
@@ -57,22 +59,33 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     return renderItem?.({ item, index, extraData, target }) ?? null;
   }, [item, index, extraData, target, renderItem]);
 
+  const style = {
+    position: "absolute",
+    width: layout.enforcedWidth ? layout.width : undefined,
+    height: layout.enforcedHeight ? layout.height : undefined,
+    minHeight: layout.minHeight,
+    minWidth: layout.minWidth,
+    maxHeight: layout.maxHeight,
+    maxWidth: layout.maxWidth,
+    left: layout.x,
+    top: layout.y,
+  } as const;
+
+  if (CellRendererComponent) {
+    return (
+      <CellRendererComponent
+        ref={viewRef}
+        onLayout={onLayout}
+        style={style}
+        index={index}
+      >
+        {children}
+      </CellRendererComponent>
+    );
+  }
+
   return (
-    <View
-      ref={viewRef}
-      onLayout={onLayout}
-      style={{
-        position: "absolute",
-        width: layout.enforcedWidth ? layout.width : undefined,
-        height: layout.enforcedHeight ? layout.height : undefined,
-        minHeight: layout.minHeight,
-        minWidth: layout.minWidth,
-        maxHeight: layout.maxHeight,
-        maxWidth: layout.maxWidth,
-        left: layout.x,
-        top: layout.y,
-      }}
-    >
+    <View ref={viewRef} onLayout={onLayout} style={style}>
       {children}
     </View>
   );
@@ -90,7 +103,8 @@ export const ViewHolder = React.memo(
       prevProps.extraData === nextProps.extraData &&
       prevProps.target === nextProps.target &&
       prevProps.item === nextProps.item &&
-      prevProps.renderItem === nextProps.renderItem
+      prevProps.renderItem === nextProps.renderItem &&
+      prevProps.CellRendererComponent === nextProps.CellRendererComponent
     );
   }
 );
@@ -101,11 +115,11 @@ function areLayoutsEqual(prevLayout: RVLayout, nextLayout: RVLayout): boolean {
     prevLayout.y === nextLayout.y &&
     prevLayout.width === nextLayout.width &&
     prevLayout.height === nextLayout.height &&
-    prevLayout.minHeight === nextLayout.minHeight &&
-    prevLayout.minWidth === nextLayout.minWidth &&
-    prevLayout.maxHeight === nextLayout.maxHeight &&
-    prevLayout.maxWidth === nextLayout.maxWidth &&
     prevLayout.enforcedWidth === nextLayout.enforcedWidth &&
-    prevLayout.enforcedHeight === nextLayout.enforcedHeight
+    prevLayout.enforcedHeight === nextLayout.enforcedHeight &&
+    prevLayout.minWidth === nextLayout.minWidth &&
+    prevLayout.minHeight === nextLayout.minHeight &&
+    prevLayout.maxWidth === nextLayout.maxWidth &&
+    prevLayout.maxHeight === nextLayout.maxHeight
   );
 }
