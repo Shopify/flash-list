@@ -147,7 +147,9 @@ export abstract class RVLayoutManager {
       const layout = this.layouts[index];
       if (
         layout.width !== dimensions.width ||
-        layout.height !== dimensions.height
+        layout.height !== dimensions.height ||
+        !layout.isWidthMeasured ||
+        !layout.isHeightMeasured
       ) {
         minRecomputeIndex = Math.min(minRecomputeIndex, index);
       }
