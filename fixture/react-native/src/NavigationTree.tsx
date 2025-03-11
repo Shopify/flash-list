@@ -21,6 +21,7 @@ import HorizontalList from "./HorizontalList";
 import { Chat } from "./Chat";
 import FlashListCellRenderer from "./CellRendererExamples";
 import { HeaderFooterExample } from "./HeaderFooterExample";
+import DynamicItems from "./DynamicItems";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -47,6 +48,7 @@ const NavigationTree = () => {
             component={ContactsSectionList}
             options={{ title: "Contacts" }}
           />
+          <Stack.Screen name="DynamicItems" component={DynamicItems} />
           <Stack.Screen
             name="TweetDetailScreen"
             component={TweetDetailScreen}

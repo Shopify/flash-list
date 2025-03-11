@@ -50,6 +50,10 @@ export const ExamplesScreen = () => {
       destination: "ContactsSectionList",
     },
     {
+      title: "Dynamic Items",
+      destination: "DynamicItems",
+    },
+    {
       title: "Messages",
       destination: "Messages",
     },

@@ -25,4 +25,5 @@ export type RootStackParamList = {
   Chat: undefined;
   CellRendererExamples: undefined;
   HeaderFooterExample: undefined;
+  DynamicItems: undefined;
 };
