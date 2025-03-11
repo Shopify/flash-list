@@ -45,6 +45,7 @@ export class RecyclerViewManager<T> {
     const newRenderStack = new Map<number, string>();
 
     for (const [index, key] of this.renderStack) {
+      //TODO: Can be optimized since engagedIndices is sorted
       if (!engagedIndices.includes(index)) {
         this.recycleKeyManager.recycleKey(key);
       }
@@ -195,6 +196,9 @@ export class RecyclerViewManager<T> {
     dataLength: number
   ): boolean {
     this.layoutManager?.modifyLayout(layoutInfo, dataLength);
+    if (dataLength === 0) {
+      this.isFirstLayoutComplete = true;
+    }
     if (this.layoutManager?.requiresRepaint) {
       this.layoutManager.requiresRepaint = false;
       return true;

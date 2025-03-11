@@ -13,7 +13,8 @@ export function useContentOffsetManagement<T>(
 
   useOnLoad(recyclerViewManager, () => {
     const initialScrollIndex = props.initialScrollIndex ?? 0;
-    if (initialScrollIndex > 0) {
+    const dataLength = props.data?.length ?? 0;
+    if (initialScrollIndex > 0 && initialScrollIndex < dataLength) {
       //TODO: remove setTimeout somehow
       setTimeout(() => {
         if (!isUnmounted.current) {

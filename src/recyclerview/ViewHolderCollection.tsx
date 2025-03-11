@@ -2,7 +2,8 @@ import React, { useImperativeHandle, useLayoutEffect } from "react";
 import { ViewHolder, ViewHolderProps } from "./ViewHolder";
 import { RVLayout } from "./layout-managers/LayoutManager";
 import { FlashListProps } from "../FlashListProps";
-import { View, ViewStyle } from "react-native";
+import { ViewStyle } from "react-native";
+import { CompatView } from "./components/CompatView";
 
 export interface ViewHolderCollectionProps<TItem> {
   data: FlashListProps<TItem>["data"];
@@ -14,7 +15,7 @@ export interface ViewHolderCollectionProps<TItem> {
   renderItem: FlashListProps<TItem>["renderItem"];
   extraData: any;
   getChildContainerLayout: () => ViewStyle | undefined;
-  childContainerViewRef?: React.RefObject<View>;
+  childContainerViewRef?: React.RefObject<CompatView>;
   onCommitLayoutEffect: () => void;
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
 }
@@ -58,13 +59,14 @@ export const ViewHolderCollection = <TItem,>(
   }));
 
   return (
-    <View
+    <CompatView
       // TODO: Take care of web scroll bar here
       ref={childContainerViewRef}
       style={containerStyle}
     >
       {containerStyle &&
         data &&
+        data.length > 0 &&
         Array.from(renderStack, ([index, reactKey]) => {
           const item = data[index];
           return (
@@ -84,6 +86,6 @@ export const ViewHolderCollection = <TItem,>(
             />
           );
         })}
-    </View>
+    </CompatView>
   );
 };

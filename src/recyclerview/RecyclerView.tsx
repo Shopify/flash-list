@@ -11,8 +11,6 @@ import {
   I18nManager,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  ScrollView,
-  View,
   RefreshControl,
 } from "react-native";
 
@@ -28,6 +26,9 @@ import {
   ViewHolderCollectionRef,
 } from "./ViewHolderCollection";
 import { useContentOffsetManagement } from "./hooks/useContentOffsetManagement";
+import { getValidComponent } from "./utils/componentUtils";
+import { CompatView } from "./components/CompatView";
+import { CompatScroller } from "./components/CompatScroller";
 
 export interface ScrollToOffsetParams {
   // The offset to scroll to
@@ -55,16 +56,21 @@ const RecyclerViewComponent = <T1,>(
     refreshing,
     onRefresh,
     progressViewOffset,
+    ListEmptyComponent,
+    ListHeaderComponent,
+    ListHeaderComponentStyle,
+    ListFooterComponent,
+    ListFooterComponentStyle,
     ...rest
   } = props;
-  const scrollViewRef = useRef<ScrollView>(null);
-  const internalViewRef = useRef<View>(null);
-  const childContainerViewRef = useRef<View>(null);
+  const scrollViewRef = useRef<CompatScroller>(null);
+  const internalViewRef = useRef<CompatView>(null);
+  const childContainerViewRef = useRef<CompatView>(null);
   const distanceFromWindow = useRef(0);
   const [_, setRenderId] = useLayoutState(0);
 
   const refHolder = useMemo(
-    () => new Map<number, RefObject<View | null>>(),
+    () => new Map<number, RefObject<CompatView | null>>(),
     []
   );
 
@@ -72,7 +78,7 @@ const RecyclerViewComponent = <T1,>(
   const { contentOffset, handleCommitLayoutEffect } =
     useContentOffsetManagement(recyclerViewManager, props);
   // console.log("contentOffset", contentOffset);
-  // console.log("render stack", renderStack);
+  //console.log("render stack", renderStack);
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
 
   useOnListLoad(recyclerViewManager, onLoad);
@@ -211,16 +217,45 @@ const RecyclerViewComponent = <T1,>(
     return undefined;
   }, [onRefresh, refreshing, progressViewOffset]);
 
+  const renderHeader = useMemo(() => {
+    if (!ListHeaderComponent) {
+      return null;
+    }
+    return (
+      <CompatView style={ListHeaderComponentStyle}>
+        {getValidComponent(ListHeaderComponent)}
+      </CompatView>
+    );
+  }, [ListHeaderComponent, ListHeaderComponentStyle]);
+
+  const renderFooter = useMemo(() => {
+    if (!ListFooterComponent) {
+      return null;
+    }
+    return (
+      <CompatView style={ListFooterComponentStyle}>
+        {getValidComponent(ListFooterComponent)}
+      </CompatView>
+    );
+  }, [ListFooterComponent, ListFooterComponentStyle]);
+
+  const renderEmpty = useMemo(() => {
+    if (!ListEmptyComponent || (data && data.length > 0)) {
+      return null;
+    }
+    return getValidComponent(ListEmptyComponent);
+  }, [ListEmptyComponent, data]);
+
   return (
     <RecyclerViewContextProvider value={context}>
-      <View
+      <CompatView
         style={{ flex: horizontal ? undefined : 1 }}
         ref={internalViewRef}
         onLayout={() => {
           //context.layout();
         }}
       >
-        <ScrollView
+        <CompatScroller
           {...rest}
           horizontal={horizontal}
           ref={scrollViewRef}
@@ -231,6 +266,7 @@ const RecyclerViewComponent = <T1,>(
           refreshControl={refreshControl}
           {...overrideProps}
         >
+          {renderHeader}
           <ViewHolderCollection
             viewHolderCollectionRef={viewHolderCollectionRef}
             data={data}
@@ -249,8 +285,10 @@ const RecyclerViewComponent = <T1,>(
                 : undefined
             }
           />
-        </ScrollView>
-      </View>
+          {renderEmpty}
+          {renderFooter}
+        </CompatScroller>
+      </CompatView>
     </RecyclerViewContextProvider>
   );
 };

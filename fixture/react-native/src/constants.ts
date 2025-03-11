@@ -24,4 +24,5 @@ export type RootStackParamList = {
   HorizontalList: undefined;
   Chat: undefined;
   CellRendererExamples: undefined;
+  HeaderFooterExample: undefined;
 };
