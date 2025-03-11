@@ -61,6 +61,7 @@ const RecyclerViewComponent = <T1,>(
     ListHeaderComponentStyle,
     ListFooterComponent,
     ListFooterComponentStyle,
+    ItemSeparatorComponent,
     ...rest
   } = props;
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -279,6 +280,7 @@ const RecyclerViewComponent = <T1,>(
             childContainerViewRef={childContainerViewRef}
             onCommitLayoutEffect={handleCommitLayoutEffect}
             CellRendererComponent={CellRendererComponent}
+            ItemSeparatorComponent={ItemSeparatorComponent}
             getChildContainerLayout={() =>
               recyclerViewManager.hasLayout()
                 ? recyclerViewManager.getChildContainerLayout()

@@ -51,6 +51,7 @@ const Twitter = ({
         return item.id;
       }}
       data={debugContext.emptyListEnabled ? [] : tweets}
+      ItemSeparatorComponent={Divider}
       renderItem={({ item }) => {
         return <TweetCell tweet={item} />;
       }}

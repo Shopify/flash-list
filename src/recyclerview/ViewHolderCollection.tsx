@@ -18,6 +18,7 @@ export interface ViewHolderCollectionProps<TItem> {
   childContainerViewRef?: React.RefObject<CompatView>;
   onCommitLayoutEffect: () => void;
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
+  ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
 }
 
 export interface ViewHolderCollectionRef {
@@ -40,6 +41,7 @@ export const ViewHolderCollection = <TItem,>(
     childContainerViewRef,
     onCommitLayoutEffect,
     CellRendererComponent,
+    ItemSeparatorComponent,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -69,11 +71,15 @@ export const ViewHolderCollection = <TItem,>(
         data.length > 0 &&
         Array.from(renderStack, ([index, reactKey]) => {
           const item = data[index];
+          const trailingItem = ItemSeparatorComponent
+            ? data[index + 1]
+            : undefined;
           return (
             <ViewHolder
               key={reactKey}
               index={index}
               item={item}
+              trailingItem={trailingItem}
               layout={{
                 ...getLayout(index),
               }}
@@ -83,6 +89,7 @@ export const ViewHolderCollection = <TItem,>(
               renderItem={renderItem}
               extraData={extraData}
               CellRendererComponent={CellRendererComponent}
+              ItemSeparatorComponent={ItemSeparatorComponent}
             />
           );
         })}
