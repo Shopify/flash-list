@@ -1,4 +1,4 @@
-import { LayoutChangeEvent, View } from "react-native";
+import { LayoutChangeEvent } from "react-native";
 import React, {
   RefObject,
   useCallback,
@@ -10,11 +10,12 @@ import React, {
 import { FlashListProps, RenderTarget } from "../FlashListProps";
 
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
+import { CompatView } from "./components/CompatView";
 
 export interface ViewHolderProps<TItem> {
   index: number;
   layout: RVLayout;
-  refHolder: Map<number, RefObject<View | null>>;
+  refHolder: Map<number, RefObject<CompatView | null>>;
   onSizeChanged: (index: number, size: RVDimension) => void;
   extraData: any;
   target: RenderTarget;
@@ -24,7 +25,7 @@ export interface ViewHolderProps<TItem> {
 }
 const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   // create ref for View
-  const viewRef = useRef<View>(null);
+  const viewRef = useRef<CompatView>(null);
   const {
     index,
     refHolder,
@@ -85,9 +86,9 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   }
 
   return (
-    <View ref={viewRef} onLayout={onLayout} style={style}>
+    <CompatView ref={viewRef} onLayout={onLayout} style={style}>
       {children}
-    </View>
+    </CompatView>
   );
 };
 

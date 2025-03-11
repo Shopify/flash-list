@@ -61,6 +61,10 @@ export const ExamplesScreen = () => {
       title: "CellRenderer Examples",
       destination: "CellRendererExamples",
     },
+    {
+      title: "Header Footer Empty Example",
+      destination: "HeaderFooterExample",
+    },
   ];
   return (
     <>

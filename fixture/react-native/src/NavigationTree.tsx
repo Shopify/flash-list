@@ -20,6 +20,7 @@ import { Grid } from "./Grid";
 import HorizontalList from "./HorizontalList";
 import { Chat } from "./Chat";
 import FlashListCellRenderer from "./CellRendererExamples";
+import { HeaderFooterExample } from "./HeaderFooterExample";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -54,6 +55,11 @@ const NavigationTree = () => {
           <Stack.Screen name="MessagesFlatList" component={MessagesFlatList} />
           <Stack.Screen name="TwitterBenchmark" component={TwitterBenchmark} />
           <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen
+            name="HeaderFooterExample"
+            component={HeaderFooterExample}
+            options={{ title: "Header Footer Empty Example" }}
+          />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
         <Stack.Screen name="ComplexMasonry" component={ComplexMasonry} />

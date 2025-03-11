@@ -51,4 +51,29 @@ export interface RecyclerViewProps<TItem> {
    * @platform android
    */
   progressViewOffset?: FlashListProps<TItem>["progressViewOffset"];
+
+  /**
+   * Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
+   */
+  ListEmptyComponent?: FlashListProps<TItem>["ListEmptyComponent"];
+
+  /**
+   * Rendered at the bottom of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
+   */
+  ListFooterComponent?: FlashListProps<TItem>["ListFooterComponent"];
+
+  /**
+   * Styling for internal View for ListFooterComponent.
+   */
+  ListFooterComponentStyle?: FlashListProps<TItem>["ListFooterComponentStyle"];
+
+  /**
+   * Rendered at the top of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
+   */
+  ListHeaderComponent?: FlashListProps<TItem>["ListHeaderComponent"];
+
+  /**
+   * Styling for internal View for ListHeaderComponent.
+   */
+  ListHeaderComponentStyle?: FlashListProps<TItem>["ListHeaderComponentStyle"];
 }
