@@ -76,4 +76,9 @@ export interface RecyclerViewProps<TItem> {
    * Styling for internal View for ListHeaderComponent.
    */
   ListHeaderComponentStyle?: FlashListProps<TItem>["ListHeaderComponentStyle"];
+
+  /**
+   * Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
+   */
+  ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
 }

@@ -20,8 +20,10 @@ export interface ViewHolderProps<TItem> {
   extraData: any;
   target: RenderTarget;
   item: TItem;
+  trailingItem: TItem | undefined;
   renderItem: FlashListProps<TItem>["renderItem"];
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
+  ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
 }
 const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   // create ref for View
@@ -36,6 +38,8 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     item,
     target,
     CellRendererComponent,
+    ItemSeparatorComponent,
+    trailingItem,
   } = props;
 
   useLayoutEffect(() => {
@@ -53,6 +57,12 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     },
     [index, onSizeChanged]
   );
+
+  const separator = useMemo(() => {
+    return ItemSeparatorComponent ? (
+      <ItemSeparatorComponent leadingItem={item} trailingItem={trailingItem} />
+    ) : null;
+  }, [ItemSeparatorComponent, item, trailingItem]);
 
   //console.log("ViewHolder re-render", index);
 
@@ -88,6 +98,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   return (
     <CompatView ref={viewRef} onLayout={onLayout} style={style}>
       {children}
+      {separator}
     </CompatView>
   );
 };
@@ -105,7 +116,9 @@ export const ViewHolder = React.memo(
       prevProps.target === nextProps.target &&
       prevProps.item === nextProps.item &&
       prevProps.renderItem === nextProps.renderItem &&
-      prevProps.CellRendererComponent === nextProps.CellRendererComponent
+      prevProps.CellRendererComponent === nextProps.CellRendererComponent &&
+      prevProps.ItemSeparatorComponent === nextProps.ItemSeparatorComponent &&
+      prevProps.trailingItem === nextProps.trailingItem
     );
   }
 );
