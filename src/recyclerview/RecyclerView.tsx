@@ -13,6 +13,7 @@ import {
   NativeSyntheticEvent,
   ScrollView,
   View,
+  RefreshControl,
 } from "react-native";
 
 import { RVDimension } from "./layout-managers/LayoutManager";
@@ -50,6 +51,11 @@ const RecyclerViewComponent = <T1,>(
     extraData,
     onLoad,
     CellRendererComponent,
+    overrideProps,
+    refreshing,
+    onRefresh,
+    progressViewOffset,
+    ...rest
   } = props;
   const scrollViewRef = useRef<ScrollView>(null);
   const internalViewRef = useRef<View>(null);
@@ -191,6 +197,20 @@ const RecyclerViewComponent = <T1,>(
     };
   }, [recyclerViewManager, setRenderId]);
 
+  // Create a function to get the refresh control
+  const refreshControl = useMemo(() => {
+    if (onRefresh) {
+      return (
+        <RefreshControl
+          refreshing={Boolean(refreshing)}
+          progressViewOffset={progressViewOffset}
+          onRefresh={onRefresh}
+        />
+      );
+    }
+    return undefined;
+  }, [onRefresh, refreshing, progressViewOffset]);
+
   return (
     <RecyclerViewContextProvider value={context}>
       <View
@@ -201,12 +221,15 @@ const RecyclerViewComponent = <T1,>(
         }}
       >
         <ScrollView
+          {...rest}
           horizontal={horizontal}
           ref={scrollViewRef}
           contentOffset={contentOffset}
           onScroll={onScroll}
           // TODO: evaluate perf
           removeClippedSubviews={false}
+          refreshControl={refreshControl}
+          {...overrideProps}
         >
           <ViewHolderCollection
             viewHolderCollectionRef={viewHolderCollectionRef}
