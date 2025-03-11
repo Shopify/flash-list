@@ -26,6 +26,8 @@ export class RecyclerViewManager<T> {
   private isFirstLayoutComplete = false;
   private props: RecyclerViewProps<T>;
 
+  public pauseRecyclingOnRenderStackChange = false;
+
   constructor(
     onRenderStackChanged: (renderStack: Map<number, string>) => void,
     props: RecyclerViewProps<T>
