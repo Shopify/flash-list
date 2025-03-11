@@ -1,4 +1,5 @@
 import { FlashListProps } from "../FlashListProps";
+import { ScrollViewProps } from "react-native";
 
 export interface RecyclerViewProps<TItem> {
   horizontal?: FlashListProps<TItem>["horizontal"];
@@ -32,4 +33,22 @@ export interface RecyclerViewProps<TItem> {
    *   - `height`: Determines height of the element (present when list is horizontal)
    */
   CellRendererComponent?: React.ComponentType<any> | undefined;
+  /**
+   * For debugging and exception use cases, internal props will be overriden with these values if used
+   */
+  overrideProps?: Partial<ScrollViewProps>;
+  /**
+   * If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality.
+   * Make sure to also set the refreshing prop correctly.
+   */
+  onRefresh?: FlashListProps<TItem>["onRefresh"];
+  /**
+   * Set this true while waiting for new data from a refresh.
+   */
+  refreshing?: FlashListProps<TItem>["refreshing"];
+  /**
+   * Set this when offset is needed for the loading indicator to show correctly.
+   * @platform android
+   */
+  progressViewOffset?: FlashListProps<TItem>["progressViewOffset"];
 }
