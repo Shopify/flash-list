@@ -131,7 +131,7 @@ const MasonryCard = ({
 // Create our masonry component
 const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
   const columnCount = 3;
-  const [items, setItems] = useState(() => generateMasonryData(100));
+  const [items, setItems] = useState(() => generateMasonryData(250));
 
   // Handle toggling the expanded state of an item
   const handleToggleExpand = useCallback((id: string) => {
