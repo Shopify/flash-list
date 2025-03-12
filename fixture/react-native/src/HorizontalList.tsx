@@ -30,7 +30,7 @@ const generateItems = (count: number): Item[] => {
 
   return Array.from({ length: count }, (_, i) => ({
     id: i,
-    title: `Item ${i + 1}`,
+    title: `Item ${i}`,
     color: colors[i % colors.length],
   }));
 };

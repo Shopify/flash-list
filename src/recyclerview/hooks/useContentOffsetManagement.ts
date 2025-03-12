@@ -12,15 +12,19 @@ export function useContentOffsetManagement<T>(
   const isUnmounted = useUnmountFlag();
 
   useOnLoad(recyclerViewManager, () => {
-    const initialScrollIndex = props.initialScrollIndex ?? 0;
+    const initialScrollIndex = props.initialScrollIndex ?? -1;
     const dataLength = props.data?.length ?? 0;
-    if (initialScrollIndex > 0 && initialScrollIndex < dataLength) {
+    if (initialScrollIndex >= 0 && initialScrollIndex < dataLength) {
       //TODO: remove setTimeout somehow
       setTimeout(() => {
         if (!isUnmounted.current) {
           setContentOffset({
-            x: recyclerViewManager.getLayout(props.initialScrollIndex ?? 0).x,
-            y: recyclerViewManager.getLayout(props.initialScrollIndex ?? 0).y,
+            x:
+              recyclerViewManager.getLayout(props.initialScrollIndex ?? 0).x +
+              recyclerViewManager.firstItemOffset,
+            y:
+              recyclerViewManager.getLayout(props.initialScrollIndex ?? 0).y +
+              recyclerViewManager.firstItemOffset,
           });
         }
       }, 0);

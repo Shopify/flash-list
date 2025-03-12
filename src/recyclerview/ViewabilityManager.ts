@@ -9,7 +9,7 @@ export interface RVViewabilityManager {
     velocity: Velocity | null | undefined,
     layoutManager: RVLayoutManager
   ) => void;
-  getVisibleIndices: () => number[];
+  getVisibleIndices: (layoutManager: RVLayoutManager) => number[];
   // can be used to get visible indices
   setOnVisibleIndicesChangedListener: (
     callback: (all: number[], now: number[], notNow: number[]) => void
@@ -76,10 +76,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
     const viewportEnd = viewportStart + viewportSize;
 
     // Get indices of items currently visible in the viewport
-    const newVisibleIndices = layoutManager.getVisibleLayouts(
-      viewportStart,
-      viewportEnd
-    );
+    const newVisibleIndices = this.getVisibleIndices(layoutManager);
 
     // Calculate render-ahead buffers based on scroll direction
     const totalBuffer = this.renderAheadOffset ?? viewportSize;
@@ -102,6 +99,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
     // Calculate the extended viewport with buffers
     const extendedStart = Math.max(0, viewportStart - bufferBefore);
     // Adjust bufferAfter if we couldn't apply full bufferBefore due to reaching start boundary
+    //TODO: Check distanceFromWindow condition
     const startBoundaryAdjustment = Math.min(0, viewportStart - bufferBefore);
     const extendedEnd = viewportEnd + bufferAfter - startBoundaryAdjustment;
     // Get indices of items that should be rendered (visible + buffer areas)
@@ -116,10 +114,24 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
 
   /**
    * Returns the currently visible indices.
+   * Does not update internal state
    * @returns An array of visible indices.
    */
-  getVisibleIndices(): number[] {
-    return [...this.visibleIndices];
+  getVisibleIndices(layoutManager: RVLayoutManager): number[] {
+    const windowSize = layoutManager.getWindowsSize();
+    const isHorizontal = layoutManager.isHorizontal();
+
+    // Calculate viewport boundaries
+    const viewportStart = this.scrollOffset;
+    const viewportSize = isHorizontal ? windowSize.width : windowSize.height;
+    const viewportEnd = viewportStart + viewportSize;
+
+    // Get indices of items currently visible in the viewport
+    const newVisibleIndices = layoutManager.getVisibleLayouts(
+      viewportStart,
+      viewportEnd
+    );
+    return newVisibleIndices;
   }
 
   /**
@@ -144,6 +156,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
 
   /**
    * Updates the visible and engaged indices and triggers the respective callbacks.
+   * TODO: Optimize this given arrays are already sorted
    * @param newVisibleIndices - The new visible indices.
    * @param newEngagedIndices - The new engaged indices.
    */

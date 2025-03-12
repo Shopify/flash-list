@@ -24,6 +24,7 @@ export interface ViewHolderProps<TItem> {
   renderItem: FlashListProps<TItem>["renderItem"];
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
   ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
+  horizontal?: FlashListProps<TItem>["horizontal"];
 }
 const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   // create ref for View
@@ -40,6 +41,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     CellRendererComponent,
     ItemSeparatorComponent,
     trailingItem,
+    horizontal,
   } = props;
 
   useLayoutEffect(() => {
@@ -71,6 +73,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   }, [item, index, extraData, target, renderItem]);
 
   const style = {
+    flexDirection: horizontal ? "row" : "column",
     position: "absolute",
     width: layout.enforcedWidth ? layout.width : undefined,
     height: layout.enforcedHeight ? layout.height : undefined,
@@ -118,7 +121,8 @@ export const ViewHolder = React.memo(
       prevProps.renderItem === nextProps.renderItem &&
       prevProps.CellRendererComponent === nextProps.CellRendererComponent &&
       prevProps.ItemSeparatorComponent === nextProps.ItemSeparatorComponent &&
-      prevProps.trailingItem === nextProps.trailingItem
+      prevProps.trailingItem === nextProps.trailingItem &&
+      prevProps.horizontal === nextProps.horizontal
     );
   }
 );

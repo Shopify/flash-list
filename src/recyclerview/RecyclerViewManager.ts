@@ -90,7 +90,7 @@ export class RecyclerViewManager<T> {
   updateScrollOffset(offset: number, velocity?: Velocity) {
     if (this.layoutManager) {
       this.viewabilityManager.updateScrollOffset(
-        offset,
+        offset - this.firstItemOffset,
         velocity,
         this.layoutManager
       );
@@ -110,6 +110,7 @@ export class RecyclerViewManager<T> {
     return this.layoutManager.getLayout(index);
   }
 
+  // Doesn't include header / foot etc
   getChildContainerLayout() {
     if (!this.layoutManager) {
       throw new Error(
@@ -132,8 +133,14 @@ export class RecyclerViewManager<T> {
     return this.layoutManager.getWindowsSize();
   }
 
+  // Includes first item offset correction
   getLastScrollOffset() {
     return this.viewabilityManager.scrollOffset;
+  }
+
+  // Doesn't include first item offset correction
+  getAbsoluteLastScrollOffset() {
+    return this.viewabilityManager.scrollOffset + this.firstItemOffset;
   }
 
   updateWindowSize(windowSize: RVDimension, firstItemOffset: number) {
@@ -176,23 +183,7 @@ export class RecyclerViewManager<T> {
         "LayoutManager is not initialized, visible indices are not unavailable"
       );
     }
-    if (this.isFirstLayoutComplete) {
-      return this.viewabilityManager.getVisibleIndices();
-    } else {
-      const initialIndex = this.props.initialScrollIndex ?? 0;
-      const layout = this.getLayout(initialIndex);
-      const windowSize = this.layoutManager.getWindowsSize();
-
-      const unboundDimensionStart = this.props.horizontal ? layout.x : layout.y;
-      const unboundDimensionEnd =
-        unboundDimensionStart +
-        (this.props.horizontal ? windowSize.width : windowSize.height);
-
-      return this.layoutManager.getVisibleLayouts(
-        unboundDimensionStart,
-        unboundDimensionEnd
-      );
-    }
+    return this.viewabilityManager.getVisibleIndices(this.layoutManager);
   }
 
   modifyChildrenLayout(
@@ -219,8 +210,26 @@ export class RecyclerViewManager<T> {
   private resumeProgressiveRender() {
     const layoutManager = this.layoutManager;
     if (layoutManager) {
+      const initialItemLayout = this.layoutManager?.getLayout(
+        this.props.initialScrollIndex ?? 0
+      );
+      const initialItemOffset = this.props.horizontal
+        ? initialItemLayout?.x
+        : initialItemLayout?.y;
+
+      if (
+        this.props.initialScrollIndex !== undefined &&
+        this.props.initialScrollIndex != null
+      ) {
+        this.viewabilityManager.scrollOffset =
+          initialItemOffset ?? 0 + this.firstItemOffset;
+      } else {
+        this.viewabilityManager.scrollOffset =
+          (initialItemOffset ?? 0) - this.firstItemOffset;
+      }
+
       const visibleIndices = this.getVisibleIndices();
-      // console.log("visibleIndices", visibleIndices);
+      console.log("visibleIndices", visibleIndices);
       this.isFirstLayoutComplete = visibleIndices.every(
         (index) =>
           layoutManager.getLayout(index).isHeightMeasured &&
@@ -239,13 +248,6 @@ export class RecyclerViewManager<T> {
             )
           )
         );
-      const initialItemLayout = this.layoutManager?.getLayout(
-        this.props.initialScrollIndex ?? 0
-      );
-      const initialItemOffset = this.props.horizontal
-        ? initialItemLayout?.x
-        : initialItemLayout?.y;
-      this.viewabilityManager.scrollOffset = initialItemOffset ?? 0;
     }
   }
 
