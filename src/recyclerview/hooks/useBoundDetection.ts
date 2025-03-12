@@ -29,24 +29,25 @@ export function useBoundDetection<T>(
     }
 
     if (recyclerViewManager.getIsFirstLayoutComplete()) {
-      const lastScrollOffset = recyclerViewManager.getLastScrollOffset();
+      const lastScrollOffset =
+        recyclerViewManager.getAbsoluteLastScrollOffset();
       const contentSize = recyclerViewManager.getChildContainerLayout();
       const windowSize = recyclerViewManager.getWindowSize();
       const isHorizontal = props.horizontal === true;
 
       // Calculate common values used by both end and start detection
       const visibleLength = isHorizontal ? windowSize.width : windowSize.height;
-      const contentLength = isHorizontal
-        ? contentSize.width
-        : contentSize.height;
+      const contentLength =
+        (isHorizontal ? contentSize.width : contentSize.height) +
+        recyclerViewManager.firstItemOffset;
 
       // Only calculate and check end reached if the callback is provided
       if (props.onEndReached) {
-        const onEndReachedThreshold = props.onEndReachedThreshold || 0.5;
+        const onEndReachedThreshold = props.onEndReachedThreshold ?? 0.5;
         const endThresholdDistance = onEndReachedThreshold * visibleLength;
 
         const isNearEnd =
-          lastScrollOffset + visibleLength >=
+          Math.ceil(lastScrollOffset + visibleLength) >=
           contentLength - endThresholdDistance;
 
         if (isNearEnd && !pendingEndReached.current) {
@@ -58,7 +59,7 @@ export function useBoundDetection<T>(
 
       // Only calculate and check start reached if the callback is provided
       if (props.onStartReached) {
-        const onStartReachedThreshold = props.onStartReachedThreshold || 0.5;
+        const onStartReachedThreshold = props.onStartReachedThreshold ?? 0.5;
         const startThresholdDistance = onStartReachedThreshold * visibleLength;
 
         const isNearStart = lastScrollOffset <= startThresholdDistance;

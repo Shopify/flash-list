@@ -312,6 +312,7 @@ const RecyclerViewHandlerTest = () => {
           {/* Use FlatList instead of FlashList to avoid import issues */}
           <RecyclerView
             ref={listRef}
+            key={horizontal ? "horizontal" : "vertical"}
             data={items}
             renderItem={renderItem}
             horizontal={horizontal}

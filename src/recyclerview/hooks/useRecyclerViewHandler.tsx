@@ -2,6 +2,8 @@ import { RefObject, useImperativeHandle } from "react";
 import { RecyclerViewProps } from "../RecyclerViewProps";
 import { CompatScroller } from "../components/CompatScroller";
 import { RecyclerViewManager } from "../RecyclerViewManager";
+import { I18nManager } from "react-native";
+import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
 
 export interface ScrollToParams extends ScrollToEdgeParams {
   viewPosition?: number;
@@ -50,6 +52,15 @@ export function useRecyclerViewHandler<T>(
           skipFirstItemOffset = true,
         }: ScrollToOffsetParams) => {
           if (scrollViewRef.current) {
+            //check RTL and apply math here
+            if (I18nManager.isRTL && horizontal) {
+              offset = adjustOffsetForRTL(
+                offset,
+                recyclerViewManager.getChildContainerLayout().width,
+                recyclerViewManager.getWindowSize().width
+              );
+            }
+
             const adjustedOffset =
               offset + (skipFirstItemOffset ? 0 : firstItemOffset);
             const scrollTo = horizontal

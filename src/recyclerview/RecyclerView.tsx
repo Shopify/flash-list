@@ -34,6 +34,7 @@ import { CompatView } from "./components/CompatView";
 import { CompatScroller } from "./components/CompatScroller";
 import { useBoundDetection } from "./hooks/useBoundDetection";
 import { useRecyclerViewHandler } from "./hooks/useRecyclerViewHandler";
+import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 
 const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
@@ -97,8 +98,6 @@ const RecyclerViewComponent = <T1,>(
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
 
-      console.log("distanceFromWindow", distanceFromWindow.current);
-
       recyclerViewManager.updateWindowSize(
         {
           width: outerViewLayout.width,
@@ -115,7 +114,7 @@ const RecyclerViewComponent = <T1,>(
       const layout = measureLayout(viewHolderRef.current!);
       return { index, dimensions: layout };
     });
-    console.log("render effect");
+    //console.log("render effect");
     if (
       recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
     ) {
@@ -128,25 +127,26 @@ const RecyclerViewComponent = <T1,>(
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      let velocity = event.nativeEvent.velocity;
       let scrollOffset = horizontal
         ? event.nativeEvent.contentOffset.x
         : event.nativeEvent.contentOffset.y;
       if (I18nManager.isRTL && horizontal) {
-        scrollOffset =
-          event.nativeEvent.contentSize.width -
-          scrollOffset -
-          2 * event.nativeEvent.layoutMeasurement.width +
-          distanceFromWindow.current;
+        scrollOffset = adjustOffsetForRTL(
+          scrollOffset,
+          event.nativeEvent.contentSize.width,
+          event.nativeEvent.layoutMeasurement.width
+        );
         // TODO: not rounding off is leading to repeated onScroll events, precision issue
-        scrollOffset = Math.ceil(scrollOffset);
-        console.log("RTL", scrollOffset, distanceFromWindow.current);
-      } else {
-        scrollOffset -= distanceFromWindow.current;
+        console.log("RTL", scrollOffset, event.nativeEvent.contentOffset.x);
+        if (velocity) {
+          velocity = {
+            x: -velocity.x,
+            y: velocity.y,
+          };
+        }
       }
-      recyclerViewManager.updateScrollOffset(
-        scrollOffset,
-        event.nativeEvent.velocity
-      );
+      recyclerViewManager.updateScrollOffset(scrollOffset, velocity);
       checkBounds();
     },
     [horizontal, recyclerViewManager]
@@ -265,6 +265,7 @@ const RecyclerViewComponent = <T1,>(
           <ViewHolderCollection
             viewHolderCollectionRef={viewHolderCollectionRef}
             data={data}
+            horizontal={horizontal}
             renderStack={renderStack}
             getLayout={(index) => recyclerViewManager.getLayout(index)}
             refHolder={refHolder}

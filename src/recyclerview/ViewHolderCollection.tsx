@@ -20,6 +20,7 @@ export interface ViewHolderCollectionProps<TItem> {
   onCommitEffect?: () => void;
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
   ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
+  horizontal: FlashListProps<TItem>["horizontal"];
 }
 
 export interface ViewHolderCollectionRef {
@@ -44,6 +45,7 @@ export const ViewHolderCollection = <TItem,>(
     CellRendererComponent,
     ItemSeparatorComponent,
     onCommitEffect,
+    horizontal,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -96,6 +98,7 @@ export const ViewHolderCollection = <TItem,>(
               extraData={extraData}
               CellRendererComponent={CellRendererComponent}
               ItemSeparatorComponent={ItemSeparatorComponent}
+              horizontal={horizontal}
             />
           );
         })}
