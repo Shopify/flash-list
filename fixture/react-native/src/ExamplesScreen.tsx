@@ -69,6 +69,10 @@ export const ExamplesScreen = () => {
       title: "Header Footer Empty Example",
       destination: "HeaderFooterExample",
     },
+    {
+      title: "RecyclerView Handler Test",
+      destination: "RecyclerViewHandlerTest",
+    },
   ];
   return (
     <>

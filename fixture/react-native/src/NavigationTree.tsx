@@ -22,6 +22,7 @@ import { Chat } from "./Chat";
 import FlashListCellRenderer from "./CellRendererExamples";
 import { HeaderFooterExample } from "./HeaderFooterExample";
 import DynamicItems from "./DynamicItems";
+import RecyclerViewHandlerTest from "./RecyclerViewHandlerTest";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -61,6 +62,11 @@ const NavigationTree = () => {
             name="HeaderFooterExample"
             component={HeaderFooterExample}
             options={{ title: "Header Footer Empty Example" }}
+          />
+          <Stack.Screen
+            name="RecyclerViewHandlerTest"
+            component={RecyclerViewHandlerTest}
+            options={{ title: "RecyclerView Handler Test" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />

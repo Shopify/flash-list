@@ -27,6 +27,7 @@ export class RecyclerViewManager<T> {
   private props: RecyclerViewProps<T>;
 
   public pauseRecyclingOnRenderStackChange = false;
+  public firstItemOffset = 0;
 
   constructor(
     onRenderStackChanged: (renderStack: Map<number, string>) => void,
@@ -135,7 +136,8 @@ export class RecyclerViewManager<T> {
     return this.viewabilityManager.scrollOffset;
   }
 
-  updateWindowSize(windowSize: RVDimension) {
+  updateWindowSize(windowSize: RVDimension, firstItemOffset: number) {
+    this.firstItemOffset = firstItemOffset;
     if (this.layoutManager) {
       this.layoutManager.updateLayoutParams({ windowSize });
     } else {

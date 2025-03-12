@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useRef,
   forwardRef,
-  useImperativeHandle,
 } from "react";
 import {
   I18nManager,
@@ -15,7 +14,11 @@ import {
 } from "react-native";
 
 import { RVDimension } from "./layout-managers/LayoutManager";
-import { areDimensionsNotEqual, measureLayout } from "./utils/measureLayout";
+import {
+  areDimensionsNotEqual,
+  measureLayout,
+  measureLayoutRelative,
+} from "./utils/measureLayout";
 import { RecyclerViewContextProvider } from "./RecyclerViewContextProvider";
 import { useLayoutState } from "./hooks/useLayoutState";
 import { useRecyclerViewManager } from "./hooks/useRecyclerViewManager";
@@ -30,17 +33,7 @@ import { getValidComponent } from "./utils/componentUtils";
 import { CompatView } from "./components/CompatView";
 import { CompatScroller } from "./components/CompatScroller";
 import { useBoundDetection } from "./hooks/useBoundDetection";
-
-export interface ScrollToOffsetParams {
-  // The offset to scroll to
-  offset: number;
-  // Whether the scrolling should be animated
-  animated?: boolean;
-  // Optional: position of the view to scroll to
-  viewPosition?: number;
-  // Optional: size of the view
-  viewSize?: number;
-}
+import { useRecyclerViewHandler } from "./hooks/useRecyclerViewHandler";
 
 const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
@@ -63,6 +56,7 @@ const RecyclerViewComponent = <T1,>(
     ListFooterComponent,
     ListFooterComponentStyle,
     ItemSeparatorComponent,
+    renderScrollComponent,
     ...rest
   } = props;
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -88,28 +82,30 @@ const RecyclerViewComponent = <T1,>(
   // Use the bound detection hook
   const { checkBounds } = useBoundDetection(recyclerViewManager, props);
 
-  // layoutManager?.updateLayoutParams({
-  //   overrideItemLayout: (index, layout) => {
-  //     props.overrideItemLayout?.(layout, data![index], index, numColumns ?? 1);
-  //   },
-  //   horizontal,
-  //   maxColumns: numColumns,
-  //   windowSize: recycleManager.getWindowSize(),
-  // });
+  // Use the recycler view handler hook to handle imperative methods
+  useRecyclerViewHandler(recyclerViewManager, ref, scrollViewRef, props);
 
   // Initialization effect
   useLayoutEffect(() => {
     if (internalViewRef.current && childContainerViewRef.current) {
       const outerViewLayout = measureLayout(internalViewRef.current);
-      const childViewLayout = measureLayout(childContainerViewRef.current);
+      const childViewLayout = measureLayoutRelative(
+        childContainerViewRef.current,
+        internalViewRef.current
+      );
       distanceFromWindow.current = horizontal
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
 
-      recyclerViewManager.updateWindowSize({
-        width: outerViewLayout.width,
-        height: outerViewLayout.height,
-      });
+      console.log("distanceFromWindow", distanceFromWindow.current);
+
+      recyclerViewManager.updateWindowSize(
+        {
+          width: outerViewLayout.width,
+          height: outerViewLayout.height,
+        },
+        distanceFromWindow.current
+      );
     }
   });
 
@@ -155,23 +151,6 @@ const RecyclerViewComponent = <T1,>(
     },
     [horizontal, recyclerViewManager]
   );
-
-  // Expose scrollToOffset method to parent component
-  useImperativeHandle(ref, () => ({
-    props,
-    scrollToOffset: ({ offset, animated }: ScrollToOffsetParams) => {
-      if (scrollViewRef.current) {
-        const scrollTo = horizontal ? { x: offset, y: 0 } : { x: 0, y: offset };
-        scrollViewRef.current.scrollTo({
-          ...scrollTo,
-          animated,
-        });
-
-        // Optionally handle viewPosition and viewSize if needed
-        // This is a simple implementation and may require more logic depending on your needs
-      }
-    },
-  }));
 
   // const contentOffset = useContentOffsetManagement(recyclerViewManager);
 
@@ -252,6 +231,16 @@ const RecyclerViewComponent = <T1,>(
     return getValidComponent(ListEmptyComponent);
   }, [ListEmptyComponent, data]);
 
+  const CompatScrollView = useMemo(
+    () =>
+      renderScrollComponent
+        ? React.forwardRef((props, ref) =>
+            renderScrollComponent({ ...props, ref } as any)
+          )
+        : CompatScroller,
+    [renderScrollComponent]
+  );
+
   return (
     <RecyclerViewContextProvider value={context}>
       <CompatView
@@ -261,7 +250,7 @@ const RecyclerViewComponent = <T1,>(
           //context.layout();
         }}
       >
-        <CompatScroller
+        <CompatScrollView
           {...rest}
           horizontal={horizontal}
           ref={scrollViewRef}
@@ -295,7 +284,7 @@ const RecyclerViewComponent = <T1,>(
           />
           {renderEmpty}
           {renderFooter}
-        </CompatScroller>
+        </CompatScrollView>
       </CompatView>
     </RecyclerViewContextProvider>
   );
