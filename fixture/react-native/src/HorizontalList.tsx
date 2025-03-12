@@ -44,7 +44,7 @@ const ListItem = ({ item }: { item: Item }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View>
       <Pressable
         style={[
           styles.itemContainer,

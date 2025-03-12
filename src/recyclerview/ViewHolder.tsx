@@ -85,24 +85,15 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     top: layout.y,
   } as const;
 
-  if (CellRendererComponent) {
-    return (
-      <CellRendererComponent
-        ref={viewRef}
-        onLayout={onLayout}
-        style={style}
-        index={index}
-      >
-        {children}
-      </CellRendererComponent>
-    );
-  }
+  //TODO: Fix this type issue
+  const CompatContainer = (CellRendererComponent ??
+    CompatView) as unknown as any;
 
   return (
-    <CompatView ref={viewRef} onLayout={onLayout} style={style}>
+    <CompatContainer ref={viewRef} onLayout={onLayout} style={style}>
       {children}
       {separator}
-    </CompatView>
+    </CompatContainer>
   );
 };
 
