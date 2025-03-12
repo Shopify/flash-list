@@ -107,4 +107,6 @@ export interface RecyclerViewProps<TItem> {
    * within half the visible length of the list.
    */
   onStartReachedThreshold?: FlashListProps<TItem>["onEndReachedThreshold"];
+
+  renderScrollComponent?: (props: ScrollViewProps) => React.ReactNode;
 }

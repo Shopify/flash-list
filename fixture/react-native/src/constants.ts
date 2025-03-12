@@ -26,4 +26,5 @@ export type RootStackParamList = {
   CellRendererExamples: undefined;
   HeaderFooterExample: undefined;
   DynamicItems: undefined;
+  RecyclerViewHandlerTest: undefined;
 };
