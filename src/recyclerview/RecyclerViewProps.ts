@@ -81,4 +81,30 @@ export interface RecyclerViewProps<TItem> {
    * Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
    */
   ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
+
+  /**
+   * Called once when the scroll position gets within onEndReachedThreshold of the rendered content.
+   */
+  onEndReached?: FlashListProps<TItem>["onEndReached"];
+
+  /**
+   * How far from the end (in units of visible length of the list) the bottom edge of the
+   * list must be from the end of the content to trigger the `onEndReached` callback.
+   * Thus a value of 0.5 will trigger `onEndReached` when the end of the content is
+   * within half the visible length of the list.
+   */
+  onEndReachedThreshold?: FlashListProps<TItem>["onEndReachedThreshold"];
+
+  /**
+   * Called once when the scroll position gets within onStartReachedThreshold of the start of the content.
+   */
+  onStartReached?: FlashListProps<TItem>["onEndReached"];
+
+  /**
+   * How far from the start (in units of visible length of the list) the top edge of the
+   * list must be from the start of the content to trigger the `onStartReached` callback.
+   * Thus a value of 0.5 will trigger `onStartReached` when the start of the content is
+   * within half the visible length of the list.
+   */
+  onStartReachedThreshold?: FlashListProps<TItem>["onEndReachedThreshold"];
 }

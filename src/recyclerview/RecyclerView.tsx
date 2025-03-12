@@ -29,6 +29,7 @@ import { useContentOffsetManagement } from "./hooks/useContentOffsetManagement";
 import { getValidComponent } from "./utils/componentUtils";
 import { CompatView } from "./components/CompatView";
 import { CompatScroller } from "./components/CompatScroller";
+import { useBoundDetection } from "./hooks/useBoundDetection";
 
 export interface ScrollToOffsetParams {
   // The offset to scroll to
@@ -83,6 +84,9 @@ const RecyclerViewComponent = <T1,>(
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
 
   useOnListLoad(recyclerViewManager, onLoad);
+
+  // Use the bound detection hook
+  const { checkBounds } = useBoundDetection(recyclerViewManager, props);
 
   // layoutManager?.updateLayoutParams({
   //   overrideItemLayout: (index, layout) => {
@@ -147,6 +151,7 @@ const RecyclerViewComponent = <T1,>(
         scrollOffset,
         event.nativeEvent.velocity
       );
+      checkBounds();
     },
     [horizontal, recyclerViewManager]
   );
@@ -279,6 +284,7 @@ const RecyclerViewComponent = <T1,>(
             extraData={extraData}
             childContainerViewRef={childContainerViewRef}
             onCommitLayoutEffect={handleCommitLayoutEffect}
+            onCommitEffect={checkBounds}
             CellRendererComponent={CellRendererComponent}
             ItemSeparatorComponent={ItemSeparatorComponent}
             getChildContainerLayout={() =>
