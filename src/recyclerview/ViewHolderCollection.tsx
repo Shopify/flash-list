@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useLayoutEffect } from "react";
+import React, { useEffect, useImperativeHandle, useLayoutEffect } from "react";
 import { ViewHolder, ViewHolderProps } from "./ViewHolder";
 import { RVLayout } from "./layout-managers/LayoutManager";
 import { FlashListProps } from "../FlashListProps";
@@ -16,7 +16,8 @@ export interface ViewHolderCollectionProps<TItem> {
   extraData: any;
   getChildContainerLayout: () => ViewStyle | undefined;
   childContainerViewRef?: React.RefObject<CompatView>;
-  onCommitLayoutEffect: () => void;
+  onCommitLayoutEffect?: () => void;
+  onCommitEffect?: () => void;
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
   ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
 }
@@ -42,6 +43,7 @@ export const ViewHolderCollection = <TItem,>(
     onCommitLayoutEffect,
     CellRendererComponent,
     ItemSeparatorComponent,
+    onCommitEffect,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -49,7 +51,11 @@ export const ViewHolderCollection = <TItem,>(
   const containerStyle = getChildContainerLayout();
 
   useLayoutEffect(() => {
-    onCommitLayoutEffect();
+    onCommitLayoutEffect?.();
+  }, [renderId]);
+
+  useEffect(() => {
+    onCommitEffect?.();
   }, [renderId]);
 
   // Expose forceUpdate through ref
