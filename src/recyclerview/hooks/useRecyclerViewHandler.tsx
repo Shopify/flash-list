@@ -56,7 +56,7 @@ export function useRecyclerViewHandler<T>(
             if (I18nManager.isRTL && horizontal) {
               offset = adjustOffsetForRTL(
                 offset,
-                recyclerViewManager.getChildContainerLayout().width,
+                recyclerViewManager.getChildContainerDimensions().width,
                 recyclerViewManager.getWindowSize().width
               );
             }

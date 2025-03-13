@@ -111,7 +111,7 @@ export class RecyclerViewManager<T> {
   }
 
   // Doesn't include header / foot etc
-  getChildContainerLayout() {
+  getChildContainerDimensions() {
     if (!this.layoutManager) {
       throw new Error(
         "LayoutManager is not initialized, child container layout is unavailable"

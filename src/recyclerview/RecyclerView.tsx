@@ -282,7 +282,7 @@ const RecyclerViewComponent = <T1,>(
             ItemSeparatorComponent={ItemSeparatorComponent}
             getChildContainerLayout={() =>
               recyclerViewManager.hasLayout()
-                ? recyclerViewManager.getChildContainerLayout()
+                ? recyclerViewManager.getChildContainerDimensions()
                 : undefined
             }
           />
