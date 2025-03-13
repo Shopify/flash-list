@@ -6401,10 +6401,10 @@ recast@^0.21.0:
     source-map "~0.6.1"
     tslib "^2.0.1"
 
-recyclerlistview@4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-4.2.1.tgz#4537a0959400cdce1df1f38d26aab823786e9b13"
-  integrity sha512-NtVYjofwgUCt1rEsTp6jHQg/47TWjnO92TU2kTVgJ9wsc/ely4HnizHHa+f/dI7qaw4+zcSogElrLjhMltN2/g==
+recyclerlistview@4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-4.2.2.tgz#384d06ef95d6015de506ddf1a341b819cff798de"
+  integrity sha512-tN6Aeob/mOD75Gco+vtjK4mbCjjsvev5me96TrwInuomYtYhLzUXSHjMOklEf2odK/eaV7uebimpZAe8YN6veg==
   dependencies:
     lodash.debounce "4.0.8"
     prop-types "15.8.1"
