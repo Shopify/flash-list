@@ -1,9 +1,9 @@
 import React, { useEffect, useImperativeHandle, useLayoutEffect } from "react";
 import { ViewHolder, ViewHolderProps } from "./ViewHolder";
-import { RVLayout } from "./layout-managers/LayoutManager";
+import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { FlashListProps } from "../FlashListProps";
-import { ViewStyle } from "react-native";
 import { CompatView } from "./components/CompatView";
+import { useRecyclerViewContext } from "./RecyclerViewContextProvider";
 
 export interface ViewHolderCollectionProps<TItem> {
   data: FlashListProps<TItem>["data"];
@@ -14,7 +14,7 @@ export interface ViewHolderCollectionProps<TItem> {
   onSizeChanged: ViewHolderProps<TItem>["onSizeChanged"];
   renderItem: FlashListProps<TItem>["renderItem"];
   extraData: any;
-  getChildContainerLayout: () => ViewStyle | undefined;
+  getChildContainerLayout: () => RVDimension | undefined;
   childContainerViewRef?: React.RefObject<CompatView>;
   onCommitLayoutEffect?: () => void;
   onCommitEffect?: () => void;
@@ -52,12 +52,33 @@ export const ViewHolderCollection = <TItem,>(
 
   const containerStyle = getChildContainerLayout();
 
+  // TODO: guard againt precision issues
+  const fixedContainerSize = horizontal
+    ? containerStyle?.height
+    : containerStyle?.width;
+
+  const recyclerViewContext = useRecyclerViewContext();
+
   useLayoutEffect(() => {
-    onCommitLayoutEffect?.();
+    if (renderId > 0) {
+      console.log(
+        "parent layout trigger due to child container size change",
+        fixedContainerSize
+      );
+      recyclerViewContext?.layout();
+    }
+  }, [fixedContainerSize]);
+
+  useLayoutEffect(() => {
+    if (renderId > 0) {
+      onCommitLayoutEffect?.();
+    }
   }, [renderId]);
 
   useEffect(() => {
-    onCommitEffect?.();
+    if (renderId > 0) {
+      onCommitEffect?.();
+    }
   }, [renderId]);
 
   // Expose forceUpdate through ref

@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useRef,
   forwardRef,
+  useState,
 } from "react";
 import {
   I18nManager,
@@ -64,7 +65,8 @@ const RecyclerViewComponent = <T1,>(
   const internalViewRef = useRef<CompatView>(null);
   const childContainerViewRef = useRef<CompatView>(null);
   const distanceFromWindow = useRef(0);
-  const [_, setRenderId] = useLayoutState(0);
+  const [_, setLayoutId] = useLayoutState(0);
+  const [__, setRenderId] = useState(0);
 
   const refHolder = useMemo(
     () => new Map<number, RefObject<CompatView | null>>(),
@@ -118,8 +120,9 @@ const RecyclerViewComponent = <T1,>(
     if (
       recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
     ) {
-      context.layout();
+      setRenderId((prev) => prev + 1);
     } else {
+      console.log("commitLayout");
       // TODO: reduce perf impact of commitLayout
       viewHolderCollectionRef.current?.commitLayout();
     }
@@ -157,7 +160,7 @@ const RecyclerViewComponent = <T1,>(
   const context = useMemo(() => {
     return {
       layout: () => {
-        setRenderId((prev) => prev + 1);
+        setLayoutId((prev) => prev + 1);
       },
       validateItemSize: (index: number, size: RVDimension) => {
         const layout = recyclerViewManager.getLayout(index);

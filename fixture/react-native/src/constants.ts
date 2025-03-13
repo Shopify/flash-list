@@ -27,4 +27,5 @@ export type RootStackParamList = {
   HeaderFooterExample: undefined;
   DynamicItems: undefined;
   RecyclerViewHandlerTest: undefined;
+  MovieList: undefined;
 };
