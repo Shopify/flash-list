@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   listContent: {
-    paddingHorizontal: 4,
+    paddingHorizontal: 0,
     paddingVertical: 8,
   },
   card: {
