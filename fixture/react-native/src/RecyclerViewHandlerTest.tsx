@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import { RecyclerView } from "../../../src";
+import { RecyclerView } from "@shopify/flash-list";
 
 // Define our item type
 interface Item {
