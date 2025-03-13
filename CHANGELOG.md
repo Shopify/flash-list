@@ -7,7 +7,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [1.7.4] - 2025-03-13
+## [1.7.5] - 2025-03-13
 
 - Fix React 19 ref error
   - https://github.com/Shopify/flash-list/pull/1554
