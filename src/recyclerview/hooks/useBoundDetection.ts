@@ -31,7 +31,7 @@ export function useBoundDetection<T>(
     if (recyclerViewManager.getIsFirstLayoutComplete()) {
       const lastScrollOffset =
         recyclerViewManager.getAbsoluteLastScrollOffset();
-      const contentSize = recyclerViewManager.getChildContainerLayout();
+      const contentSize = recyclerViewManager.getChildContainerDimensions();
       const windowSize = recyclerViewManager.getWindowSize();
       const isHorizontal = props.horizontal === true;
 
