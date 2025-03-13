@@ -195,6 +195,7 @@ export class RecyclerViewManager<T> {
       this.isFirstLayoutComplete = true;
     }
     if (this.layoutManager?.requiresRepaint) {
+      console.log("requiresRepaint triggered");
       this.layoutManager.requiresRepaint = false;
       return true;
     }
@@ -203,7 +204,7 @@ export class RecyclerViewManager<T> {
     } else {
       this.resumeProgressiveRender();
     }
-    return false;
+    return !this.isFirstLayoutComplete;
   }
 
   // TODO

@@ -73,6 +73,10 @@ export const ExamplesScreen = () => {
       title: "RecyclerView Handler Test",
       destination: "RecyclerViewHandlerTest",
     },
+    {
+      title: "Movie Streaming",
+      destination: "MovieList",
+    },
   ];
   return (
     <>

@@ -23,6 +23,7 @@ import FlashListCellRenderer from "./CellRendererExamples";
 import { HeaderFooterExample } from "./HeaderFooterExample";
 import DynamicItems from "./DynamicItems";
 import RecyclerViewHandlerTest from "./RecyclerViewHandlerTest";
+import MovieList from "./MovieList";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -67,6 +68,11 @@ const NavigationTree = () => {
             name="RecyclerViewHandlerTest"
             component={RecyclerViewHandlerTest}
             options={{ title: "RecyclerView Handler Test" }}
+          />
+          <Stack.Screen
+            name="MovieList"
+            component={MovieList}
+            options={{ title: "Movie Streaming" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
