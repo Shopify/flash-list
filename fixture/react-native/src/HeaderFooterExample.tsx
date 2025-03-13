@@ -59,11 +59,10 @@ export const HeaderFooterExample = () => {
           console.log("header footer empty example onLoad");
         }}
         renderItem={renderItem}
-        estimatedItemSize={70}
+        contentContainerStyle={{ flexGrow: 1 }}
         ListHeaderComponent={ListHeader}
         ListFooterComponent={ListFooter}
         ListEmptyComponent={ListEmpty}
-        contentContainerStyle={styles.listContent}
       />
     </View>
   );
