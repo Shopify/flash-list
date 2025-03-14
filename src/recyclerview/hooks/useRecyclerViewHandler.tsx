@@ -176,6 +176,9 @@ export function useRecyclerViewHandler<T>(
         recomputeViewableItems: () => {
           recyclerViewManager.recomputeViewableItems();
         },
+        prepareForLayoutAnimationRender: () => {
+          recyclerViewManager.disableRecycling = true;
+        },
       };
 
       return methods;
