@@ -45,6 +45,8 @@ export type ContentStyle = Pick<
   | "padding"
   | "paddingVertical"
   | "paddingHorizontal"
+  | "minHeight"
+  | "minWidth"
 >;
 
 export interface FlashListProps<TItem> extends ScrollViewProps {

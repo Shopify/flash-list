@@ -4,6 +4,8 @@ import { Dimension } from "recyclerlistview";
 import { ContentStyle } from "../FlashListProps";
 
 export interface ContentStyleExplicit {
+  minWidth: number;
+  minHeight: number;
   paddingTop: number;
   paddingBottom: number;
   paddingLeft: number;
@@ -24,6 +26,8 @@ export const updateContentStyle = (
     paddingVertical,
     paddingHorizontal,
     backgroundColor,
+    minWidth,
+    minHeight,
   } = (contentContainerStyleSource ?? {}) as ViewStyle;
   contentStyle.paddingLeft = Number(
     paddingLeft || paddingHorizontal || padding || 0
@@ -38,6 +42,8 @@ export const updateContentStyle = (
     paddingBottom || paddingVertical || padding || 0
   );
   contentStyle.backgroundColor = backgroundColor;
+  contentStyle.minWidth = Number(minWidth || 0);
+  contentStyle.minHeight = Number(minHeight || 0);
   return contentStyle as ContentStyleExplicit;
 };
 
