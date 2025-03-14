@@ -39,7 +39,7 @@ const Twitter = ({
     debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData
   );
   const viewabilityConfig = useRef<ViewabilityConfig>({
-    waitForInteraction: true,
+    waitForInteraction: false,
     itemVisiblePercentThreshold: 50,
     minimumViewTime: 1000,
   }).current;
@@ -54,6 +54,10 @@ const Twitter = ({
       ItemSeparatorComponent={Divider}
       renderItem={({ item }) => {
         return <TweetCell tweet={item} />;
+      }}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={(info) => {
+        console.log(info);
       }}
     />
   );

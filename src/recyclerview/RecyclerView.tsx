@@ -74,8 +74,10 @@ const RecyclerViewComponent = <T1,>(
   );
 
   const { recyclerViewManager, renderStack } = useRecyclerViewManager(props);
-  const { contentOffset, handleCommitLayoutEffect } =
-    useContentOffsetManagement(recyclerViewManager, props);
+  const { contentOffset, applyContentOffset } = useContentOffsetManagement(
+    recyclerViewManager,
+    props
+  );
   // console.log("contentOffset", contentOffset);
   //console.log("render stack", renderStack);
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
@@ -276,8 +278,13 @@ const RecyclerViewComponent = <T1,>(
             renderItem={renderItem}
             extraData={extraData}
             childContainerViewRef={childContainerViewRef}
-            onCommitLayoutEffect={handleCommitLayoutEffect}
-            onCommitEffect={checkBounds}
+            onCommitLayoutEffect={() => {
+              applyContentOffset();
+            }}
+            onCommitEffect={() => {
+              checkBounds();
+              recyclerViewManager.computeItemViewability();
+            }}
             CellRendererComponent={CellRendererComponent}
             ItemSeparatorComponent={ItemSeparatorComponent}
             getChildContainerLayout={() =>

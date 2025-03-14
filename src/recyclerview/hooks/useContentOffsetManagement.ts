@@ -34,7 +34,7 @@ export function useContentOffsetManagement<T>(
 
   // const firstVisibleItemKey = useRef<string | undefined>(undefined);
   // const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
-  const handleCommitLayoutEffect = useCallback(() => {
+  const applyContentOffset = useCallback(() => {
     // if (recyclerViewManager.getIsFirstLayoutComplete()) {
     //   if (firstVisibleItemKey.current) {
     //     const currentIndexOfFirstVisibleItem = props.data?.findIndex(
@@ -77,5 +77,5 @@ export function useContentOffsetManagement<T>(
     // }
   }, [props.data, props.keyExtractor, recyclerViewManager]);
 
-  return { contentOffset, handleCommitLayoutEffect };
+  return { contentOffset, applyContentOffset };
 }

@@ -1,6 +1,7 @@
 // Interface of layout manager for app's listviews
 
 import { MultiTypeAverageWindow } from "../../utils/AverageWindow";
+import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
 import {
   findFirstVisibleIndex,
   findLastVisibleIndex,
@@ -64,8 +65,7 @@ export abstract class RVLayoutManager {
   getVisibleLayouts(
     unboundDimensionStart: number,
     unboundDimensionEnd: number
-  ): number[] {
-    const visibleIndices: number[] = [];
+  ): ConsecutiveNumbers {
     // Find the first visible index
     const firstVisibleIndex = findFirstVisibleIndex(
       this.layouts,
@@ -82,11 +82,9 @@ export abstract class RVLayoutManager {
 
     // Collect the indices in the range
     if (firstVisibleIndex !== -1 && lastVisibleIndex !== -1) {
-      for (let i = firstVisibleIndex; i <= lastVisibleIndex; i++) {
-        visibleIndices.push(i);
-      }
+      return new ConsecutiveNumbers(firstVisibleIndex, lastVisibleIndex);
     }
-    return visibleIndices;
+    return ConsecutiveNumbers.EMPTY;
   }
 
   // remove layout values and recompute layout.

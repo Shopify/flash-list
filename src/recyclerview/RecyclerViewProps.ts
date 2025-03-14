@@ -111,4 +111,8 @@ export interface RecyclerViewProps<TItem> {
   renderScrollComponent?: (props: ScrollViewProps) => React.ReactNode;
 
   contentContainerStyle?: ScrollViewProps["contentContainerStyle"];
+
+  viewabilityConfig?: FlashListProps<TItem>["viewabilityConfig"];
+  onViewableItemsChanged?: FlashListProps<TItem>["onViewableItemsChanged"];
+  viewabilityConfigCallbackPairs?: FlashListProps<TItem>["viewabilityConfigCallbackPairs"];
 }

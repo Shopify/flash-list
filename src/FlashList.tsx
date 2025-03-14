@@ -879,6 +879,22 @@ class FlashList<T> extends React.PureComponent<
   public recomputeViewableItems = () => {
     this.viewabilityManager.recomputeViewableItems();
   };
+
+  public getChildContainerDimensions() {
+    return this.rlvRef?.getContentDimension();
+  }
+
+  public getLayout(index: number) {
+    return this.rlvRef?.getLayout(index);
+  }
+
+  public getWindowSize() {
+    return this.rlvRef?.getRenderedSize();
+  }
+
+  public getAbsoluteLastScrollOffset() {
+    return this.rlvRef?.getCurrentScrollOffset();
+  }
 }
 
 export default FlashList;

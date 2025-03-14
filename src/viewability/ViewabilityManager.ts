@@ -68,21 +68,20 @@ export default class ViewabilityManager<T> {
 
   public updateViewableItems = (newViewableIndices?: number[]) => {
     const listSize =
-      this.flashListRef.recyclerlistview_unsafe?.getRenderedSize() ??
+      this.flashListRef.getWindowSize() ??
       this.flashListRef.props.estimatedListSize;
     if (listSize === undefined || !this.shouldListenToVisibleIndices) {
       return;
     }
     const scrollOffset =
-      (this.flashListRef.recyclerlistview_unsafe?.getCurrentScrollOffset() ??
-        0) - this.flashListRef.firstItemOffset;
+      (this.flashListRef.getAbsoluteLastScrollOffset() ?? 0) -
+      this.flashListRef.firstItemOffset;
     this.viewabilityHelpers.forEach((viewabilityHelper) => {
       viewabilityHelper.updateViewableItems(
         this.flashListRef.props.horizontal ?? false,
         scrollOffset,
         listSize,
-        (index: number) =>
-          this.flashListRef.recyclerlistview_unsafe?.getLayout(index),
+        (index: number) => this.flashListRef.getLayout(index),
         newViewableIndices
       );
     });
