@@ -115,4 +115,6 @@ export interface RecyclerViewProps<TItem> {
   viewabilityConfig?: FlashListProps<TItem>["viewabilityConfig"];
   onViewableItemsChanged?: FlashListProps<TItem>["onViewableItemsChanged"];
   viewabilityConfigCallbackPairs?: FlashListProps<TItem>["viewabilityConfigCallbackPairs"];
+
+  onScroll?: FlashListProps<TItem>["onScroll"];
 }
