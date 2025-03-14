@@ -102,8 +102,11 @@ export abstract class RVLayoutManager {
 
   // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
   modifyLayout(layoutInfo: RVLayoutInfo[], totalItemCount: number): void {
+    let minRecomputeIndex = Number.MAX_VALUE;
+
     if (this.layouts.length > totalItemCount) {
       this.layouts.length = totalItemCount;
+      minRecomputeIndex = totalItemCount - 1; // <0 gets skipped so it's safe to set to totalItemCount - 1
     }
 
     // TODO
@@ -136,8 +139,6 @@ export abstract class RVLayoutManager {
       }
       this.recomputeLayouts(startIndex);
     }
-
-    let minRecomputeIndex = Number.MAX_VALUE;
 
     // compute minRecomputeIndex
     for (const info of layoutInfo) {

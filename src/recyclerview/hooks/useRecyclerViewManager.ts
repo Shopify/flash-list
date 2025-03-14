@@ -1,22 +1,29 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { RecyclerViewProps } from "../RecyclerViewProps";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 
 export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
-  const [renderStack, setRenderStack] = useState<Map<number, string>>(
-    new Map()
-  );
   const [recyclerViewManager] = useState<RecyclerViewManager<T>>(
-    () =>
-      new RecyclerViewManager(
-        // when render stack changes
-        setRenderStack,
-        props
-      )
+    () => new RecyclerViewManager(props)
   );
+  const { data } = props;
 
-  recyclerViewManager.updateProps(props);
+  useMemo(() => {
+    recyclerViewManager.updateProps(props);
+  }, [props]);
 
-  return { recyclerViewManager, renderStack };
+  useMemo(() => {
+    if (recyclerViewManager.hasLayout()) {
+      recyclerViewManager.modifyChildrenLayout([], data?.length ?? 0);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    return () => {
+      recyclerViewManager.dispose();
+    };
+  }, []);
+
+  return { recyclerViewManager };
 };

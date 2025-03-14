@@ -11,6 +11,13 @@ let id = 0;
 
 const ItemRenderer = ({ item }: { item: Item }) => {
   const [id, setId] = useState(item.id);
+  // log mount and unmount
+  useEffect(() => {
+    console.log("ItemRenderer mounted");
+    return () => {
+      console.log("ItemRenderer unmounted");
+    };
+  }, []);
   return (
     <View style={styles.itemContainer}>
       <Text style={styles.text}>Index: {item.index}</Text>
@@ -47,7 +54,7 @@ const DynamicItems = () => {
 
   const removeItems = () => {
     setItems((prevItems) =>
-      prevItems.length > 5 ? prevItems.slice(0, -5) : prevItems
+      prevItems.length >= 5 ? prevItems.slice(0, -5) : prevItems
     );
   };
 
@@ -65,6 +72,7 @@ const DynamicItems = () => {
         data={items}
         renderItem={({ item }) => <ItemRenderer item={item} />}
         keyExtractor={(item) => item.id}
+        ListEmptyComponent={() => <Text>No items</Text>}
       />
     </View>
   );

@@ -1,24 +1,25 @@
 import { ConsecutiveNumbers } from "./ConsecutiveNumbers";
 import { RVLayoutManager } from "../layout-managers/LayoutManager";
 
-export interface RVVisibleIndicesTracker {
+export interface RVEngagedIndicesTracker {
   // current scroll offset, setting this driectly will not trigger visible indices change
   scrollOffset: number;
-  renderAheadOffset: number | undefined;
+  drawDistance: number | undefined;
+
+  /**
+   * Updates the scroll offset and calculates the new engaged indices.
+   * @param offset - The new scroll offset.
+   * @param velocity - The scroll velocity to determine buffer distribution.
+   * @param layoutManager - The layout manager to fetch visible layouts.
+   * @returns The new engaged indices if any or undefined if no change
+   */
   updateScrollOffset: (
     offset: number,
     velocity: Velocity | null | undefined,
     layoutManager: RVLayoutManager
-  ) => void;
-  getVisibleIndices: (layoutManager: RVLayoutManager) => ConsecutiveNumbers;
-  // can be used to get visible indices
-  setOnVisibleIndicesChangedListener: (
-    callback: (all: ConsecutiveNumbers) => void
-  ) => void;
-  // can be used to get indices that need to be rendered, includes render buffer
-  setOnEngagedIndicesChangedListener: (
-    callback: (all: ConsecutiveNumbers) => void
-  ) => void;
+  ) => ConsecutiveNumbers | undefined;
+  getEngagedIndices: () => ConsecutiveNumbers;
+  computeVisibleIndices: (layoutManager: RVLayoutManager) => ConsecutiveNumbers;
 }
 
 export interface Velocity {
@@ -26,14 +27,11 @@ export interface Velocity {
   y: number;
 }
 
-export class RVVisibleIndicesTrackerImpl implements RVVisibleIndicesTracker {
+export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   // Current scroll offset
   public scrollOffset = 0;
   // Render ahead offset for pre-rendering items
-  public renderAheadOffset: number | undefined = undefined;
-
-  // Currently visible indices
-  private visibleIndices = ConsecutiveNumbers.EMPTY;
+  public drawDistance: number | undefined = undefined;
   // Currently engaged indices (including render buffer)
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
@@ -41,12 +39,6 @@ export class RVVisibleIndicesTrackerImpl implements RVVisibleIndicesTracker {
 
   private smallMultiplier = 0.1;
   private largeMultiplier = 0.9;
-
-  // Callback for visible indices change
-  private onVisibleIndicesChanged?: (all: ConsecutiveNumbers) => void;
-
-  // Callback for engaged indices change
-  private onEngagedIndicesChanged?: (all: ConsecutiveNumbers) => void;
 
   /**
    * Updates the scroll offset and calculates the new visible and engaged indices.
@@ -58,7 +50,7 @@ export class RVVisibleIndicesTrackerImpl implements RVVisibleIndicesTracker {
     offset: number,
     velocity: Velocity | null | undefined,
     layoutManager: RVLayoutManager
-  ): void {
+  ): ConsecutiveNumbers | undefined {
     this.scrollOffset = offset;
     const windowSize = layoutManager.getWindowsSize();
     const isHorizontal = layoutManager.isHorizontal();
@@ -68,11 +60,8 @@ export class RVVisibleIndicesTrackerImpl implements RVVisibleIndicesTracker {
     const viewportSize = isHorizontal ? windowSize.width : windowSize.height;
     const viewportEnd = viewportStart + viewportSize;
 
-    // Get indices of items currently visible in the viewport
-    const newVisibleIndices = this.getVisibleIndices(layoutManager);
-
     // Calculate render-ahead buffers based on scroll direction
-    const totalBuffer = this.renderAheadOffset ?? viewportSize;
+    const totalBuffer = this.drawDistance ?? viewportSize;
 
     // Default distribution: 25% before visible area, 75% after
     let bufferBefore = Math.ceil(totalBuffer * this.smallMultiplier);
@@ -101,16 +90,21 @@ export class RVVisibleIndicesTrackerImpl implements RVVisibleIndicesTracker {
       extendedEnd
     );
 
-    // Update indices and trigger callbacks if necessary
-    this.updateIndices(newVisibleIndices, newEngagedIndices);
+    const oldEngagedIndices = this.engagedIndices;
+    this.engagedIndices = newEngagedIndices;
+
+    if (!newEngagedIndices.equals(oldEngagedIndices)) {
+      return newEngagedIndices;
+    }
+    return undefined;
   }
 
   /**
-   * Returns the currently visible indices.
-   * Does not update internal state
-   * @returns An array of visible indices.
+   * Computes the currently visible indices. Not buffer is applied.
+   * @param layoutManager - The layout manager to fetch visible layouts.
+   * @returns The visible indices.
    */
-  getVisibleIndices(layoutManager: RVLayoutManager): ConsecutiveNumbers {
+  computeVisibleIndices(layoutManager: RVLayoutManager): ConsecutiveNumbers {
     const windowSize = layoutManager.getWindowsSize();
     const isHorizontal = layoutManager.isHorizontal();
 
@@ -128,56 +122,9 @@ export class RVVisibleIndicesTrackerImpl implements RVVisibleIndicesTracker {
   }
 
   /**
-   * Sets the callback for when visible indices change.
-   * @param callback - The callback function.
+   * @returns The last computed engaged indices. Doesn't compute new.
    */
-  setOnVisibleIndicesChangedListener(
-    callback: (all: ConsecutiveNumbers) => void
-  ): void {
-    this.onVisibleIndicesChanged = callback;
-  }
-
-  /**
-   * Sets the callback for when engaged indices change.
-   * @param callback - The callback function.
-   */
-  setOnEngagedIndicesChangedListener(
-    callback: (all: ConsecutiveNumbers) => void
-  ): void {
-    this.onEngagedIndicesChanged = callback;
-  }
-
-  /**
-   * Updates the visible and engaged indices and triggers the respective callbacks.
-   * TODO: Optimize this given arrays are already sorted
-   * @param newVisibleIndices - The new visible indices.
-   * @param newEngagedIndices - The new engaged indices.
-   */
-  private updateIndices(
-    newVisibleIndices: ConsecutiveNumbers,
-    newEngagedIndices: ConsecutiveNumbers
-  ): void {
-    const oldVisibleIndices = this.visibleIndices;
-    const oldEngagedIndices = this.engagedIndices;
-
-    // Update the current visible and engaged indices
-    this.visibleIndices = newVisibleIndices;
-    this.engagedIndices = newEngagedIndices;
-
-    // Trigger the visible indices changed callback if set and if there is a change
-    if (
-      this.onVisibleIndicesChanged &&
-      !newVisibleIndices.equals(oldVisibleIndices)
-    ) {
-      this.onVisibleIndicesChanged(newVisibleIndices);
-    }
-
-    // Trigger the engaged indices changed callback if set and if there is a change
-    if (
-      this.onEngagedIndicesChanged &&
-      !newEngagedIndices.equals(oldEngagedIndices)
-    ) {
-      this.onEngagedIndicesChanged(newEngagedIndices);
-    }
+  getEngagedIndices(): ConsecutiveNumbers {
+    return this.engagedIndices;
   }
 }
