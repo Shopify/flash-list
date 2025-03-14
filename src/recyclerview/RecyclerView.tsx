@@ -73,7 +73,7 @@ const RecyclerViewComponent = <T1,>(
     []
   );
 
-  const { recyclerViewManager, renderStack } = useRecyclerViewManager(props);
+  const { recyclerViewManager } = useRecyclerViewManager(props);
   const { contentOffset, applyContentOffset } = useContentOffsetManagement(
     recyclerViewManager,
     props
@@ -118,7 +118,7 @@ const RecyclerViewComponent = <T1,>(
       const layout = measureLayout(viewHolderRef.current!);
       return { index, dimensions: layout };
     });
-    //console.log("render effect");
+    console.log("render effect");
     if (
       recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
     ) {
@@ -151,7 +151,10 @@ const RecyclerViewComponent = <T1,>(
           };
         }
       }
-      recyclerViewManager.updateScrollOffset(scrollOffset, velocity);
+      if (recyclerViewManager.updateScrollOffset(scrollOffset, velocity)) {
+        // trigger another update if there are engaged indices
+        setRenderId((prev) => prev + 1);
+      }
       checkBounds();
     },
     [horizontal, recyclerViewManager]
@@ -271,7 +274,7 @@ const RecyclerViewComponent = <T1,>(
             viewHolderCollectionRef={viewHolderCollectionRef}
             data={data}
             horizontal={horizontal}
-            renderStack={renderStack}
+            renderStack={recyclerViewManager.getRenderStack()}
             getLayout={(index) => recyclerViewManager.getLayout(index)}
             refHolder={refHolder}
             onSizeChanged={context.validateItemSize}
