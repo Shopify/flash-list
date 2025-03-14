@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Allow `minHeight` and `minHeight` to be passed to `contentContainerStyle`
+  - https://github.com/Shopify/flash-list/pull/1560
+
 ## [1.7.5] - 2025-03-13
 
 - Fix React 19 ref error
