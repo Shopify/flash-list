@@ -1,6 +1,7 @@
-import { RVLayoutManager } from "./layout-managers/LayoutManager";
+import { ConsecutiveNumbers } from "./ConsecutiveNumbers";
+import { RVLayoutManager } from "../layout-managers/LayoutManager";
 
-export interface RVViewabilityManager {
+export interface RVVisibleIndicesTracker {
   // current scroll offset, setting this driectly will not trigger visible indices change
   scrollOffset: number;
   renderAheadOffset: number | undefined;
@@ -9,14 +10,14 @@ export interface RVViewabilityManager {
     velocity: Velocity | null | undefined,
     layoutManager: RVLayoutManager
   ) => void;
-  getVisibleIndices: (layoutManager: RVLayoutManager) => number[];
+  getVisibleIndices: (layoutManager: RVLayoutManager) => ConsecutiveNumbers;
   // can be used to get visible indices
   setOnVisibleIndicesChangedListener: (
-    callback: (all: number[], now: number[], notNow: number[]) => void
+    callback: (all: ConsecutiveNumbers) => void
   ) => void;
   // can be used to get indices that need to be rendered, includes render buffer
   setOnEngagedIndicesChangedListener: (
-    callback: (all: number[], now: number[], notNow: number[]) => void
+    callback: (all: ConsecutiveNumbers) => void
   ) => void;
 }
 
@@ -25,16 +26,16 @@ export interface Velocity {
   y: number;
 }
 
-export class RVViewabilityManagerImpl implements RVViewabilityManager {
+export class RVVisibleIndicesTrackerImpl implements RVVisibleIndicesTracker {
   // Current scroll offset
   public scrollOffset = 0;
   // Render ahead offset for pre-rendering items
   public renderAheadOffset: number | undefined = undefined;
 
   // Currently visible indices
-  private visibleIndices: number[] = [];
+  private visibleIndices = ConsecutiveNumbers.EMPTY;
   // Currently engaged indices (including render buffer)
-  private engagedIndices: number[] = [];
+  private engagedIndices = ConsecutiveNumbers.EMPTY;
 
   private isScrollingBackward = false;
 
@@ -42,18 +43,10 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
   private largeMultiplier = 0.9;
 
   // Callback for visible indices change
-  private onVisibleIndicesChanged?: (
-    all: number[],
-    now: number[],
-    notNow: number[]
-  ) => void;
+  private onVisibleIndicesChanged?: (all: ConsecutiveNumbers) => void;
 
   // Callback for engaged indices change
-  private onEngagedIndicesChanged?: (
-    all: number[],
-    now: number[],
-    notNow: number[]
-  ) => void;
+  private onEngagedIndicesChanged?: (all: ConsecutiveNumbers) => void;
 
   /**
    * Updates the scroll offset and calculates the new visible and engaged indices.
@@ -117,7 +110,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
    * Does not update internal state
    * @returns An array of visible indices.
    */
-  getVisibleIndices(layoutManager: RVLayoutManager): number[] {
+  getVisibleIndices(layoutManager: RVLayoutManager): ConsecutiveNumbers {
     const windowSize = layoutManager.getWindowsSize();
     const isHorizontal = layoutManager.isHorizontal();
 
@@ -139,7 +132,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
    * @param callback - The callback function.
    */
   setOnVisibleIndicesChangedListener(
-    callback: (all: number[], now: number[], notNow: number[]) => void
+    callback: (all: ConsecutiveNumbers) => void
   ): void {
     this.onVisibleIndicesChanged = callback;
   }
@@ -149,7 +142,7 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
    * @param callback - The callback function.
    */
   setOnEngagedIndicesChangedListener(
-    callback: (all: number[], now: number[], notNow: number[]) => void
+    callback: (all: ConsecutiveNumbers) => void
   ): void {
     this.onEngagedIndicesChanged = callback;
   }
@@ -161,8 +154,8 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
    * @param newEngagedIndices - The new engaged indices.
    */
   private updateIndices(
-    newVisibleIndices: number[],
-    newEngagedIndices: number[]
+    newVisibleIndices: ConsecutiveNumbers,
+    newEngagedIndices: ConsecutiveNumbers
   ): void {
     const oldVisibleIndices = this.visibleIndices;
     const oldEngagedIndices = this.engagedIndices;
@@ -174,51 +167,17 @@ export class RVViewabilityManagerImpl implements RVViewabilityManager {
     // Trigger the visible indices changed callback if set and if there is a change
     if (
       this.onVisibleIndicesChanged &&
-      !this.arraysEqual(newVisibleIndices, oldVisibleIndices)
+      !newVisibleIndices.equals(oldVisibleIndices)
     ) {
-      const nowVisible = newVisibleIndices.filter(
-        (index) => !oldVisibleIndices.includes(index)
-      );
-      const notNowVisible = oldVisibleIndices.filter(
-        (index) => !newVisibleIndices.includes(index)
-      );
-      this.onVisibleIndicesChanged(
-        newVisibleIndices,
-        nowVisible,
-        notNowVisible
-      );
+      this.onVisibleIndicesChanged(newVisibleIndices);
     }
 
     // Trigger the engaged indices changed callback if set and if there is a change
     if (
       this.onEngagedIndicesChanged &&
-      !this.arraysEqual(newEngagedIndices, oldEngagedIndices)
+      !newEngagedIndices.equals(oldEngagedIndices)
     ) {
-      const nowEngaged = newEngagedIndices.filter(
-        (index) => !oldEngagedIndices.includes(index)
-      );
-      const notNowEngaged = oldEngagedIndices.filter(
-        (index) => !newEngagedIndices.includes(index)
-      );
-      this.onEngagedIndicesChanged(
-        newEngagedIndices,
-        nowEngaged,
-        notNowEngaged
-      );
+      this.onEngagedIndicesChanged(newEngagedIndices);
     }
-  }
-
-  /**
-   * Helper function to check if two arrays are equal.
-   * @param arr1 - The first array.
-   * @param arr2 - The second array.
-   * @returns True if the arrays are equal, false otherwise.
-   */
-  private arraysEqual(arr1: number[], arr2: number[]): boolean {
-    if (arr1.length !== arr2.length) return false;
-    for (let i = 0; i < arr1.length; i++) {
-      if (arr1[i] !== arr2[i]) return false;
-    }
-    return true;
   }
 }

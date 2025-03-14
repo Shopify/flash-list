@@ -4,7 +4,6 @@ import { CompatScroller } from "../components/CompatScroller";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { I18nManager } from "react-native";
 import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
-
 export interface ScrollToParams extends ScrollToEdgeParams {
   viewPosition?: number;
   viewOffset?: number;
@@ -38,7 +37,6 @@ export function useRecyclerViewHandler<T>(
   props: RecyclerViewProps<T>
 ) {
   const { horizontal, data } = props;
-  const firstItemOffset = recyclerViewManager.firstItemOffset;
 
   useImperativeHandle(
     ref,
@@ -62,7 +60,8 @@ export function useRecyclerViewHandler<T>(
             }
 
             const adjustedOffset =
-              offset + (skipFirstItemOffset ? 0 : firstItemOffset);
+              offset +
+              (skipFirstItemOffset ? 0 : recyclerViewManager.firstItemOffset);
             const scrollTo = horizontal
               ? { x: adjustedOffset, y: 0 }
               : { x: 0, y: adjustedOffset };
@@ -159,10 +158,28 @@ export function useRecyclerViewHandler<T>(
             }
           }
         },
+        getFirstItemOffset: () => {
+          return recyclerViewManager.firstItemOffset;
+        },
+        getWindowSize: () => {
+          return recyclerViewManager.getWindowSize();
+        },
+        getLayout: (index: number) => {
+          return recyclerViewManager.getLayout(index);
+        },
+        getChildContainerDimensions: () => {
+          return recyclerViewManager.getChildContainerDimensions();
+        },
+        recordInteraction: () => {
+          recyclerViewManager.recordInteraction();
+        },
+        recomputeViewableItems: () => {
+          recyclerViewManager.recomputeViewableItems();
+        },
       };
 
       return methods;
     },
-    [horizontal, data, recyclerViewManager, scrollViewRef, firstItemOffset]
+    [horizontal, data, recyclerViewManager, scrollViewRef]
   );
 }

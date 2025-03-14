@@ -1,3 +1,4 @@
+import { ConsecutiveNumbers } from "./helpers/ConsecutiveNumbers";
 import { RVGridLayoutManagerImpl } from "./layout-managers/GridLayoutManager";
 import {
   RVDimension,
@@ -9,15 +10,16 @@ import { RVMasonryLayoutManagerImpl } from "./layout-managers/MasonryLayoutManag
 import { RecycleKeyManagerImpl, RecycleKeyManager } from "./RecycleKeyManager";
 import { RecyclerViewProps } from "./RecyclerViewProps";
 import {
-  RVViewabilityManager,
-  RVViewabilityManagerImpl,
+  RVVisibleIndicesTracker,
+  RVVisibleIndicesTrackerImpl,
   Velocity,
-} from "./ViewabilityManager";
+} from "./helpers/VisibleIndicesTracker";
+import ViewabilityManager from "../viewability/ViewabilityManager";
 
 // Abstracts layout manager, key manager and viewability manager and generates render stack (progressively on load)
 export class RecyclerViewManager<T> {
   private initialDrawBatchSize = 1;
-  private viewabilityManager: RVViewabilityManager;
+  private visibleIndicesTracker: RVVisibleIndicesTracker;
   private recycleKeyManager: RecycleKeyManager;
   private layoutManager?: RVLayoutManager;
   // Map of index to key
@@ -25,6 +27,7 @@ export class RecyclerViewManager<T> {
   private onRenderStackChanged: (renderStack: Map<number, string>) => void;
   private isFirstLayoutComplete = false;
   private props: RecyclerViewProps<T>;
+  private itemViewabilityManager: ViewabilityManager<T>;
 
   public pauseRecyclingOnRenderStackChange = false;
   public firstItemOffset = 0;
@@ -35,18 +38,18 @@ export class RecyclerViewManager<T> {
   ) {
     this.onRenderStackChanged = onRenderStackChanged;
     this.props = props;
-    this.viewabilityManager = new RVViewabilityManagerImpl();
-    this.viewabilityManager.setOnEngagedIndicesChangedListener(
+    this.visibleIndicesTracker = new RVVisibleIndicesTrackerImpl();
+    this.visibleIndicesTracker.setOnEngagedIndicesChangedListener(
       this.updateRenderStack
     );
     this.recycleKeyManager = new RecycleKeyManagerImpl();
+    this.itemViewabilityManager = new ViewabilityManager<T>(this as any);
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
   // TODO: Call getKey anyway if stableIds are present
-  public updateRenderStack = (engagedIndices: number[]): void => {
+  public updateRenderStack = (engagedIndices: ConsecutiveNumbers): void => {
     const newRenderStack = new Map<number, string>();
-
     for (const [index, key] of this.renderStack) {
       //TODO: Can be optimized since engagedIndices is sorted
       if (!engagedIndices.includes(index)) {
@@ -79,7 +82,7 @@ export class RecyclerViewManager<T> {
 
   updateProps(props: RecyclerViewProps<T>) {
     this.props = props;
-    this.viewabilityManager.renderAheadOffset = props.drawDistance;
+    this.visibleIndicesTracker.renderAheadOffset = props.drawDistance;
     if (this.props.drawDistance === 0) {
       this.initialDrawBatchSize = 1;
     } else {
@@ -89,7 +92,7 @@ export class RecyclerViewManager<T> {
 
   updateScrollOffset(offset: number, velocity?: Velocity) {
     if (this.layoutManager) {
-      this.viewabilityManager.updateScrollOffset(
+      this.visibleIndicesTracker.updateScrollOffset(
         offset - this.firstItemOffset,
         velocity,
         this.layoutManager
@@ -135,12 +138,12 @@ export class RecyclerViewManager<T> {
 
   // Includes first item offset correction
   getLastScrollOffset() {
-    return this.viewabilityManager.scrollOffset;
+    return this.visibleIndicesTracker.scrollOffset;
   }
 
   // Doesn't include first item offset correction
   getAbsoluteLastScrollOffset() {
-    return this.viewabilityManager.scrollOffset + this.firstItemOffset;
+    return this.visibleIndicesTracker.scrollOffset + this.firstItemOffset;
   }
 
   updateWindowSize(windowSize: RVDimension, firstItemOffset: number) {
@@ -183,7 +186,7 @@ export class RecyclerViewManager<T> {
         "LayoutManager is not initialized, visible indices are not unavailable"
       );
     }
-    return this.viewabilityManager.getVisibleIndices(this.layoutManager);
+    return this.visibleIndicesTracker.getVisibleIndices(this.layoutManager);
   }
 
   modifyChildrenLayout(
@@ -207,6 +210,21 @@ export class RecyclerViewManager<T> {
     return !this.isFirstLayoutComplete;
   }
 
+  computeItemViewability() {
+    this.itemViewabilityManager.shouldListenToVisibleIndices &&
+      this.itemViewabilityManager.updateViewableItems(
+        this.getVisibleIndices().toArray()
+      );
+  }
+
+  recordInteraction() {
+    this.itemViewabilityManager.recordInteraction();
+  }
+
+  recomputeViewableItems() {
+    this.itemViewabilityManager.recomputeViewableItems();
+  }
+
   // TODO
   private resumeProgressiveRender() {
     const layoutManager = this.layoutManager;
@@ -222,15 +240,14 @@ export class RecyclerViewManager<T> {
         this.props.initialScrollIndex !== undefined &&
         this.props.initialScrollIndex != null
       ) {
-        this.viewabilityManager.scrollOffset =
+        this.visibleIndicesTracker.scrollOffset =
           initialItemOffset ?? 0 + this.firstItemOffset;
       } else {
-        this.viewabilityManager.scrollOffset =
+        this.visibleIndicesTracker.scrollOffset =
           (initialItemOffset ?? 0) - this.firstItemOffset;
       }
 
       const visibleIndices = this.getVisibleIndices();
-      console.log("visibleIndices", visibleIndices);
       this.isFirstLayoutComplete = visibleIndices.every(
         (index) =>
           layoutManager.getLayout(index).isHeightMeasured &&
@@ -254,8 +271,8 @@ export class RecyclerViewManager<T> {
 
   private recomputeEngagedIndices() {
     if (this.layoutManager) {
-      this.viewabilityManager.updateScrollOffset(
-        this.viewabilityManager.scrollOffset,
+      this.visibleIndicesTracker.updateScrollOffset(
+        this.visibleIndicesTracker.scrollOffset,
         null,
         this.layoutManager
       );
