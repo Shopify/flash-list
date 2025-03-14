@@ -59,6 +59,7 @@ const RecyclerViewComponent = <T1,>(
     ListFooterComponentStyle,
     ItemSeparatorComponent,
     renderScrollComponent,
+    onScroll,
     ...rest
   } = props;
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -130,7 +131,7 @@ const RecyclerViewComponent = <T1,>(
     }
   });
 
-  const onScroll = useCallback(
+  const onScrollHandler = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       let velocity = event.nativeEvent.velocity;
       let scrollOffset = horizontal
@@ -156,6 +157,8 @@ const RecyclerViewComponent = <T1,>(
         setRenderId((prev) => prev + 1);
       }
       checkBounds();
+      recyclerViewManager.computeItemViewability();
+      onScroll?.(event);
     },
     [horizontal, recyclerViewManager]
   );
@@ -263,7 +266,7 @@ const RecyclerViewComponent = <T1,>(
           horizontal={horizontal}
           ref={scrollViewRef}
           contentOffset={contentOffset}
-          onScroll={onScroll}
+          onScroll={onScrollHandler}
           // TODO: evaluate perf
           removeClippedSubviews={false}
           refreshControl={refreshControl}
