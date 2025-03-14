@@ -66,7 +66,7 @@ const RecyclerViewComponent = <T1,>(
   const internalViewRef = useRef<CompatView>(null);
   const childContainerViewRef = useRef<CompatView>(null);
   const distanceFromWindow = useRef(0);
-  const [_, setLayoutId] = useLayoutState(0);
+  const [_, setLayoutTreeId] = useLayoutState(0);
   const [__, setRenderId] = useState(0);
 
   const refHolder = useMemo(
@@ -119,13 +119,13 @@ const RecyclerViewComponent = <T1,>(
       const layout = measureLayout(viewHolderRef.current!);
       return { index, dimensions: layout };
     });
-    console.log("render effect");
+    //console.log("render effect");
     if (
       recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
     ) {
       setRenderId((prev) => prev + 1);
     } else {
-      console.log("commitLayout");
+      //console.log("commitLayout");
       // TODO: reduce perf impact of commitLayout
       viewHolderCollectionRef.current?.commitLayout();
     }
@@ -165,39 +165,46 @@ const RecyclerViewComponent = <T1,>(
 
   // const contentOffset = useContentOffsetManagement(recyclerViewManager);
 
-  const context = useMemo(() => {
+  const recyclerViewContext = useMemo(() => {
     return {
       layout: () => {
-        setLayoutId((prev) => prev + 1);
+        setLayoutTreeId((prev) => prev + 1);
       },
-      validateItemSize: (index: number, size: RVDimension) => {
-        const layout = recyclerViewManager.getLayout(index);
-        const width = Math.max(
-          Math.min(layout.width, layout.maxWidth ?? Infinity),
-          layout.minWidth ?? 0
-        );
-        const height = Math.max(
-          Math.min(layout.height, layout.maxHeight ?? Infinity),
-          layout.minHeight ?? 0
-        );
-        if (
-          areDimensionsNotEqual(width, size.width) ||
-          areDimensionsNotEqual(height, size.height)
-        ) {
-          console.log(
-            "invalid size",
-            index,
-            width,
-            size.width,
-            height,
-            size.height
-          );
-          // TODO: Add a warning for missing useLayoutState
-          //context.layout();
-        }
+      getRef: () => {
+        return ref;
+      },
+      getScrollViewRef: () => {
+        return scrollViewRef;
       },
     };
-  }, [recyclerViewManager, setRenderId]);
+  }, [setLayoutTreeId]);
+
+  const validateItemSize = (index: number, size: RVDimension) => {
+    const layout = recyclerViewManager.getLayout(index);
+    const width = Math.max(
+      Math.min(layout.width, layout.maxWidth ?? Infinity),
+      layout.minWidth ?? 0
+    );
+    const height = Math.max(
+      Math.min(layout.height, layout.maxHeight ?? Infinity),
+      layout.minHeight ?? 0
+    );
+    if (
+      areDimensionsNotEqual(width, size.width) ||
+      areDimensionsNotEqual(height, size.height)
+    ) {
+      console.log(
+        "invalid size",
+        index,
+        width,
+        size.width,
+        height,
+        size.height
+      );
+      // TODO: Add a warning for missing useLayoutState
+      //context.layout();
+    }
+  };
 
   // Create a function to get the refresh control
   const refreshControl = useMemo(() => {
@@ -253,7 +260,7 @@ const RecyclerViewComponent = <T1,>(
   );
 
   return (
-    <RecyclerViewContextProvider value={context}>
+    <RecyclerViewContextProvider value={recyclerViewContext}>
       <CompatView
         style={{ flex: horizontal ? undefined : 1 }}
         ref={internalViewRef}
@@ -280,7 +287,7 @@ const RecyclerViewComponent = <T1,>(
             renderStack={recyclerViewManager.getRenderStack()}
             getLayout={(index) => recyclerViewManager.getLayout(index)}
             refHolder={refHolder}
-            onSizeChanged={context.validateItemSize}
+            onSizeChanged={validateItemSize}
             renderItem={renderItem}
             extraData={extraData}
             childContainerViewRef={childContainerViewRef}
