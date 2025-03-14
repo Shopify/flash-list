@@ -117,4 +117,5 @@ export interface RecyclerViewProps<TItem> {
   viewabilityConfigCallbackPairs?: FlashListProps<TItem>["viewabilityConfigCallbackPairs"];
 
   onScroll?: FlashListProps<TItem>["onScroll"];
+  disableRecycling?: boolean;
 }

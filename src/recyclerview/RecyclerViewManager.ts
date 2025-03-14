@@ -49,6 +49,9 @@ export class RecyclerViewManager<T> {
         this.recycleKeyManager.recycleKey(key);
       }
     }
+    if (this.disableRecycling) {
+      this.recycleKeyManager.clearPool();
+    }
     for (const index of engagedIndices) {
       // TODO: connect key extractor
       const newKey = this.recycleKeyManager.getKey(
@@ -229,6 +232,17 @@ export class RecyclerViewManager<T> {
 
   recomputeViewableItems() {
     this.itemViewabilityManager.recomputeViewableItems();
+  }
+
+  processDataUpdte() {
+    if (this.hasLayout()) {
+      this.modifyChildrenLayout([], this.props.data?.length ?? 0);
+      if (!this.recomputeEngagedIndices()) {
+        // recomputeEngagedIndices will update the render stack if there are any changes in the engaged indices.
+        // It's important to update render stack so that elements are assgined right keys incase items were deleted.
+        this.updateRenderStack(this.engagedIndicesTracker.getEngagedIndices());
+      }
+    }
   }
 
   dispose() {

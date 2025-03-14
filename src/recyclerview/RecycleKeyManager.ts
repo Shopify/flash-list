@@ -7,6 +7,8 @@ export interface RecycleKeyManager {
   recycleKey: (key: string) => void;
   // Checks if a key is available for recycling (unused)
   hasKeyInPool: (key: string) => boolean;
+  // Clears the pool of recycledkeys.
+  clearPool: () => void;
 }
 
 export class RecycleKeyManagerImpl implements RecycleKeyManager {
@@ -125,6 +127,13 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
   }
 
   /**
+   * Clears the pool of recycledkeys.
+   */
+  public clearPool() {
+    this.keyPools.clear();
+  }
+
+  /**
    * Generates a unique key using a counter.
    * @returns A unique key.
    */
@@ -135,6 +144,7 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
   /**
    * Ensures that the overall pool size does not exceed the maximum limit.
    * If it does, it recycles the oldest keys.
+   * TODO: Check performance impact of this
    */
   private ensurePoolSize(): void {
     if (this.keyMap.size <= this.maxItems) return;

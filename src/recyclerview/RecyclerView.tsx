@@ -60,6 +60,7 @@ const RecyclerViewComponent = <T1,>(
     ItemSeparatorComponent,
     renderScrollComponent,
     onScroll,
+    disableRecycling,
     ...rest
   } = props;
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -128,6 +129,7 @@ const RecyclerViewComponent = <T1,>(
       //console.log("commitLayout");
       // TODO: reduce perf impact of commitLayout
       viewHolderCollectionRef.current?.commitLayout();
+      applyContentOffset();
     }
   });
 
@@ -291,12 +293,10 @@ const RecyclerViewComponent = <T1,>(
             renderItem={renderItem}
             extraData={extraData}
             childContainerViewRef={childContainerViewRef}
-            onCommitLayoutEffect={() => {
-              applyContentOffset();
-            }}
             onCommitEffect={() => {
               checkBounds();
               recyclerViewManager.computeItemViewability();
+              recyclerViewManager.disableRecycling = Boolean(disableRecycling);
             }}
             CellRendererComponent={CellRendererComponent}
             ItemSeparatorComponent={ItemSeparatorComponent}

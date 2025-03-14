@@ -14,9 +14,7 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   }, [props]);
 
   useMemo(() => {
-    if (recyclerViewManager.hasLayout()) {
-      recyclerViewManager.modifyChildrenLayout([], data?.length ?? 0);
-    }
+    recyclerViewManager.processDataUpdte();
   }, [data]);
 
   useEffect(() => {
