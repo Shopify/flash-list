@@ -11,7 +11,6 @@ import {
   I18nManager,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  RefreshControl,
 } from "react-native";
 
 import { RVDimension } from "./layout-managers/LayoutManager";
@@ -30,7 +29,6 @@ import {
   ViewHolderCollectionRef,
 } from "./ViewHolderCollection";
 import { useContentOffsetManagement } from "./hooks/useContentOffsetManagement";
-import { getValidComponent } from "./utils/componentUtils";
 import { CompatView } from "./components/CompatView";
 import { CompatScroller } from "./components/CompatScroller";
 import { useBoundDetection } from "./hooks/useBoundDetection";
