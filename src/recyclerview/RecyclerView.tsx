@@ -36,6 +36,7 @@ import { CompatScroller } from "./components/CompatScroller";
 import { useBoundDetection } from "./hooks/useBoundDetection";
 import { useRecyclerViewHandler } from "./hooks/useRecyclerViewHandler";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
+import { useSecondaryProps } from "./hooks/useSecondaryProps";
 
 const RecyclerViewComponent = <T1,>(
   props: RecyclerViewProps<T1>,
@@ -208,58 +209,13 @@ const RecyclerViewComponent = <T1,>(
     }
   };
 
-  // Create a function to get the refresh control
-  const refreshControl = useMemo(() => {
-    if (onRefresh) {
-      return (
-        <RefreshControl
-          refreshing={Boolean(refreshing)}
-          progressViewOffset={progressViewOffset}
-          onRefresh={onRefresh}
-        />
-      );
-    }
-    return undefined;
-  }, [onRefresh, refreshing, progressViewOffset]);
-
-  const renderHeader = useMemo(() => {
-    if (!ListHeaderComponent) {
-      return null;
-    }
-    return (
-      <CompatView style={ListHeaderComponentStyle}>
-        {getValidComponent(ListHeaderComponent)}
-      </CompatView>
-    );
-  }, [ListHeaderComponent, ListHeaderComponentStyle]);
-
-  const renderFooter = useMemo(() => {
-    if (!ListFooterComponent) {
-      return null;
-    }
-    return (
-      <CompatView style={ListFooterComponentStyle}>
-        {getValidComponent(ListFooterComponent)}
-      </CompatView>
-    );
-  }, [ListFooterComponent, ListFooterComponentStyle]);
-
-  const renderEmpty = useMemo(() => {
-    if (!ListEmptyComponent || (data && data.length > 0)) {
-      return null;
-    }
-    return getValidComponent(ListEmptyComponent);
-  }, [ListEmptyComponent, data]);
-
-  const CompatScrollView = useMemo(
-    () =>
-      renderScrollComponent
-        ? React.forwardRef((props, ref) =>
-            renderScrollComponent({ ...props, ref } as any)
-          )
-        : CompatScroller,
-    [renderScrollComponent]
-  );
+  const {
+    refreshControl,
+    renderHeader,
+    renderFooter,
+    renderEmpty,
+    CompatScrollView,
+  } = useSecondaryProps(props);
 
   return (
     <RecyclerViewContextProvider value={recyclerViewContext}>
