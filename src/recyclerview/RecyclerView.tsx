@@ -106,7 +106,7 @@ const RecyclerViewComponent = <T1,>(
 
       recyclerViewManager.updateWindowSize(
         {
-          width: outerViewLayout.width,
+          width: horizontal ? outerViewLayout.width : childViewLayout.width,
           height: outerViewLayout.height,
         },
         distanceFromWindow.current
@@ -272,6 +272,7 @@ const RecyclerViewComponent = <T1,>(
       >
         <CompatScrollView
           {...rest}
+          style={undefined}
           horizontal={horizontal}
           ref={scrollViewRef}
           contentOffset={contentOffset}
