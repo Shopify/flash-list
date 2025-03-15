@@ -50,12 +50,12 @@ export const ViewHolderCollection = <TItem,>(
 
   const [renderId, setRenderId] = React.useState(0);
 
-  const containerStyle = getChildContainerLayout();
+  const containerLayout = getChildContainerLayout();
 
   // TODO: guard againt precision issues
   const fixedContainerSize = horizontal
-    ? containerStyle?.height
-    : containerStyle?.width;
+    ? containerLayout?.height
+    : containerLayout?.width;
 
   const recyclerViewContext = useRecyclerViewContext();
 
@@ -89,15 +89,21 @@ export const ViewHolderCollection = <TItem,>(
     },
   }));
 
+  const hasData = data && data.length > 0;
+
+  const containerStyle = {
+    width: horizontal ? containerLayout?.width : undefined,
+    height: containerLayout?.height,
+  };
+
   return (
     <CompatView
       // TODO: Take care of web scroll bar here
       ref={childContainerViewRef}
-      style={containerStyle}
+      style={hasData && containerStyle}
     >
-      {containerStyle &&
-        data &&
-        data.length > 0 &&
+      {containerLayout &&
+        hasData &&
         Array.from(renderStack, ([index, reactKey]) => {
           const item = data[index];
           const trailingItem = ItemSeparatorComponent
