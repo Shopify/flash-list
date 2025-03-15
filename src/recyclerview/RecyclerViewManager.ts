@@ -220,9 +220,12 @@ export class RecyclerViewManager<T> {
   }
 
   computeItemViewability() {
+    // Using higher buffer for masonry to avoid missing items
     this.itemViewabilityManager.shouldListenToVisibleIndices &&
       this.itemViewabilityManager.updateViewableItems(
-        this.getVisibleIndices().toArray()
+        this.props.masonry
+          ? this.engagedIndicesTracker.getEngagedIndices().toArray()
+          : this.getVisibleIndices().toArray()
       );
   }
 
@@ -294,7 +297,7 @@ export class RecyclerViewManager<T> {
   }
 
   private recomputeEngagedIndices(): ConsecutiveNumbers | undefined {
-    return this.updateScrollOffset(this.engagedIndicesTracker.scrollOffset);
+    return this.updateScrollOffset(this.getAbsoluteLastScrollOffset());
   }
 
   private getItemType(index: number): string {

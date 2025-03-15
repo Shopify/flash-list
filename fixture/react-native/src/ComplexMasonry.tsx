@@ -164,6 +164,13 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
           <MasonryCard item={item} onToggleExpand={handleToggleExpand} />
         )}
         contentContainerStyle={styles.listContent}
+        viewabilityConfig={{
+          minimumViewTime: 1000,
+          itemVisiblePercentThreshold: 50,
+        }}
+        onViewableItemsChanged={({ changed }) => {
+          console.log("viewableItems", changed);
+        }}
       />
     </View>
   );
@@ -179,7 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   listContent: {
-    paddingHorizontal: 0,
+    paddingHorizontal: 4,
     paddingVertical: 8,
   },
   card: {
