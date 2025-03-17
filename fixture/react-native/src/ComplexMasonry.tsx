@@ -166,7 +166,7 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
         contentContainerStyle={styles.listContent}
         viewabilityConfig={{
           minimumViewTime: 1000,
-          itemVisiblePercentThreshold: 50,
+          itemVisiblePercentThreshold: 0,
         }}
         onViewableItemsChanged={({ changed }) => {
           console.log("viewableItems", changed);

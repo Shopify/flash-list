@@ -60,6 +60,7 @@ const RecyclerViewComponent = <T1,>(
     renderScrollComponent,
     onScroll,
     disableRecycling,
+    style,
     ...rest
   } = props;
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -102,7 +103,11 @@ const RecyclerViewComponent = <T1,>(
       distanceFromWindow.current = horizontal
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
-
+      console.log(
+        "updateWindowSize",
+        outerViewLayout.height,
+        childViewLayout.width
+      );
       recyclerViewManager.updateWindowSize(
         {
           width: horizontal ? outerViewLayout.width : childViewLayout.width,
@@ -218,7 +223,7 @@ const RecyclerViewComponent = <T1,>(
   return (
     <RecyclerViewContextProvider value={recyclerViewContext}>
       <CompatView
-        style={{ flex: horizontal ? undefined : 1 }}
+        style={{ flex: horizontal ? undefined : 1, ...style }}
         ref={internalViewRef}
         onLayout={() => {
           //context.layout();
