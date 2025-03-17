@@ -14,7 +14,7 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   }, [props]);
 
   useMemo(() => {
-    recyclerViewManager.processDataUpdte();
+    recyclerViewManager.processDataUpdate();
   }, [data]);
 
   useEffect(() => {

@@ -237,7 +237,7 @@ export class RecyclerViewManager<T> {
     this.itemViewabilityManager.recomputeViewableItems();
   }
 
-  processDataUpdte() {
+  processDataUpdate() {
     if (this.hasLayout()) {
       this.modifyChildrenLayout([], this.props.data?.length ?? 0);
       if (!this.recomputeEngagedIndices()) {
@@ -275,6 +275,7 @@ export class RecyclerViewManager<T> {
       }
 
       const visibleIndices = this.getVisibleIndices();
+      console.log("---------> visibleIndices", visibleIndices);
       this.isFirstLayoutComplete = visibleIndices.every(
         (index) =>
           layoutManager.getLayout(index).isHeightMeasured &&

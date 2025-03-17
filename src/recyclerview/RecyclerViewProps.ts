@@ -1,5 +1,5 @@
 import { FlashListProps } from "../FlashListProps";
-import { ScrollViewProps } from "react-native";
+import { ScrollViewProps, ViewStyle } from "react-native";
 
 export interface RecyclerViewProps<TItem> {
   horizontal?: FlashListProps<TItem>["horizontal"];
@@ -118,4 +118,8 @@ export interface RecyclerViewProps<TItem> {
 
   onScroll?: FlashListProps<TItem>["onScroll"];
   disableRecycling?: boolean;
+  /**
+   * Style for the RecyclerView's parent container.
+   */
+  style?: ViewStyle;
 }

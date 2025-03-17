@@ -53,6 +53,9 @@ export function Grid() {
       <RecyclerView
         data={data}
         numColumns={2}
+        contentContainerStyle={{
+          padding: 4,
+        }}
         initialScrollIndex={5}
         overrideItemLayout={(layout, item) => {
           layout.span = item.span;
