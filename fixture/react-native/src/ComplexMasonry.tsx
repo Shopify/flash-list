@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { RecyclerView } from "@shopify/flash-list";
 import FastImage from "@d11/react-native-fast-image";
@@ -55,12 +56,16 @@ const IMAGE_URLS = [
 ];
 
 // Generate random data for our masonry layout
-const generateMasonryData = (count: number): MasonryItem[] => {
+const generateMasonryData = (
+  count: number,
+  startIndex: number = 0
+): MasonryItem[] => {
   return Array.from({ length: count }, (_, index) => {
     // Create a pattern of spans to make it visually interesting
     // Items with span=2 will take up 2 columns
+    const actualIndex = startIndex + index;
     let span = 1;
-    if (index === 0 || index === 7) {
+    if (actualIndex === 0 || actualIndex === 7) {
       span = 2;
     }
 
@@ -68,15 +73,15 @@ const generateMasonryData = (count: number): MasonryItem[] => {
     // Items with span=2 should generally be shorter to create a balanced layout
     const baseHeight = span === 2 ? 180 : 220;
     const heightVariation = span === 2 ? 40 : 80;
-    const height = baseHeight + (index % 3) * heightVariation;
+    const height = baseHeight + (actualIndex % 3) * heightVariation;
 
     return {
-      id: index.toString(),
-      title: `Item ${index}`,
-      image: IMAGE_URLS[index % IMAGE_URLS.length],
+      id: actualIndex.toString(),
+      title: `Item ${actualIndex}`,
+      image: IMAGE_URLS[actualIndex % IMAGE_URLS.length],
       height,
       span,
-      color: COLORS[index % COLORS.length],
+      color: COLORS[actualIndex % COLORS.length],
       isExpanded: false, // Initially not expanded
     };
   });
@@ -131,7 +136,8 @@ const MasonryCard = ({
 // Create our masonry component
 const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
   const columnCount = 3;
-  const [items, setItems] = useState(() => generateMasonryData(250));
+  const [items, setItems] = useState(() => generateMasonryData(50));
+  const [isLoading, setIsLoading] = useState(false);
 
   // Handle toggling the expanded state of an item
   const handleToggleExpand = useCallback((id: string) => {
@@ -141,6 +147,32 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
       )
     );
   }, []);
+
+  // Handle loading more items when reaching the end of the list
+  const handleEndReached = useCallback(() => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    // Simulate network delay
+    setTimeout(() => {
+      setItems((currentItems) => [
+        ...currentItems,
+        ...generateMasonryData(20, currentItems.length),
+      ]);
+      setIsLoading(false);
+    }, 500);
+  }, [isLoading]);
+
+  // Footer component with loading indicator
+  const renderFooter = useCallback(() => {
+    if (!isLoading) return null;
+    return (
+      <View style={styles.footer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }, [isLoading]);
 
   return (
     <View style={styles.container}>
@@ -163,6 +195,9 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
         renderItem={({ item }: { item: MasonryItem }) => (
           <MasonryCard item={item} onToggleExpand={handleToggleExpand} />
         )}
+        ListFooterComponent={renderFooter}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={1}
         contentContainerStyle={styles.listContent}
         viewabilityConfig={{
           minimumViewTime: 1000,
@@ -233,5 +268,9 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 4,
     opacity: 0.8,
+  },
+  footer: {
+    paddingVertical: 20,
+    alignItems: "center",
   },
 });
