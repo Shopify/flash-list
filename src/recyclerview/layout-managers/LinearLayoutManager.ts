@@ -17,13 +17,10 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
 
   //TODO: check if this is needed
   updateLayoutParams(params: LayoutParams): void {
-    if (params.windowSize.width !== this.windowSize.width) {
-      console.log("updateLayoutParams", params.windowSize.width);
-      this.boundedSize = this.horizontal
-        ? params.windowSize.height
-        : params.windowSize.width;
-      this.recomputeLayouts(0);
-    }
+    super.updateLayoutParams(params);
+    this.boundedSize = this.horizontal
+      ? params.windowSize.height
+      : params.windowSize.width;
   }
 
   // Updates layout information based on the provided layout info.
@@ -100,20 +97,22 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
 
   // Helper function to recompute layouts starting from a given index
   recomputeLayouts(startIndex = 0): void {
-    for (let i = startIndex; i < this.layouts.length; i++) {
+    for (let i = startIndex; i <= this.getMaxRecomputeIndex(startIndex); i++) {
       const layout = this.getLayout(i);
-      if (i > 0) {
-        const prevLayout = this.getLayout(i - 1);
-        if (this.horizontal) {
-          layout.x = prevLayout.x + prevLayout.width;
-          layout.y = 0;
-        } else {
-          layout.x = 0;
-          layout.y = prevLayout.y + prevLayout.height;
-        }
-      } else {
+
+      // Set positions based on whether this is the first item or not
+      if (i === 0) {
         layout.x = 0;
         layout.y = 0;
+      } else {
+        const prevLayout = this.getLayout(i - 1);
+        layout.x = this.horizontal ? prevLayout.x + prevLayout.width : 0;
+        layout.y = this.horizontal ? 0 : prevLayout.y + prevLayout.height;
+      }
+
+      // Set width for vertical layouts
+      if (!this.horizontal) {
+        layout.width = this.boundedSize;
       }
     }
   }

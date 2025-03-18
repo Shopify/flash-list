@@ -21,6 +21,7 @@ export abstract class RVLayoutManager {
   private _getItemType?: (index: number) => string | number;
   private heightAverageWindow: MultiTypeAverageWindow;
   private widthAverageWindow: MultiTypeAverageWindow;
+  private maxItemsToProcess: number = 500; // TODO: make this dynamic
 
   constructor(params: LayoutParams) {
     this.horizontal = Boolean(params.horizontal);
@@ -102,74 +103,44 @@ export abstract class RVLayoutManager {
 
   // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
   modifyLayout(layoutInfo: RVLayoutInfo[], totalItemCount: number): void {
+    const startTime = performance.now();
+
     let minRecomputeIndex = Number.MAX_VALUE;
 
     if (this.layouts.length > totalItemCount) {
       this.layouts.length = totalItemCount;
       minRecomputeIndex = totalItemCount - 1; // <0 gets skipped so it's safe to set to totalItemCount - 1
     }
-
-    // TODO
-    // if (layoutInfo.length === 0) {
-    //   return;
-    // }
-
     // update average windows
-    for (const info of layoutInfo) {
-      const { index, dimensions } = info;
-      this.heightAverageWindow.addValue(
-        dimensions.height,
-        this.getItemType(index)
-      );
-      this.widthAverageWindow.addValue(
-        dimensions.width,
-        this.getItemType(index)
-      );
-    }
-
-    // console.log(
-    //   "layouts",
-    //   this.layouts.map((l) => l.height)
-    // );
+    this.computeEstimatesAndMinRecomputeIndex(layoutInfo);
 
     if (this.layouts.length < totalItemCount) {
       const startIndex = this.layouts.length;
       for (let i = this.layouts.length; i < totalItemCount; i++) {
         this.getLayout(i);
       }
+      const oldMaxItemsToProcess = this.maxItemsToProcess;
+      this.maxItemsToProcess = Infinity;
       this.recomputeLayouts(startIndex);
+      this.maxItemsToProcess = oldMaxItemsToProcess;
     }
-
+    minRecomputeIndex = Math.min(
+      minRecomputeIndex,
+      this.processLayoutInfo(layoutInfo, totalItemCount) ?? minRecomputeIndex
+    );
     // compute minRecomputeIndex
-    for (const info of layoutInfo) {
-      const { index, dimensions } = info;
-      const layout = this.layouts[index];
-      if (
-        layout.width !== dimensions.width ||
-        layout.height !== dimensions.height ||
-        !layout.isWidthMeasured ||
-        !layout.isHeightMeasured
-      ) {
-        minRecomputeIndex = Math.min(minRecomputeIndex, index);
-      }
-      this.heightAverageWindow.addValue(
-        dimensions.height,
-        this.getItemType(index)
-      );
-      this.widthAverageWindow.addValue(
-        dimensions.width,
-        this.getItemType(index)
-      );
+    minRecomputeIndex = Math.min(
+      minRecomputeIndex,
+      this.computeEstimatesAndMinRecomputeIndex(layoutInfo)
+    );
+    if (minRecomputeIndex >= 0 && minRecomputeIndex < totalItemCount) {
+      this.recomputeLayouts(minRecomputeIndex);
     }
-
-    const finalMinRecomputeIndex =
-      this.processLayoutInfo(layoutInfo, totalItemCount) ?? minRecomputeIndex;
-    if (
-      finalMinRecomputeIndex >= 0 &&
-      finalMinRecomputeIndex < totalItemCount
-    ) {
-      this.recomputeLayouts(finalMinRecomputeIndex);
-    }
+    const endTime = performance.now();
+    console.log(
+      `Time taken to recompute layouts: ${endTime - startTime} milliseconds`,
+      minRecomputeIndex
+    );
   }
 
   // Returns layout info for an item at given index
@@ -195,6 +166,8 @@ export abstract class RVLayoutManager {
   // recompute if critical layout information changes, can be called with same values repeatedly so only recompute if necessary
   updateLayoutParams(params: LayoutParams) {
     this.windowSize = params.windowSize;
+    this.horizontal = params.horizontal ?? this.horizontal;
+    this.maxColumns = params.maxColumns ?? this.maxColumns;
   }
 
   abstract recomputeLayouts(startIndex: number): void;
@@ -208,6 +181,32 @@ export abstract class RVLayoutManager {
     this.spanSizeInfo.span = undefined;
     this.overrideItemLayout?.(index, this.spanSizeInfo);
     return this.spanSizeInfo;
+  }
+
+  protected getMaxRecomputeIndex(startIndex: number): number {
+    return Math.min(
+      startIndex + this.maxItemsToProcess,
+      this.layouts.length - 1
+    );
+  }
+
+  private computeEstimatesAndMinRecomputeIndex(
+    layoutInfo: RVLayoutInfo[]
+  ): number {
+    let minRecomputeIndex = Number.MAX_VALUE;
+    for (const info of layoutInfo) {
+      const { index, dimensions } = info;
+      minRecomputeIndex = Math.min(minRecomputeIndex, index);
+      this.heightAverageWindow.addValue(
+        dimensions.height,
+        this.getItemType(index)
+      );
+      this.widthAverageWindow.addValue(
+        dimensions.width,
+        this.getItemType(index)
+      );
+    }
+    return minRecomputeIndex;
   }
 }
 

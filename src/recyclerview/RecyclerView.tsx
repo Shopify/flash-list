@@ -103,11 +103,11 @@ const RecyclerViewComponent = <T1,>(
       distanceFromWindow.current = horizontal
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
-      console.log(
-        "updateWindowSize",
-        outerViewLayout.height,
-        childViewLayout.width
-      );
+      // console.log(
+      //   "updateWindowSize",
+      //   outerViewLayout.height,
+      //   childViewLayout.width
+      // );
       recyclerViewManager.updateWindowSize(
         {
           width: horizontal ? outerViewLayout.width : childViewLayout.width,
@@ -199,14 +199,14 @@ const RecyclerViewComponent = <T1,>(
       areDimensionsNotEqual(width, size.width) ||
       areDimensionsNotEqual(height, size.height)
     ) {
-      console.log(
-        "invalid size",
-        index,
-        width,
-        size.width,
-        height,
-        size.height
-      );
+      // console.log(
+      //   "invalid size",
+      //   index,
+      //   width,
+      //   size.width,
+      //   height,
+      //   size.height
+      // );
       // TODO: Add a warning for missing useLayoutState
       //context.layout();
     }
@@ -226,7 +226,8 @@ const RecyclerViewComponent = <T1,>(
         style={{ flex: horizontal ? undefined : 1, ...style }}
         ref={internalViewRef}
         onLayout={() => {
-          //context.layout();
+          //console.log("onLayout");
+          recyclerViewContext.layout();
         }}
       >
         <CompatScrollView

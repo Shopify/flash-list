@@ -7,7 +7,6 @@ import {
 } from "./LayoutManager";
 
 export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
-  private numColumns: number;
   private boundedSize: number;
   private columnHeights: number[];
   private optimizeItemArrangement: boolean;
@@ -16,9 +15,13 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   constructor(params: LayoutParams) {
     super(params);
     this.boundedSize = params.windowSize.width;
-    this.numColumns = params.maxColumns ?? 2;
     this.optimizeItemArrangement = params.optimizeItemArrangement ?? false;
-    this.columnHeights = Array(this.numColumns).fill(0);
+    this.columnHeights = Array(this.maxColumns).fill(0);
+  }
+
+  updateLayoutParams(params: LayoutParams) {
+    super.updateLayoutParams(params);
+    this.boundedSize = params.windowSize.width;
   }
 
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
@@ -26,6 +29,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
       const layout = this.layouts[index];
+      layout.width = this.getWidth(index);
       layout.height = dimensions.height;
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
@@ -35,11 +39,9 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
   estimateLayout(index: number) {
     const layout = this.layouts[index];
-    // Get span information if available
-    const span = this.getSpanSizeInfo(index).span ?? 1;
 
     // Set width based on columns and span
-    layout.width = (this.boundedSize / this.numColumns) * span;
+    layout.width = this.getWidth(index);
     layout.height = this.getEstimatedHeight(index);
 
     layout.isWidthMeasured = true;
@@ -61,7 +63,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   recomputeLayouts(startIndex = 0): void {
     // Reset column heights if starting from the beginning
     if (startIndex === 0) {
-      this.columnHeights = Array(this.numColumns).fill(0);
+      this.columnHeights = Array(this.maxColumns).fill(0);
       this.currentColumn = 0;
     } else {
       // Find the y-position of the first item to recompute
@@ -90,9 +92,14 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  private getWidth(index: number): number {
+    const span = this.getSpanSizeInfo(index).span ?? 1;
+    return (this.boundedSize / this.maxColumns) * span;
+  }
+
   private placeItemSequentially(layout: RVLayout, span: number): void {
     // Check if the item can fit in the current row
-    if (this.currentColumn + span > this.numColumns) {
+    if (this.currentColumn + span > this.maxColumns) {
       // Move to the next row
       this.currentColumn = 0;
     }
@@ -104,25 +111,25 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
       col < this.currentColumn + span;
       col++
     ) {
-      if (col < this.numColumns) {
+      if (col < this.maxColumns) {
         maxHeight = Math.max(maxHeight, this.columnHeights[col]);
       }
     }
 
     // Place the item
-    layout.x = (this.boundedSize / this.numColumns) * this.currentColumn;
+    layout.x = (this.boundedSize / this.maxColumns) * this.currentColumn;
     layout.y = maxHeight;
 
     // Update column heights
     for (let col = this.currentColumn; col < this.currentColumn + span; col++) {
-      if (col < this.numColumns) {
+      if (col < this.maxColumns) {
         this.columnHeights[col] = maxHeight + layout.height;
       }
     }
 
     // Move to the next column
     this.currentColumn += span;
-    if (this.currentColumn >= this.numColumns) {
+    if (this.currentColumn >= this.maxColumns) {
       this.currentColumn = 0;
     }
   }
@@ -132,7 +139,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     let shortestColumnIndex = 0;
     let minHeight = this.columnHeights[0];
 
-    for (let i = 1; i < this.numColumns; i++) {
+    for (let i = 1; i < this.maxColumns; i++) {
       if (this.columnHeights[i] < minHeight) {
         minHeight = this.columnHeights[i];
         shortestColumnIndex = i;
@@ -140,7 +147,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
 
     // Place the item in the shortest column
-    layout.x = (this.boundedSize / this.numColumns) * shortestColumnIndex;
+    layout.x = (this.boundedSize / this.maxColumns) * shortestColumnIndex;
     layout.y = this.columnHeights[shortestColumnIndex];
 
     // Update the column height
@@ -152,7 +159,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     let minTotalHeight = Number.MAX_VALUE;
 
     // Try all possible positions
-    for (let startCol = 0; startCol <= this.numColumns - span; startCol++) {
+    for (let startCol = 0; startCol <= this.maxColumns - span; startCol++) {
       // Find the maximum height among the columns this item would span
       let maxHeight = this.columnHeights[startCol];
       for (let col = startCol + 1; col < startCol + span; col++) {
@@ -161,7 +168,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
       // Calculate the total height after placing the item
       let totalHeight = 0;
-      for (let col = 0; col < this.numColumns; col++) {
+      for (let col = 0; col < this.maxColumns; col++) {
         if (col >= startCol && col < startCol + span) {
           totalHeight += maxHeight + layout.height;
         } else {
@@ -180,7 +187,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     const maxHeight = Math.max(
       ...this.columnHeights.slice(bestStartColumn, bestStartColumn + span)
     );
-    layout.x = (this.boundedSize / this.numColumns) * bestStartColumn;
+    layout.x = (this.boundedSize / this.maxColumns) * bestStartColumn;
     layout.y = maxHeight;
 
     // Update column heights
@@ -191,19 +198,19 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
   private updateColumnHeightsToIndex(index: number): void {
     // Reset column heights
-    this.columnHeights = Array(this.numColumns).fill(0);
+    this.columnHeights = Array(this.maxColumns).fill(0);
     this.currentColumn = 0;
 
     // Recalculate column heights up to the given index
     for (let i = 0; i < index; i++) {
       const layout = this.layouts[i];
       const itemWidth = layout.width;
-      const columnWidth = this.boundedSize / this.numColumns;
+      const columnWidth = this.boundedSize / this.maxColumns;
       const span = Math.round(itemWidth / columnWidth);
 
       // Find which columns this item spans
       const startColumn = Math.round(layout.x / columnWidth);
-      const endColumn = Math.min(startColumn + span, this.numColumns);
+      const endColumn = Math.min(startColumn + span, this.maxColumns);
 
       // Update column heights
       for (let col = startColumn; col < endColumn; col++) {
@@ -215,7 +222,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
       // Update current column for non-optimized layout
       if (!this.optimizeItemArrangement) {
-        this.currentColumn = (startColumn + span) % this.numColumns;
+        this.currentColumn = (startColumn + span) % this.maxColumns;
       }
     }
   }
