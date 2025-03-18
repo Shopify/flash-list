@@ -21,7 +21,11 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
   updateLayoutParams(params: LayoutParams) {
     super.updateLayoutParams(params);
-    this.boundedSize = params.windowSize.width;
+    if (this.boundedSize !== params.windowSize.width) {
+      this.boundedSize = params.windowSize.width;
+      //TODO: Optimize masonry in general
+      this.recomputeLayouts(0, this.layouts.length - 1);
+    }
   }
 
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
@@ -60,7 +64,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     };
   }
 
-  recomputeLayouts(startIndex = 0): void {
+  recomputeLayouts(startIndex: number, endIndex: number): void {
     // Reset column heights if starting from the beginning
     if (startIndex === 0) {
       this.columnHeights = Array(this.maxColumns).fill(0);

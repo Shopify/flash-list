@@ -97,8 +97,9 @@ export abstract class RVLayoutManager {
     for (const index of indices) {
       this.layouts.splice(index, 1);
     }
+    const startIndex = Math.min(...indices);
     // Recompute layouts starting from the smallest index in the original indices array
-    this.recomputeLayouts(Math.min(...indices));
+    this.recomputeLayouts(startIndex, this.getMaxRecomputeIndex(startIndex));
   }
 
   // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
@@ -119,10 +120,7 @@ export abstract class RVLayoutManager {
       for (let i = this.layouts.length; i < totalItemCount; i++) {
         this.getLayout(i);
       }
-      const oldMaxItemsToProcess = this.maxItemsToProcess;
-      this.maxItemsToProcess = Infinity;
-      this.recomputeLayouts(startIndex);
-      this.maxItemsToProcess = oldMaxItemsToProcess;
+      this.recomputeLayouts(startIndex, totalItemCount - 1);
     }
     minRecomputeIndex = Math.min(
       minRecomputeIndex,
@@ -134,7 +132,10 @@ export abstract class RVLayoutManager {
       this.computeEstimatesAndMinRecomputeIndex(layoutInfo)
     );
     if (minRecomputeIndex >= 0 && minRecomputeIndex < totalItemCount) {
-      this.recomputeLayouts(minRecomputeIndex);
+      this.recomputeLayouts(
+        minRecomputeIndex,
+        this.getMaxRecomputeIndex(minRecomputeIndex)
+      );
     }
     const endTime = performance.now();
     console.log(
@@ -170,7 +171,7 @@ export abstract class RVLayoutManager {
     this.maxColumns = params.maxColumns ?? this.maxColumns;
   }
 
-  abstract recomputeLayouts(startIndex: number): void;
+  abstract recomputeLayouts(startIndex: number, endIndex: number): void;
 
   // Size of the rendered area
   abstract getLayoutSize(): RVDimension;
@@ -183,7 +184,7 @@ export abstract class RVLayoutManager {
     return this.spanSizeInfo;
   }
 
-  protected getMaxRecomputeIndex(startIndex: number): number {
+  private getMaxRecomputeIndex(startIndex: number): number {
     return Math.min(
       startIndex + this.maxItemsToProcess,
       this.layouts.length - 1
