@@ -18,9 +18,16 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   //TODO: check if this is needed
   updateLayoutParams(params: LayoutParams): void {
     super.updateLayoutParams(params);
+    const oldBoundedSize = this.boundedSize;
     this.boundedSize = this.horizontal
       ? params.windowSize.height
       : params.windowSize.width;
+    if (oldBoundedSize !== this.boundedSize) {
+      if (this.layouts.length > 0) {
+        this.recomputeLayouts(0, this.layouts.length - 1);
+        this.requiresRepaint = true;
+      }
+    }
   }
 
   // Updates layout information based on the provided layout info.

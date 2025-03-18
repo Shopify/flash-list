@@ -99,7 +99,10 @@ export abstract class RVLayoutManager {
     }
     const startIndex = Math.min(...indices);
     // Recompute layouts starting from the smallest index in the original indices array
-    this.recomputeLayouts(startIndex, this.getMaxRecomputeIndex(startIndex));
+    this.recomputeLayouts(
+      this.getMinRecomputeIndex(startIndex),
+      this.getMaxRecomputeIndex(startIndex)
+    );
   }
 
   // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
@@ -133,7 +136,7 @@ export abstract class RVLayoutManager {
     );
     if (minRecomputeIndex >= 0 && minRecomputeIndex < totalItemCount) {
       this.recomputeLayouts(
-        minRecomputeIndex,
+        this.getMinRecomputeIndex(minRecomputeIndex),
         this.getMaxRecomputeIndex(minRecomputeIndex)
       );
     }
@@ -189,6 +192,10 @@ export abstract class RVLayoutManager {
       startIndex + this.maxItemsToProcess,
       this.layouts.length - 1
     );
+  }
+
+  private getMinRecomputeIndex(startIndex: number): number {
+    return startIndex;
   }
 
   private computeEstimatesAndMinRecomputeIndex(
