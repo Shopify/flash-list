@@ -10,7 +10,7 @@ interface GridItem {
 }
 
 export function Grid() {
-  const [numItems] = useState(1000); // Default to 100 items
+  const [numItems] = useState(10000); // Default to 100 items
 
   // Generate colors for the grid items
   const colors = [
@@ -73,9 +73,6 @@ const GridItem = ({ item }: { item: GridItem }) => {
   const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
   const baseHeight = 50;
   const height = isExpanded ? (item.id % 2 == 0 ? 80 : 100) : baseHeight;
-  useEffect(() => {
-    //console.log("item mount", item.id);
-  }, []);
   return (
     <Pressable onPress={() => setIsExpanded(!isExpanded)}>
       <View
