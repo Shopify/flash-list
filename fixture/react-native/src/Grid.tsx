@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text, View, StyleSheet, Platform, Pressable } from "react-native";
 import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
 
@@ -56,7 +56,7 @@ export function Grid() {
         contentContainerStyle={{
           padding: 4,
         }}
-        initialScrollIndex={5}
+        //initialScrollIndex={5}
         overrideItemLayout={(layout, item) => {
           layout.span = item.span;
         }}
@@ -73,7 +73,9 @@ const GridItem = ({ item }: { item: GridItem }) => {
   const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
   const baseHeight = 50;
   const height = isExpanded ? (item.id % 2 == 0 ? 80 : 100) : baseHeight;
-
+  useEffect(() => {
+    //console.log("item mount", item.id);
+  }, []);
   return (
     <Pressable onPress={() => setIsExpanded(!isExpanded)}>
       <View

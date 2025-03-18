@@ -4,7 +4,7 @@ import { RVLayoutManager } from "../layout-managers/LayoutManager";
 export interface RVEngagedIndicesTracker {
   // current scroll offset, setting this driectly will not trigger visible indices change
   scrollOffset: number;
-  drawDistance: number | undefined;
+  drawDistance: number;
 
   /**
    * Updates the scroll offset and calculates the new engaged indices.
@@ -31,7 +31,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   // Current scroll offset
   public scrollOffset = 0;
   // Render ahead offset for pre-rendering items
-  public drawDistance: number | undefined = undefined;
+  public drawDistance: number = 250;
   // Currently engaged indices (including render buffer)
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
@@ -64,7 +64,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
 
     // STEP 2: Determine buffer size and distribution
     // The total extra space where items will be pre-rendered
-    const totalBuffer = this.drawDistance ?? viewportSize;
+    const totalBuffer = this.drawDistance;
 
     // Determine scroll direction to optimize buffer distribution
     if (velocity) {

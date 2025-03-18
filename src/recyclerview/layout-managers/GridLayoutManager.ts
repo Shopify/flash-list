@@ -13,10 +13,16 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     this.boundedSize = params.windowSize.width;
   }
 
+  updateLayoutParams(params: LayoutParams): void {
+    this.boundedSize = params.windowSize.width;
+    super.updateLayoutParams(params);
+  }
+
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
       const layout = this.layouts[index];
+      layout.width = this.getWidth(index);
       layout.height = dimensions.height;
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
@@ -25,12 +31,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
 
   estimateLayout(index: number) {
     const layout = this.layouts[index];
-
-    // Apply span information if available
-    const span = this.getSpanSizeInfo(index).span ?? 1;
-
-    // Set width based on columns and span
-    layout.width = (this.boundedSize / this.maxColumns) * span;
+    layout.width = this.getWidth(index);
     layout.height = this.getEstimatedHeight(index);
 
     layout.isWidthMeasured = true;
@@ -56,9 +57,11 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     let startX = startVal.x;
     let startY = startVal.y;
 
-    const itemCount = this.layouts.length;
-
-    for (let i = newStartIndex; i < itemCount; i++) {
+    for (
+      let i = newStartIndex;
+      i <= this.getMaxRecomputeIndex(newStartIndex);
+      i++
+    ) {
       const layout = this.getLayout(i);
       if (!this.checkBounds(startX, layout.width)) {
         const tallestItem = this.processAndReturnTallestItemInRow(i);
@@ -70,6 +73,11 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       layout.y = startY;
       startX += layout.width;
     }
+  }
+
+  private getWidth(index: number): number {
+    const span = this.getSpanSizeInfo(index).span ?? 1;
+    return (this.boundedSize / this.maxColumns) * span;
   }
 
   private processAndReturnTallestItemInRow(index: number): RVLayout {

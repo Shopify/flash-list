@@ -41,7 +41,7 @@ export class RecyclerViewManager<T> {
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
   // TODO: Call getKey anyway if stableIds are present
   private updateRenderStack = (engagedIndices: ConsecutiveNumbers): void => {
-    console.log("updateRenderStack", engagedIndices);
+    //console.log("updateRenderStack", engagedIndices);
     const newRenderStack = new Map<number, string>();
     for (const [index, key] of this.renderStack) {
       //TODO: Can be optimized since engagedIndices is sorted
@@ -78,7 +78,8 @@ export class RecyclerViewManager<T> {
 
   updateProps(props: RecyclerViewProps<T>) {
     this.props = props;
-    this.engagedIndicesTracker.drawDistance = props.drawDistance;
+    this.engagedIndicesTracker.drawDistance =
+      props.drawDistance ?? this.engagedIndicesTracker.drawDistance;
     if (this.props.drawDistance === 0) {
       this.initialDrawBatchSize = 1;
     } else {
@@ -207,7 +208,7 @@ export class RecyclerViewManager<T> {
       this.isFirstLayoutComplete = true;
     }
     if (this.layoutManager?.requiresRepaint) {
-      console.log("requiresRepaint triggered");
+      // console.log("requiresRepaint triggered");
       this.layoutManager.requiresRepaint = false;
       return true;
     }
@@ -275,12 +276,13 @@ export class RecyclerViewManager<T> {
       }
 
       const visibleIndices = this.getVisibleIndices();
-      console.log("---------> visibleIndices", visibleIndices);
+      // console.log("---------> visibleIndices", visibleIndices);
       this.isFirstLayoutComplete = visibleIndices.every(
         (index) =>
           layoutManager.getLayout(index).isHeightMeasured &&
           layoutManager.getLayout(index).isWidthMeasured
       );
+
       // If everything is measured then render stack will be in sync. The buffer items will get rendered in the next update
       // triggered by the useOnLoad hook.
       !this.isFirstLayoutComplete &&
