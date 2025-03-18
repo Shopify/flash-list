@@ -50,18 +50,14 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     };
   }
 
-  recomputeLayouts(startIndex = 0): void {
+  recomputeLayouts(startIndex: number, endIndex: number): void {
     const newStartIndex = this.locateFirstNeighbourIndex(startIndex);
     const startVal = this.getLayout(newStartIndex);
 
     let startX = startVal.x;
     let startY = startVal.y;
 
-    for (
-      let i = newStartIndex;
-      i <= this.getMaxRecomputeIndex(newStartIndex);
-      i++
-    ) {
+    for (let i = newStartIndex; i <= endIndex; i++) {
       const layout = this.getLayout(i);
       if (!this.checkBounds(startX, layout.width)) {
         const tallestItem = this.processAndReturnTallestItemInRow(i);

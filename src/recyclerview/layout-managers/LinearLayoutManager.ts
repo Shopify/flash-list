@@ -96,8 +96,8 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   }
 
   // Helper function to recompute layouts starting from a given index
-  recomputeLayouts(startIndex = 0): void {
-    for (let i = startIndex; i <= this.getMaxRecomputeIndex(startIndex); i++) {
+  recomputeLayouts(startIndex: number, endIndex: number): void {
+    for (let i = startIndex; i <= endIndex; i++) {
       const layout = this.getLayout(i);
 
       // Set positions based on whether this is the first item or not
