@@ -207,14 +207,14 @@ const RecyclerViewComponent = <T1,>(
       areDimensionsNotEqual(width, size.width) ||
       areDimensionsNotEqual(height, size.height)
     ) {
-      // console.log(
-      //   "invalid size",
-      //   index,
-      //   width,
-      //   size.width,
-      //   height,
-      //   size.height
-      // );
+      console.log(
+        "invalid size",
+        index,
+        width,
+        size.width,
+        height,
+        size.height
+      );
       // TODO: Add a warning for missing useLayoutState
       //context.layout();
     }

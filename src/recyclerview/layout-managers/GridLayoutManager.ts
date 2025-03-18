@@ -14,21 +14,24 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   }
 
   updateLayoutParams(params: LayoutParams): void {
-    if (params.windowSize.width !== this.boundedSize) {
+    super.updateLayoutParams(params);
+    if (this.boundedSize !== params.windowSize.width) {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
+        //update all widths
+        for (let i = 0; i < this.layouts.length; i++) {
+          this.layouts[i].width = this.getWidth(i);
+        }
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
       }
     }
-    super.updateLayoutParams(params);
   }
 
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
       const layout = this.layouts[index];
-      layout.width = this.getWidth(index);
       layout.height = dimensions.height;
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
