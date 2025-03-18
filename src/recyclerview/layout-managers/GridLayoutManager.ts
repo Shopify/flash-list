@@ -86,9 +86,11 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     let tallestItem: RVLayout | undefined;
     let maxHeight = 0;
     let i = startIndex;
+    let isMeasured = false;
     // TODO: Manage precision problems
     while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
       const layout = this.layouts[i];
+      isMeasured = isMeasured || Boolean(layout.isHeightMeasured);
       maxHeight = Math.max(maxHeight, layout.height);
       if (
         layout.height > (layout.minHeight ?? 0) &&
@@ -96,16 +98,22 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       ) {
         tallestItem = layout;
       }
+
       i++;
       if (i >= this.layouts.length) {
         break;
       }
     }
+
     tallestItem = tallestItem ?? this.layouts[startIndex];
+
+    if (!isMeasured) {
+      return tallestItem;
+    }
 
     if (tallestItem) {
       let targetHeight = tallestItem.height;
-      if (tallestItem.height < maxHeight) {
+      if (maxHeight - tallestItem.height > 1) {
         targetHeight = 0;
         this.requiresRepaint = true;
       }

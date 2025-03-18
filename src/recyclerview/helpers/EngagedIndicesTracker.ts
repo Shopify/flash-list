@@ -64,7 +64,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
 
     // STEP 2: Determine buffer size and distribution
     // The total extra space where items will be pre-rendered
-    const totalBuffer = this.drawDistance;
+    const totalBuffer = this.drawDistance * 2;
 
     // Determine scroll direction to optimize buffer distribution
     if (velocity) {

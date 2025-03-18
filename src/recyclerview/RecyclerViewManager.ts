@@ -212,10 +212,10 @@ export class RecyclerViewManager<T> {
       this.layoutManager.requiresRepaint = false;
       return true;
     }
-    if (this.getIsFirstLayoutComplete()) {
-      return this.recomputeEngagedIndices() !== undefined;
+    if (this.isFirstLayoutComplete) {
+      return this.recomputeEngagedIndices() !== undefined; //TODO: Move to an effect as this can block paint for more than necessary
     } else {
-      this.resumeProgressiveRender();
+      this.renderProgressively();
     }
     return !this.isFirstLayoutComplete;
   }
@@ -249,12 +249,16 @@ export class RecyclerViewManager<T> {
     }
   }
 
+  recomputeEngagedIndices(): ConsecutiveNumbers | undefined {
+    return this.updateScrollOffset(this.getAbsoluteLastScrollOffset());
+  }
+
   dispose() {
     this.itemViewabilityManager.dispose();
   }
 
   // TODO
-  private resumeProgressiveRender() {
+  private renderProgressively() {
     const layoutManager = this.layoutManager;
     if (layoutManager) {
       const initialItemLayout = this.layoutManager?.getLayout(
@@ -297,10 +301,6 @@ export class RecyclerViewManager<T> {
           )
         );
     }
-  }
-
-  private recomputeEngagedIndices(): ConsecutiveNumbers | undefined {
-    return this.updateScrollOffset(this.getAbsoluteLastScrollOffset());
   }
 
   private getItemType(index: number): string {
