@@ -23,8 +23,11 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     super.updateLayoutParams(params);
     if (this.boundedSize !== params.windowSize.width) {
       this.boundedSize = params.windowSize.width;
-      //TODO: Optimize masonry in general
-      this.recomputeLayouts(0, this.layouts.length - 1);
+      if (this.layouts.length > 0) {
+        //TODO: Optimize masonry in general
+        this.recomputeLayouts(0, this.layouts.length - 1);
+        this.requiresRepaint = true;
+      }
     }
   }
 

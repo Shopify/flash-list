@@ -14,7 +14,13 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   }
 
   updateLayoutParams(params: LayoutParams): void {
-    this.boundedSize = params.windowSize.width;
+    if (params.windowSize.width !== this.boundedSize) {
+      this.boundedSize = params.windowSize.width;
+      if (this.layouts.length > 0) {
+        this.recomputeLayouts(0, this.layouts.length - 1);
+        this.requiresRepaint = true;
+      }
+    }
     super.updateLayoutParams(params);
   }
 

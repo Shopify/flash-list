@@ -233,14 +233,24 @@ const RecyclerViewComponent = <T1,>(
       <CompatView
         style={{ flex: horizontal ? undefined : 1, ...style }}
         ref={internalViewRef}
-        onLayout={() => {
-          //console.log("onLayout");
-          recyclerViewContext.layout();
+        onLayout={(event) => {
+          if (
+            areDimensionsNotEqual(
+              event.nativeEvent.layout.width,
+              recyclerViewManager.getWindowSize().width
+            ) ||
+            areDimensionsNotEqual(
+              event.nativeEvent.layout.height,
+              recyclerViewManager.getWindowSize().height
+            )
+          ) {
+            console.log("onLayout");
+            recyclerViewContext.layout();
+          }
         }}
       >
         <CompatScrollView
           {...rest}
-          style={undefined}
           horizontal={horizontal}
           ref={scrollViewRef}
           contentOffset={contentOffset}
