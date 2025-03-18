@@ -24,6 +24,10 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     if (this.boundedSize !== params.windowSize.width) {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
+        //update all widths
+        for (let i = 0; i < this.layouts.length; i++) {
+          this.layouts[i].width = this.getWidth(i);
+        }
         //TODO: Optimize masonry in general
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
@@ -36,7 +40,6 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
       const layout = this.layouts[index];
-      layout.width = this.getWidth(index);
       layout.height = dimensions.height;
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
