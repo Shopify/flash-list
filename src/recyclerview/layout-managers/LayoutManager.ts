@@ -21,7 +21,7 @@ export abstract class RVLayoutManager {
   private _getItemType?: (index: number) => string | number;
   private heightAverageWindow: MultiTypeAverageWindow;
   private widthAverageWindow: MultiTypeAverageWindow;
-  private maxItemsToProcess: number = 500; // TODO: make this dynamic
+  private maxItemsToProcess: number = 250; // TODO: make this dynamic
 
   constructor(params: LayoutParams) {
     this.horizontal = Boolean(params.horizontal);

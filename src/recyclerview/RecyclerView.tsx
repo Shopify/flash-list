@@ -137,6 +137,14 @@ const RecyclerViewComponent = <T1,>(
     }
   });
 
+  // useEffect(() => {
+  //   if (recyclerViewManager.getIsFirstLayoutComplete()) {
+  //     if (recyclerViewManager.recomputeEngagedIndices()) {
+  //       setRenderId((prev) => prev + 1);
+  //     }
+  //   }
+  // });
+
   const onScrollHandler = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       let velocity = event.nativeEvent.velocity;
