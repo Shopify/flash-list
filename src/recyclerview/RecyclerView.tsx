@@ -35,6 +35,7 @@ import { useBoundDetection } from "./hooks/useBoundDetection";
 import { useRecyclerViewHandler } from "./hooks/useRecyclerViewHandler";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 import { useSecondaryProps } from "./hooks/useSecondaryProps";
+import { StickyHeader } from "./components/StickyHeader";
 
 const RecyclerViewComponent = <T,>(
   props: RecyclerViewProps<T>,
@@ -61,6 +62,7 @@ const RecyclerViewComponent = <T,>(
     onScroll,
     disableRecycling,
     style,
+    stickyHeaderIndices,
     ...rest
   } = props;
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -311,6 +313,13 @@ const RecyclerViewComponent = <T,>(
           {renderEmpty}
           {renderFooter}
         </CompatScrollView>
+        <StickyHeader
+          stickyHeaderIndices={stickyHeaderIndices!}
+          data={data!}
+          renderItem={renderItem}
+          //scrollY={scrollY}
+          recyclerViewManager={recyclerViewManager}
+        />
       </CompatView>
     </RecyclerViewContextProvider>
   );
