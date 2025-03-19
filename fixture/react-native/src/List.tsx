@@ -68,7 +68,6 @@ const List = () => {
           setRefreshing(false);
         }, 2000);
       }}
-      disableAutoLayout
       keyExtractor={(item: number) => {
         return item.toString();
       }}
@@ -76,7 +75,6 @@ const List = () => {
         return item % 2 === 0 ? "even" : "odd";
       }}
       renderItem={renderItem}
-      estimatedItemSize={100}
       data={data}
     />
   );
