@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, RecyclerView } from "@shopify/flash-list";
 
 import { DebugContext } from "../Debug";
 
@@ -33,7 +33,7 @@ const Contacts = () => {
     .filter((item) => item !== null) as number[];
 
   return (
-    <FlashList
+    <RecyclerView
       testID="FlashList"
       estimatedItemSize={44}
       data={data}
