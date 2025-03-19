@@ -102,6 +102,11 @@ export class RecyclerViewManager<T> {
         velocity,
         this.layoutManager
       );
+      console.log(
+        "scrollOffset",
+        this.engagedIndicesTracker.scrollOffset,
+        this.firstItemOffset
+      );
       if (engagedIndices) {
         this.updateRenderStack(engagedIndices);
         return engagedIndices;
@@ -205,6 +210,7 @@ export class RecyclerViewManager<T> {
   ): boolean {
     this.layoutManager?.modifyLayout(layoutInfo, dataLength);
     if (dataLength === 0) {
+      this.applyInitialScrollAdjustment();
       this.isFirstLayoutComplete = true;
     }
     if (this.layoutManager?.requiresRepaint) {
@@ -257,28 +263,41 @@ export class RecyclerViewManager<T> {
     this.itemViewabilityManager.dispose();
   }
 
+  private applyInitialScrollAdjustment() {
+    if (!this.layoutManager) {
+      return;
+    }
+    const initialItemLayout = this.layoutManager?.getLayout(
+      this.props.initialScrollIndex ?? 0
+    );
+    const initialItemOffset = this.props.horizontal
+      ? initialItemLayout?.x
+      : initialItemLayout?.y;
+
+    if (
+      this.props.initialScrollIndex !== undefined &&
+      this.props.initialScrollIndex != null
+    ) {
+      console.log(
+        "initialItemOffset",
+        this.props.initialScrollIndex,
+        initialItemOffset,
+        this.firstItemOffset
+      );
+      this.engagedIndicesTracker.scrollOffset =
+        initialItemOffset ?? 0 + this.firstItemOffset;
+    } else {
+      console.log("initialItemOffset", initialItemOffset, this.firstItemOffset);
+      this.engagedIndicesTracker.scrollOffset =
+        (initialItemOffset ?? 0) - this.firstItemOffset;
+    }
+  }
+
   // TODO
   private renderProgressively() {
     const layoutManager = this.layoutManager;
     if (layoutManager) {
-      const initialItemLayout = this.layoutManager?.getLayout(
-        this.props.initialScrollIndex ?? 0
-      );
-      const initialItemOffset = this.props.horizontal
-        ? initialItemLayout?.x
-        : initialItemLayout?.y;
-
-      if (
-        this.props.initialScrollIndex !== undefined &&
-        this.props.initialScrollIndex != null
-      ) {
-        this.engagedIndicesTracker.scrollOffset =
-          initialItemOffset ?? 0 + this.firstItemOffset;
-      } else {
-        this.engagedIndicesTracker.scrollOffset =
-          (initialItemOffset ?? 0) - this.firstItemOffset;
-      }
-
+      this.applyInitialScrollAdjustment();
       const visibleIndices = this.getVisibleIndices();
       // console.log("---------> visibleIndices", visibleIndices);
       this.isFirstLayoutComplete = visibleIndices.every(

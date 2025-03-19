@@ -28,4 +28,5 @@ export type RootStackParamList = {
   DynamicItems: undefined;
   RecyclerViewHandlerTest: undefined;
   MovieList: undefined;
+  Carousel: undefined;
 };
