@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useRef } from "react";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { RecyclerViewProps } from "../RecyclerViewProps";

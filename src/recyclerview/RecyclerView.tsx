@@ -36,8 +36,8 @@ import { useRecyclerViewHandler } from "./hooks/useRecyclerViewHandler";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 import { useSecondaryProps } from "./hooks/useSecondaryProps";
 
-const RecyclerViewComponent = <T1,>(
-  props: RecyclerViewProps<T1>,
+const RecyclerViewComponent = <T,>(
+  props: RecyclerViewProps<T>,
   ref: React.Ref<any>
 ) => {
   const {
@@ -293,8 +293,13 @@ const RecyclerViewComponent = <T1,>(
   );
 };
 
-export const RecyclerView = forwardRef(
-  RecyclerViewComponent
-) as typeof RecyclerViewComponent;
+// Define the component type with proper generic typing
+type RecyclerViewType = <T>(
+  props: RecyclerViewProps<T> & { ref?: React.Ref<any> }
+) => React.JSX.Element;
 
-// RecyclerView.displayName = "RecyclerView";
+// Create the forwarded ref component with proper typing
+const RecyclerView = forwardRef(RecyclerViewComponent) as RecyclerViewType;
+
+// Export the component
+export { RecyclerView };

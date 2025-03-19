@@ -65,8 +65,9 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
   const CompatScrollView = useMemo(
     () =>
       renderScrollComponent
-        ? React.forwardRef((props, ref) =>
-            renderScrollComponent({ ...props, ref } as any)
+        ? React.forwardRef(
+            (props, ref) =>
+              renderScrollComponent({ ...props, ref } as any) as any
           )
         : CompatScroller,
     [renderScrollComponent]
