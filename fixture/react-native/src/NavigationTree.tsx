@@ -24,6 +24,7 @@ import { HeaderFooterExample } from "./HeaderFooterExample";
 import DynamicItems from "./DynamicItems";
 import RecyclerViewHandlerTest from "./RecyclerViewHandlerTest";
 import MovieList from "./MovieList";
+import Carousel from "./Carousel";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -73,6 +74,11 @@ const NavigationTree = () => {
             name="MovieList"
             component={MovieList}
             options={{ title: "Movie Streaming" }}
+          />
+          <Stack.Screen
+            name="Carousel"
+            component={Carousel}
+            options={{ title: "Carousel Example" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />

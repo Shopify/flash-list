@@ -22,6 +22,7 @@ export const ExamplesScreen = () => {
   const data: ExampleItem[] = [
     { title: "List", destination: "List" },
     { title: "Horizontal List", destination: "HorizontalList" },
+    { title: "Carousel", destination: "Carousel" },
     { title: "Grid", destination: "Grid" },
     { title: "Masonry", destination: "Masonry" },
     { title: "Complex Masonry", destination: "ComplexMasonry" },
