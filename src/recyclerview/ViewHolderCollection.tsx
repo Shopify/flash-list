@@ -15,7 +15,6 @@ export interface ViewHolderCollectionProps<TItem> {
   renderItem: FlashListProps<TItem>["renderItem"];
   extraData: any;
   getChildContainerLayout: () => RVDimension | undefined;
-  childContainerViewRef?: React.RefObject<CompatView>;
   onCommitLayoutEffect?: () => void;
   onCommitEffect?: () => void;
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
@@ -40,7 +39,6 @@ export const ViewHolderCollection = <TItem,>(
     extraData,
     viewHolderCollectionRef,
     getChildContainerLayout,
-    childContainerViewRef,
     onCommitLayoutEffect,
     CellRendererComponent,
     ItemSeparatorComponent,
@@ -99,7 +97,6 @@ export const ViewHolderCollection = <TItem,>(
   return (
     <CompatView
       // TODO: Take care of web scroll bar here
-      ref={childContainerViewRef}
       style={hasData && containerStyle}
     >
       {containerLayout &&

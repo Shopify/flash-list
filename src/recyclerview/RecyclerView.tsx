@@ -103,15 +103,17 @@ const RecyclerViewComponent = <T,>(
       distanceFromWindow.current = horizontal
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
-      // console.log(
-      //   "updateWindowSize",
-      //   outerViewLayout.height,
-      //   childViewLayout.width
-      // );
+
+      console.log(
+        "updateWindowSize",
+        measureLayout(scrollViewRef.current!),
+        measureLayout(childContainerViewRef.current!)
+      );
+
       recyclerViewManager.updateWindowSize(
         {
           width: horizontal ? outerViewLayout.width : childViewLayout.width,
-          height: outerViewLayout.height,
+          height: horizontal ? childViewLayout.height : outerViewLayout.height,
         },
         distanceFromWindow.current
       );
@@ -260,6 +262,14 @@ const RecyclerViewComponent = <T,>(
           refreshControl={refreshControl}
           {...overrideProps}
         >
+          <CompatView
+            style={{
+              height: horizontal ? undefined : 0,
+              width: horizontal ? 0 : undefined,
+              backgroundColor: "blue",
+            }}
+            ref={childContainerViewRef}
+          />
           {renderHeader}
           <ViewHolderCollection
             viewHolderCollectionRef={viewHolderCollectionRef}
@@ -271,7 +281,6 @@ const RecyclerViewComponent = <T,>(
             onSizeChanged={validateItemSize}
             renderItem={renderItem}
             extraData={extraData}
-            childContainerViewRef={childContainerViewRef}
             onCommitEffect={() => {
               checkBounds();
               recyclerViewManager.computeItemViewability();
