@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import {
+  Animated,
   I18nManager,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -35,7 +36,7 @@ import { useBoundDetection } from "./hooks/useBoundDetection";
 import { useRecyclerViewHandler } from "./hooks/useRecyclerViewHandler";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 import { useSecondaryProps } from "./hooks/useSecondaryProps";
-import { StickyHeader } from "./components/StickyHeader";
+import { StickyHeader, StickyHeaderRef } from "./components/StickyHeader";
 
 const RecyclerViewComponent = <T,>(
   props: RecyclerViewProps<T>,
@@ -69,6 +70,8 @@ const RecyclerViewComponent = <T,>(
   const internalViewRef = useRef<CompatView>(null);
   const childContainerViewRef = useRef<CompatView>(null);
   const distanceFromWindow = useRef(0);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const stickyHeaderRef = useRef<StickyHeaderRef>(null);
   const [_, setLayoutTreeId] = useLayoutState(0);
   const [__, setRenderId] = useState(0);
 
@@ -106,11 +109,11 @@ const RecyclerViewComponent = <T,>(
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
 
-      console.log(
-        "updateWindowSize",
-        measureLayout(scrollViewRef.current!),
-        measureLayout(childContainerViewRef.current!)
-      );
+      // console.log(
+      //   "updateWindowSize",
+      //   measureLayout(scrollViewRef.current!),
+      //   measureLayout(childContainerViewRef.current!)
+      // );
 
       recyclerViewManager.updateWindowSize(
         {
@@ -174,6 +177,7 @@ const RecyclerViewComponent = <T,>(
         // trigger another update if there are engaged indices
         setRenderId((prev) => prev + 1);
       }
+      stickyHeaderRef.current?.reportScrollEvent(event.nativeEvent);
       checkBounds();
       recyclerViewManager.computeItemViewability();
       onScroll?.(event);
@@ -197,32 +201,35 @@ const RecyclerViewComponent = <T,>(
     };
   }, [setLayoutTreeId]);
 
-  const validateItemSize = (index: number, size: RVDimension) => {
-    const layout = recyclerViewManager.getLayout(index);
-    const width = Math.max(
-      Math.min(layout.width, layout.maxWidth ?? Infinity),
-      layout.minWidth ?? 0
-    );
-    const height = Math.max(
-      Math.min(layout.height, layout.maxHeight ?? Infinity),
-      layout.minHeight ?? 0
-    );
-    if (
-      areDimensionsNotEqual(width, size.width) ||
-      areDimensionsNotEqual(height, size.height)
-    ) {
-      console.log(
-        "invalid size",
-        index,
-        width,
-        size.width,
-        height,
-        size.height
+  const validateItemSize = useCallback(
+    (index: number, size: RVDimension) => {
+      const layout = recyclerViewManager.getLayout(index);
+      const width = Math.max(
+        Math.min(layout.width, layout.maxWidth ?? Infinity),
+        layout.minWidth ?? 0
       );
-      // TODO: Add a warning for missing useLayoutState
-      //context.layout();
-    }
-  };
+      const height = Math.max(
+        Math.min(layout.height, layout.maxHeight ?? Infinity),
+        layout.minHeight ?? 0
+      );
+      if (
+        areDimensionsNotEqual(width, size.width) ||
+        areDimensionsNotEqual(height, size.height)
+      ) {
+        console.log(
+          "invalid size",
+          index,
+          width,
+          size.width,
+          height,
+          size.height
+        );
+        // TODO: Add a warning for missing useLayoutState
+        //context.layout();
+      }
+    },
+    [recyclerViewManager]
+  );
 
   const {
     refreshControl,
@@ -244,6 +251,27 @@ const RecyclerViewComponent = <T,>(
       />
     );
   }, [horizontal]);
+
+  const hasStickyHeaders = useMemo(() => {
+    return (
+      data &&
+      data.length > 0 &&
+      stickyHeaderIndices &&
+      stickyHeaderIndices.length > 0
+    );
+  }, [data, stickyHeaderIndices]);
+
+  const animatedEvent = useMemo(() => {
+    if (hasStickyHeaders) {
+      return Animated.event(
+        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+        { useNativeDriver: true, listener: onScrollHandler }
+      );
+    }
+    return onScrollHandler;
+  }, [onScrollHandler, hasStickyHeaders]);
+
+  console.log("render");
 
   return (
     <RecyclerViewContextProvider value={recyclerViewContext}>
@@ -271,7 +299,7 @@ const RecyclerViewComponent = <T,>(
           horizontal={horizontal}
           ref={scrollViewRef}
           contentOffset={contentOffset}
-          onScroll={onScrollHandler}
+          onScroll={animatedEvent}
           // TODO: evaluate perf
           removeClippedSubviews={false}
           refreshControl={refreshControl}
@@ -313,13 +341,16 @@ const RecyclerViewComponent = <T,>(
           {renderEmpty}
           {renderFooter}
         </CompatScrollView>
-        <StickyHeader
-          stickyHeaderIndices={stickyHeaderIndices!}
-          data={data!}
-          renderItem={renderItem}
-          //scrollY={scrollY}
-          recyclerViewManager={recyclerViewManager}
-        />
+        {hasStickyHeaders && (
+          <StickyHeader
+            stickyHeaderIndices={stickyHeaderIndices!}
+            data={data!}
+            renderItem={renderItem}
+            scrollY={scrollY}
+            stickyHeaderRef={stickyHeaderRef}
+            recyclerViewManager={recyclerViewManager}
+          />
+        )}
       </CompatView>
     </RecyclerViewContextProvider>
   );
