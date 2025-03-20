@@ -5,7 +5,7 @@ import React, {
   useImperativeHandle,
   useCallback,
 } from "react";
-import { Animated, NativeScrollEvent, View } from "react-native";
+import { Animated, NativeScrollEvent } from "react-native";
 import { FlashListProps } from "../..";
 import { CompatAnimatedView } from "./CompatView";
 import { RecyclerViewManager } from "../RecyclerViewManager";
@@ -23,7 +23,7 @@ export interface StickyHeaderRef {
   reportScrollEvent: (event: NativeScrollEvent) => void;
 }
 
-export const StickyHeader = <TItem,>({
+export const StickyHeaders = <TItem,>({
   stickyHeaderIndices,
   renderItem,
   stickyHeaderRef,
