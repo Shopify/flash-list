@@ -63,7 +63,6 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   getLayoutSize(): RVDimension {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
     const lastLayout = this.layouts[this.layouts.length - 1];
-    console.log(this.boundedSize);
     return {
       width: this.horizontal
         ? lastLayout.x + lastLayout.width

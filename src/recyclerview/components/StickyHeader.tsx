@@ -1,74 +1,127 @@
-import React, { useRef, useEffect } from "react";
-import { Animated, View } from "react-native";
+import React, {
+  useRef,
+  useState,
+  useMemo,
+  useImperativeHandle,
+  useCallback,
+} from "react";
+import { Animated, NativeScrollEvent, View } from "react-native";
 import { FlashListProps } from "../..";
 import { CompatAnimatedView } from "./CompatView";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { ViewHolder } from "../ViewHolder";
 export interface StickyHeaderProps<TItem> {
   stickyHeaderIndices: number[];
-  data: TItem[];
-  renderItem: FlashListProps<TItem>["renderItem"];
+  data: readonly TItem[];
   scrollY: Animated.Value;
+  renderItem: FlashListProps<TItem>["renderItem"];
+  stickyHeaderRef: React.RefObject<StickyHeaderRef>;
   recyclerViewManager: RecyclerViewManager<TItem>;
   extraData?: FlashListProps<TItem>["extraData"];
+}
+export interface StickyHeaderRef {
+  reportScrollEvent: (event: NativeScrollEvent) => void;
 }
 
 export const StickyHeader = <TItem,>({
   stickyHeaderIndices,
   renderItem,
-  //scrollY,
+  stickyHeaderRef,
   recyclerViewManager,
+  scrollY,
   data,
   extraData,
 }: StickyHeaderProps<TItem>) => {
-  const translateY = useRef(new Animated.Value(0)).current;
-  // Calculate current sticky header
+  const [stickyIndices, setStickyIndices] = useState<{
+    current: number;
+    next?: number;
+  }>({ current: -1 });
 
-  let currentSticky = -1;
-  const currentScrollY = recyclerViewManager.getLastScrollOffset();
+  const { current: currentStickyIndex, next: nextStickyIndex } = stickyIndices;
 
-  for (let i = 0; i < stickyHeaderIndices.length; i++) {
-    const stickyHeaderIndex = stickyHeaderIndices[i];
-    const stickyHeaderOffset = recyclerViewManager.getLayout(stickyHeaderIndex);
-    if (stickyHeaderOffset.y <= currentScrollY) {
-      currentSticky = stickyHeaderIndex;
+  // Memoize sorted indices based on their Y positions
+  const sortedIndices = useMemo(() => {
+    return [...stickyHeaderIndices].sort((a, b) => {
+      const aY = recyclerViewManager.getLayout(a).y;
+      const bY = recyclerViewManager.getLayout(b).y;
+      return aY - bY;
+    });
+  }, [stickyHeaderIndices, recyclerViewManager]);
+
+  const compute = useCallback(() => {
+    const adjustedValue = recyclerViewManager.getLastScrollOffset();
+
+    // Binary search for current sticky index
+    const newStickyIndex = findCurrentStickyIndex(
+      sortedIndices,
+      adjustedValue,
+      (index) => recyclerViewManager.getLayout(index).y
+    );
+
+    // Binary search for next sticky index
+    const newNextStickyIndex = findNextStickyIndex(
+      sortedIndices,
+      adjustedValue,
+      (index) => recyclerViewManager.getLayout(index).y
+    );
+
+    if (
+      newStickyIndex !== currentStickyIndex ||
+      newNextStickyIndex !== nextStickyIndex
+    ) {
+      setStickyIndices({
+        current: newStickyIndex,
+        next: newNextStickyIndex,
+      });
     }
-  }
+  }, [currentStickyIndex, nextStickyIndex, recyclerViewManager, sortedIndices]);
 
-  // Calculate next sticky header
-  let nextSticky;
-  for (let i = 0; i < stickyHeaderIndices.length; i++) {
-    const stickyHeaderIndex = stickyHeaderIndices[i];
-    const stickyHeaderOffset = recyclerViewManager.getLayout(stickyHeaderIndex);
-    if (stickyHeaderOffset.y > currentScrollY) {
-      nextSticky = stickyHeaderIndex;
-      break;
+  compute();
+
+  // Optimized scroll handler using binary search pattern
+  useImperativeHandle(
+    stickyHeaderRef,
+    () => ({
+      reportScrollEvent: () => {
+        compute();
+      },
+    }),
+    [
+      stickyHeaderIndices,
+      recyclerViewManager,
+      currentStickyIndex,
+      nextStickyIndex,
+    ]
+  );
+
+  const refHolder = useRef(new Map()).current;
+
+  // Memoize translateY calculation
+  const translateY = useMemo(() => {
+    if (currentStickyIndex === -1 || !nextStickyIndex) {
+      return new Animated.Value(0);
     }
-  }
 
-  if (nextSticky !== undefined) {
-    const nextHeaderLayout = recyclerViewManager.getLayout(nextSticky);
-    const currentHeaderLayout = recyclerViewManager.getLayout(currentSticky);
-    const currentHeaderHeight = currentHeaderLayout.height || 0;
+    const currentLayout = recyclerViewManager.getLayout(currentStickyIndex);
+    const nextLayout = recyclerViewManager.getLayout(nextStickyIndex);
 
-    // Calculate how much the next header has pushed into the current sticky header
-    const pushDistance =
-      currentScrollY + currentHeaderHeight - nextHeaderLayout.y;
+    const pushStartsAt = nextLayout.y - currentLayout.height;
 
-    if (pushDistance > 0) {
-      // When next header starts pushing the current one
-      translateY.setValue(-Math.min(pushDistance, currentHeaderHeight));
-    } else {
-      translateY.setValue(0);
-    }
-  }
+    return scrollY.interpolate({
+      inputRange: [
+        pushStartsAt + recyclerViewManager.firstItemOffset,
+        nextLayout.y + recyclerViewManager.firstItemOffset,
+      ],
+      outputRange: [0, -currentLayout.height],
+      extrapolate: "clamp",
+    });
+  }, [currentStickyIndex, nextStickyIndex, recyclerViewManager, scrollY]);
 
-  const refHolder = useRef(
-    new Map<number, React.RefObject<View | null>>()
-  ).current;
+  // Memoize header content
+  const headerContent = useMemo(() => {
+    if (currentStickyIndex === -1) return null;
 
-  return (
-    currentSticky !== -1 && (
+    return (
       <CompatAnimatedView
         style={{
           position: "absolute",
@@ -79,20 +132,70 @@ export const StickyHeader = <TItem,>({
         }}
       >
         <ViewHolder
-          index={currentSticky}
-          item={data[currentSticky]}
+          index={currentStickyIndex}
+          item={data[currentStickyIndex]}
           renderItem={renderItem}
           layout={{ x: 0, y: 0, width: 0, height: 0 }}
           refHolder={refHolder}
           extraData={extraData}
-          onSizeChanged={() => {}}
           trailingItem={null}
           target="StickyHeader"
         />
       </CompatAnimatedView>
-    )
-  );
+    );
+  }, [currentStickyIndex, data, renderItem, extraData, refHolder, translateY]);
+
+  return headerContent;
 };
+
+// Binary search utilities
+function findCurrentStickyIndex(
+  sortedIndices: number[],
+  adjustedValue: number,
+  getY: (index: number) => number
+): number {
+  let left = 0;
+  let right = sortedIndices.length - 1;
+  let result = -1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const currentY = getY(sortedIndices[mid]);
+
+    if (currentY <= adjustedValue) {
+      result = sortedIndices[mid];
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  return result;
+}
+
+function findNextStickyIndex(
+  sortedIndices: number[],
+  adjustedValue: number,
+  getY: (index: number) => number
+): number | undefined {
+  let left = 0;
+  let right = sortedIndices.length - 1;
+  let result: number | undefined;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const currentY = getY(sortedIndices[mid]);
+
+    if (currentY > adjustedValue) {
+      result = sortedIndices[mid];
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
+  }
+
+  return result;
+}
 
 /*
  * Sliding animation for sticky headers:

@@ -102,11 +102,7 @@ export class RecyclerViewManager<T> {
         velocity,
         this.layoutManager
       );
-      console.log(
-        "scrollOffset",
-        this.engagedIndicesTracker.scrollOffset,
-        this.firstItemOffset
-      );
+
       if (engagedIndices) {
         this.updateRenderStack(engagedIndices);
         return engagedIndices;

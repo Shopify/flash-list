@@ -16,7 +16,6 @@ export interface ViewHolderProps<TItem> {
   index: number;
   layout: RVLayout;
   refHolder: Map<number, RefObject<CompatView | null>>;
-  onSizeChanged: (index: number, size: RVDimension) => void;
   extraData: any;
   target: RenderTarget;
   item: TItem;
@@ -25,6 +24,7 @@ export interface ViewHolderProps<TItem> {
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
   ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
   horizontal?: FlashListProps<TItem>["horizontal"];
+  onSizeChanged?: (index: number, size: RVDimension) => void;
 }
 const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   // create ref for View
@@ -55,7 +55,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
 
   const onLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      onSizeChanged(index, event.nativeEvent.layout);
+      onSizeChanged?.(index, event.nativeEvent.layout);
     },
     [index, onSizeChanged]
   );
