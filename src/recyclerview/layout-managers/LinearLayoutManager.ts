@@ -4,6 +4,7 @@ import { RVLayoutManager } from "./LayoutManager";
 
 export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   private boundedSize: number;
+  private hasSize: boolean = false;
 
   private tallestItem?: RVLayout;
   private tallestItemHeight: number = 0;
@@ -13,6 +14,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     this.boundedSize = this.horizontal
       ? params.windowSize.height
       : params.windowSize.width;
+    this.hasSize = this.boundedSize > 0;
   }
 
   //TODO: check if this is needed
@@ -42,7 +44,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       layout.height = dimensions.height;
     }
 
-    if (this.horizontal) {
+    if (this.horizontal && !this.hasSize) {
       this.normalizeLayoutHeights(layoutInfo);
     }
   }
@@ -121,6 +123,8 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       // Set width for vertical layouts
       if (!this.horizontal) {
         layout.width = this.boundedSize;
+      } else if (this.hasSize) {
+        layout.minHeight = this.boundedSize;
       }
     }
   }
