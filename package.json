@@ -1,6 +1,6 @@
 {
   "name": "@shopify/flash-list",
-  "version": "1.7.3",
+  "version": "1.7.6",
   "keywords": [
     "react-native",
     "recyclerview",
@@ -85,7 +85,7 @@
     "jestSetup.js"
   ],
   "dependencies": {
-    "recyclerlistview": "4.2.1",
+    "recyclerlistview": "4.2.3",
     "tslib": "2.8.1"
   },
   "codegenConfig": {
