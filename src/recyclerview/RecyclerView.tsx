@@ -230,6 +230,19 @@ const RecyclerViewComponent = <T,>(
     CompatScrollView,
   } = useSecondaryProps(props);
 
+  const viewToMeasureBoundedSize = useMemo(() => {
+    return (
+      <CompatView
+        style={{
+          height: horizontal ? undefined : 0,
+          width: horizontal ? 0 : undefined,
+          backgroundColor: "blue",
+        }}
+        ref={childContainerViewRef}
+      />
+    );
+  }, [horizontal]);
+
   return (
     <RecyclerViewContextProvider value={recyclerViewContext}>
       <CompatView
@@ -271,6 +284,7 @@ const RecyclerViewComponent = <T,>(
             ref={childContainerViewRef}
           />
           {renderHeader}
+          {viewToMeasureBoundedSize}
           <ViewHolderCollection
             viewHolderCollectionRef={viewHolderCollectionRef}
             data={data}
