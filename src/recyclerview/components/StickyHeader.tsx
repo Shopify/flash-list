@@ -52,7 +52,7 @@ export const StickyHeader = <TItem,>({
       }
     }
 
-  const offset =
+  //const offset =
 
   const refHolder = useRef(
     new Map<number, React.RefObject<View | null>>()
@@ -66,7 +66,6 @@ export const StickyHeader = <TItem,>({
           top: 0,
           left: 0,
           right: 0,
-          transform: [{ translateY: offset }],
       }}
     >
       <ViewHolder
