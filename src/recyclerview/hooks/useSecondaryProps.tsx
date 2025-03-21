@@ -3,10 +3,7 @@ import { RecyclerViewProps } from "../RecyclerViewProps";
 import { useMemo } from "react";
 import { getValidComponent } from "../utils/componentUtils";
 import { CompatView } from "../components/CompatView";
-import {
-  CompatAnimatedScroller,
-  CompatScroller,
-} from "../components/CompatScroller";
+import { CompatAnimatedScroller } from "../components/CompatScroller";
 import React from "react";
 
 export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
