@@ -9,10 +9,10 @@ export interface ScrollAnchorRef {
   scrollBy: (offset: number) => void;
 }
 export function ScrollAnchor({ scrollAnchorRef }: ScrollAnchorProps) {
-  const [scrollOffset, setScrollOffset] = useState(50);
+  const [scrollOffset, setScrollOffset] = useState(1);
   useImperativeHandle(scrollAnchorRef, () => ({
     scrollBy: (offset: number) => {
-      setScrollOffset((prev) => prev - offset);
+      setScrollOffset((prev) => prev + offset);
     },
   }));
   const anchor = useMemo(() => {

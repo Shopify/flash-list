@@ -55,8 +55,8 @@ export function useContentOffsetManagement<T>(
 
         if (currentIndexOfFirstVisibleItem !== undefined) {
           const diff =
-            firstVisibleItemLayout.current!.y -
-            recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y;
+            recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y -
+            firstVisibleItemLayout.current!.y;
           firstVisibleItemLayout.current = {
             ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
           };
