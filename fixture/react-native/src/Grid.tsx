@@ -56,7 +56,7 @@ export function Grid() {
         contentContainerStyle={{
           padding: 4,
         }}
-        //initialScrollIndex={5}
+        initialScrollIndex={5}
         overrideItemLayout={(layout, item) => {
           layout.span = item.span;
         }}
@@ -70,13 +70,7 @@ export function Grid() {
 }
 
 const GridItem = ({ item }: { item: GridItem }) => {
-  const [isExpanded, setIsExpanded] = useRecyclingState(
-    false,
-    [item.id],
-    () => {
-      console.log("recycle", item.id);
-    }
-  );
+  const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
   const baseHeight = 50;
   const height = isExpanded ? (item.id % 2 == 0 ? 80 : 100) : baseHeight;
   return (

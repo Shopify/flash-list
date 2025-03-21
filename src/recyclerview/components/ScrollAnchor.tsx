@@ -12,7 +12,6 @@ export function ScrollAnchor({ scrollAnchorRef }: ScrollAnchorProps) {
   const [scrollOffset, setScrollOffset] = useState(50);
   useImperativeHandle(scrollAnchorRef, () => ({
     scrollBy: (offset: number) => {
-      //console.log("scrollBy", offset);
       setScrollOffset((prev) => prev - offset);
     },
   }));

@@ -84,9 +84,10 @@ const RecyclerViewComponent = <T,>(
   );
 
   const { recyclerViewManager } = useRecyclerViewManager(props);
-  const { contentOffset, applyContentOffset } = useContentOffsetManagement(
+  const { applyContentOffset } = useContentOffsetManagement(
     recyclerViewManager,
     props,
+    scrollViewRef,
     scrollAnchorRef
   );
   // console.log("contentOffset", contentOffset);
@@ -313,7 +314,6 @@ const RecyclerViewComponent = <T,>(
           {...rest}
           horizontal={horizontal}
           ref={scrollViewRef}
-          contentOffset={contentOffset}
           onScroll={animatedEvent}
           // TODO: evaluate perf
           removeClippedSubviews={false}
@@ -323,7 +323,9 @@ const RecyclerViewComponent = <T,>(
           refreshControl={refreshControl}
           {...overrideProps}
         >
-          <ScrollAnchor scrollAnchorRef={scrollAnchorRef} />
+          {maintainVisibleContentPositionInternal && (
+            <ScrollAnchor scrollAnchorRef={scrollAnchorRef} />
+          )}
           {renderHeader}
           {viewToMeasureBoundedSize}
           <ViewHolderCollection
