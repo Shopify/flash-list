@@ -74,6 +74,14 @@ export function Chat() {
 
         <RecyclerView
           data={messages}
+          maintainVisibleContentPosition={{
+            autoscrollToTopThreshold: 100,
+          }}
+          ListHeaderComponent={() => (
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>Chat Example</Text>
+            </View>
+          )}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />

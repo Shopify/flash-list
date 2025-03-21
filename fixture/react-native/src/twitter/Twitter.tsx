@@ -57,7 +57,7 @@ const Twitter = ({
       }}
       viewabilityConfig={viewabilityConfig}
       onViewableItemsChanged={(info) => {
-        console.log(info);
+        //console.log(info);
       }}
     />
   );

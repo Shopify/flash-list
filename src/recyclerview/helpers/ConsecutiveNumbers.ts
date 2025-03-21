@@ -62,6 +62,22 @@ export class ConsecutiveNumbers {
     return this.includes(value) ? value - this.startIndex : -1;
   }
 
+  findValue(
+    predicate: (
+      value: number,
+      index: number,
+      array: ConsecutiveNumbers
+    ) => boolean | undefined
+  ): number | undefined {
+    for (let i = 0; i < this.length; i++) {
+      const value = this.startIndex + i;
+      if (predicate(value, i, this)) {
+        return value;
+      }
+    }
+    return undefined;
+  }
+
   /**
    * Tests whether all elements in the consecutive range pass the provided test function
    * @param predicate A function that tests each element

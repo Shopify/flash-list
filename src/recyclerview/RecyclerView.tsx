@@ -37,6 +37,7 @@ import { useRecyclerViewHandler } from "./hooks/useRecyclerViewHandler";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 import { useSecondaryProps } from "./hooks/useSecondaryProps";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
+import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
 
 const RecyclerViewComponent = <T,>(
   props: RecyclerViewProps<T>,
@@ -64,6 +65,7 @@ const RecyclerViewComponent = <T,>(
     disableRecycling,
     style,
     stickyHeaderIndices,
+    maintainVisibleContentPosition,
     ...rest
   } = props;
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -72,6 +74,7 @@ const RecyclerViewComponent = <T,>(
   const distanceFromWindow = useRef(0);
   const scrollY = useRef(new Animated.Value(0)).current;
   const stickyHeaderRef = useRef<StickyHeaderRef>(null);
+  const scrollAnchorRef = useRef<ScrollAnchorRef>(null);
   const [_, setLayoutTreeId] = useLayoutState(0);
   const [__, setRenderId] = useState(0);
 
@@ -83,7 +86,8 @@ const RecyclerViewComponent = <T,>(
   const { recyclerViewManager } = useRecyclerViewManager(props);
   const { contentOffset, applyContentOffset } = useContentOffsetManagement(
     recyclerViewManager,
-    props
+    props,
+    scrollAnchorRef
   );
   // console.log("contentOffset", contentOffset);
   //console.log("render stack", renderStack);
@@ -179,6 +183,7 @@ const RecyclerViewComponent = <T,>(
       }
       stickyHeaderRef.current?.reportScrollEvent(event.nativeEvent);
       checkBounds();
+      recyclerViewManager.recordInteraction();
       recyclerViewManager.computeItemViewability();
       onScroll?.(event);
     },
@@ -271,6 +276,16 @@ const RecyclerViewComponent = <T,>(
     return onScrollHandler;
   }, [onScrollHandler, hasStickyHeaders]);
 
+  const maintainVisibleContentPositionInternal = useMemo(() => {
+    if (maintainVisibleContentPosition) {
+      return {
+        ...maintainVisibleContentPosition,
+        minIndexForVisible: 0,
+      };
+    }
+    return undefined;
+  }, [maintainVisibleContentPosition]);
+
   console.log("render");
 
   return (
@@ -302,17 +317,13 @@ const RecyclerViewComponent = <T,>(
           onScroll={animatedEvent}
           // TODO: evaluate perf
           removeClippedSubviews={false}
+          maintainVisibleContentPosition={
+            maintainVisibleContentPositionInternal
+          }
           refreshControl={refreshControl}
           {...overrideProps}
         >
-          <CompatView
-            style={{
-              height: horizontal ? undefined : 0,
-              width: horizontal ? 0 : undefined,
-              backgroundColor: "blue",
-            }}
-            ref={childContainerViewRef}
-          />
+          <ScrollAnchor scrollAnchorRef={scrollAnchorRef} />
           {renderHeader}
           {viewToMeasureBoundedSize}
           <ViewHolderCollection

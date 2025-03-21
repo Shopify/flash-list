@@ -4,7 +4,9 @@ import { ScrollViewProps, ViewStyle } from "react-native";
 export interface RecyclerViewProps<TItem>
   extends Omit<
     FlashListProps<TItem>,
-    "contentContainerStyle" | "renderScrollComponent"
+    | "contentContainerStyle"
+    | "renderScrollComponent"
+    | "maintainVisibleContentPosition"
   > {
   masonry?: boolean;
   /**
@@ -39,4 +41,8 @@ export interface RecyclerViewProps<TItem>
    * Style for the RecyclerView's parent container.
    */
   style?: ViewStyle;
+
+  maintainVisibleContentPosition?: {
+    autoscrollToTopThreshold?: number;
+  };
 }
