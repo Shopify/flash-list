@@ -1,12 +1,15 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { RecyclerViewProps } from "../RecyclerViewProps";
 import { useOnLoad } from "./useOnLoad";
 import { useUnmountFlag } from "./useUnmountFlag";
+import { RVLayout } from "../layout-managers/LayoutManager";
+import { ScrollAnchorRef } from "../components/ScrollAnchor";
 export function useContentOffsetManagement<T>(
   recyclerViewManager: RecyclerViewManager<T>,
-  props: RecyclerViewProps<T>
+  props: RecyclerViewProps<T>,
+  scrollAnchorRef: React.RefObject<ScrollAnchorRef>
 ) {
   const [contentOffset, setContentOffset] = useState({ x: 0, y: 0 });
   const isUnmounted = useUnmountFlag();
@@ -32,49 +35,47 @@ export function useContentOffsetManagement<T>(
   });
   // TODO: exp chat app support. Needs to be polished.
 
-  // const firstVisibleItemKey = useRef<string | undefined>(undefined);
-  // const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
+  const firstVisibleItemKey = useRef<string | undefined>(undefined);
+  const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
   const applyContentOffset = useCallback(() => {
-    // if (recyclerViewManager.getIsFirstLayoutComplete()) {
-    //   if (firstVisibleItemKey.current) {
-    //     const currentIndexOfFirstVisibleItem = props.data?.findIndex(
-    //       (item, index) =>
-    //         props.keyExtractor?.(item, index) === firstVisibleItemKey.current
-    //     );
-    //     if (currentIndexOfFirstVisibleItem !== undefined) {
-    //       console.log(
-    //         "currentIndexOfFirstVisibleItem",
-    //         firstVisibleItemKey.current
-    //       );
-    //       const diff =
-    //         firstVisibleItemLayout.current!.y -
-    //         recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y;
-    //       console.log("diff", diff);
-    //       firstVisibleItemLayout.current = {
-    //         ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
-    //       };
-    //       console.log("diff--------->", diff);
-    //       if (diff !== 0) {
-    //         setContentOffset({
-    //           x: 0,
-    //           y: recyclerViewManager.getLastScrollOffset() - diff,
-    //         });
-    //       }
-    //     }
-    //   }
-    //   const firstVisibleIndex = recyclerViewManager.getVisibleIndices()[0];
-    //   if (firstVisibleIndex !== undefined) {
-    //     console.log("firstVisibleIndex", firstVisibleIndex);
-    //     firstVisibleItemKey.current =
-    //       props.keyExtractor?.(
-    //         props.data![firstVisibleIndex],
-    //         firstVisibleIndex
-    //       ) ?? "0";
-    //     firstVisibleItemLayout.current = {
-    //       ...recyclerViewManager.getLayout(firstVisibleIndex),
-    //     };
-    //   }
-    // }
+    if (
+      recyclerViewManager.getIsFirstLayoutComplete() &&
+      props.maintainVisibleContentPosition
+    ) {
+      if (firstVisibleItemKey.current) {
+        const currentIndexOfFirstVisibleItem = recyclerViewManager
+          .getEngagedIndices()
+          .findValue(
+            (index) =>
+              props.keyExtractor?.(props.data![index], index) ===
+              firstVisibleItemKey.current
+          );
+
+        if (currentIndexOfFirstVisibleItem !== undefined) {
+          const diff =
+            firstVisibleItemLayout.current!.y -
+            recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y;
+          firstVisibleItemLayout.current = {
+            ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
+          };
+          if (diff !== 0) {
+            scrollAnchorRef.current?.scrollBy(diff);
+          }
+        }
+      }
+      const firstVisibleIndex =
+        recyclerViewManager.getEngagedIndices().startIndex;
+      if (firstVisibleIndex !== undefined) {
+        firstVisibleItemKey.current =
+          props.keyExtractor?.(
+            props.data![firstVisibleIndex],
+            firstVisibleIndex
+          ) ?? "0";
+        firstVisibleItemLayout.current = {
+          ...recyclerViewManager.getLayout(firstVisibleIndex),
+        };
+      }
+    }
   }, [props.data, props.keyExtractor, recyclerViewManager]);
 
   return { contentOffset, applyContentOffset };

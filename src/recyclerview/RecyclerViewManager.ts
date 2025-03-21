@@ -201,6 +201,10 @@ export class RecyclerViewManager<T> {
     return this.engagedIndicesTracker.computeVisibleIndices(this.layoutManager);
   }
 
+  getEngagedIndices() {
+    return this.engagedIndicesTracker.getEngagedIndices();
+  }
+
   modifyChildrenLayout(
     layoutInfo: RVLayoutInfo[],
     dataLength: number

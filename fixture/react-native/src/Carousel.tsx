@@ -123,7 +123,7 @@ const Carousel = () => {
         keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        snapToInterval={screenWidth}
+        snapToInterval={screenWidth * 0.8 + 32}
         decelerationRate="fast"
         contentContainerStyle={styles.flatListContent}
         scrollEventThrottle={16}
