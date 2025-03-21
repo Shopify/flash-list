@@ -56,8 +56,6 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
     // Update current scroll position
     this.scrollOffset = offset;
 
-    console.log("updateScrollOffset", offset, velocity);
-
     // STEP 1: Determine the currently visible viewport
     const windowSize = layoutManager.getWindowsSize();
     const isHorizontal = layoutManager.isHorizontal();
