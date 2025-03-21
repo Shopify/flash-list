@@ -35,10 +35,11 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   // Currently engaged indices (including render buffer)
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
-  private isScrollingBackward = false;
-
   private smallMultiplier = 0.1;
   private largeMultiplier = 0.9;
+
+  private velocityHistory = [-1, -1, -1, -1, -1];
+  private velocityIndex = 0;
 
   /**
    * Updates the scroll offset and calculates the new engaged indices.
@@ -55,6 +56,8 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
     // Update current scroll position
     this.scrollOffset = offset;
 
+    console.log("updateScrollOffset", offset, velocity);
+
     // STEP 1: Determine the currently visible viewport
     const windowSize = layoutManager.getWindowsSize();
     const isHorizontal = layoutManager.isHorizontal();
@@ -67,17 +70,17 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
     const totalBuffer = this.drawDistance * 2;
 
     // Determine scroll direction to optimize buffer distribution
-    if (velocity) {
-      this.isScrollingBackward = isHorizontal ? velocity.x < 0 : velocity.y < 0;
-    }
+    const isScrollingBackward = this.isScrollingBackward(
+      isHorizontal ? velocity?.x : velocity?.y
+    );
 
     // Distribute more buffer in the direction of scrolling
     // When scrolling forward: more buffer after viewport
     // When scrolling backward: more buffer before viewport
-    const beforeRatio = this.isScrollingBackward
+    const beforeRatio = isScrollingBackward
       ? this.largeMultiplier
       : this.smallMultiplier;
-    const afterRatio = this.isScrollingBackward
+    const afterRatio = isScrollingBackward
       ? this.smallMultiplier
       : this.largeMultiplier;
 
@@ -122,6 +125,26 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
     return newEngagedIndices.equals(oldEngagedIndices)
       ? undefined
       : newEngagedIndices;
+  }
+
+  private isScrollingBackward(velocity?: number): boolean {
+    //update velocity history
+    if (velocity) {
+      this.velocityHistory[this.velocityIndex] = velocity;
+      this.velocityIndex =
+        (this.velocityIndex + 1) % this.velocityHistory.length;
+    }
+    //should decide based on whether we have more positive or negative values, use for loop
+    let positiveCount = 0;
+    let negativeCount = 0;
+    for (let i = 0; i < this.velocityHistory.length; i++) {
+      if (this.velocityHistory[i] > 0) {
+        positiveCount++;
+      } else if (this.velocityHistory[i] < 0) {
+        negativeCount++;
+      }
+    }
+    return positiveCount < negativeCount;
   }
 
   /**

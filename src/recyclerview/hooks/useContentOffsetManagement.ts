@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { RecyclerViewProps } from "../RecyclerViewProps";
@@ -6,12 +6,13 @@ import { useOnLoad } from "./useOnLoad";
 import { useUnmountFlag } from "./useUnmountFlag";
 import { RVLayout } from "../layout-managers/LayoutManager";
 import { ScrollAnchorRef } from "../components/ScrollAnchor";
+import { ScrollView } from "react-native";
 export function useContentOffsetManagement<T>(
   recyclerViewManager: RecyclerViewManager<T>,
   props: RecyclerViewProps<T>,
+  scrollViewRef: React.RefObject<ScrollView>,
   scrollAnchorRef: React.RefObject<ScrollAnchorRef>
 ) {
-  const [contentOffset, setContentOffset] = useState({ x: 0, y: 0 });
   const isUnmounted = useUnmountFlag();
 
   useOnLoad(recyclerViewManager, () => {
@@ -21,13 +22,14 @@ export function useContentOffsetManagement<T>(
       //TODO: remove setTimeout somehow
       setTimeout(() => {
         if (!isUnmounted.current) {
-          setContentOffset({
+          scrollViewRef.current?.scrollTo({
             x:
               recyclerViewManager.getLayout(props.initialScrollIndex ?? 0).x +
               recyclerViewManager.firstItemOffset,
             y:
               recyclerViewManager.getLayout(props.initialScrollIndex ?? 0).y +
               recyclerViewManager.firstItemOffset,
+            animated: false,
           });
         }
       }, 0);
@@ -78,5 +80,5 @@ export function useContentOffsetManagement<T>(
     }
   }, [props.data, props.keyExtractor, recyclerViewManager]);
 
-  return { contentOffset, applyContentOffset };
+  return { applyContentOffset };
 }
