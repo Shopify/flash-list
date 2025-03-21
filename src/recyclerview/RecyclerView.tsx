@@ -278,7 +278,7 @@ const RecyclerViewComponent = <T,>(
   }, [onScrollHandler, hasStickyHeaders]);
 
   const maintainVisibleContentPositionInternal = useMemo(() => {
-    if (maintainVisibleContentPosition) {
+    if (maintainVisibleContentPosition && !horizontal) {
       return {
         ...maintainVisibleContentPosition,
         minIndexForVisible: 0,
