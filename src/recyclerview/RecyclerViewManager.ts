@@ -25,6 +25,7 @@ export class RecyclerViewManager<T> {
   // Map of index to key
   private renderStack: Map<number, string> = new Map();
   private isFirstLayoutComplete = false;
+  private hasRenderedProgressively = false;
   private props: RecyclerViewProps<T>;
   private itemViewabilityManager: ViewabilityManager<T>;
 
@@ -208,18 +209,19 @@ export class RecyclerViewManager<T> {
     if (dataLength === 0) {
       this.applyInitialScrollAdjustment();
       this.isFirstLayoutComplete = true;
+      return false;
     }
     if (this.layoutManager?.requiresRepaint) {
       // console.log("requiresRepaint triggered");
       this.layoutManager.requiresRepaint = false;
       return true;
     }
-    if (this.isFirstLayoutComplete) {
+    if (this.hasRenderedProgressively) {
       return this.recomputeEngagedIndices() !== undefined; //TODO: Move to an effect as this can block paint for more than necessary
     } else {
       this.renderProgressively();
     }
-    return !this.isFirstLayoutComplete;
+    return !this.hasRenderedProgressively;
   }
 
   computeItemViewability() {
@@ -295,16 +297,20 @@ export class RecyclerViewManager<T> {
     if (layoutManager) {
       this.applyInitialScrollAdjustment();
       const visibleIndices = this.getVisibleIndices();
-      // console.log("---------> visibleIndices", visibleIndices);
-      this.isFirstLayoutComplete = visibleIndices.every(
+      //console.log("---------> visibleIndices", visibleIndices);
+      this.hasRenderedProgressively = visibleIndices.every(
         (index) =>
           layoutManager.getLayout(index).isHeightMeasured &&
           layoutManager.getLayout(index).isWidthMeasured
       );
 
+      if (this.hasRenderedProgressively) {
+        this.isFirstLayoutComplete = true;
+      }
+
       // If everything is measured then render stack will be in sync. The buffer items will get rendered in the next update
       // triggered by the useOnLoad hook.
-      !this.isFirstLayoutComplete &&
+      !this.hasRenderedProgressively &&
         this.updateRenderStack(
           // pick first n indices from visible ones and n is size of renderStack
           visibleIndices.slice(

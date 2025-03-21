@@ -28,8 +28,8 @@ export abstract class RVLayoutManager {
     this.windowSize = params.windowSize;
     this.layouts = [];
     this.maxColumns = params.maxColumns ?? 1;
-    this.heightAverageWindow = new MultiTypeAverageWindow(5, 100);
-    this.widthAverageWindow = new MultiTypeAverageWindow(5, 100);
+    this.heightAverageWindow = new MultiTypeAverageWindow(5, 200);
+    this.widthAverageWindow = new MultiTypeAverageWindow(5, 200);
     this._getItemType = params.getItemType;
     this.overrideItemLayout = params.overrideItemLayout;
   }
