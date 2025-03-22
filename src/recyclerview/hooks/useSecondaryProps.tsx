@@ -62,16 +62,16 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     return getValidComponent(ListEmptyComponent);
   }, [ListEmptyComponent, data]);
 
-  const CompatScrollView = useMemo(
-    () =>
-      renderScrollComponent
-        ? React.forwardRef(
-            (props, ref) =>
-              renderScrollComponent({ ...props, ref } as any) as any
-          )
-        : CompatAnimatedScroller,
-    [renderScrollComponent]
-  );
+  const CompatScrollView = useMemo(() => {
+    if (typeof renderScrollComponent === "function") {
+      return React.forwardRef(
+        (props, ref) => renderScrollComponent({ ...props, ref } as any) as any
+      );
+    } else if (renderScrollComponent) {
+      return renderScrollComponent;
+    }
+    return CompatAnimatedScroller;
+  }, [renderScrollComponent]);
 
   return {
     refreshControl,

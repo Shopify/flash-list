@@ -38,15 +38,19 @@ export const StickyHeaders = <TItem,>({
   }>({ current: -1 });
 
   const { current: currentStickyIndex, next: nextStickyIndex } = stickyIndices;
+  const hasLayout = recyclerViewManager.hasLayout();
 
   // Memoize sorted indices based on their Y positions
   const sortedIndices = useMemo(() => {
+    if (!hasLayout) {
+      return [];
+    }
     return [...stickyHeaderIndices].sort((a, b) => {
       const aY = recyclerViewManager.getLayout(a).y;
       const bY = recyclerViewManager.getLayout(b).y;
       return aY - bY;
     });
-  }, [stickyHeaderIndices, recyclerViewManager]);
+  }, [stickyHeaderIndices, recyclerViewManager, hasLayout]);
 
   const compute = useCallback(() => {
     const adjustedValue = recyclerViewManager.getLastScrollOffset();
@@ -59,11 +63,18 @@ export const StickyHeaders = <TItem,>({
     );
 
     // Binary search for next sticky index
-    const newNextStickyIndex = findNextStickyIndex(
+    let newNextStickyIndex = findNextStickyIndex(
       sortedIndices,
       adjustedValue,
       (index) => recyclerViewManager.getLayout(index).y
     );
+
+    if (
+      (newNextStickyIndex ?? 0) >
+      recyclerViewManager.getEngagedIndices().endIndex
+    ) {
+      newNextStickyIndex = undefined;
+    }
 
     if (
       newStickyIndex !== currentStickyIndex ||
