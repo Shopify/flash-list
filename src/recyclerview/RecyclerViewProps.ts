@@ -44,5 +44,7 @@ export interface RecyclerViewProps<TItem>
 
   maintainVisibleContentPosition?: {
     autoscrollToTopThreshold?: number;
+    autoscrollToBottomThreshold?: number;
+    startRenderingFromBottom?: boolean;
   };
 }

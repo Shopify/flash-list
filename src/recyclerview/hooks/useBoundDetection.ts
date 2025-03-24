@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useRef } from "react";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { RecyclerViewProps } from "../RecyclerViewProps";
+import { CompatScroller } from "../components/CompatScroller";
 
 /**
  * Hook to detect when the scroll position reaches near the start or end of the list
@@ -12,19 +13,24 @@ import { RecyclerViewProps } from "../RecyclerViewProps";
  */
 export function useBoundDetection<T>(
   recyclerViewManager: RecyclerViewManager<T>,
-  props: RecyclerViewProps<T>
+  props: RecyclerViewProps<T>,
+  scrollViewRef: React.RefObject<CompatScroller>
 ) {
   const pendingEndReached = useRef(false);
   const pendingStartReached = useRef(false);
+  const pendingAutoscrollToBottom = useRef(false);
+  const { horizontal, data, maintainVisibleContentPosition } = props;
 
-  useMemo(() => {
-    pendingEndReached.current = false;
-  }, [props.data]);
-
-  const checkBounds = () => {
+  const checkBounds = useCallback(() => {
     // Skip all calculations if neither callback is provided
+    const autoscrollToBottomThreshold =
+      maintainVisibleContentPosition?.autoscrollToBottomThreshold ?? -1;
 
-    if (!props.onEndReached && !props.onStartReached) {
+    if (
+      !props.onEndReached &&
+      !props.onStartReached &&
+      autoscrollToBottomThreshold < 0
+    ) {
       return;
     }
 
@@ -70,8 +76,34 @@ export function useBoundDetection<T>(
         }
         pendingStartReached.current = isNearStart;
       }
+
+      if (!horizontal) {
+        const autoscrollToBottomThresholdDistance =
+          autoscrollToBottomThreshold * visibleLength;
+
+        const isNearBottom =
+          Math.ceil(lastScrollOffset + visibleLength) >=
+          contentLength - autoscrollToBottomThresholdDistance;
+
+        if (isNearBottom) {
+          pendingAutoscrollToBottom.current = true;
+        } else {
+          pendingAutoscrollToBottom.current = false;
+        }
+      }
     }
-  };
+  }, [recyclerViewManager, props]);
+
+  useMemo(() => {
+    pendingEndReached.current = false;
+  }, [data]);
+
+  useEffect(() => {
+    if (pendingAutoscrollToBottom.current) {
+      scrollViewRef.current?.scrollToEnd();
+      pendingAutoscrollToBottom.current = false;
+    }
+  }, [data]);
 
   return {
     checkBounds,

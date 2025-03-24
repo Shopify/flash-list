@@ -97,7 +97,11 @@ const RecyclerViewComponent = <T,>(
   useOnListLoad(recyclerViewManager, onLoad);
 
   // Use the bound detection hook
-  const { checkBounds } = useBoundDetection(recyclerViewManager, props);
+  const { checkBounds } = useBoundDetection(
+    recyclerViewManager,
+    props,
+    scrollViewRef
+  );
 
   // Use the recycler view handler hook to handle imperative methods
   useRecyclerViewHandler(recyclerViewManager, ref, scrollViewRef, props);
@@ -245,19 +249,6 @@ const RecyclerViewComponent = <T,>(
     CompatScrollView,
   } = useSecondaryProps(props);
 
-  const viewToMeasureBoundedSize = useMemo(() => {
-    return (
-      <CompatView
-        style={{
-          height: horizontal ? undefined : 0,
-          width: horizontal ? 0 : undefined,
-          backgroundColor: "blue",
-        }}
-        ref={childContainerViewRef}
-      />
-    );
-  }, [horizontal]);
-
   const hasStickyHeaders = useMemo(() => {
     return (
       data &&
@@ -286,6 +277,31 @@ const RecyclerViewComponent = <T,>(
     }
     return undefined;
   }, [maintainVisibleContentPosition]);
+
+  const shouldRenderFromBottom =
+    maintainVisibleContentPositionInternal?.startRenderingFromBottom ?? false;
+
+  const adjustmentMinHeight = recyclerViewManager.hasLayout()
+    ? Math.max(
+        0,
+        recyclerViewManager.getWindowSize().height -
+          recyclerViewManager.getChildContainerDimensions().height -
+          recyclerViewManager.firstItemOffset
+      )
+    : 0;
+
+  const viewToMeasureBoundedSize = useMemo(() => {
+    return (
+      <CompatView
+        style={{
+          height: horizontal ? undefined : 0,
+          width: horizontal ? 0 : undefined,
+          minHeight: shouldRenderFromBottom ? adjustmentMinHeight : undefined,
+        }}
+        ref={childContainerViewRef}
+      />
+    );
+  }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
 
   console.log("render");
 
