@@ -303,13 +303,14 @@ const RecyclerViewComponent = <T,>(
     );
   }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
 
-  console.log("render");
+  //console.log("render");
 
   return (
     <RecyclerViewContextProvider value={recyclerViewContext}>
       <CompatView
         style={{ flex: horizontal ? undefined : 1, ...style }}
         ref={internalViewRef}
+        collapsable={false}
         onLayout={(event) => {
           if (
             areDimensionsNotEqual(
@@ -321,7 +322,7 @@ const RecyclerViewComponent = <T,>(
               recyclerViewManager.getWindowSize().height
             )
           ) {
-            console.log("onLayout");
+            //console.log("onLayout");
             recyclerViewContext.layout();
           }
         }}
@@ -332,7 +333,6 @@ const RecyclerViewComponent = <T,>(
           ref={scrollViewRef}
           onScroll={animatedEvent}
           // TODO: evaluate perf
-          removeClippedSubviews={false}
           maintainVisibleContentPosition={
             maintainVisibleContentPositionInternal
           }

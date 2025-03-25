@@ -893,7 +893,15 @@ class FlashList<T> extends React.PureComponent<
   }
 
   public getAbsoluteLastScrollOffset() {
-    return this.rlvRef?.getCurrentScrollOffset();
+    return this.rlvRef?.getCurrentScrollOffset() ?? 0;
+  }
+
+  public getFirstItemOffset() {
+    return this.firstItemOffset;
+  }
+
+  public getFirstVisibleIndex() {
+    return this.rlvRef?.findApproxFirstVisibleIndex() ?? -1;
   }
 }
 
