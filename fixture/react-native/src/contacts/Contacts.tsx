@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { RecyclerView } from "@shopify/flash-list";
 
 import { DebugContext } from "../Debug";
@@ -9,6 +9,7 @@ import ContactCell from "./ContactCell";
 import ContactSectionHeader from "./ContactSectionHeader";
 import ContactHeader from "./ContactHeader";
 import ContactDivider from "./ContactDivider";
+import { ScrollView } from "react-native";
 
 const Contacts = () => {
   const debugContext = useContext(DebugContext);
@@ -32,6 +33,12 @@ const Contacts = () => {
     })
     .filter((item) => item !== null) as number[];
 
+  const renderScrollComponent = useMemo(() => {
+    return (props: any) => {
+      return <ScrollView {...props} />;
+    };
+  }, []);
+
   return (
     <RecyclerView
       testID="FlashList"
@@ -51,6 +58,7 @@ const Contacts = () => {
       stickyHeaderIndices={stickyHeaderIndices}
       ListHeaderComponent={ContactHeader}
       initialScrollIndex={debugContext.initialScrollIndex}
+      renderScrollComponent={renderScrollComponent}
     />
   );
 };
