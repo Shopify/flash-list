@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useImperativeHandle,
   useCallback,
+  useEffect,
 } from "react";
 import { Animated, NativeScrollEvent } from "react-native";
 import { FlashListProps } from "../..";
@@ -33,11 +34,11 @@ export const StickyHeaders = <TItem,>({
   extraData,
 }: StickyHeaderProps<TItem>) => {
   const [stickyIndices, setStickyIndices] = useState<{
-    current: number;
-    next?: number;
-  }>({ current: -1 });
+    currentStickyIndex: number;
+    nextStickyIndex: number;
+  }>({ currentStickyIndex: -1, nextStickyIndex: -1 });
 
-  const { current: currentStickyIndex, next: nextStickyIndex } = stickyIndices;
+  const { currentStickyIndex, nextStickyIndex } = stickyIndices;
   const hasLayout = recyclerViewManager.hasLayout();
 
   // Memoize sorted indices based on their Y positions
@@ -56,24 +57,17 @@ export const StickyHeaders = <TItem,>({
     const adjustedValue = recyclerViewManager.getLastScrollOffset();
 
     // Binary search for current sticky index
-    const newStickyIndex = findCurrentStickyIndex(
+    const currentIndexInArray = findCurrentStickyIndex(
       sortedIndices,
       adjustedValue,
       (index) => recyclerViewManager.getLayout(index).y
     );
 
-    // Binary search for next sticky index
-    let newNextStickyIndex = findNextStickyIndex(
-      sortedIndices,
-      adjustedValue,
-      (index) => recyclerViewManager.getLayout(index).y
-    );
+    const newStickyIndex = sortedIndices[currentIndexInArray] ?? -1;
+    let newNextStickyIndex = sortedIndices[currentIndexInArray + 1] ?? -1;
 
-    if (
-      (newNextStickyIndex ?? 0) >
-      recyclerViewManager.getEngagedIndices().endIndex
-    ) {
-      newNextStickyIndex = undefined;
+    if (newNextStickyIndex > recyclerViewManager.getEngagedIndices().endIndex) {
+      newNextStickyIndex = -1;
     }
 
     if (
@@ -81,13 +75,15 @@ export const StickyHeaders = <TItem,>({
       newNextStickyIndex !== nextStickyIndex
     ) {
       setStickyIndices({
-        current: newStickyIndex,
-        next: newNextStickyIndex,
+        currentStickyIndex: newStickyIndex,
+        nextStickyIndex: newNextStickyIndex,
       });
     }
   }, [currentStickyIndex, nextStickyIndex, recyclerViewManager, sortedIndices]);
 
-  compute();
+  useEffect(() => {
+    compute();
+  }, [compute]);
 
   // Optimized scroll handler using binary search pattern
   useImperativeHandle(
@@ -109,8 +105,12 @@ export const StickyHeaders = <TItem,>({
 
   // Memoize translateY calculation
   const translateY = useMemo(() => {
-    if (currentStickyIndex === -1 || !nextStickyIndex) {
-      return new Animated.Value(0);
+    if (currentStickyIndex === -1 || nextStickyIndex === -1) {
+      return scrollY.interpolate({
+        inputRange: [0, Infinity],
+        outputRange: [0, 0],
+        extrapolate: "clamp",
+      });
     }
 
     const currentLayout = recyclerViewManager.getLayout(currentStickyIndex);
@@ -174,7 +174,7 @@ function findCurrentStickyIndex(
     const currentY = getY(sortedIndices[mid]);
 
     if (currentY <= adjustedValue) {
-      result = sortedIndices[mid];
+      result = mid;
       left = mid + 1;
     } else {
       right = mid - 1;
@@ -183,31 +183,6 @@ function findCurrentStickyIndex(
 
   return result;
 }
-
-function findNextStickyIndex(
-  sortedIndices: number[],
-  adjustedValue: number,
-  getY: (index: number) => number
-): number | undefined {
-  let left = 0;
-  let right = sortedIndices.length - 1;
-  let result: number | undefined;
-
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    const currentY = getY(sortedIndices[mid]);
-
-    if (currentY > adjustedValue) {
-      result = sortedIndices[mid];
-      right = mid - 1;
-    } else {
-      left = mid + 1;
-    }
-  }
-
-  return result;
-}
-
 /*
  * Sliding animation for sticky headers:
  * When the next header pushes the current one up, we translate the current header
