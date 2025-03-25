@@ -249,24 +249,37 @@ const RecyclerViewComponent = <T,>(
     CompatScrollView,
   } = useSecondaryProps(props);
 
-  const hasStickyHeaders = useMemo(() => {
-    return (
+  const stickyHeaders = useMemo(() => {
+    if (
       data &&
       data.length > 0 &&
       stickyHeaderIndices &&
       stickyHeaderIndices.length > 0
-    );
-  }, [data, stickyHeaderIndices]);
+    ) {
+      return (
+        <StickyHeaders
+          stickyHeaderIndices={stickyHeaderIndices}
+          data={data}
+          renderItem={renderItem}
+          scrollY={scrollY}
+          stickyHeaderRef={stickyHeaderRef}
+          recyclerViewManager={recyclerViewManager}
+          extraData={extraData}
+        />
+      );
+    }
+    return null;
+  }, [data, stickyHeaderIndices, renderItem, extraData]);
 
   const animatedEvent = useMemo(() => {
-    if (hasStickyHeaders) {
+    if (stickyHeaders) {
       return Animated.event(
         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
         { useNativeDriver: true, listener: onScrollHandler }
       );
     }
     return onScrollHandler;
-  }, [onScrollHandler, hasStickyHeaders]);
+  }, [onScrollHandler, stickyHeaders]);
 
   const maintainVisibleContentPositionInternal = useMemo(() => {
     if (maintainVisibleContentPosition && !horizontal) {
@@ -322,7 +335,7 @@ const RecyclerViewComponent = <T,>(
               recyclerViewManager.getWindowSize().height
             )
           ) {
-            //console.log("onLayout");
+            console.log("onLayout");
             recyclerViewContext.layout();
           }
         }}
@@ -370,16 +383,7 @@ const RecyclerViewComponent = <T,>(
           {renderEmpty}
           {renderFooter}
         </CompatScrollView>
-        {hasStickyHeaders && (
-          <StickyHeaders
-            stickyHeaderIndices={stickyHeaderIndices!}
-            data={data!}
-            renderItem={renderItem}
-            scrollY={scrollY}
-            stickyHeaderRef={stickyHeaderRef}
-            recyclerViewManager={recyclerViewManager}
-          />
-        )}
+        {stickyHeaders}
       </CompatView>
     </RecyclerViewContextProvider>
   );
@@ -391,7 +395,9 @@ type RecyclerViewType = <T>(
 ) => React.JSX.Element;
 
 // Create the forwarded ref component with proper typing
-const RecyclerView = forwardRef(RecyclerViewComponent) as RecyclerViewType;
+const RecyclerView = React.memo(
+  forwardRef(RecyclerViewComponent)
+) as RecyclerViewType;
 
 // Export the component
 export { RecyclerView };

@@ -18,7 +18,7 @@ export interface StickyHeaderProps<TItem> {
   renderItem: FlashListProps<TItem>["renderItem"];
   stickyHeaderRef: React.RefObject<StickyHeaderRef>;
   recyclerViewManager: RecyclerViewManager<TItem>;
-  extraData?: FlashListProps<TItem>["extraData"];
+  extraData: FlashListProps<TItem>["extraData"];
 }
 export interface StickyHeaderRef {
   reportScrollEvent: (event: NativeScrollEvent) => void;
