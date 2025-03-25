@@ -1,4 +1,4 @@
-import { RefreshControl } from "react-native";
+import { Animated, RefreshControl } from "react-native";
 import { RecyclerViewProps } from "../RecyclerViewProps";
 import { useMemo } from "react";
 import { getValidComponent } from "../utils/componentUtils";
@@ -63,14 +63,16 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
   }, [ListEmptyComponent, data]);
 
   const CompatScrollView = useMemo(() => {
+    let scrollComponent = CompatAnimatedScroller;
     if (typeof renderScrollComponent === "function") {
-      return React.forwardRef(
-        (props, ref) => renderScrollComponent({ ...props, ref } as any) as any
-      );
+      //TODO: Test animated version of this
+      scrollComponent = React.forwardRef((props, ref) =>
+        renderScrollComponent({ ...props, ref } as any)
+      ) as any;
     } else if (renderScrollComponent) {
-      return renderScrollComponent;
+      scrollComponent = renderScrollComponent;
     }
-    return CompatAnimatedScroller;
+    return Animated.createAnimatedComponent(scrollComponent);
   }, [renderScrollComponent]);
 
   return {
