@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { View, Text, StyleSheet, Pressable, StatusBar } from "react-native";
 import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
 
@@ -36,7 +36,7 @@ const generateItems = (count: number): Item[] => {
 };
 
 // ListItem component that manages its own expanded state
-const ListItem = ({ item }: { item: Item }) => {
+const ListItem = React.memo(({ item }: { item: Item }) => {
   const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
 
   const handlePress = () => {
@@ -59,10 +59,13 @@ const ListItem = ({ item }: { item: Item }) => {
       </Pressable>
     </View>
   );
-};
+});
 
-const HorizontalList = () => {
+const HorizontalList = React.memo(() => {
   const [data] = useState<Item[]>(generateItems(20));
+
+  // Memoize the separator component
+  const Separator = useMemo(() => () => <View style={styles.separator} />, []);
 
   return (
     <View style={styles.container}>
@@ -73,6 +76,7 @@ const HorizontalList = () => {
         data={data}
         renderItem={({ item }) => <ListItem item={item} />}
         keyExtractor={(item) => item.id.toString()}
+        ItemSeparatorComponent={Separator}
       />
 
       <Text style={styles.description}>
@@ -82,7 +86,7 @@ const HorizontalList = () => {
       </Text>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -119,6 +123,14 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+  },
+  separator: {
+    width: 1,
+    height: "80%",
+    backgroundColor: "rgba(0, 0, 0, 0.15)",
+    alignSelf: "center",
+    marginHorizontal: 2,
+    borderRadius: 5,
   },
   description: {
     fontSize: 16,
