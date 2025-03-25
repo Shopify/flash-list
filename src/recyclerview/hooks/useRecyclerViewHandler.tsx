@@ -43,6 +43,7 @@ export function useRecyclerViewHandler<T>(
     () => {
       // Create an object with all methods
       const methods = {
+        ...scrollViewRef.current, // TODO: evaluate if this will need to any issues
         props,
         scrollToOffset: ({
           offset,
@@ -167,11 +168,20 @@ export function useRecyclerViewHandler<T>(
         getLayout: (index: number) => {
           return recyclerViewManager.getLayout(index);
         },
+        getAbsoluteLastScrollOffset: () => {
+          return recyclerViewManager.getAbsoluteLastScrollOffset();
+        },
         getChildContainerDimensions: () => {
           return recyclerViewManager.getChildContainerDimensions();
         },
         recordInteraction: () => {
           recyclerViewManager.recordInteraction();
+        },
+        getVisibleIndices: () => {
+          return recyclerViewManager.getVisibleIndices();
+        },
+        getFirstVisibleIndex: () => {
+          return recyclerViewManager.getVisibleIndices().startIndex;
         },
         recomputeViewableItems: () => {
           recyclerViewManager.recomputeViewableItems();
