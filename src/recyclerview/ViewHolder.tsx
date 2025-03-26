@@ -1,3 +1,9 @@
+/**
+ * ViewHolder is a core component in FlashList that manages individual item rendering and layout.
+ * It handles the rendering of list items, separators, and manages layout updates for each item.
+ * The component is memoized to prevent unnecessary re-renders and includes layout comparison logic.
+ */
+
 import { LayoutChangeEvent } from "react-native";
 import React, {
   RefObject,
@@ -12,20 +18,41 @@ import { FlashListProps, RenderTarget } from "../FlashListProps";
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { CompatView } from "./components/CompatView";
 
+/**
+ * Props interface for the ViewHolder component
+ * @template TItem - The type of item being rendered in the list
+ */
 export interface ViewHolderProps<TItem> {
+  /** Index of the item in the data array */
   index: number;
+  /** Layout information for positioning and sizing the item */
   layout: RVLayout;
+  /** Map to store refs for each ViewHolder instance, keyed by index */
   refHolder: Map<number, RefObject<CompatView | null>>;
+  /** Additional data passed to renderItem that can trigger re-renders */
   extraData: any;
+  /** Specifies the rendering target (e.g., "Cell", "StickyHeader") */
   target: RenderTarget;
+  /** The actual item data to be rendered */
   item: TItem;
+  /** The next item in the list, used for rendering separators */
   trailingItem: TItem | undefined;
+  /** Function to render the item content */
   renderItem: FlashListProps<TItem>["renderItem"];
+  /** Optional custom component to wrap each item */
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
+  /** Optional component to render between items */
   ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
+  /** Whether the list is horizontal or vertical */
   horizontal?: FlashListProps<TItem>["horizontal"];
+  /** Callback when the item's size changes */
   onSizeChanged?: (index: number, size: RVDimension) => void;
 }
+
+/**
+ * Internal ViewHolder component that handles the actual rendering of list items
+ * @template TItem - The type of item being rendered in the list
+ */
 const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   // create ref for View
   const viewRef = useRef<CompatView>(null);
@@ -97,6 +124,10 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   );
 };
 
+/**
+ * Memoized ViewHolder component that prevents unnecessary re-renders by comparing props
+ * @template TItem - The type of item being rendered in the list
+ */
 export const ViewHolder = React.memo(
   ViewHolderInternal,
   (prevProps, nextProps) => {
@@ -118,6 +149,13 @@ export const ViewHolder = React.memo(
   }
 );
 
+/**
+ * Compares two RVLayout objects to determine if they are equal
+ * Used in the memo comparison function to prevent unnecessary re-renders
+ * @param prevLayout - Previous layout object
+ * @param nextLayout - Next layout object
+ * @returns boolean indicating if layouts are equal
+ */
 function areLayoutsEqual(prevLayout: RVLayout, nextLayout: RVLayout): boolean {
   return (
     prevLayout.x === nextLayout.x &&
