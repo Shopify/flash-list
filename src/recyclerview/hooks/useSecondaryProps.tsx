@@ -99,9 +99,8 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     let scrollComponent = CompatAnimatedScroller;
     if (typeof renderScrollComponent === "function") {
       // Create a forwarded ref wrapper for the custom scroll component
-      // TODO: Test animated version of custom scroll component
       scrollComponent = React.forwardRef((props, ref) =>
-        renderScrollComponent({ ...props, ref } as any)
+        (renderScrollComponent as any)({ ...props, ref } as any)
       ) as any;
     } else if (renderScrollComponent) {
       scrollComponent = renderScrollComponent;

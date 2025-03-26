@@ -4,10 +4,11 @@ import { ScrollViewProps, ViewStyle } from "react-native";
 export interface RecyclerViewProps<TItem>
   extends Omit<
     FlashListProps<TItem>,
-    | "contentContainerStyle"
-    | "renderScrollComponent"
-    | "maintainVisibleContentPosition"
+    "contentContainerStyle" | "maintainVisibleContentPosition"
   > {
+  /*
+   * Enable masonry layout.
+   */
   masonry?: boolean;
   /**
    * If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order.
@@ -27,24 +28,37 @@ export interface RecyclerViewProps<TItem>
    */
   onStartReachedThreshold?: FlashListProps<TItem>["onEndReachedThreshold"];
 
-  renderScrollComponent?: (props: ScrollViewProps) => React.ReactNode;
-
-  contentContainerStyle?: ScrollViewProps["contentContainerStyle"];
-
-  viewabilityConfig?: FlashListProps<TItem>["viewabilityConfig"];
-  onViewableItemsChanged?: FlashListProps<TItem>["onViewableItemsChanged"];
-  viewabilityConfigCallbackPairs?: FlashListProps<TItem>["viewabilityConfigCallbackPairs"];
-
-  onScroll?: FlashListProps<TItem>["onScroll"];
-  disableRecycling?: boolean;
   /**
    * Style for the RecyclerView's parent container.
    */
+  contentContainerStyle?: ScrollViewProps["contentContainerStyle"];
+
+  /**
+   * If true, the RecyclerView will not recycle items.
+   */
+  disableRecycling?: boolean;
+  /**
+   * Style for the RecyclerView's parent container.
+   * Please avoid anything which can mess size of children in this view. For example, margin is okay but padding is not.
+   */
   style?: ViewStyle;
 
+  /**
+   * Configuration for maintaining scroll position when content changes.
+   * Useful for chat-like interfaces where new messages can be added at the top or bottom.
+   */
   maintainVisibleContentPosition?: {
+    /**
+     * When content is added at the top, automatically scroll to maintain position if the user is within this threshold of the top
+     */
     autoscrollToTopThreshold?: number;
+    /**
+     * When content is added at the bottom, automatically scroll to maintain position if the user is within this threshold of the bottom
+     */
     autoscrollToBottomThreshold?: number;
+    /**
+     * If true, initial render will start from the bottom of the list, useful for chat-like interfaces when there are only few messages
+     */
     startRenderingFromBottom?: boolean;
   };
 }
