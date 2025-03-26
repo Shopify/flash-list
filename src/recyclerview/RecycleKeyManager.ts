@@ -169,6 +169,7 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
    * Ensures the total number of active keys doesn't exceed the maximum limit.
    * If the limit is exceeded, recycles the oldest keys until within bounds.
    * Note: This operation may impact performance when dealing with large lists.
+   * TODO: Check performance impact of this
    */
   private ensurePoolSize(): void {
     if (this.keyMap.size <= this.maxItems) return;
