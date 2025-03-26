@@ -8,6 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import { RecyclerView } from "@shopify/flash-list";
+import { LegendList } from "@legendapp/list";
 
 interface ChatMessage {
   id: string;
@@ -31,7 +32,7 @@ const messageTexts = [
 
 export function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>(() =>
-    generateInitialMessages(20)
+    generateInitialMessages(4)
   );
 
   const addMessageAtTop = useCallback(() => {
@@ -74,11 +75,10 @@ export function Chat() {
 
         <RecyclerView
           data={messages}
-          maintainVisibleContentPosition={
-            {
-              //autoscrollToTopThreshold: 100,
-            }
-          }
+          maintainVisibleContentPosition={{
+            autoscrollToBottomThreshold: 0.1,
+            startRenderingFromBottom: true,
+          }}
           ListHeaderComponent={() => (
             <View style={styles.header}>
               <Text style={styles.headerTitle}>Chat Example</Text>
