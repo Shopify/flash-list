@@ -1,6 +1,6 @@
 /**
  * A simple wrapper for consecutive integer arrays
- * Only stores start and end indices for memory efficiency
+ * Only stores start and end indices for faster computation as numbers are consecutive.
  */
 export class ConsecutiveNumbers {
   constructor(

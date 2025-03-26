@@ -2,16 +2,17 @@ import { ConsecutiveNumbers } from "./ConsecutiveNumbers";
 import { RVLayoutManager } from "../layout-managers/LayoutManager";
 
 export interface RVEngagedIndicesTracker {
-  // current scroll offset, setting this driectly will not trigger visible indices change
+  // Current scroll offset of the list. Directly setting this won't trigger visible indices updates
   scrollOffset: number;
+  // Total distance (in pixels) to pre-render items before and after the visible viewport
   drawDistance: number;
 
   /**
-   * Updates the scroll offset and calculates the new engaged indices.
-   * @param offset - The new scroll offset.
-   * @param velocity - The scroll velocity to determine buffer distribution.
-   * @param layoutManager - The layout manager to fetch visible layouts.
-   * @returns The new engaged indices if any or undefined if no change
+   * Updates the scroll offset and calculates which items should be rendered (engaged indices).
+   * @param offset - The new scroll offset position
+   * @param velocity - Current scroll velocity to optimize buffer distribution
+   * @param layoutManager - Layout manager to fetch item positions and dimensions
+   * @returns New engaged indices if changed, undefined if no change
    */
   updateScrollOffset: (
     offset: number,
@@ -28,25 +29,28 @@ export interface Velocity {
 }
 
 export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
-  // Current scroll offset
+  // Current scroll position of the list
   public scrollOffset = 0;
-  // Render ahead offset for pre-rendering items
+  // Distance to pre-render items before and after the visible viewport (in pixels)
   public drawDistance: number = 250;
-  // Currently engaged indices (including render buffer)
+  // Currently rendered item indices (including buffer items)
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
-  private smallMultiplier = 0.1;
-  private largeMultiplier = 0.9;
+  // Buffer distribution multipliers for scroll direction optimization
+  private smallMultiplier = 0.1; // Used for buffer in the opposite direction of scroll
+  private largeMultiplier = 0.9; // Used for buffer in the direction of scroll
 
+  // Circular buffer to track recent scroll velocities for direction detection
   private velocityHistory = [-1, -1, -1, -1, -1];
   private velocityIndex = 0;
 
   /**
-   * Updates the scroll offset and calculates the new engaged indices.
-   * @param offset - The new scroll offset.
-   * @param velocity - The scroll velocity to determine buffer distribution.
-   * @param layoutManager - The layout manager to fetch visible layouts.
-   * @returns The new engaged indices if any or undefined if no change
+   * Updates scroll position and determines which items should be rendered.
+   * Implements a smart buffer system that:
+   * 1. Calculates the visible viewport
+   * 2. Determines optimal buffer distribution based on scroll direction
+   * 3. Adjusts buffer sizes at list boundaries
+   * 4. Returns new indices that need to be rendered
    */
   updateScrollOffset(
     offset: number,
@@ -125,6 +129,12 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
       : newEngagedIndices;
   }
 
+  /**
+   * Determines scroll direction by analyzing recent velocity history.
+   * Uses a majority voting system on the last 5 velocity values.
+   * @param velocity - Current scroll velocity component (x or y)
+   * @returns true if scrolling backward (negative direction), false otherwise
+   */
   private isScrollingBackward(velocity?: number): boolean {
     //update velocity history
     if (velocity) {
@@ -146,9 +156,10 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   }
 
   /**
-   * Computes the currently visible indices. Not buffer is applied.
-   * @param layoutManager - The layout manager to fetch visible layouts.
-   * @returns The visible indices.
+   * Calculates which items are currently visible in the viewport.
+   * Unlike getEngagedIndices, this doesn't include buffer items.
+   * @param layoutManager - Layout manager to fetch item positions
+   * @returns Indices of items currently visible in the viewport
    */
   computeVisibleIndices(layoutManager: RVLayoutManager): ConsecutiveNumbers {
     const windowSize = layoutManager.getWindowsSize();
@@ -168,7 +179,9 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   }
 
   /**
-   * @returns The last computed engaged indices. Doesn't compute new.
+   * Returns the currently engaged (rendered) indices.
+   * This includes both visible items and buffer items.
+   * @returns The last computed set of engaged indices
    */
   getEngagedIndices(): ConsecutiveNumbers {
     return this.engagedIndices;
