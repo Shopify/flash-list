@@ -172,9 +172,10 @@ export abstract class RVLayoutManager {
     // update average windows
     this.computeEstimatesAndMinRecomputeIndex(layoutInfo);
 
-    if (this.layouts.length < totalItemCount) {
+    if (this.layouts.length < totalItemCount && totalItemCount > 0) {
       const startIndex = this.layouts.length;
-      for (let i = this.layouts.length; i < totalItemCount; i++) {
+      this.layouts.length = totalItemCount;
+      for (let i = startIndex; i < totalItemCount; i++) {
         this.getLayout(i);
       }
       this.recomputeLayouts(startIndex, totalItemCount - 1);
@@ -208,6 +209,9 @@ export abstract class RVLayoutManager {
    * @returns Layout information for the item
    */
   getLayout(index: number): RVLayout {
+    if (index >= this.layouts.length) {
+      throw new Error("index out of bounds, not enough layouts");
+    }
     let layout = this.layouts[index];
     if (!layout) {
       // Create new layout with estimated dimensions
