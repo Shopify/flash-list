@@ -6,10 +6,19 @@ import {
   RVLayoutManager,
 } from "./LayoutManager";
 
+/**
+ * MasonryLayoutManager implementation that arranges items in a masonry/pinterest-style layout.
+ * Items are placed in columns, with support for items spanning multiple columns.
+ * Can optimize item placement to minimize column height differences.
+ */
 export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
+  /** The width of the bounded area for the masonry layout */
   private boundedSize: number;
+  /** Array tracking the current height of each column */
   private columnHeights: number[];
+  /** Whether to optimize item placement for better space utilization */
   private optimizeItemArrangement: boolean;
+  /** Current column index for sequential placement */
   private currentColumn: number = 0;
 
   constructor(params: LayoutParams) {
@@ -19,6 +28,10 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     this.columnHeights = Array(this.maxColumns).fill(0);
   }
 
+  /**
+   * Updates layout parameters and triggers recomputation if necessary.
+   * @param params New layout parameters
+   */
   updateLayoutParams(params: LayoutParams) {
     super.updateLayoutParams(params);
     if (this.boundedSize !== params.windowSize.width) {
@@ -35,6 +48,11 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Processes layout information for items, updating their dimensions.
+   * @param layoutInfo Array of layout information for items (real measurements)
+   * @param itemCount Total number of items in the list
+   */
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
     // Update layout information
     for (const info of layoutInfo) {
@@ -47,6 +65,11 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Estimates layout dimensions for an item at the given index.
+   * Can be called by base class if estimate is required.
+   * @param index Index of the item to estimate layout for
+   */
   estimateLayout(index: number) {
     const layout = this.layouts[index];
 
@@ -58,6 +81,10 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     layout.enforcedWidth = true;
   }
 
+  /**
+   * Returns the total size of the layout area.
+   * @returns RVDimension containing width and height of the layout
+   */
   getLayoutSize(): RVDimension {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
 
@@ -70,6 +97,12 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     };
   }
 
+  /**
+   * Recomputes layouts for items in the given range.
+   * Uses different placement strategies based on optimization settings.
+   * @param startIndex Starting index of items to recompute
+   * @param endIndex Ending index of items to recompute
+   */
   recomputeLayouts(startIndex: number, endIndex: number): void {
     // Reset column heights if starting from the beginning
     if (startIndex === 0) {
@@ -102,11 +135,21 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Calculates the width of an item based on its span.
+   * @param index Index of the item
+   * @returns Width of the item
+   */
   private getWidth(index: number): number {
     const span = this.getSpanSizeInfo(index).span ?? 1;
     return (this.boundedSize / this.maxColumns) * span;
   }
 
+  /**
+   * Places an item sequentially in the next available position.
+   * @param layout Layout information for the item
+   * @param span Number of columns the item spans
+   */
   private placeItemSequentially(layout: RVLayout, span: number): void {
     // Check if the item can fit in the current row
     if (this.currentColumn + span > this.maxColumns) {
@@ -144,6 +187,10 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Places a single-column item in the shortest available column.
+   * @param layout Layout information for the item
+   */
   private placeSingleColumnItem(layout: RVLayout): void {
     // Find the shortest column
     let shortestColumnIndex = 0;
@@ -164,6 +211,11 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     this.columnHeights[shortestColumnIndex] += layout.height;
   }
 
+  /**
+   * Places a multi-column item in the position that minimizes total column heights.
+   * @param layout Layout information for the item
+   * @param span Number of columns the item spans
+   */
   private placeOptimizedMultiColumnItem(layout: RVLayout, span: number): void {
     let bestStartColumn = 0;
     let minTotalHeight = Number.MAX_VALUE;
@@ -206,6 +258,10 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Updates column heights up to a given index by recalculating item positions.
+   * @param index Index to update column heights up to
+   */
   private updateColumnHeightsToIndex(index: number): void {
     // Reset column heights
     this.columnHeights = Array(this.maxColumns).fill(0);

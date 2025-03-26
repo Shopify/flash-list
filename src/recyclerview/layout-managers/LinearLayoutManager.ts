@@ -2,11 +2,19 @@ import { LayoutParams, RVDimension, RVLayoutInfo } from "./LayoutManager";
 import { RVLayout } from "./LayoutManager";
 import { RVLayoutManager } from "./LayoutManager";
 
+/**
+ * LinearLayoutManager implementation that arranges items in a single row or column.
+ * Supports both horizontal and vertical layouts with dynamic item sizing.
+ */
 export class RVLinearLayoutManagerImpl extends RVLayoutManager {
+  /** The bounded size (width for vertical, height for horizontal) */
   private boundedSize: number;
+  /** Whether the bounded size has been set */
   private hasSize: boolean = false;
 
+  /** Reference to the tallest item in the layout */
   private tallestItem?: RVLayout;
+  /** Height of the tallest item */
   private tallestItemHeight: number = 0;
 
   constructor(params: LayoutParams) {
@@ -17,7 +25,10 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     this.hasSize = this.boundedSize > 0;
   }
 
-  //TODO: check if this is needed
+  /**
+   * Updates layout parameters and triggers recomputation if necessary.
+   * @param params New layout parameters
+   */
   updateLayoutParams(params: LayoutParams): void {
     super.updateLayoutParams(params);
     const oldBoundedSize = this.boundedSize;
@@ -32,7 +43,12 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
-  // Updates layout information based on the provided layout info.
+  /**
+   * Processes layout information for items, updating their dimensions.
+   * For horizontal layouts, also normalizes heights of items.
+   * @param layoutInfo Array of layout information for items
+   * @param itemCount Total number of items in the list
+   */
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
     // Update layout information
     for (const info of layoutInfo) {
@@ -49,6 +65,10 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Estimates layout dimensions for an item at the given index.
+   * @param index Index of the item to estimate layout for
+   */
   estimateLayout(index: number) {
     const layout = this.layouts[index];
     layout.width = this.horizontal
@@ -59,7 +79,10 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     layout.enforcedWidth = !this.horizontal;
   }
 
-  // Size of the rendered area
+  /**
+   * Returns the total size of the layout area.
+   * @returns RVDimension containing width and height of the layout
+   */
   getLayoutSize(): RVDimension {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
     const lastLayout = this.layouts[this.layouts.length - 1];
@@ -73,6 +96,10 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     };
   }
 
+  /**
+   * Normalizes heights of items in horizontal layout to match the tallest item.
+   * @param layoutInfo Array of layout information for items
+   */
   private normalizeLayoutHeights(layoutInfo: RVLayoutInfo[]) {
     let newTallestItem: RVLayout | undefined;
     for (const info of layoutInfo) {
@@ -104,7 +131,12 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
-  // Helper function to recompute layouts starting from a given index
+  /**
+   * Recomputes layouts for items in the given range.
+   * Positions items sequentially based on layout direction.
+   * @param startIndex Starting index of items to recompute
+   * @param endIndex Ending index of items to recompute
+   */
   recomputeLayouts(startIndex: number, endIndex: number): void {
     for (let i = startIndex; i <= endIndex; i++) {
       const layout = this.getLayout(i);

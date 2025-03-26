@@ -7,20 +7,35 @@ import {
   findLastVisibleIndex,
 } from "../utils/findVisibleIndex";
 
-// TODO: Figure out how to estimate size of unrendered items and bidirectional item loading
+/**
+ * Base abstract class for layout managers in the recycler view system.
+ * Provides common functionality for managing item layouts and dimensions.
+ * Supports both horizontal and vertical layouts with dynamic item sizing.
+ */
 export abstract class RVLayoutManager {
+  /** Whether the layout is horizontal (true) or vertical (false) */
   protected horizontal: boolean;
+  /** Array of layout information for all items */
   protected layouts: RVLayout[];
+  /** Dimensions of the visible window/viewport */
   protected windowSize: RVDimension;
+  /** Information about item spans and sizes */
   protected spanSizeInfo: SpanSizeInfo = {};
+  /** Maximum number of columns in the layout */
   protected maxColumns: number;
+  /** Optional callback to override default item layout */
   protected overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
 
+  /** Flag indicating if the layout requires repainting */
   public requiresRepaint: boolean = false;
 
+  /** Optional function to determine item type */
   private _getItemType?: (index: number) => string | number;
+  /** Window for tracking average heights by item type */
   private heightAverageWindow: MultiTypeAverageWindow;
+  /** Window for tracking average widths by item type */
   private widthAverageWindow: MultiTypeAverageWindow;
+  /** Maximum number of items to process in a single layout pass */
   private maxItemsToProcess: number = 250; // TODO: make this dynamic
 
   constructor(params: LayoutParams) {
@@ -34,35 +49,67 @@ export abstract class RVLayoutManager {
     this.overrideItemLayout = params.overrideItemLayout;
   }
 
+  /**
+   * Gets the type of an item at the given index.
+   * @param index Index of the item
+   * @returns Item type or "default" if not specified
+   */
   private getItemType(index: number): string | number {
     return this._getItemType?.(index) ?? "default";
   }
 
+  /**
+   * Gets the estimated width for an item based on its type.
+   * @param index Index of the item
+   * @returns Estimated width
+   */
   protected getEstimatedWidth(index: number): number {
     return this.widthAverageWindow.getCurrentValue(this.getItemType(index));
   }
 
+  /**
+   * Gets the estimated height for an item based on its type.
+   * @param index Index of the item
+   * @returns Estimated height
+   */
   protected getEstimatedHeight(index: number): number {
     return this.heightAverageWindow.getCurrentValue(this.getItemType(index));
   }
 
-  // update layout info and return the index of the first modified layout
-  // recompute will be called with this return value.
+  /**
+   * Abstract method to process layout information for items.
+   * @param layoutInfo Array of layout information for items
+   * @param itemCount Total number of items in the list
+   * @returns Index of first modified layout or void
+   */
   protected abstract processLayoutInfo(
     layoutInfo: RVLayoutInfo[],
     itemCount: number
   ): number | void;
 
+  /**
+   * Checks if the layout is horizontal.
+   * @returns True if horizontal, false if vertical
+   */
   isHorizontal(): boolean {
     return this.horizontal;
   }
 
+  /**
+   * Gets the dimensions of the visible window.
+   * @returns Window dimensions
+   */
   getWindowsSize(): RVDimension {
     return this.windowSize;
   }
 
-  // returns visible indices, should be very fast. Use binary search to find the first visible index.
-  // Returns visible indices, should be very fast. Return sorted indices.
+  /**
+   * Gets indices of items currently visible in the viewport.
+   * Uses binary search for efficient lookup.
+   * @param unboundDimensionStart Start position of viewport
+   * @param unboundDimensionEnd End position of viewport
+   * @returns ConsecutiveNumbers containing visible indices
+   */
   getVisibleLayouts(
     unboundDimensionStart: number,
     unboundDimensionEnd: number
@@ -88,7 +135,10 @@ export abstract class RVLayoutManager {
     return ConsecutiveNumbers.EMPTY;
   }
 
-  // remove layout values and recompute layout.
+  /**
+   * Removes layout information for specified indices and recomputes layout.
+   * @param indices Array of indices to remove
+   */
   deleteLayout(indices: number[]): void {
     // Sort indices in descending order
     indices.sort((num1, num2) => num2 - num1);
@@ -105,7 +155,11 @@ export abstract class RVLayoutManager {
     );
   }
 
-  // Updates layout information based on the provided layout info. The input can have any index in any order and may impact overall layout.
+  /**
+   * Updates layout information for items and recomputes layout if necessary.
+   * @param layoutInfo Array of layout information for items (real measurements)
+   * @param totalItemCount Total number of items in the list
+   */
   modifyLayout(layoutInfo: RVLayoutInfo[], totalItemCount: number): void {
     const startTime = performance.now();
 
@@ -147,8 +201,12 @@ export abstract class RVLayoutManager {
     );
   }
 
-  // Returns layout info for an item at given index
-  // Creates and initializes a new layout if one doesn't exist
+  /**
+   * Gets layout information for an item at the given index.
+   * Creates and initializes a new layout if one doesn't exist.
+   * @param index Index of the item
+   * @returns Layout information for the item
+   */
   getLayout(index: number): RVLayout {
     let layout = this.layouts[index];
     if (!layout) {
@@ -167,26 +225,51 @@ export abstract class RVLayoutManager {
     return layout;
   }
 
-  // recompute if critical layout information changes, can be called with same values repeatedly so only recompute if necessary
+  /**
+   * Updates layout parameters and triggers recomputation if necessary.
+   * @param params New layout parameters
+   */
   updateLayoutParams(params: LayoutParams) {
     this.windowSize = params.windowSize;
     this.horizontal = params.horizontal ?? this.horizontal;
     this.maxColumns = params.maxColumns ?? this.maxColumns;
   }
 
+  /**
+   * Abstract method to recompute layouts for items in the given range.
+   * @param startIndex Starting index of items to recompute
+   * @param endIndex Ending index of items to recompute
+   */
   abstract recomputeLayouts(startIndex: number, endIndex: number): void;
 
-  // Size of the rendered area
+  /**
+   * Abstract method to get the total size of the layout area.
+   * @returns RVDimension containing width and height of the layout
+   */
   abstract getLayoutSize(): RVDimension;
 
+  /**
+   * Abstract method to estimate layout dimensions for an item.
+   * @param index Index of the item to estimate layout for
+   */
   protected abstract estimateLayout(index: number): void;
 
+  /**
+   * Gets span size information for an item, applying any overrides.
+   * @param index Index of the item
+   * @returns SpanSizeInfo for the item
+   */
   protected getSpanSizeInfo(index: number): SpanSizeInfo {
     this.spanSizeInfo.span = undefined;
     this.overrideItemLayout?.(index, this.spanSizeInfo);
     return this.spanSizeInfo;
   }
 
+  /**
+   * Gets the maximum index to process in a single layout pass.
+   * @param startIndex Starting index
+   * @returns Maximum index to process
+   */
   private getMaxRecomputeIndex(startIndex: number): number {
     return Math.min(
       startIndex + this.maxItemsToProcess,
@@ -194,10 +277,20 @@ export abstract class RVLayoutManager {
     );
   }
 
+  /**
+   * Gets the minimum index to process in a single layout pass.
+   * @param startIndex Starting index
+   * @returns Minimum index to process
+   */
   private getMinRecomputeIndex(startIndex: number): number {
     return startIndex;
   }
 
+  /**
+   * Computes size estimates and finds the minimum recompute index.
+   * @param layoutInfo Array of layout information for items
+   * @returns Minimum index that needs recomputation
+   */
   private computeEstimatesAndMinRecomputeIndex(
     layoutInfo: RVLayoutInfo[]
   ): number {
