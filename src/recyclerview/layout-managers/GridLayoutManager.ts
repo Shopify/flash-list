@@ -5,7 +5,13 @@ import {
   RVLayoutInfo,
   RVLayoutManager,
 } from "./LayoutManager";
+
+/**
+ * GridLayoutManager implementation that arranges items in a grid pattern.
+ * Items are placed in rows and columns, with support for items spanning multiple columns.
+ */
 export class RVGridLayoutManagerImpl extends RVLayoutManager {
+  /** The width of the bounded area for the grid */
   private boundedSize: number;
 
   constructor(params: LayoutParams) {
@@ -13,6 +19,10 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     this.boundedSize = params.windowSize.width;
   }
 
+  /**
+   * Updates layout parameters and triggers recomputation if necessary.
+   * @param params New layout parameters
+   */
   updateLayoutParams(params: LayoutParams): void {
     super.updateLayoutParams(params);
     if (this.boundedSize !== params.windowSize.width) {
@@ -28,6 +38,11 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Processes layout information for items, updating their dimensions.
+   * @param layoutInfo Array of layout information for items
+   * @param itemCount Total number of items in the list
+   */
   processLayoutInfo(layoutInfo: RVLayoutInfo[], itemCount: number) {
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
@@ -38,6 +53,10 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Estimates layout dimensions for an item at the given index.
+   * @param index Index of the item to estimate layout for
+   */
   estimateLayout(index: number) {
     const layout = this.layouts[index];
     layout.width = this.getWidth(index);
@@ -47,7 +66,10 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     layout.enforcedWidth = true;
   }
 
-  // Size of the rendered area
+  /**
+   * Returns the total size of the layout area.
+   * @returns RVDimension containing width and height of the layout
+   */
   getLayoutSize(): RVDimension {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
     const lastRowTallestItem = this.processAndReturnTallestItemInRow(
@@ -59,6 +81,11 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     };
   }
 
+  /**
+   * Recomputes layouts for items in the given range.
+   * @param startIndex Starting index of items to recompute
+   * @param endIndex Ending index of items to recompute
+   */
   recomputeLayouts(startIndex: number, endIndex: number): void {
     const newStartIndex = this.locateFirstNeighbourIndex(startIndex);
     const startVal = this.getLayout(newStartIndex);
@@ -80,11 +107,23 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     }
   }
 
+  /**
+   * Calculates the width of an item based on its span.
+   * @param index Index of the item
+   * @returns Width of the item
+   */
   private getWidth(index: number): number {
     const span = this.getSpanSizeInfo(index).span ?? 1;
     return (this.boundedSize / this.maxColumns) * span;
   }
 
+  /**
+   * Processes items in a row and returns the tallest item.
+   * Also handles height normalization for items in the same row.
+   * Tallest item per row helps in forcing tallest items height on neighbouring items.
+   * @param index Index of the last item in the row
+   * @returns The tallest item in the row
+   */
   private processAndReturnTallestItemInRow(index: number): RVLayout {
     const startIndex = this.locateFirstNeighbourIndex(index);
     const y = this.layouts[startIndex].y;
@@ -139,11 +178,22 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     return tallestItem;
   }
 
+  /**
+   * Checks if an item can fit within the bounded width.
+   * @param itemX Starting X position of the item
+   * @param width Width of the item
+   * @returns True if the item fits within bounds
+   */
   private checkBounds(itemX: number, width: number): boolean {
     // TODO: Manage precision problems
     return itemX + width <= this.boundedSize + 0.9;
   }
 
+  /**
+   * Locates the index of the first item in the current row.
+   * @param startIndex Index to start searching from
+   * @returns Index of the first item in the row
+   */
   private locateFirstNeighbourIndex(startIndex: number): number {
     if (startIndex === 0) {
       return 0;
