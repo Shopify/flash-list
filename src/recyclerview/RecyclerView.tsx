@@ -1,3 +1,7 @@
+/**
+ * RecyclerView is a high-performance list component that efficiently renders and recycles list items.
+ * It's designed to handle large lists with optimal memory usage and smooth scrolling.
+ */
 import React, {
   RefObject,
   useCallback,
@@ -39,10 +43,15 @@ import { useSecondaryProps } from "./hooks/useSecondaryProps";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
 import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
 
+/**
+ * Main RecyclerView component that handles list rendering, scrolling, and item recycling.
+ * @template T - The type of items in the list
+ */
 const RecyclerViewComponent = <T,>(
   props: RecyclerViewProps<T>,
   ref: React.Ref<any>
 ) => {
+  // Destructure props and initialize refs
   const {
     horizontal,
     renderItem,
@@ -68,21 +77,30 @@ const RecyclerViewComponent = <T,>(
     maintainVisibleContentPosition,
     ...rest
   } = props;
+
+  // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);
   const internalViewRef = useRef<CompatView>(null);
   const childContainerViewRef = useRef<CompatView>(null);
-  const distanceFromWindow = useRef(0);
+
+  // Track scroll position
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Refs for sticky headers and scroll anchoring
   const stickyHeaderRef = useRef<StickyHeaderRef>(null);
   const scrollAnchorRef = useRef<ScrollAnchorRef>(null);
+
+  // State for managing layout and render updates
   const [_, setLayoutTreeId] = useLayoutState(0);
   const [__, setRenderId] = useState(0);
 
+  // Map to store refs for each item in the list
   const refHolder = useMemo(
     () => new Map<number, RefObject<CompatView | null>>(),
     []
   );
 
+  // Initialize core RecyclerView manager and content offset management
   const { recyclerViewManager } = useRecyclerViewManager(props);
   const { applyContentOffset } = useContentOffsetManagement(
     recyclerViewManager,
@@ -90,60 +108,66 @@ const RecyclerViewComponent = <T,>(
     scrollViewRef,
     scrollAnchorRef
   );
-  // console.log("contentOffset", contentOffset);
-  //console.log("render stack", renderStack);
+
+  // Initialize view holder collection ref
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
 
+  // Hook to handle list loading
   useOnListLoad(recyclerViewManager, onLoad);
 
-  // Use the bound detection hook
+  // Hook to detect when scrolling reaches list bounds
   const { checkBounds } = useBoundDetection(
     recyclerViewManager,
     props,
     scrollViewRef
   );
 
-  // Use the recycler view handler hook to handle imperative methods
+  // Hook to handle imperative methods (scrollTo, etc.)
   useRecyclerViewHandler(recyclerViewManager, ref, scrollViewRef, props);
 
-  // Initialization effect
+  /**
+   * Initialize the RecyclerView by measuring and setting up the window size
+   * This effect runs when the component mounts or when layout changes
+   */
   useLayoutEffect(() => {
     if (internalViewRef.current && childContainerViewRef.current) {
+      // Measure the outer and inner container layouts
       const outerViewLayout = measureLayout(internalViewRef.current);
       const childViewLayout = measureLayoutRelative(
         childContainerViewRef.current,
         internalViewRef.current
       );
-      distanceFromWindow.current = horizontal
+
+      // Calculate offset of first item
+      const firstItemOffset = horizontal
         ? childViewLayout.x - outerViewLayout.x
         : childViewLayout.y - outerViewLayout.y;
 
-      // console.log(
-      //   "updateWindowSize",
-      //   measureLayout(scrollViewRef.current!),
-      //   measureLayout(childContainerViewRef.current!)
-      // );
-
+      // Update the RecyclerView manager with window dimensions
       recyclerViewManager.updateWindowSize(
         {
           width: horizontal ? outerViewLayout.width : childViewLayout.width,
           height: horizontal ? childViewLayout.height : outerViewLayout.height,
         },
-        distanceFromWindow.current
+        firstItemOffset
       );
     }
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  /**
+   * Effect to handle layout updates for list items
+   * This ensures proper positioning and recycling of items
+   */
   useLayoutEffect(() => {
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
       const layout = measureLayout(viewHolderRef.current!);
       return { index, dimensions: layout };
     });
-    //console.log("render effect");
+
     if (
       recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
     ) {
+      // Trigger re-render if layout modifications were made
       setRenderId((prev) => prev + 1);
     } else {
       //console.log("commitLayout");
@@ -153,28 +177,23 @@ const RecyclerViewComponent = <T,>(
     }
   });
 
-  // useEffect(() => {
-  //   if (recyclerViewManager.getIsFirstLayoutComplete()) {
-  //     if (recyclerViewManager.recomputeEngagedIndices()) {
-  //       setRenderId((prev) => prev + 1);
-  //     }
-  //   }
-  // });
-
+  /**
+   * Scroll event handler that manages scroll position, velocity, and RTL support
+   */
   const onScrollHandler = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       let velocity = event.nativeEvent.velocity;
       let scrollOffset = horizontal
         ? event.nativeEvent.contentOffset.x
         : event.nativeEvent.contentOffset.y;
+
+      // Handle RTL (Right-to-Left) layout adjustments
       if (I18nManager.isRTL && horizontal) {
         scrollOffset = adjustOffsetForRTL(
           scrollOffset,
           event.nativeEvent.contentSize.width,
           event.nativeEvent.layoutMeasurement.width
         );
-        // TODO: not rounding off is leading to repeated onScroll events, precision issue
-        console.log("RTL", scrollOffset, event.nativeEvent.contentOffset.x);
         if (velocity) {
           velocity = {
             x: -velocity.x,
@@ -182,21 +201,27 @@ const RecyclerViewComponent = <T,>(
           };
         }
       }
+
+      // Update scroll position and trigger re-render if needed
       if (recyclerViewManager.updateScrollOffset(scrollOffset, velocity)) {
-        // trigger another update if there are engaged indices
         setRenderId((prev) => prev + 1);
       }
+
+      // Update sticky headers and check bounds
       stickyHeaderRef.current?.reportScrollEvent(event.nativeEvent);
       checkBounds();
+
+      // Record interaction and compute item visibility
       recyclerViewManager.recordInteraction();
       recyclerViewManager.computeItemViewability();
+
+      // Call user-provided onScroll handler
       onScroll?.(event);
     },
     [horizontal, recyclerViewManager]
   );
 
-  // const contentOffset = useContentOffsetManagement(recyclerViewManager);
-
+  // Create context for child components
   const recyclerViewContext = useMemo(() => {
     return {
       layout: () => {
@@ -211,6 +236,9 @@ const RecyclerViewComponent = <T,>(
     };
   }, [setLayoutTreeId]);
 
+  /**
+   * Validates that item dimensions match the expected layout
+   */
   const validateItemSize = useCallback(
     (index: number, size: RVDimension) => {
       const layout = recyclerViewManager.getLayout(index);
@@ -241,6 +269,7 @@ const RecyclerViewComponent = <T,>(
     [recyclerViewManager]
   );
 
+  // Get secondary props and components
   const {
     refreshControl,
     renderHeader,
@@ -249,6 +278,7 @@ const RecyclerViewComponent = <T,>(
     CompatScrollView,
   } = useSecondaryProps(props);
 
+  // Render sticky headers if configured
   const stickyHeaders = useMemo(() => {
     if (
       data &&
@@ -271,6 +301,7 @@ const RecyclerViewComponent = <T,>(
     return null;
   }, [data, stickyHeaderIndices, renderItem, extraData]);
 
+  // Set up scroll event handling with animation support for sticky headers
   const animatedEvent = useMemo(() => {
     if (stickyHeaders) {
       return Animated.event(
@@ -294,6 +325,7 @@ const RecyclerViewComponent = <T,>(
   const shouldRenderFromBottom =
     maintainVisibleContentPositionInternal?.startRenderingFromBottom ?? false;
 
+  // Calculate minimum height adjustment for bottom rendering
   const adjustmentMinHeight = recyclerViewManager.hasLayout()
     ? Math.max(
         0,
@@ -303,6 +335,7 @@ const RecyclerViewComponent = <T,>(
       )
     : 0;
 
+  // Create view for measuring bounded size
   const viewToMeasureBoundedSize = useMemo(() => {
     return (
       <CompatView
@@ -316,8 +349,7 @@ const RecyclerViewComponent = <T,>(
     );
   }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
 
-  //console.log("render");
-
+  // Render the main RecyclerView structure
   return (
     <RecyclerViewContextProvider value={recyclerViewContext}>
       <CompatView
@@ -352,11 +384,13 @@ const RecyclerViewComponent = <T,>(
           refreshControl={refreshControl}
           {...overrideProps}
         >
+          {/* Scroll anchor for maintaining content position */}
           {maintainVisibleContentPositionInternal && (
             <ScrollAnchor scrollAnchorRef={scrollAnchorRef} />
           )}
           {renderHeader}
           {viewToMeasureBoundedSize}
+          {/* Main list content */}
           <ViewHolderCollection
             viewHolderCollectionRef={viewHolderCollectionRef}
             data={data}
@@ -389,15 +423,14 @@ const RecyclerViewComponent = <T,>(
   );
 };
 
-// Define the component type with proper generic typing
+// Type definition for the RecyclerView component
 type RecyclerViewType = <T>(
   props: RecyclerViewProps<T> & { ref?: React.Ref<any> }
 ) => React.JSX.Element;
 
-// Create the forwarded ref component with proper typing
+// Create and export the memoized, forwarded ref component
 const RecyclerView = React.memo(
   forwardRef(RecyclerViewComponent)
 ) as RecyclerViewType;
 
-// Export the component
 export { RecyclerView };

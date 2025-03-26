@@ -1,69 +1,85 @@
 export interface RecycleKeyManager {
-  // gets new key for the item type, every item has it's on pool. The managers tracks which key is rendering which stableId
-  // if a stableId is provided, it will return the key for that stableId, otherwise it will return a new key
+  /**
+   * Retrieves a unique key for an item type, maintaining a separate pool for each type.
+   * If a stableId is provided and exists, returns the associated key.
+   * Otherwise, generates a new key or reuses one from the pool.
+   * @param itemType - The type/category of the item (e.g., 'header', 'product', 'footer')
+   * @param stableId - Optional unique identifier for stable item tracking
+   * @param currentKey - Optional current key to maintain if it exists in the pool
+   * @returns A unique key for the item
+   */
   getKey: (itemType: string, stableId: string, currentKey?: string) => string;
-  // when view is out of viewports, it should be recycled, this method should be called to recycle the key and add it back to the pool
-  // Itemtype should already be known, as it was used to get the key
+
+  /**
+   * Recycles a key back into its item type's pool when the associated view is no longer visible.
+   * This allows the key to be reused for new items of the same type.
+   * @param key - The key to be recycled back into the pool
+   */
   recycleKey: (key: string) => void;
-  // Checks if a key is available for recycling (unused)
+
+  /**
+   * Checks if a key is currently available in the recycling pool (not in use).
+   * @param key - The key to check
+   * @returns True if the key is available in the pool, false otherwise
+   */
   hasKeyInPool: (key: string) => boolean;
-  // Clears the pool of recycledkeys.
+
+  /**
+   * Clears all recycled keys from the pool, resetting the recycling system.
+   * This is useful when the list needs to be completely reset.
+   */
   clearPool: () => void;
 }
 
 export class RecycleKeyManagerImpl implements RecycleKeyManager {
-  // Maximum number of items (keys) that the manager can handle at any given time.
+  // Maximum number of unique keys that can be active at any time
   private maxItems: number;
 
-  // Map where each key is an item type, and the value is a set of keys associated with that item type.
+  // Stores pools of recycled keys for each item type
   private keyPools: Map<string, Set<string>>;
 
-  // Map that stores information about each key, including its associated item type and optional stableId.
+  // Maps active keys to their metadata (item type and stable ID)
   private keyMap: Map<string, { itemType: string; stableId?: string }>;
 
-  // Map that stores the association between stableIds and their corresponding keys.
+  // Maps stable IDs to their corresponding keys for quick lookups
   private stableIdMap: Map<string, string>;
 
-  // Counter for generating new keys.
+  // Counter for generating unique sequential keys
   private keyCounter: number;
 
-  // the overall pool size shouldn't exceed maxItems, if it does, it will start recycling the keys
+  /**
+   * Creates a new RecycleKeyManager with a specified maximum number of items.
+   * @param maxItems - Maximum number of unique keys that can be active simultaneously.
+   *                   Defaults to Number.MAX_SAFE_INTEGER if not specified.
+   */
   constructor(maxItems: number = Number.MAX_SAFE_INTEGER) {
-    // Initialize the maximum number of items.
     this.maxItems = maxItems;
-
-    // Initialize the map for key pools.
     this.keyPools = new Map();
-
-    // Initialize the map for key metadata.
     this.keyMap = new Map();
-
-    // Initialize the map for stableId to key associations.
     this.stableIdMap = new Map();
-
-    // Initialize the key counter.
     this.keyCounter = 0;
   }
 
   /**
-   * Gets a key for the specified item type. If a stableId is provided and already exists,
-   * it returns the key associated with that stableId. Otherwise, it generates a new key
-   * or reuses one from the pool.
-   * @param itemType - The type of the item.
-   * @param stableId - Optional stable identifier for the item.
-   * @returns The key for the item.
+   * Gets a key for the specified item type, prioritizing stable ID associations.
+   * If a stable ID exists, returns its associated key. Otherwise, either reuses
+   * a key from the pool or generates a new one.
+   * @param itemType - The type/category of the item
+   * @param stableId - Optional unique identifier for stable item tracking
+   * @param currentKey - Optional current key to maintain if it exists in the pool
+   * @returns A unique key for the item
    */
   public getKey(
     itemType: string,
     stableId: string,
     currentKey?: string
   ): string {
-    // If a stableId is provided and already exists, return the associated key.
+    // Return existing key if stableId is already mapped
     if (stableId && this.stableIdMap.has(stableId)) {
       return this.stableIdMap.get(stableId)!;
     }
 
-    // Get or create the pool for the specified item type.
+    // Get or create the pool for this item type
     let pool = this.keyPools.get(itemType);
     if (!pool) {
       pool = new Set();
@@ -71,7 +87,7 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
     }
 
     let key: string;
-    // If the pool has available keys, reuse one.
+    // Reuse existing key from pool if available
     if (pool.size > 0) {
       key =
         currentKey && pool.has(currentKey)
@@ -79,25 +95,26 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
           : pool.values().next().value;
       pool.delete(key);
     } else {
-      // Otherwise, generate a new key using the counter.
+      // Generate new key if pool is empty
       key = this.generateKey();
     }
 
-    // Store the key and its associated item type and stableId.
+    // Update mappings with new key information
     this.keyMap.set(key, { itemType, stableId });
     if (stableId) {
       this.stableIdMap.set(stableId, key);
     }
 
-    // Ensure the overall pool size does not exceed the maximum limit.
+    // Ensure we don't exceed the maximum number of active keys
     this.ensurePoolSize();
 
     return key;
   }
 
   /**
-   * Recycles a key by adding it back to the pool for its item type.
-   * @param key - The key to be recycled.
+   * Recycles a key by adding it back to its item type's pool and cleaning up
+   * associated mappings. This should be called when a view is no longer visible.
+   * @param key - The key to be recycled
    */
   public recycleKey(key: string): void {
     const keyInfo = this.keyMap.get(key);
@@ -107,10 +124,12 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
     }
 
     const { itemType, stableId } = keyInfo;
+    // Clean up stable ID mapping if it exists
     if (stableId) {
       this.stableIdMap.delete(stableId);
     }
 
+    // Add key back to its type's pool
     let pool = this.keyPools.get(itemType);
     if (!pool) {
       pool = new Set();
@@ -121,30 +140,35 @@ export class RecycleKeyManagerImpl implements RecycleKeyManager {
     this.keyMap.delete(key);
   }
 
-  // Checks if a key is available for recycling (unused)
+  /**
+   * Checks if a key is currently available in the recycling pool.
+   * @param key - The key to check
+   * @returns True if the key is available in the pool, false otherwise
+   */
   public hasKeyInPool(key: string): boolean {
     return !this.keyMap.has(key);
   }
 
   /**
-   * Clears the pool of recycledkeys.
+   * Clears all recycled keys from the pool, effectively resetting the recycling system.
+   * This operation does not affect currently active keys.
    */
   public clearPool() {
     this.keyPools.clear();
   }
 
   /**
-   * Generates a unique key using a counter.
-   * @returns A unique key.
+   * Generates a unique sequential key using an internal counter.
+   * @returns A unique key as a string
    */
   private generateKey(): string {
     return (this.keyCounter++).toString();
   }
 
   /**
-   * Ensures that the overall pool size does not exceed the maximum limit.
-   * If it does, it recycles the oldest keys.
-   * TODO: Check performance impact of this
+   * Ensures the total number of active keys doesn't exceed the maximum limit.
+   * If the limit is exceeded, recycles the oldest keys until within bounds.
+   * Note: This operation may impact performance when dealing with large lists.
    */
   private ensurePoolSize(): void {
     if (this.keyMap.size <= this.maxItems) return;
