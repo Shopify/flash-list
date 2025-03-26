@@ -211,7 +211,6 @@ export class RecyclerViewManager<T> {
   ): boolean {
     this.layoutManager?.modifyLayout(layoutInfo, dataLength);
     if (dataLength === 0) {
-      this.applyInitialScrollAdjustment();
       this.isFirstLayoutComplete = true;
       return false;
     }
@@ -265,8 +264,12 @@ export class RecyclerViewManager<T> {
     this.itemViewabilityManager.dispose();
   }
 
+  private getDataLength() {
+    return this.props.data?.length ?? 0;
+  }
+
   private applyInitialScrollAdjustment() {
-    if (!this.layoutManager) {
+    if (!this.layoutManager || this.getDataLength() === 0) {
       return;
     }
     const initialItemLayout = this.layoutManager?.getLayout(
