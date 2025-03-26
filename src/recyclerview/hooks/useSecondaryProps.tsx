@@ -6,6 +6,22 @@ import { CompatView } from "../components/CompatView";
 import { CompatAnimatedScroller } from "../components/CompatScroller";
 import React from "react";
 
+/**
+ * Hook that manages secondary props and components for the RecyclerView.
+ * This hook handles the creation and management of:
+ * 1. Pull-to-refresh functionality
+ * 2. Header and footer components
+ * 3. Empty state component
+ * 4. Custom scroll component with animation support
+ *
+ * @param props - The RecyclerViewProps containing all configuration options
+ * @returns An object containing:
+ *   - refreshControl: The pull-to-refresh control component
+ *   - renderHeader: The header component renderer
+ *   - renderFooter: The footer component renderer
+ *   - renderEmpty: The empty state component renderer
+ *   - CompatScrollView: The animated scroll component
+ */
 export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
   const {
     ListHeaderComponent,
@@ -19,7 +35,10 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     onRefresh,
     data,
   } = props;
-  // Create a function to get the refresh control
+
+  /**
+   * Creates the refresh control component if onRefresh is provided.
+   */
   const refreshControl = useMemo(() => {
     if (onRefresh) {
       return (
@@ -33,6 +52,9 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     return undefined;
   }, [onRefresh, refreshing, progressViewOffset]);
 
+  /**
+   * Creates the header component with optional styling.
+   */
   const renderHeader = useMemo(() => {
     if (!ListHeaderComponent) {
       return null;
@@ -44,6 +66,9 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     );
   }, [ListHeaderComponent, ListHeaderComponentStyle]);
 
+  /**
+   * Creates the footer component with optional styling.
+   */
   const renderFooter = useMemo(() => {
     if (!ListFooterComponent) {
       return null;
@@ -55,6 +80,10 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     );
   }, [ListFooterComponent, ListFooterComponentStyle]);
 
+  /**
+   * Creates the empty state component when there's no data.
+   * Only rendered when ListEmptyComponent is provided and data is empty.
+   */
   const renderEmpty = useMemo(() => {
     if (!ListEmptyComponent || (data && data.length > 0)) {
       return null;
@@ -62,16 +91,22 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     return getValidComponent(ListEmptyComponent);
   }, [ListEmptyComponent, data]);
 
+  /**
+   * Creates an animated scroll component based on the provided renderScrollComponent.
+   * If no custom component is provided, uses the default CompatAnimatedScroller.
+   */
   const CompatScrollView = useMemo(() => {
     let scrollComponent = CompatAnimatedScroller;
     if (typeof renderScrollComponent === "function") {
-      //TODO: Test animated version of this
+      // Create a forwarded ref wrapper for the custom scroll component
+      // TODO: Test animated version of custom scroll component
       scrollComponent = React.forwardRef((props, ref) =>
         renderScrollComponent({ ...props, ref } as any)
       ) as any;
     } else if (renderScrollComponent) {
       scrollComponent = renderScrollComponent;
     }
+    // Wrap the scroll component with Animated.createAnimatedComponent
     return Animated.createAnimatedComponent(scrollComponent);
   }, [renderScrollComponent]);
 
