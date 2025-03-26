@@ -2,12 +2,18 @@ import { RVLayout } from "../layout-managers/LayoutManager";
 
 /**
  * A helper function to perform binary search for the first or last visible index.
+ * This function efficiently finds items that are visible within a viewport by using
+ * a binary search algorithm on sorted layouts.
  *
- * @param layouts - The sorted array of RVLayout objects.
- * @param threshold - The threshold value to determine visibility.
- * @param isSortedByX - A boolean indicating if the array is sorted by x (true) or y (false).
- * @param findFirst - A boolean indicating whether to find the first (true) or last (false) visible index.
- * @returns The index of the visible layout or -1 if none are visible.
+ * @param layouts - The sorted array of RVLayout objects, sorted by either x or y position
+ * @param threshold - The threshold value to determine visibility (viewport boundary)
+ * @param isSortedByX - A boolean indicating if the array is sorted by x (true) or y (false)
+ * @param findFirst - A boolean indicating whether to find the first (true) or last (false) visible index
+ * @returns The index of the visible layout or -1 if none are visible
+ *
+ * @remarks
+ * The binary search implementation ensures O(log n) time complexity for finding visible items.
+ * The function assumes the layouts array is pre-sorted by the relevant dimension (x or y).
  */
 function binarySearchVisibleIndex(
   layouts: RVLayout[],
@@ -27,25 +33,22 @@ function binarySearchVisibleIndex(
     const position = isSortedByX ? layout.x : layout.y;
     const size = isSortedByX ? layout.width : layout.height;
 
-    //TODO: Will this find item bigger than viewport
     if (findFirst) {
       // Logic for finding the first visible index
       if (position >= threshold || position + size >= threshold) {
-        // Potential visible index
+        // Potential visible index found, continue searching left for earlier visible items
         visibleIndex = mid;
-        // Search in the left half for the first visible
         right = mid - 1;
       } else {
-        // Search in the right half
+        // Search in the right half for visible items
         left = mid + 1;
       }
     } else if (position <= threshold) {
-      // Potential visible index
+      // Potential visible index found, continue searching right for later visible items
       visibleIndex = mid;
-      // Search in the right half for the last visible
       left = mid + 1;
     } else {
-      // Search in the left half
+      // Search in the left half for visible items
       right = mid - 1;
     }
   }
@@ -55,11 +58,13 @@ function binarySearchVisibleIndex(
 
 /**
  * Finds the first visible index in a sorted array of RVLayout objects.
+ * This is a wrapper around binarySearchVisibleIndex that specifically finds
+ * the first item that becomes visible in the viewport.
  *
- * @param layouts - The sorted array of RVLayout objects.
- * @param threshold - The threshold value to determine visibility.
- * @param isSortedByX - A boolean indicating if the array is sorted by x (true) or y (false).
- * @returns The index of the first visible layout or -1 if none are visible.
+ * @param layouts - The sorted array of RVLayout objects
+ * @param threshold - The threshold value to determine visibility
+ * @param isSortedByX - A boolean indicating if the array is sorted by x (true) or y (false)
+ * @returns The index of the first visible layout or -1 if none are visible
  */
 export function findFirstVisibleIndex(
   layouts: RVLayout[],
@@ -71,11 +76,13 @@ export function findFirstVisibleIndex(
 
 /**
  * Finds the last visible index in a sorted array of RVLayout objects.
+ * This is a wrapper around binarySearchVisibleIndex that specifically finds
+ * the last item that remains visible in the viewport.
  *
- * @param layouts - The sorted array of RVLayout objects.
- * @param threshold - The threshold value to determine visibility.
- * @param isSortedByX - A boolean indicating if the array is sorted by x (true) or y (false).
- * @returns The index of the last visible layout or -1 if none are visible.
+ * @param layouts - The sorted array of RVLayout objects
+ * @param threshold - The threshold value to determine visibility
+ * @param isSortedByX - A boolean indicating if the array is sorted by x (true) or y (false)
+ * @returns The index of the last visible layout or -1 if none are visible
  */
 export function findLastVisibleIndex(
   layouts: RVLayout[],
