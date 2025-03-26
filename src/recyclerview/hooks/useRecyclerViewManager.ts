@@ -13,6 +13,9 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
     recyclerViewManager.updateProps(props);
   }, [props]);
 
+  /**
+   * When data changes, we need to process the data update before the render happens
+   */
   useMemo(() => {
     recyclerViewManager.processDataUpdate();
   }, [data]);
