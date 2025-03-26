@@ -1,3 +1,9 @@
+/**
+ * StickyHeaders component manages the sticky header behavior in a FlashList.
+ * It handles the animation and positioning of headers that should remain fixed
+ * at the top of the list while scrolling.
+ */
+
 import React, {
   useRef,
   useState,
@@ -11,16 +17,33 @@ import { FlashListProps } from "../..";
 import { CompatAnimatedView } from "./CompatView";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { ViewHolder } from "../ViewHolder";
+
+/**
+ * Props for the StickyHeaders component
+ * @template TItem - The type of items in the list
+ */
 export interface StickyHeaderProps<TItem> {
+  /** Array of indices that should have sticky headers */
   stickyHeaderIndices: number[];
+  /** The data array being rendered */
   data: readonly TItem[];
+  /** Animated value tracking scroll position */
   scrollY: Animated.Value;
+  /** Function to render each item */
   renderItem: FlashListProps<TItem>["renderItem"];
+  /** Ref to access sticky header methods */
   stickyHeaderRef: React.RefObject<StickyHeaderRef>;
+  /** Manager for recycler view operations */
   recyclerViewManager: RecyclerViewManager<TItem>;
+  /** Additional data to trigger re-renders */
   extraData: FlashListProps<TItem>["extraData"];
 }
+
+/**
+ * Ref interface for StickyHeaders component
+ */
 export interface StickyHeaderRef {
+  /** Reports scroll events to update sticky header positions */
   reportScrollEvent: (event: NativeScrollEvent) => void;
 }
 
@@ -159,7 +182,13 @@ export const StickyHeaders = <TItem,>({
   return headerContent;
 };
 
-// Binary search utilities
+/**
+ * Binary search utility to find the current sticky header index based on scroll position
+ * @param sortedIndices - Array of indices sorted by Y position
+ * @param adjustedValue - Current scroll position
+ * @param getY - Function to get Y position for an index
+ * @returns Index of the current sticky header
+ */
 function findCurrentStickyIndex(
   sortedIndices: number[],
   adjustedValue: number,
@@ -183,8 +212,3 @@ function findCurrentStickyIndex(
 
   return result;
 }
-/*
- * Sliding animation for sticky headers:
- * When the next header pushes the current one up, we translate the current header
- * upward based on how much the next header has entered the sticky header zone.
- */
