@@ -42,7 +42,7 @@ const generateItems = (count: number): Item[] => {
     id: `item-${i}`,
     title: `Item ${i}`,
     subtitle: `This is a detailed description for item ${i}`,
-    height: (i % 3) * 50 + 100, // Random heights: 100, 150, or 200
+    height: Math.floor(Math.random() * 201) + 100, // Random height between 100 and 300
     color: colors[i % colors.length],
   }));
 };
