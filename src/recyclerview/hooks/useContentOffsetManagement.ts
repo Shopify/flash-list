@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { RecyclerViewProps } from "../RecyclerViewProps";
@@ -26,6 +26,7 @@ export function useContentOffsetManagement<T>(
   scrollViewRef: React.RefObject<ScrollView>,
   scrollAnchorRef: React.RefObject<ScrollAnchorRef>
 ) {
+  const [_, setRenderId] = useState(0);
   // Track component unmount state to prevent operations after unmount
   const isUnmounted = useUnmountFlag();
 
@@ -52,16 +53,34 @@ export function useContentOffsetManagement<T>(
     }
   });
 
+  const updateScrollOffsetAsync = useCallback(
+    async (offset: number): Promise<void> => {
+      return new Promise((resolve) => {
+        recyclerViewManager.updateScrollOffset(offset);
+        // Add the resolve function to the queue
+        pendingScrollResolves.current.push(resolve);
+        setRenderId((prev) => prev + 1);
+      });
+    },
+    [recyclerViewManager]
+  );
+
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
   const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
+  const pendingScrollResolves = useRef<(() => void)[]>([]);
 
   /**
    * Maintains the visible content position when the list updates.
    * This is particularly useful for chat applications where we want to keep
    * the user's current view position when new messages are added.
    */
-  const applyContentOffset = useCallback(() => {
+  const applyContentOffset = useCallback(async () => {
+    // Resolve all pending scroll updates from previous calls
+    const resolves = pendingScrollResolves.current;
+    pendingScrollResolves.current = [];
+    resolves.forEach((resolve) => resolve());
+
     if (
       recyclerViewManager.getIsFirstLayoutComplete() &&
       props.maintainVisibleContentPosition
@@ -85,6 +104,7 @@ export function useContentOffsetManagement<T>(
             ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
           };
           if (diff !== 0) {
+            console.log("diff", diff, firstVisibleItemKey.current);
             scrollAnchorRef.current?.scrollBy(diff);
           }
         }
@@ -104,7 +124,12 @@ export function useContentOffsetManagement<T>(
         };
       }
     }
-  }, [props.data, props.keyExtractor, recyclerViewManager]);
+  }, [
+    props.data,
+    props.keyExtractor,
+    recyclerViewManager,
+    updateScrollOffsetAsync,
+  ]);
 
-  return { applyContentOffset };
+  return { applyContentOffset, updateScrollOffsetAsync };
 }

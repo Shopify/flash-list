@@ -4,6 +4,7 @@ import { CompatScroller } from "../components/CompatScroller";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { I18nManager } from "react-native";
 import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
+import { useUnmountFlag } from "./useUnmountFlag";
 
 /**
  * Parameters for scrolling to a specific position in the list.
@@ -70,9 +71,11 @@ export function useRecyclerViewHandler<T>(
   recyclerViewManager: RecyclerViewManager<T>,
   ref: React.Ref<any>,
   scrollViewRef: RefObject<CompatScroller>,
+  updateScrollOffsetAsync: (offset: number) => Promise<void>,
   props: RecyclerViewProps<T>
 ) {
   const { horizontal, data } = props;
+  const isUnmounted = useUnmountFlag();
 
   useImperativeHandle(
     ref,
@@ -149,7 +152,7 @@ export function useRecyclerViewHandler<T>(
          * Scrolls to a specific index in the list.
          * Supports viewPosition and viewOffset for precise positioning.
          */
-        scrollToIndex: ({
+        scrollToIndex: async ({
           index,
           animated,
           viewPosition,
@@ -157,30 +160,75 @@ export function useRecyclerViewHandler<T>(
         }: ScrollToIndexParams) => {
           if (scrollViewRef.current && data && data.length > index) {
             const layout = recyclerViewManager.getLayout(index);
+            let lastScrollOffset = recyclerViewManager.getLastScrollOffset();
             if (layout) {
-              const offset = horizontal ? layout.x : layout.y;
-              let finalOffset = offset;
+              let prevFinalOffset = Number.POSITIVE_INFINITY;
+              let finalOffset = 0;
+              let attempts = 0;
+              const MAX_ATTEMPTS = 5;
+              const OFFSET_TOLERANCE = 1; // 1px tolerance
 
-              // Apply viewPosition and viewOffset adjustments if provided
-              if (viewPosition !== undefined || viewOffset !== undefined) {
-                const containerSize = horizontal
-                  ? recyclerViewManager.getWindowSize().width
-                  : recyclerViewManager.getWindowSize().height;
+              do {
+                const layout = recyclerViewManager.getLayout(index);
+                if (!layout || isUnmounted.current) break;
 
-                const itemSize = horizontal ? layout.width : layout.height;
+                const offset = horizontal ? layout.x : layout.y;
+                finalOffset = offset;
 
-                if (viewPosition !== undefined) {
-                  // viewPosition: 0 = top, 0.5 = center, 1 = bottom
-                  finalOffset =
-                    offset - (containerSize - itemSize) * viewPosition;
+                // Apply viewPosition and viewOffset adjustments if provided
+                if (viewPosition !== undefined || viewOffset !== undefined) {
+                  const containerSize = horizontal
+                    ? recyclerViewManager.getWindowSize().width
+                    : recyclerViewManager.getWindowSize().height;
+
+                  const itemSize = horizontal ? layout.width : layout.height;
+
+                  if (viewPosition !== undefined) {
+                    // viewPosition: 0 = top, 0.5 = center, 1 = bottom
+                    finalOffset =
+                      offset - (containerSize - itemSize) * viewPosition;
+                  }
+
+                  if (viewOffset !== undefined) {
+                    finalOffset += viewOffset;
+                  }
                 }
 
-                if (viewOffset !== undefined) {
-                  finalOffset += viewOffset;
+                // Check if offset has stabilized
+                if (
+                  Math.abs(prevFinalOffset - finalOffset) <= OFFSET_TOLERANCE
+                ) {
+                  break;
                 }
+
+                prevFinalOffset = finalOffset;
+                await updateScrollOffsetAsync(finalOffset);
+                console.log("finalOffset", finalOffset);
+
+                //recyclerViewManager.updateScrollOffset(finalOffset);
+                attempts++;
+              } while (attempts < MAX_ATTEMPTS);
+
+              if (animated) {
+                if (finalOffset > lastScrollOffset) {
+                  lastScrollOffset = Math.max(
+                    finalOffset - 500,
+                    lastScrollOffset
+                  );
+                } else {
+                  lastScrollOffset = Math.min(
+                    finalOffset + 500,
+                    lastScrollOffset
+                  );
+                }
+
+                //We don't need to add firstItemOffset here as it will be added in scrollToOffset
+                methods.scrollToOffset({
+                  offset: lastScrollOffset,
+                  animated: false,
+                  skipFirstItemOffset: false,
+                });
               }
-
-              // We don't need to add firstItemOffset here as it will be added in scrollToOffset
               methods.scrollToOffset({
                 offset: finalOffset,
                 animated,

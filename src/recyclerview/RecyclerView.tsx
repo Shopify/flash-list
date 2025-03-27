@@ -102,12 +102,13 @@ const RecyclerViewComponent = <T,>(
 
   // Initialize core RecyclerView manager and content offset management
   const { recyclerViewManager } = useRecyclerViewManager(props);
-  const { applyContentOffset } = useContentOffsetManagement(
-    recyclerViewManager,
-    props,
-    scrollViewRef,
-    scrollAnchorRef
-  );
+  const { applyContentOffset, updateScrollOffsetAsync } =
+    useContentOffsetManagement(
+      recyclerViewManager,
+      props,
+      scrollViewRef,
+      scrollAnchorRef
+    );
 
   // Initialize view holder collection ref
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
@@ -123,7 +124,13 @@ const RecyclerViewComponent = <T,>(
   );
 
   // Hook to handle imperative methods (scrollTo, etc.)
-  useRecyclerViewHandler(recyclerViewManager, ref, scrollViewRef, props);
+  useRecyclerViewHandler(
+    recyclerViewManager,
+    ref,
+    scrollViewRef,
+    updateScrollOffsetAsync,
+    props
+  );
 
   /**
    * Initialize the RecyclerView by measuring and setting up the window size

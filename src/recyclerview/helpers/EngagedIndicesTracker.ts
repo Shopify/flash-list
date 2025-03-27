@@ -119,7 +119,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
       extendedStart,
       extendedEnd
     );
-
+    console.log("newEngagedIndices", newEngagedIndices, velocity);
     // Only return new indices if they've changed
     const oldEngagedIndices = this.engagedIndices;
     this.engagedIndices = newEngagedIndices;
