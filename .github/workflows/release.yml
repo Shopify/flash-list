@@ -24,18 +24,18 @@ jobs:
         id: set-tag
         run: echo "TAG_NAME=${{ github.event.release.tag_name || github.event.inputs.tag }}" >> $GITHUB_ENV
 
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.SHOPIFY_GH_ACCESS_TOKEN }}
           # Use the tag associated with the release
           ref: ${{ env.TAG_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node from .nvmrc
         uses: actions/setup-node@v4
         with:
           node-version-file: ".nvmrc"
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -60,4 +60,4 @@ jobs:
         run: npm publish --provenance --tag ${{ env.NPM_TAG }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.SHOPIFY_GH_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
