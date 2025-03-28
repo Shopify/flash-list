@@ -879,6 +879,51 @@ class FlashList<T> extends React.PureComponent<
   public recomputeViewableItems = () => {
     this.viewabilityManager.recomputeViewableItems();
   };
+
+  /**
+   * Returns the dimensions of the child container.
+   * @returns {Object} The dimensions of the child container.
+   */
+  public getChildContainerDimensions() {
+    return this.rlvRef?.getContentDimension();
+  }
+
+  /**
+   * Returns the layout of the item at the given index.
+   * @param index - The index of the item to get the layout for.
+   * @returns {Object} The layout of the item at the given index.
+   */
+  public getLayout(index: number) {
+    return this.rlvRef?.getLayout(index);
+  }
+
+  /**
+   * Returns the size of the list.
+   * @returns {Object} The size of the list.
+   */
+  public getWindowSize() {
+    return this.rlvRef?.getRenderedSize();
+  }
+
+  /**
+   * Returns the absolute last scroll offset of the list.
+   * @returns {number} The absolute last scroll offset of the list.
+   */
+  public getAbsoluteLastScrollOffset() {
+    return this.rlvRef?.getCurrentScrollOffset() ?? 0;
+  }
+
+  /**
+   * Returns the first item offset of the list.
+   * @returns {number} The first item offset of the list.
+   */
+  public getFirstItemOffset() {
+    return this.firstItemOffset;
+  }
+
+  public getFirstVisibleIndex() {
+    return this.rlvRef?.findApproxFirstVisibleIndex() ?? -1;
+  }
 }
 
 export default FlashList;
