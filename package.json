@@ -35,6 +35,7 @@
     "lint:fix": "yarn eslint . --ext .ts,.tsx --fix",
     "type-check": "yarn tsc --pretty --noEmit",
     "build": "tsc -b",
+    "prepublishOnly": "yarn run build",
     "fixture:rn:up": "cd fixture/react-native && yarn && cd ios && bundle exec pod install && cd ../../../",
     "fixture:expo:up": "cd fixture/expo && yarn && cd ../../",
     "fixture:rn:android": "cd fixture/react-native && yarn react-native run-android && yarn build --watch",
