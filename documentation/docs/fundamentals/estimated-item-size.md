@@ -9,6 +9,7 @@ sidebar_position: 2
 
 ### How to calculate
 
+- For vertical lists, `estimatedItemSize` should be the average item's height; for horizontal lists, `estimatedItemSize` should the average item's width.
 - Use the average item size from the first render - this will be a part of the warning if you don't specify `estimatedItemSize`.
 - If most items are of **similar heights** or **widths** (if horizontal), just open up element inspector from `react-native's` dev menu, check the size of one of the items, and use it. Don't worry about different devices. We have enough tolerance to work around it.
 - If the items **have a lot of different sizes**, choose a few that are pretty different, use element inspector, read their sizes, and calculate an average. This average will work great, don't worry about solving for different devices sizes. There's enough tolerance internally.
