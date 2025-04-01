@@ -33,15 +33,14 @@ import {
   ViewHolderCollection,
   ViewHolderCollectionRef,
 } from "./ViewHolderCollection";
-import { useContentOffsetManagement } from "./hooks/useContentOffsetManagement";
 import { CompatView } from "./components/CompatView";
 import { CompatScroller } from "./components/CompatScroller";
 import { useBoundDetection } from "./hooks/useBoundDetection";
-import { useRecyclerViewHandler } from "./hooks/useRecyclerViewHandler";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 import { useSecondaryProps } from "./hooks/useSecondaryProps";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
 import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
+import { useRecyclerViewController } from "./hooks/useRecyclerViewController";
 
 /**
  * Main RecyclerView component that handles list rendering, scrolling, and item recycling.
@@ -102,13 +101,13 @@ const RecyclerViewComponent = <T,>(
 
   // Initialize core RecyclerView manager and content offset management
   const { recyclerViewManager } = useRecyclerViewManager(props);
-  const { applyContentOffset, updateScrollOffsetAsync } =
-    useContentOffsetManagement(
-      recyclerViewManager,
-      props,
-      scrollViewRef,
-      scrollAnchorRef
-    );
+  const { applyContentOffset } = useRecyclerViewController(
+    recyclerViewManager,
+    ref,
+    scrollViewRef,
+    scrollAnchorRef,
+    props
+  );
 
   // Initialize view holder collection ref
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
@@ -121,15 +120,6 @@ const RecyclerViewComponent = <T,>(
     recyclerViewManager,
     props,
     scrollViewRef
-  );
-
-  // Hook to handle imperative methods (scrollTo, etc.)
-  useRecyclerViewHandler(
-    recyclerViewManager,
-    ref,
-    scrollViewRef,
-    updateScrollOffsetAsync,
-    props
   );
 
   /**
