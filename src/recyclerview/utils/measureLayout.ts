@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { PixelRatio, View } from "react-native";
 
 /**
  * Measures the layout of a view relative to itselft.
@@ -13,8 +13,8 @@ export function measureLayout(view: View) {
   view.measureLayout(view, (x, y, width, height) => {
     layout.x = x;
     layout.y = y;
-    layout.width = width;
-    layout.height = height;
+    layout.width = PixelRatio.roundToNearestPixel(width);
+    layout.height = PixelRatio.roundToNearestPixel(height);
   });
   return layout;
 }
@@ -32,8 +32,8 @@ export function measureLayoutRelative(view: View, relativeTo: View) {
   view.measureLayout(relativeTo, (x, y, width, height) => {
     layout.x = x;
     layout.y = y;
-    layout.width = width;
-    layout.height = height;
+    layout.width = PixelRatio.roundToNearestPixel(width);
+    layout.height = PixelRatio.roundToNearestPixel(height);
   });
   return layout;
 }
