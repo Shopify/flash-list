@@ -1,4 +1,12 @@
-export { default as FlashList } from "./FlashList";
+import { RecyclerView } from "./recyclerview/RecyclerView";
+import LegacyFlashList from "./FlashList";
+import { isNewCoreEnabled } from "./enableNewCore";
+
+const FlashList = (isNewCoreEnabled()
+  ? RecyclerView
+  : LegacyFlashList) as unknown as typeof LegacyFlashList;
+
+export { FlashList };
 export {
   FlashListProps,
   ContentStyle,
