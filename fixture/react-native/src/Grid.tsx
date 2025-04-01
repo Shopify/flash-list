@@ -56,7 +56,8 @@ export function Grid() {
         contentContainerStyle={{
           padding: 4,
         }}
-        initialScrollIndex={60}
+        //maintainVisibleContentPosition={{}}
+        initialScrollIndex={65}
         overrideItemLayout={(layout, item) => {
           layout.span = item.span;
         }}

@@ -49,6 +49,10 @@ export interface RecyclerViewProps<TItem>
    */
   maintainVisibleContentPosition?: {
     /**
+     * maintainVisibleContentPosition is enabled by default.
+     */
+    disabled?: boolean;
+    /**
      * When content is added at the top, automatically scroll to maintain position if the user is within this threshold of the top
      */
     autoscrollToTopThreshold?: number;

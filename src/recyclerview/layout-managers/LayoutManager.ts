@@ -161,8 +161,6 @@ export abstract class RVLayoutManager {
    * @param totalItemCount Total number of items in the list
    */
   modifyLayout(layoutInfo: RVLayoutInfo[], totalItemCount: number): void {
-    const startTime = performance.now();
-
     let minRecomputeIndex = Number.MAX_VALUE;
 
     if (this.layouts.length > totalItemCount) {
@@ -195,11 +193,6 @@ export abstract class RVLayoutManager {
         this.getMaxRecomputeIndex(minRecomputeIndex)
       );
     }
-    const endTime = performance.now();
-    console.log(
-      `Time taken to recompute layouts: ${endTime - startTime} milliseconds`,
-      minRecomputeIndex
-    );
   }
 
   /**

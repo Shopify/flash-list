@@ -310,13 +310,14 @@ const RecyclerViewComponent = <T,>(
   }, [onScrollHandler, stickyHeaders]);
 
   const maintainVisibleContentPositionInternal = useMemo(() => {
-    if (maintainVisibleContentPosition && !horizontal) {
+    if (maintainVisibleContentPosition?.disabled || horizontal) {
+      return undefined;
+    } else {
       return {
         ...maintainVisibleContentPosition,
         minIndexForVisible: 0,
       };
     }
-    return undefined;
   }, [maintainVisibleContentPosition]);
 
   const shouldRenderFromBottom =

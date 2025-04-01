@@ -31,7 +31,7 @@ export interface ScrollAnchorRef {
  * @returns An invisible anchor element used for scrolling
  */
 export function ScrollAnchor({ scrollAnchorRef }: ScrollAnchorProps) {
-  const [scrollOffset, setScrollOffset] = useState(1);
+  const [scrollOffset, setScrollOffset] = useState(100000); //TODO: Fix this value
 
   // Expose scrollBy method through ref
   useImperativeHandle(scrollAnchorRef, () => ({

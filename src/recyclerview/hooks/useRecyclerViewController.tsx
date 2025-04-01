@@ -93,6 +93,7 @@ export function useRecyclerViewController<T>(
   const { horizontal, data } = props;
   const isUnmounted = useUnmountFlag();
   const [_, setRenderId] = useState(0);
+  const pauseAdjustRef = useRef(false);
 
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
@@ -140,8 +141,9 @@ export function useRecyclerViewController<T>(
     resolves.forEach((resolve) => resolve());
 
     if (
+      !props.horizontal &&
       recyclerViewManager.getIsFirstLayoutComplete() &&
-      props.maintainVisibleContentPosition
+      props.maintainVisibleContentPosition?.disabled !== true
     ) {
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
@@ -161,8 +163,8 @@ export function useRecyclerViewController<T>(
           firstVisibleItemLayout.current = {
             ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
           };
-          if (diff !== 0) {
-            console.log("diff", diff, firstVisibleItemKey.current);
+          if (diff !== 0 && !pauseAdjustRef.current) {
+            //console.log("diff", diff, firstVisibleItemKey.current);
             scrollAnchorRef.current?.scrollBy(diff);
           }
         }
@@ -170,7 +172,7 @@ export function useRecyclerViewController<T>(
 
       // Update the tracked first visible item
       const firstVisibleIndex =
-        recyclerViewManager.getEngagedIndices().startIndex;
+        recyclerViewManager.getVisibleIndices().startIndex;
       if (firstVisibleIndex !== undefined) {
         firstVisibleItemKey.current =
           props.keyExtractor?.(
@@ -238,7 +240,13 @@ export function useRecyclerViewController<T>(
       /**
        * Scrolls to the end of the list.
        */
-      scrollToEnd: ({ animated }: ScrollToEdgeParams = {}) => {
+      scrollToEnd: async ({ animated }: ScrollToEdgeParams = {}) => {
+        if (data && data.length > 0) {
+          await handlerMethods.scrollToIndex({
+            index: data.length - 1,
+            animated,
+          });
+        }
         scrollViewRef.current!.scrollToEnd({ animated });
       },
 
@@ -263,8 +271,8 @@ export function useRecyclerViewController<T>(
         viewOffset,
       }: ScrollToIndexParams) => {
         if (scrollViewRef.current && data && data.length > index) {
+          pauseAdjustRef.current = true;
           const layout = recyclerViewManager.getLayout(index);
-          let lastScrollOffset = recyclerViewManager.getLastScrollOffset();
           if (layout) {
             let prevFinalOffset = Number.POSITIVE_INFINITY;
             let finalOffset = 0;
@@ -305,37 +313,19 @@ export function useRecyclerViewController<T>(
 
               prevFinalOffset = finalOffset;
               await updateScrollOffsetAsync(finalOffset);
-              console.log("finalOffset", finalOffset);
 
               attempts++;
             } while (attempts < MAX_ATTEMPTS);
 
-            if (animated) {
-              if (finalOffset > lastScrollOffset) {
-                lastScrollOffset = Math.max(
-                  finalOffset - 500,
-                  lastScrollOffset
-                );
-              } else {
-                lastScrollOffset = Math.min(
-                  finalOffset + 500,
-                  lastScrollOffset
-                );
-              }
-
-              //We don't need to add firstItemOffset here as it will be added in scrollToOffset
-              handlerMethods.scrollToOffset({
-                offset: lastScrollOffset,
-                animated: false,
-                skipFirstItemOffset: false,
-              });
-            }
             handlerMethods.scrollToOffset({
               offset: finalOffset,
               animated,
               skipFirstItemOffset: false,
             });
           }
+          setTimeout(() => {
+            pauseAdjustRef.current = false;
+          }, 200);
         }
       },
 
