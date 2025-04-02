@@ -110,6 +110,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     maxWidth: layout.maxWidth,
     left: layout.x,
     top: layout.y,
+    zIndex: 0,
   } as const;
 
   //TODO: Fix this type issue
