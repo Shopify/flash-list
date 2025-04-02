@@ -260,7 +260,7 @@ const RecyclerViewComponent = <T,>(
           size.height
         );
         // TODO: Add a warning for missing useLayoutState
-        //context.layout();
+        recyclerViewContext.layout();
       }
     },
     [recyclerViewManager]
