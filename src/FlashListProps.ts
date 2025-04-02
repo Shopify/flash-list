@@ -47,7 +47,8 @@ export type ContentStyle = Pick<
   | "paddingHorizontal"
 >;
 
-export interface FlashListProps<TItem> extends ScrollViewProps {
+export interface FlashListProps<TItem>
+  extends Omit<ScrollViewProps, "maintainVisibleContentPosition"> {
   /**
    * Takes an item from `data` and renders it into the list. Typical usage:
    * ```ts
@@ -332,4 +333,67 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * `false` again.
    */
   disableAutoLayout?: boolean;
+
+  /**
+   * New arch only
+   * Enable masonry layout.
+   */
+  masonry?: boolean;
+  /**
+   * New arch only
+   * If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order.
+   */
+  optimizeItemArrangement?: boolean; //TODO: Check if this breaks on item resize or is glitchy
+
+  /**
+   * New arch only
+   * Called once when the scroll position gets within onStartReachedThreshold of the start of the content.
+   */
+  onStartReached?: FlashListProps<TItem>["onEndReached"];
+
+  /**
+   * New arch only
+   * How far from the start (in units of visible length of the list) the top edge of the
+   * list must be from the start of the content to trigger the `onStartReached` callback.
+   * Thus a value of 0.5 will trigger `onStartReached` when the start of the content is
+   * within half the visible length of the list.
+   */
+  onStartReachedThreshold?: FlashListProps<TItem>["onEndReachedThreshold"];
+
+  /**
+   * New arch only
+   * If true, the RecyclerView will not recycle items.
+   */
+  disableRecycling?: boolean;
+
+  /**
+   * New arch only
+   * Style for the RecyclerView's parent container.
+   * Please avoid anything which can mess size of children in this view. For example, margin is okay but padding is not.
+   */
+  style?: ViewStyle;
+
+  /**
+   * New arch only
+   * Configuration for maintaining scroll position when content changes.
+   * Useful for chat-like interfaces where new messages can be added at the top or bottom.
+   */
+  maintainVisibleContentPosition?: {
+    /**
+     * maintainVisibleContentPosition is enabled by default.
+     */
+    disabled?: boolean;
+    /**
+     * When content is added at the top, automatically scroll to maintain position if the user is within this threshold of the top
+     */
+    autoscrollToTopThreshold?: number;
+    /**
+     * When content is added at the bottom, automatically scroll to maintain position if the user is within this threshold of the bottom
+     */
+    autoscrollToBottomThreshold?: number;
+    /**
+     * If true, initial render will start from the bottom of the list, useful for chat-like interfaces when there are only few messages
+     */
+    startRenderingFromBottom?: boolean;
+  };
 }
