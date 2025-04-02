@@ -114,8 +114,10 @@ export function useBoundDetection<T>(
   // Auto-scroll to bottom when new content is added and we're near the bottom
   useEffect(() => {
     if (pendingAutoscrollToBottom.current) {
-      scrollViewRef.current?.scrollToEnd();
-      pendingAutoscrollToBottom.current = false;
+      requestAnimationFrame(() => {
+        scrollViewRef.current?.scrollToEnd();
+        pendingAutoscrollToBottom.current = false;
+      });
     }
   }, [data]);
 

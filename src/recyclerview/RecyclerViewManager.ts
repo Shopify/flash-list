@@ -264,6 +264,15 @@ export class RecyclerViewManager<T> {
     this.itemViewabilityManager.dispose();
   }
 
+  getInitialScrollIndex() {
+    return (
+      this.props.initialScrollIndex ??
+      (this.props.maintainVisibleContentPosition?.startRenderingFromBottom
+        ? this.getDataLength() - 1
+        : undefined)
+    );
+  }
+
   private getDataLength() {
     return this.props.data?.length ?? 0;
   }
@@ -272,20 +281,19 @@ export class RecyclerViewManager<T> {
     if (!this.layoutManager || this.getDataLength() === 0) {
       return;
     }
+
+    const initialScrollIndex = this.getInitialScrollIndex();
     const initialItemLayout = this.layoutManager?.getLayout(
-      this.props.initialScrollIndex ?? 0
+      initialScrollIndex ?? 0
     );
     const initialItemOffset = this.props.horizontal
       ? initialItemLayout?.x
       : initialItemLayout?.y;
 
-    if (
-      this.props.initialScrollIndex !== undefined &&
-      this.props.initialScrollIndex != null
-    ) {
+    if (initialScrollIndex !== undefined) {
       console.log(
         "initialItemOffset",
-        this.props.initialScrollIndex,
+        initialScrollIndex,
         initialItemOffset,
         this.firstItemOffset
       );

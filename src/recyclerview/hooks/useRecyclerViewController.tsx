@@ -102,7 +102,8 @@ export function useRecyclerViewController<T>(
 
   // Handle initial scroll position when the list first loads
   useOnLoad(recyclerViewManager, () => {
-    const initialScrollIndex = props.initialScrollIndex ?? -1;
+    const initialScrollIndex =
+      recyclerViewManager.getInitialScrollIndex() ?? -1;
     const dataLength = props.data?.length ?? 0;
     if (initialScrollIndex >= 0 && initialScrollIndex < dataLength) {
       // Use setTimeout to ensure the scroll happens after layout is complete

@@ -32,7 +32,7 @@ const messageTexts = [
 
 export function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>(() =>
-    generateInitialMessages(4)
+    generateInitialMessages(14)
   );
 
   const addMessageAtTop = useCallback(() => {
