@@ -274,6 +274,13 @@ export function useRecyclerViewController<T>(
         if (scrollViewRef.current && data && data.length > index) {
           pauseAdjustRef.current = true;
           const layout = recyclerViewManager.getLayout(index);
+          let lastScrollOffset = recyclerViewManager.getLastScrollOffset();
+          const bufferForScroll = horizontal
+            ? recyclerViewManager.getWindowSize().width
+            : recyclerViewManager.getWindowSize().height;
+
+          const bufferForCompute = bufferForScroll * 2;
+
           if (layout) {
             let prevFinalOffset = Number.POSITIVE_INFINITY;
             let finalOffset = 0;
@@ -313,10 +320,59 @@ export function useRecyclerViewController<T>(
               }
 
               prevFinalOffset = finalOffset;
+
+              if (animated) {
+                if (finalOffset > lastScrollOffset) {
+                  lastScrollOffset = Math.max(
+                    finalOffset - bufferForCompute,
+                    lastScrollOffset
+                  );
+                } else {
+                  lastScrollOffset = Math.min(
+                    finalOffset + bufferForCompute,
+                    lastScrollOffset
+                  );
+                }
+
+                await updateScrollOffsetAsync(lastScrollOffset);
+              }
               await updateScrollOffsetAsync(finalOffset);
 
               attempts++;
             } while (attempts < MAX_ATTEMPTS);
+
+            if (animated) {
+              const maxOffset =
+                (horizontal
+                  ? recyclerViewManager.getChildContainerDimensions().width
+                  : recyclerViewManager.getChildContainerDimensions().height) -
+                (horizontal
+                  ? recyclerViewManager.getWindowSize().width
+                  : recyclerViewManager.getWindowSize().height);
+
+              if (finalOffset > maxOffset) {
+                finalOffset = maxOffset;
+              }
+
+              if (finalOffset > lastScrollOffset) {
+                lastScrollOffset = Math.max(
+                  finalOffset - bufferForScroll,
+                  lastScrollOffset
+                );
+              } else {
+                lastScrollOffset = Math.min(
+                  finalOffset + bufferForScroll,
+                  lastScrollOffset
+                );
+              }
+
+              //We don't need to add firstItemOffset here as it will be added in scrollToOffset
+              handlerMethods.scrollToOffset({
+                offset: lastScrollOffset,
+                animated: false,
+                skipFirstItemOffset: false,
+              });
+            }
 
             handlerMethods.scrollToOffset({
               offset: finalOffset,
