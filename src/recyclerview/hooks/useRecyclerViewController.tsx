@@ -189,7 +189,6 @@ export function useRecyclerViewController<T>(
 
   const handlerMethods = useMemo(() => {
     return {
-      ...scrollViewRef.current,
       props,
       /**
        * Scrolls the list to a specific offset position.
@@ -447,13 +446,13 @@ export function useRecyclerViewController<T>(
         recyclerViewManager.disableRecycling = true;
       },
     };
-  }, [horizontal, data, recyclerViewManager, scrollViewRef]);
+  }, [horizontal, data, recyclerViewManager]);
 
   // Expose imperative methods through the ref
   useImperativeHandle(
     ref,
     () => {
-      return handlerMethods;
+      return { ...scrollViewRef.current, ...handlerMethods };
     },
     [handlerMethods]
   );
