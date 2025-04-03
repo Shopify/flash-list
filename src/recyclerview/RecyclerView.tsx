@@ -385,7 +385,12 @@ const RecyclerViewComponent = <T,>(
               recyclerViewManager.getWindowSize().height
             )
           ) {
-            console.log("onLayout");
+            console.log(
+              "onLayout",
+
+              recyclerViewManager.getWindowSize(),
+              event.nativeEvent.layout
+            );
             recyclerViewContext.layout();
           }
         }}

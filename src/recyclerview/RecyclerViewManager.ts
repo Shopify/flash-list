@@ -273,7 +273,7 @@ export class RecyclerViewManager<T> {
     );
   }
 
-  private getDataLength() {
+  getDataLength() {
     return this.props.data?.length ?? 0;
   }
 
@@ -291,16 +291,16 @@ export class RecyclerViewManager<T> {
       : initialItemLayout?.y;
 
     if (initialScrollIndex !== undefined) {
-      console.log(
-        "initialItemOffset",
-        initialScrollIndex,
-        initialItemOffset,
-        this.firstItemOffset
-      );
+      // console.log(
+      //   "initialItemOffset",
+      //   initialScrollIndex,
+      //   initialItemOffset,
+      //   this.firstItemOffset
+      // );
       this.engagedIndicesTracker.scrollOffset =
         initialItemOffset ?? 0 + this.firstItemOffset;
     } else {
-      console.log("initialItemOffset", initialItemOffset, this.firstItemOffset);
+      //console.log("initialItemOffset", initialItemOffset, this.firstItemOffset);
       this.engagedIndicesTracker.scrollOffset =
         (initialItemOffset ?? 0) - this.firstItemOffset;
     }
