@@ -37,6 +37,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       : params.windowSize.width;
     if (oldBoundedSize !== this.boundedSize) {
       if (this.layouts.length > 0) {
+        console.log("-----> recomputeLayouts");
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
       }

@@ -1,5 +1,12 @@
 import { PixelRatio, View } from "react-native";
 
+interface Layout {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 /**
  * Measures the layout of a view relative to itselft.
  * Using measure wasn't returing accurate values but this workaround does.
@@ -8,15 +15,12 @@ import { PixelRatio, View } from "react-native";
  * @param view - The React Native View component to measure
  * @returns An object containing x, y, width, and height measurements
  */
-export function measureLayout(view: View) {
-  const layout = { x: 0, y: 0, width: 0, height: 0 };
-  view.measureLayout(view, (x, y, width, height) => {
-    layout.x = x;
-    layout.y = y;
-    layout.width = PixelRatio.roundToNearestPixel(width);
-    layout.height = PixelRatio.roundToNearestPixel(height);
-  });
-  return layout;
+export function measureLayout(view: View, oldLayout: Layout | undefined) {
+  // const layout = view.unstable_getBoundingClientRect();
+  // layout.width = roundOffPixel(layout.width);
+  // layout.height = roundOffPixel(layout.height);
+  // return layout;
+  return measureLayoutRelative(view, view, oldLayout);
 }
 
 /**
@@ -27,14 +31,27 @@ export function measureLayout(view: View) {
  * @param relativeTo - The reference view to measure against
  * @returns An object containing x, y, width, and height measurements
  */
-export function measureLayoutRelative(view: View, relativeTo: View) {
+export function measureLayoutRelative(
+  view: View,
+  relativeTo: View,
+  oldLayout: Layout | undefined
+) {
   const layout = { x: 0, y: 0, width: 0, height: 0 };
   view.measureLayout(relativeTo, (x, y, width, height) => {
     layout.x = x;
     layout.y = y;
-    layout.width = PixelRatio.roundToNearestPixel(width);
-    layout.height = PixelRatio.roundToNearestPixel(height);
+    layout.width = roundOffPixel(width);
+    layout.height = roundOffPixel(height);
   });
+
+  if (oldLayout) {
+    if (areDimensionsEqual(layout.width, oldLayout.width)) {
+      layout.width = oldLayout.width;
+    }
+    if (areDimensionsEqual(layout.height, oldLayout.height)) {
+      layout.height = oldLayout.height;
+    }
+  }
   return layout;
 }
 
@@ -47,7 +64,7 @@ export function measureLayoutRelative(view: View, relativeTo: View) {
  * @returns true if the values are significantly different, false otherwise
  */
 export function areDimensionsNotEqual(value1: number, value2: number): boolean {
-  return Math.abs(value1 - value2) > 1;
+  return !areDimensionsEqual(value1, value2);
 }
 
 /**
@@ -59,5 +76,14 @@ export function areDimensionsNotEqual(value1: number, value2: number): boolean {
  * @returns true if the values are approximately equal, false otherwise
  */
 export function areDimensionsEqual(value1: number, value2: number): boolean {
-  return Math.abs(value1 - value2) <= 1;
+  return (
+    Math.abs(
+      PixelRatio.getPixelSizeForLayoutSize(value1) -
+        PixelRatio.getPixelSizeForLayoutSize(value2)
+    ) <= 1
+  );
+}
+
+export function roundOffPixel(value: number): number {
+  return PixelRatio.roundToNearestPixel(value);
 }

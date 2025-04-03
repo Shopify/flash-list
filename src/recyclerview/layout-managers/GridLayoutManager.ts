@@ -32,6 +32,8 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
         for (let i = 0; i < this.layouts.length; i++) {
           this.layouts[i].width = this.getWidth(i);
         }
+        console.log("-----> recomputeLayouts");
+
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
       }

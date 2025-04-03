@@ -150,7 +150,7 @@ const RecyclerViewHandlerTest = () => {
           {
             backgroundColor: item.color,
             height: horizontal ? 150 : item.height,
-            width: horizontal ? item.height : "100%",
+            width: horizontal ? item.height : undefined,
           },
         ]}
         onPress={() => scrollToItem(item, true, 0)}

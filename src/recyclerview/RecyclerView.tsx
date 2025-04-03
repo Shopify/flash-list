@@ -129,10 +129,11 @@ const RecyclerViewComponent = <T,>(
   useLayoutEffect(() => {
     if (internalViewRef.current && childContainerViewRef.current) {
       // Measure the outer and inner container layouts
-      const outerViewLayout = measureLayout(internalViewRef.current);
+      const outerViewLayout = measureLayout(internalViewRef.current, undefined);
       const childViewLayout = measureLayoutRelative(
         childContainerViewRef.current,
-        internalViewRef.current
+        internalViewRef.current,
+        undefined
       );
 
       // Calculate offset of first item
@@ -157,7 +158,24 @@ const RecyclerViewComponent = <T,>(
    */
   useLayoutEffect(() => {
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
-      const layout = measureLayout(viewHolderRef.current!);
+      const layout = measureLayout(
+        viewHolderRef.current!,
+        recyclerViewManager.getLayout(index)
+      );
+
+      //comapre height with stored layout
+      const storedLayout = recyclerViewManager.getLayout(index);
+      if (
+        storedLayout.height !== layout.height &&
+        storedLayout.isHeightMeasured
+      ) {
+        console.log(
+          "height changed",
+          index,
+          layout.height,
+          storedLayout.height
+        );
+      }
       return { index, dimensions: layout };
     });
 
@@ -346,6 +364,8 @@ const RecyclerViewComponent = <T,>(
       />
     );
   }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
+
+  console.log("render");
 
   // Render the main RecyclerView structure
   return (
