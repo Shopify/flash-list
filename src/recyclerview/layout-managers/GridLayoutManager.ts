@@ -14,8 +14,8 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   /** The width of the bounded area for the grid */
   private boundedSize: number;
 
-  constructor(params: LayoutParams) {
-    super(params);
+  constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
+    super(params, previousLayoutManager);
     this.boundedSize = params.windowSize.width;
   }
 
@@ -24,8 +24,12 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
    * @param params New layout parameters
    */
   updateLayoutParams(params: LayoutParams): void {
+    const prevNumColumns = this.maxColumns;
     super.updateLayoutParams(params);
-    if (this.boundedSize !== params.windowSize.width) {
+    if (
+      this.boundedSize !== params.windowSize.width ||
+      prevNumColumns !== params.maxColumns
+    ) {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
         //update all widths

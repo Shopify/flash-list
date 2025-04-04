@@ -158,33 +158,45 @@ export class RecyclerViewManager<T> {
     return this.engagedIndicesTracker.scrollOffset + this.firstItemOffset;
   }
 
-  updateWindowSize(windowSize: RVDimension, firstItemOffset: number) {
+  updateLayoutParams(windowSize: RVDimension, firstItemOffset: number) {
     this.firstItemOffset = firstItemOffset;
-    if (this.layoutManager) {
-      this.layoutManager.updateLayoutParams({ windowSize });
+    const LayoutManagerClass = this.getLayoutManagerClass();
+    if (
+      Boolean(this.layoutManager?.isHorizontal()) !==
+      Boolean(this.props.horizontal)
+    ) {
+      throw new Error(
+        "Horizontal prop cannot be toggled, you can use a key on FlashList to recreate it."
+      );
+    }
+    if (!(this.layoutManager instanceof LayoutManagerClass)) {
+      console.log("-----> new LayoutManagerClass");
+
+      this.layoutManager = new LayoutManagerClass(
+        {
+          windowSize,
+          maxColumns: this.props.numColumns ?? 1,
+          horizontal: !!this.props.horizontal,
+          optimizeItemArrangement: this.props.optimizeItemArrangement ?? true,
+          overrideItemLayout: (index, layout) => {
+            this.props?.overrideItemLayout?.(
+              layout,
+              this.props.data![index],
+              index,
+              this.props.numColumns ?? 1,
+              this.props.extraData
+            );
+          },
+        },
+        this.layoutManager
+      );
     } else {
-      const LayoutManagerClass = this.props.masonry
-        ? RVMasonryLayoutManagerImpl
-        : (this.props.numColumns ?? 1) > 1 && !this.props.horizontal
-        ? RVGridLayoutManagerImpl
-        : RVLinearLayoutManagerImpl;
-      // TODO: Check if params can just be forwarded
-      const newLayoutManager = new LayoutManagerClass({
+      this.layoutManager.updateLayoutParams({
         windowSize,
         maxColumns: this.props.numColumns ?? 1,
         horizontal: !!this.props.horizontal,
         optimizeItemArrangement: this.props.optimizeItemArrangement ?? true,
-        overrideItemLayout: (index, layout) => {
-          this.props?.overrideItemLayout?.(
-            layout,
-            this.props.data![index],
-            index,
-            this.props.numColumns ?? 1,
-            this.props.extraData
-          );
-        },
       });
-      this.layoutManager = newLayoutManager;
     }
   }
 
@@ -275,6 +287,21 @@ export class RecyclerViewManager<T> {
 
   getDataLength() {
     return this.props.data?.length ?? 0;
+  }
+
+  private getLayoutManagerClass() {
+    // throw errors for incompatible props
+    if (this.props.masonry && this.props.horizontal) {
+      throw new Error("Masonry and horizontal props are incompatible");
+    }
+    if ((this.props.numColumns ?? 1) > 1 && this.props.horizontal) {
+      throw new Error("numColumns and horizontal props are incompatible");
+    }
+    return this.props.masonry
+      ? RVMasonryLayoutManagerImpl
+      : (this.props.numColumns ?? 1) > 1 && !this.props.horizontal
+      ? RVGridLayoutManagerImpl
+      : RVLinearLayoutManagerImpl;
   }
 
   private applyInitialScrollAdjustment() {

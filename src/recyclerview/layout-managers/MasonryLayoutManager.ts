@@ -16,13 +16,11 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   private boundedSize: number;
   /** Array tracking the current height of each column */
   private columnHeights: number[];
-  /** Whether to optimize item placement for better space utilization */
-  private optimizeItemArrangement: boolean;
   /** Current column index for sequential placement */
   private currentColumn: number = 0;
 
-  constructor(params: LayoutParams) {
-    super(params);
+  constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
+    super(params, previousLayoutManager);
     this.boundedSize = params.windowSize.width;
     this.optimizeItemArrangement = params.optimizeItemArrangement ?? false;
     this.columnHeights = Array(this.maxColumns).fill(0);
@@ -33,8 +31,14 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
    * @param params New layout parameters
    */
   updateLayoutParams(params: LayoutParams) {
+    const prevMaxColumns = this.maxColumns;
+    const prevOptimizeItemArrangement = this.optimizeItemArrangement;
     super.updateLayoutParams(params);
-    if (this.boundedSize !== params.windowSize.width) {
+    if (
+      this.boundedSize !== params.windowSize.width ||
+      prevMaxColumns !== params.maxColumns ||
+      prevOptimizeItemArrangement !== params.optimizeItemArrangement
+    ) {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
         console.log("-----> recomputeLayouts");
@@ -42,6 +46,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         //update all widths
         for (let i = 0; i < this.layouts.length; i++) {
           this.layouts[i].width = this.getWidth(i);
+          this.layouts[i].minHeight = undefined;
         }
         //TODO: Optimize masonry in general
         this.recomputeLayouts(0, this.layouts.length - 1);

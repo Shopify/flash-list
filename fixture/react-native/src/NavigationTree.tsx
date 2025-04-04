@@ -25,6 +25,7 @@ import DynamicItems from "./DynamicItems";
 import RecyclerViewHandlerTest from "./RecyclerViewHandlerTest";
 import MovieList from "./MovieList";
 import Carousel from "./Carousel";
+import { LayoutOptions } from "./LayoutOptions";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -79,6 +80,11 @@ const NavigationTree = () => {
             name="Carousel"
             component={Carousel}
             options={{ title: "Carousel Example" }}
+          />
+          <Stack.Screen
+            name="LayoutOptions"
+            component={LayoutOptions}
+            options={{ title: "Layout Options" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />

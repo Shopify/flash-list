@@ -142,7 +142,7 @@ const RecyclerViewComponent = <T,>(
         : childViewLayout.y - outerViewLayout.y;
 
       // Update the RecyclerView manager with window dimensions
-      recyclerViewManager.updateWindowSize(
+      recyclerViewManager.updateLayoutParams(
         {
           width: horizontal ? outerViewLayout.width : childViewLayout.width,
           height: horizontal ? childViewLayout.height : outerViewLayout.height,

@@ -17,8 +17,8 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   /** Height of the tallest item */
   private tallestItemHeight: number = 0;
 
-  constructor(params: LayoutParams) {
-    super(params);
+  constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
+    super(params, previousLayoutManager);
     this.boundedSize = this.horizontal
       ? params.windowSize.height
       : params.windowSize.width;
@@ -30,12 +30,16 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
    * @param params New layout parameters
    */
   updateLayoutParams(params: LayoutParams): void {
+    const prevHorizontal = this.horizontal;
     super.updateLayoutParams(params);
     const oldBoundedSize = this.boundedSize;
     this.boundedSize = this.horizontal
       ? params.windowSize.height
       : params.windowSize.width;
-    if (oldBoundedSize !== this.boundedSize) {
+    if (
+      oldBoundedSize !== this.boundedSize ||
+      prevHorizontal !== this.horizontal
+    ) {
       if (this.layouts.length > 0) {
         console.log("-----> recomputeLayouts", this.horizontal);
         this.recomputeLayouts(0, this.layouts.length - 1);

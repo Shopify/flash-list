@@ -26,6 +26,9 @@ export abstract class RVLayoutManager {
   /** Optional callback to override default item layout */
   protected overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
 
+  /** Whether to optimize item placement for better space utilization */
+  protected optimizeItemArrangement: boolean;
+
   /** Flag indicating if the layout requires repainting */
   public requiresRepaint: boolean = false;
 
@@ -38,15 +41,19 @@ export abstract class RVLayoutManager {
   /** Maximum number of items to process in a single layout pass */
   private maxItemsToProcess: number = 250; // TODO: make this dynamic
 
-  constructor(params: LayoutParams) {
-    this.horizontal = Boolean(params.horizontal);
-    this.windowSize = params.windowSize;
-    this.layouts = [];
-    this.maxColumns = params.maxColumns ?? 1;
+  constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     this.heightAverageWindow = new MultiTypeAverageWindow(5, 200);
     this.widthAverageWindow = new MultiTypeAverageWindow(5, 200);
     this._getItemType = params.getItemType;
     this.overrideItemLayout = params.overrideItemLayout;
+    this.layouts = previousLayoutManager?.layouts ?? [];
+    if (previousLayoutManager) {
+      this.updateLayoutParams(params);
+    } else {
+      this.horizontal = Boolean(params.horizontal);
+      this.windowSize = params.windowSize;
+      this.maxColumns = params.maxColumns ?? 1;
+    }
   }
 
   /**
@@ -230,6 +237,8 @@ export abstract class RVLayoutManager {
     this.windowSize = params.windowSize;
     this.horizontal = params.horizontal ?? this.horizontal;
     this.maxColumns = params.maxColumns ?? this.maxColumns;
+    this.optimizeItemArrangement =
+      params.optimizeItemArrangement ?? this.optimizeItemArrangement;
   }
 
   /**

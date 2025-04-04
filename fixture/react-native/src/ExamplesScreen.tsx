@@ -78,6 +78,10 @@ export const ExamplesScreen = () => {
       title: "Movie Streaming",
       destination: "MovieList",
     },
+    {
+      title: "Layout Options",
+      destination: "LayoutOptions",
+    },
   ];
   return (
     <>
