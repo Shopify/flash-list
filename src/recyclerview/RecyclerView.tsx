@@ -81,6 +81,7 @@ const RecyclerViewComponent = <T,>(
   const scrollViewRef = useRef<CompatScroller>(null);
   const internalViewRef = useRef<CompatView>(null);
   const childContainerViewRef = useRef<CompatView>(null);
+  const containerViewSizeRef = useRef<RVDimension | undefined>(undefined);
 
   // Track scroll position
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -135,6 +136,8 @@ const RecyclerViewComponent = <T,>(
         internalViewRef.current,
         undefined
       );
+
+      containerViewSizeRef.current = outerViewLayout;
 
       // Calculate offset of first item
       const firstItemOffset = horizontal
@@ -378,11 +381,11 @@ const RecyclerViewComponent = <T,>(
           if (
             areDimensionsNotEqual(
               event.nativeEvent.layout.width,
-              recyclerViewManager.getWindowSize().width
+              containerViewSizeRef.current?.width ?? 0
             ) ||
             areDimensionsNotEqual(
               event.nativeEvent.layout.height,
-              recyclerViewManager.getWindowSize().height
+              containerViewSizeRef.current?.height ?? 0
             )
           ) {
             console.log(

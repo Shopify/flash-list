@@ -44,9 +44,9 @@ export const useOnListLoad = <T>(
     // );
     //console.log("----------> dataCollector", dataCollectorString);
     console.log("----------> elapsedTimeInMs", elapsedTimeInMs);
-    onLoad?.({ elapsedTimeInMs });
     requestAnimationFrame(() => {
       if (!isUnmounted.current) {
+        onLoad?.({ elapsedTimeInMs });
         setIsLoaded(true);
       }
     });

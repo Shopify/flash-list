@@ -162,8 +162,9 @@ export class RecyclerViewManager<T> {
     this.firstItemOffset = firstItemOffset;
     const LayoutManagerClass = this.getLayoutManagerClass();
     if (
+      this.layoutManager &&
       Boolean(this.layoutManager?.isHorizontal()) !==
-      Boolean(this.props.horizontal)
+        Boolean(this.props.horizontal)
     ) {
       throw new Error(
         "Horizontal prop cannot be toggled, you can use a key on FlashList to recreate it."
@@ -223,7 +224,6 @@ export class RecyclerViewManager<T> {
   ): boolean {
     this.layoutManager?.modifyLayout(layoutInfo, dataLength);
     if (dataLength === 0) {
-      this.isFirstLayoutComplete = true;
       return false;
     }
     if (this.layoutManager?.requiresRepaint) {
