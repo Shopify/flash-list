@@ -45,7 +45,6 @@ export class RecyclerViewManager<T> {
     //console.log("updateRenderStack", engagedIndices);
     const newRenderStack = new Map<number, string>();
     for (const [index, key] of this.renderStack) {
-      //TODO: Can be optimized since engagedIndices is sorted
       if (!engagedIndices.includes(index)) {
         this.recycleKeyManager.recycleKey(key);
       }
@@ -54,7 +53,6 @@ export class RecyclerViewManager<T> {
       this.recycleKeyManager.clearPool();
     }
     for (const index of engagedIndices) {
-      // TODO: connect key extractor
       const newKey = this.recycleKeyManager.getKey(
         this.getItemType(index),
         this.getStableId(index),
@@ -334,7 +332,6 @@ export class RecyclerViewManager<T> {
     }
   }
 
-  // TODO
   private renderProgressively() {
     const layoutManager = this.layoutManager;
     if (layoutManager) {
