@@ -10,6 +10,7 @@ import React, {
   useRef,
   forwardRef,
   useState,
+  useId,
 } from "react";
 import {
   Animated,
@@ -24,7 +25,11 @@ import {
   measureLayout,
   measureLayoutRelative,
 } from "./utils/measureLayout";
-import { RecyclerViewContextProvider } from "./RecyclerViewContextProvider";
+import {
+  RecyclerViewContext,
+  RecyclerViewContextProvider,
+  useRecyclerViewContext,
+} from "./RecyclerViewContextProvider";
 import { useLayoutState } from "./hooks/useLayoutState";
 import { useRecyclerViewManager } from "./hooks/useRecyclerViewManager";
 import { RecyclerViewProps } from "./RecyclerViewProps";
@@ -82,6 +87,7 @@ const RecyclerViewComponent = <T,>(
   const internalViewRef = useRef<CompatView>(null);
   const childContainerViewRef = useRef<CompatView>(null);
   const containerViewSizeRef = useRef<RVDimension | undefined>(undefined);
+  const pendingChildIds = useRef<Set<string>>(new Set()).current;
 
   // Track scroll position
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -161,6 +167,9 @@ const RecyclerViewComponent = <T,>(
    * This ensures proper positioning and recycling of items
    */
   useLayoutEffect(() => {
+    if (pendingChildIds.size > 0) {
+      return;
+    }
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
       const layout = measureLayout(
         viewHolderRef.current!,
@@ -241,7 +250,7 @@ const RecyclerViewComponent = <T,>(
   );
 
   // Create context for child components
-  const recyclerViewContext = useMemo(() => {
+  const recyclerViewContext: RecyclerViewContext = useMemo(() => {
     return {
       layout: () => {
         setLayoutTreeId((prev) => prev + 1);
@@ -252,8 +261,24 @@ const RecyclerViewComponent = <T,>(
       getScrollViewRef: () => {
         return scrollViewRef;
       },
+      markChildLayoutAsPending: (id: string) => {
+        pendingChildIds.add(id);
+      },
+      unmarkChildLayoutAsPending: (id: string) => {
+        if (pendingChildIds.has(id)) {
+          pendingChildIds.delete(id);
+          recyclerViewContext.layout();
+        }
+      },
     };
   }, [setLayoutTreeId]);
+
+  const parentRecyclerViewContext = useRecyclerViewContext();
+  const recyclerViewId = useId();
+
+  if (!recyclerViewManager.getIsFirstLayoutComplete()) {
+    parentRecyclerViewContext?.markChildLayoutAsPending(recyclerViewId);
+  }
 
   /**
    * Validates that item dimensions match the expected layout
@@ -430,6 +455,9 @@ const RecyclerViewComponent = <T,>(
             extraData={extraData}
             onCommitLayoutEffect={() => {
               applyInitialScrollIndex();
+              parentRecyclerViewContext?.unmarkChildLayoutAsPending(
+                recyclerViewId
+              );
             }}
             onCommitEffect={() => {
               applyInitialScrollIndex();

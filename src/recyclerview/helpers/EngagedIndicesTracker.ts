@@ -119,7 +119,9 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
       extendedStart,
       extendedEnd
     );
-    //console.log("newEngagedIndices", newEngagedIndices, this.scrollOffset);
+    if (!isHorizontal) {
+      //console.log("newEngagedIndices", newEngagedIndices, this.scrollOffset);
+    }
     // Only return new indices if they've changed
     const oldEngagedIndices = this.engagedIndices;
     this.engagedIndices = newEngagedIndices;

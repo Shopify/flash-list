@@ -1,13 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
   StatusBar,
-  Image,
   Dimensions,
-  FlatList,
 } from "react-native";
 import { useRecyclingState, RecyclerView } from "@shopify/flash-list";
 
@@ -125,6 +123,41 @@ const generateCategories = (): Category[] => {
       title: "Blockbusters",
       movies: generateMovies(15),
     },
+    {
+      id: 7,
+      title: "Critically Acclaimed",
+      movies: generateMovies(15),
+    },
+    {
+      id: 8,
+      title: "Critically Acclaimed",
+      movies: generateMovies(15),
+    },
+    {
+      id: 9,
+      title: "Critically Acclaimed",
+      movies: generateMovies(15),
+    },
+    {
+      id: 10,
+      title: "Critically Acclaimed",
+      movies: generateMovies(15),
+    },
+    {
+      id: 11,
+      title: "Critically Acclaimed",
+      movies: generateMovies(15),
+    },
+    {
+      id: 12,
+      title: "Critically Acclaimed",
+      movies: generateMovies(15),
+    },
+    {
+      id: 13,
+      title: "Critically Acclaimed",
+      movies: generateMovies(15),
+    },
   ];
 };
 
@@ -186,6 +219,9 @@ const MoviePoster = ({ item }: { item: Movie }) => {
 
 // Category row component
 const CategoryRow = ({ category }: { category: Category }) => {
+  useEffect(() => {
+    console.log("Moview row mount", category.title);
+  }, []);
   return (
     <View style={styles.categoryContainer}>
       <Text style={styles.categoryTitle}>{category.title}</Text>
@@ -215,6 +251,10 @@ const MovieList = () => {
       <View style={styles.listContainer}>
         <RecyclerView
           data={categories}
+          drawDistance={10}
+          onLoad={({ elapsedTimeInMs }) => {
+            console.log("onLoad ------------>", elapsedTimeInMs);
+          }}
           ListHeaderComponent={() => <FeaturedMovie movie={featuredMovie} />}
           renderItem={({ item }) => <CategoryRow category={item} />}
           keyExtractor={(item) => item.id.toString()}
