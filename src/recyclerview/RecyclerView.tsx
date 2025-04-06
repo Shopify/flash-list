@@ -276,10 +276,6 @@ const RecyclerViewComponent = <T,>(
   const parentRecyclerViewContext = useRecyclerViewContext();
   const recyclerViewId = useId();
 
-  if (!recyclerViewManager.getIsFirstLayoutComplete()) {
-    parentRecyclerViewContext?.markChildLayoutAsPending(recyclerViewId);
-  }
-
   /**
    * Validates that item dimensions match the expected layout
    */
@@ -321,6 +317,10 @@ const RecyclerViewComponent = <T,>(
     renderEmpty,
     CompatScrollView,
   } = useSecondaryProps(props);
+
+  if (!recyclerViewManager.getIsFirstLayoutComplete() && !renderEmpty) {
+    parentRecyclerViewContext?.markChildLayoutAsPending(recyclerViewId);
+  }
 
   // Render sticky headers if configured
   const stickyHeaders = useMemo(() => {

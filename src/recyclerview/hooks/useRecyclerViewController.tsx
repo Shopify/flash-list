@@ -117,12 +117,21 @@ export function useRecyclerViewController<T>(
       }, 100);
 
       pauseAdjustRef.current = true;
+
+      const offset = horizontal
+        ? recyclerViewManager.getLayout(initialScrollIndex).x
+        : recyclerViewManager.getLayout(initialScrollIndex).y;
       handlerMethods.scrollToOffset({
-        offset: horizontal
-          ? recyclerViewManager.getLayout(initialScrollIndex).x
-          : recyclerViewManager.getLayout(initialScrollIndex).y,
+        offset,
         animated: false,
       });
+
+      setTimeout(() => {
+        handlerMethods.scrollToOffset({
+          offset,
+          animated: false,
+        });
+      }, 0);
     }
   }, [recyclerViewManager, props.data]);
 

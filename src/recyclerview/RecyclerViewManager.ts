@@ -324,6 +324,7 @@ export class RecyclerViewManager<T> {
       //   initialItemOffset,
       //   this.firstItemOffset
       // );
+      this.layoutManager.recomputeLayouts(0, initialScrollIndex);
       this.engagedIndicesTracker.scrollOffset =
         initialItemOffset ?? 0 + this.firstItemOffset;
     } else {
