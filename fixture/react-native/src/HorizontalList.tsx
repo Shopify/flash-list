@@ -74,6 +74,7 @@ const HorizontalList = React.memo(() => {
       <RecyclerView
         horizontal
         data={data}
+        initialScrollIndex={2}
         renderItem={({ item }) => <ListItem item={item} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={Separator}

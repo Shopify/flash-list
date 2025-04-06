@@ -12,7 +12,6 @@ import { CompatScroller } from "../components/CompatScroller";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
 import { useUnmountFlag } from "./useUnmountFlag";
-import { useOnLoad } from "./useOnLoad";
 import { RVLayout } from "../layout-managers/LayoutManager";
 import { ScrollAnchorRef } from "../components/ScrollAnchor";
 
@@ -94,26 +93,43 @@ export function useRecyclerViewController<T>(
   const isUnmounted = useUnmountFlag();
   const [_, setRenderId] = useState(0);
   const pauseAdjustRef = useRef(false);
+  const initialScrollCompletedRef = useRef(false);
 
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
   const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
   const pendingScrollResolves = useRef<(() => void)[]>([]);
 
-  // Handle initial scroll position when the list first loads
-  useOnLoad(recyclerViewManager, () => {
+  const applyInitialScrollIndex = useCallback(() => {
     const initialScrollIndex =
       recyclerViewManager.getInitialScrollIndex() ?? -1;
     const dataLength = props.data?.length ?? 0;
-    if (initialScrollIndex >= 0 && initialScrollIndex < dataLength) {
-      // Use setTimeout to ensure the scroll happens after layout is complete
-      handlerMethods.scrollToIndex({
-        index: initialScrollIndex,
+    if (
+      initialScrollIndex >= 0 &&
+      initialScrollIndex < dataLength &&
+      !initialScrollCompletedRef.current &&
+      recyclerViewManager.getIsFirstLayoutComplete()
+    ) {
+      // Use setTimeout to ensure that we keep trying to scroll on first few renders
+      setTimeout(() => {
+        initialScrollCompletedRef.current = true;
+        pauseAdjustRef.current = false;
+      }, 100);
+
+      pauseAdjustRef.current = true;
+      handlerMethods.scrollToOffset({
+        offset: horizontal
+          ? recyclerViewManager.getLayout(initialScrollIndex).x
+          : recyclerViewManager.getLayout(initialScrollIndex).y,
         animated: false,
       });
     }
-  });
+  }, [recyclerViewManager, props.data]);
 
+  // Handle initial scroll position when the list first loads
+  //   useOnLoad(recyclerViewManager, () => {
+
+  //   });
   /**
    * Updates the scroll offset and returns a Promise that resolves
    * when the update has been applied.
@@ -457,5 +473,5 @@ export function useRecyclerViewController<T>(
     [handlerMethods]
   );
 
-  return { applyContentOffset };
+  return { applyContentOffset, applyInitialScrollIndex };
 }

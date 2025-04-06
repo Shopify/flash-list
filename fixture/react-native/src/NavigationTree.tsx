@@ -32,7 +32,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const NavigationTree = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ animation: "none" }}>
         <Stack.Group>
           <Stack.Screen name="Examples" component={ExamplesScreen} />
           <Stack.Screen name="List" component={List} />

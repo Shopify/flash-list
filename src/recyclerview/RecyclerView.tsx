@@ -102,13 +102,14 @@ const RecyclerViewComponent = <T,>(
 
   // Initialize core RecyclerView manager and content offset management
   const { recyclerViewManager } = useRecyclerViewManager(props);
-  const { applyContentOffset } = useRecyclerViewController(
-    recyclerViewManager,
-    ref,
-    scrollViewRef,
-    scrollAnchorRef,
-    props
-  );
+  const { applyContentOffset, applyInitialScrollIndex } =
+    useRecyclerViewController(
+      recyclerViewManager,
+      ref,
+      scrollViewRef,
+      scrollAnchorRef,
+      props
+    );
 
   // Initialize view holder collection ref
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
@@ -427,7 +428,11 @@ const RecyclerViewComponent = <T,>(
             onSizeChanged={validateItemSize}
             renderItem={renderItem}
             extraData={extraData}
+            onCommitLayoutEffect={() => {
+              applyInitialScrollIndex();
+            }}
             onCommitEffect={() => {
+              applyInitialScrollIndex();
               checkBounds();
               recyclerViewManager.computeItemViewability();
               recyclerViewManager.disableRecycling = Boolean(disableRecycling);
