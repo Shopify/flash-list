@@ -169,6 +169,7 @@ export function useRecyclerViewController<T>(
     if (
       !props.horizontal &&
       recyclerViewManager.getIsFirstLayoutComplete() &&
+      props.keyExtractor &&
       props.maintainVisibleContentPosition?.disabled !== true
     ) {
       // If we have a tracked first visible item, maintain its position
