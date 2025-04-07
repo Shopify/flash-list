@@ -53,3 +53,4 @@ export { default as ViewToken } from "./viewability/ViewToken";
 export { default as CellContainer } from "./native/cell-container/CellContainer";
 export { RecyclerView } from "./recyclerview/RecyclerView";
 export { RecyclerViewProps } from "./recyclerview/RecyclerViewProps";
+export { useRecyclerViewContext } from "./recyclerview/RecyclerViewContextProvider";

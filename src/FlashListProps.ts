@@ -396,4 +396,11 @@ export interface FlashListProps<TItem>
      */
     startRenderingFromBottom?: boolean;
   };
+
+  /**
+   * New arch only
+   * Called when the layout is committed. Can be used to measure list.
+   * Doing set state inside the callback can lead to infinite loops. Make sure FlashList's props are memoized.
+   */
+  onCommitLayoutEffect?: () => void;
 }

@@ -79,6 +79,7 @@ const RecyclerViewComponent = <T,>(
     style,
     stickyHeaderIndices,
     maintainVisibleContentPosition,
+    onCommitLayoutEffect,
     ...rest
   } = props;
 
@@ -461,6 +462,7 @@ const RecyclerViewComponent = <T,>(
               parentRecyclerViewContext?.unmarkChildLayoutAsPending(
                 recyclerViewId
               );
+              onCommitLayoutEffect?.();
             }}
             onCommitEffect={() => {
               applyInitialScrollIndex();
