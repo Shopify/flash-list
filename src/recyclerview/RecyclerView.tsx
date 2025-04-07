@@ -318,7 +318,10 @@ const RecyclerViewComponent = <T,>(
     CompatScrollView,
   } = useSecondaryProps(props);
 
-  if (!recyclerViewManager.getIsFirstLayoutComplete() && !renderEmpty) {
+  if (
+    !recyclerViewManager.getIsFirstLayoutComplete() &&
+    recyclerViewManager.getDataLength() > 0
+  ) {
     parentRecyclerViewContext?.markChildLayoutAsPending(recyclerViewId);
   }
 
