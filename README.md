@@ -6,9 +6,9 @@ FlashList v2 has been rebuilt from the ground up and delivers fast performance, 
 
 ## React Native's old architecture support
 
-> ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. Old architecture will be supported while FlashList v2 is in alpha/beta and will be dropped once it's ready. When run on old architecture, we just fall back to v1.x.
+> ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. Old architecture will be supported while FlashList v2 is in alpha/beta and will be dropped once it's ready. When run on old architecture, we just fall back to v1.x which doesn't have any of the new features.
 
-## Web support
+### Web support
 
 Web support might be added sometime in the future. We plan on shipping the RN version first.
 
@@ -17,8 +17,6 @@ Web support might be added sometime in the future. We plan on shipping the RN ve
 Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
 
 ## Usage
-
-We recommend reading the detailed documentation for using `FlashList` [here](https://shopify.github.io/flash-list/docs/usage).
 
 But if you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` by changing the component name or refer to the example below:
 
@@ -73,7 +71,7 @@ const MyList = () => {
 
 - `onStartReachedThreshold`: How far from the start the top edge of the list must be to trigger `onStartReached`.
 - `disableRecycling`: If true, the FlashList will not recycle items.
-- `style`: Style for the FlashList's parent container. Avoid properties that affect children size (margin is okay, padding is not).
+- `style`: Style for the FlashList's parent container. We highly recommend not adding padding which can impact the size of the ScrollView inside. We operate on the assumption that the size of parent view and ScrollView is the same.. In most cases, `contentContainerStyle` should be enough so avoid using this.
 - `maintainVisibleContentPosition`: Configuration for maintaining scroll position when content changes:
   - `disabled`: Set to true to disable this feature (enabled by default).
   - `autoscrollToTopThreshold`: Automatically scroll to maintain position when content is added at the top.
@@ -83,7 +81,7 @@ const MyList = () => {
   <FlashList
     data={chatMessages}
     maintainVisibleContentPosition={{
-      autoscrollToBottomThreshold: 10,
+      autoscrollToBottomThreshold: 0.2,
       startRenderingFromBottom: true,
     }}
     renderItem={({ item }) => <ChatMessage message={item} />}
@@ -105,13 +103,13 @@ const MyList = () => {
 
 ## Changed props
 
-- `overrideItemLayout`: In v2, this allows a way to change the span of items. Span is supported, but we no longer read the size estimates.
+- `overrideItemLayout`: This used to allow a way to change the span of items and provide size estimates. In v2, span is supported, but we no longer read the size estimates.
   ```jsx
   <FlashList
     data={gridData}
     numColumns={2}
     overrideItemLayout={(layout, item) => {
-      layout.span = item.span; // Set span to 1 or 2
+      layout.span = item.span; // Set span
     }}
     renderItem={({ item }) => <GridItem item={item} />}
   />
@@ -122,7 +120,7 @@ const MyList = () => {
 - `masonry` is now a prop on FlashList. It's now also possible to use `overrideItemLayout` with `masonry`.
 - `maintainVisibleContentPosition` is available and now enabled by default. We use this to reduce visible glitches as much as possible. Chat apps without inverted will also be possible. Please note that if you plan on adding a large number of rows on top of the list, then you may want to increase the drawDistance on the list.
 - `onStartReached` callback is now available with a configurable threshold.
-- We've added support for RTL layouts.
+- We've also added support for RTL layouts.
 
 ## Improvements
 
@@ -134,11 +132,10 @@ const MyList = () => {
 - In Grid layout, if side-by-side items have different heights, then the shorter item will match the height of the tallest item. This wasn't possible in v1.
 - The ref of FlashList has many more useful methods like `getVisibleIndices` and `getLayout`.
 - `contentContainerStyle` prop is fully supported now.
-- `style` prop is applied to the parent for FlashList. We highly recommend not adding padding which can impact the size of the ScrollView inside. We operate on the assumption that the size of parent view and ScrollView is the same.
 
 ## Things to know
 
-- Avoid adding keys directly to components which can break recycling. Same as v1.
+- Avoid adding keys directly to components which can break recycling. Same as v1. More info [here](https://shopify.github.io/flash-list/docs/fundamentals/performant-components/#remove-key-prop).
 - `useLayoutState`: This is similar to `useState` but communicates the change in state to FlashList. It's useful if you want to resize a child component based on a local state. Item layout changes will still be detected using `onLayout` callback in the absence of `useLayoutState`, which might not look as smooth on a case-by-case basis.
 
   ```jsx
@@ -164,7 +161,13 @@ const MyList = () => {
   import { useRecyclingState } from "@shopify/flash-list";
 
   const GridItem = ({ item }) => {
-    const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
+    const [isExpanded, setIsExpanded] = useRecyclingState(
+      false,
+      [item.id],
+      () => {
+        // runs on reset. Can be used to reset scroll positions of nested horizontal lists
+      }
+    );
     const height = isExpanded ? 100 : 50;
 
     return (
@@ -182,4 +185,4 @@ const MyList = () => {
 
 ## App / Playground
 
-The [fixture](https://github.com/Shopify/flash-list/tree/main/fixture) is an example app showing how to use the library.
+The [fixture](https://github.com/Shopify/flash-list/tree/new-rlv-prototype/fixture) is an example app showing how to use the library.
