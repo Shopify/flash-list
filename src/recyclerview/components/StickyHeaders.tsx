@@ -69,11 +69,7 @@ export const StickyHeaders = <TItem,>({
     if (!hasLayout) {
       return [];
     }
-    return [...stickyHeaderIndices].sort((a, b) => {
-      const aY = recyclerViewManager.getLayout(a).y;
-      const bY = recyclerViewManager.getLayout(b).y;
-      return aY - bY;
-    });
+    return stickyHeaderIndices.sort((a, b) => a - b);
   }, [stickyHeaderIndices, recyclerViewManager, hasLayout]);
 
   const compute = useCallback(() => {
