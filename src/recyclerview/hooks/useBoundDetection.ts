@@ -76,7 +76,7 @@ export function useBoundDetection<T>(
 
       // Check if we're near the start of the list
       if (props.onStartReached) {
-        const onStartReachedThreshold = props.onStartReachedThreshold ?? 0.5;
+        const onStartReachedThreshold = props.onStartReachedThreshold ?? 0.2;
         const startThresholdDistance = onStartReachedThreshold * visibleLength;
 
         const isNearStart = lastScrollOffset <= startThresholdDistance;

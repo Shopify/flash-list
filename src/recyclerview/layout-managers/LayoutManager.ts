@@ -6,6 +6,7 @@ import {
   findFirstVisibleIndex,
   findLastVisibleIndex,
 } from "../utils/findVisibleIndex";
+import { areDimensionsNotEqual } from "../utils/measureLayout";
 
 /**
  * Base abstract class for layout managers in the recycler view system.
@@ -175,7 +176,10 @@ export abstract class RVLayoutManager {
       minRecomputeIndex = totalItemCount - 1; // <0 gets skipped so it's safe to set to totalItemCount - 1
     }
     // update average windows
-    this.computeEstimatesAndMinRecomputeIndex(layoutInfo);
+    minRecomputeIndex = Math.min(
+      minRecomputeIndex,
+      this.computeEstimatesAndMinRecomputeIndex(layoutInfo)
+    );
 
     if (this.layouts.length < totalItemCount && totalItemCount > 0) {
       const startIndex = this.layouts.length;
@@ -303,7 +307,15 @@ export abstract class RVLayoutManager {
     let minRecomputeIndex = Number.MAX_VALUE;
     for (const info of layoutInfo) {
       const { index, dimensions } = info;
-      minRecomputeIndex = Math.min(minRecomputeIndex, index);
+      const storedLayout = this.layouts[index];
+      if (
+        !storedLayout.isHeightMeasured ||
+        !storedLayout.isWidthMeasured ||
+        areDimensionsNotEqual(storedLayout.height, dimensions.height) ||
+        areDimensionsNotEqual(storedLayout.width, dimensions.width)
+      ) {
+        minRecomputeIndex = Math.min(minRecomputeIndex, index);
+      }
       this.heightAverageWindow.addValue(
         dimensions.height,
         this.getItemType(index)

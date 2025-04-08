@@ -36,8 +36,10 @@ export function Chat() {
   );
 
   const addMessageAtTop = useCallback(() => {
-    const newMessage = generateRandomMessage();
-    setMessages((prev) => [newMessage, ...prev]);
+    const newMessages = Array.from({ length: 10 }, () =>
+      generateRandomMessage()
+    );
+    setMessages((prev) => [...newMessages, ...prev]);
   }, []);
 
   const addMessageAtBottom = useCallback(() => {
@@ -75,9 +77,14 @@ export function Chat() {
 
         <RecyclerView
           data={messages}
+          drawDistance={500}
           maintainVisibleContentPosition={{
             autoscrollToBottomThreshold: 0.1,
             startRenderingFromBottom: true,
+          }}
+          onStartReached={() => {
+            console.log("onStartReached");
+            addMessageAtTop();
           }}
           ListHeaderComponent={() => (
             <View style={styles.header}>
@@ -113,7 +120,7 @@ function generateInitialMessages(count: number): ChatMessage[] {
 
 function generateRandomMessage(): ChatMessage {
   return {
-    id: `msg-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    id: `msg-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
     text: messageTexts[Math.floor(Math.random() * messageTexts.length)],
     sender: Math.random() > 0.5 ? "user" : "other",
     timestamp: new Date(),

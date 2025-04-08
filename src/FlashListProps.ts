@@ -228,7 +228,7 @@ export interface FlashListProps<TItem>
    * How far from the end (in units of visible length of the list) the bottom edge of the
    * list must be from the end of the content to trigger the `onEndReached` callback.
    * Thus a value of 0.5 will trigger `onEndReached` when the end of the content is
-   * within half the visible length of the list.
+   * within half the visible length of the list. Default value is 0.5.
    */
   onEndReachedThreshold?: number | null | undefined;
 
@@ -356,7 +356,7 @@ export interface FlashListProps<TItem>
    * How far from the start (in units of visible length of the list) the top edge of the
    * list must be from the start of the content to trigger the `onStartReached` callback.
    * Thus a value of 0.5 will trigger `onStartReached` when the start of the content is
-   * within half the visible length of the list.
+   * within half the visible length of the list. Default value is 0.2.
    */
   onStartReachedThreshold?: FlashListProps<TItem>["onEndReachedThreshold"];
 
