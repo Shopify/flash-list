@@ -4,7 +4,7 @@
 
 FlashList v2 has been rebuilt from the ground up and delivers fast performance, higher precision, and better ease of use compared to v1. We've achieved all this while moving to a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates. It also introduces several new features compared to v1.
 
-> ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. Old architecture will be supported while FlashList v2 is in alpha/beta and will be dropped once it's ready. When run on old architecture, we just fall back to v1.x which doesn't have any of the new features.
+> ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. **Old architecture will only be supported while FlashList v2 is in alpha/beta and will be dropped once it's ready.** When run on old architecture, we just fall back to v1.x which doesn't have any of the new features.
 
 > ⚠️ **IMPORTANT:** FlashList v2.x is in alpha and may have some issues. Please report any issues or edge cases you run into. We're actively working on testing and optimizing v2 so some things might change in the final version.
 
@@ -71,7 +71,7 @@ const MyList = () => {
 
 - `onStartReachedThreshold`: How far from the start the top edge of the list must be to trigger `onStartReached`.
 - `disableRecycling`: If true, the FlashList will not recycle items.
-- `style`: Style for the FlashList's parent container. We highly recommend not adding padding which can impact the size of the ScrollView inside. We operate on the assumption that the size of parent view and ScrollView is the same.. In most cases, `contentContainerStyle` should be enough so avoid using this.
+- `style`: Style for the FlashList's parent container. We highly recommend not adding padding which can impact the size of the ScrollView inside. We operate on the assumption that the size of parent view and ScrollView is the same. In most cases, `contentContainerStyle` should be enough so avoid using this.
 - `maintainVisibleContentPosition`: Configuration for maintaining scroll position when content changes:
   - `disabled`: Set to true to disable this feature (enabled by default).
   - `autoscrollToTopThreshold`: Automatically scroll to maintain position when content is added at the top.
@@ -156,7 +156,7 @@ const MyList = () => {
   };
   ```
 
-- `useRecyclingState`: Similar to `useState` but accepts a dependency array. On change of deps, the state gets reset without an additional setState call. Useful for maintaining local item state if really necessary. It also has the functionality of `useLayoutState` built in.
+- `useRecyclingState`: Similar to `useState` but accepts a dependency array. On change of deps, the state gets reset without an additional `setState` call. Useful for maintaining local item state if really necessary. It also has the functionality of `useLayoutState` built in.
 
   ```jsx
   import { useRecyclingState } from "@shopify/flash-list";
