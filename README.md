@@ -4,9 +4,9 @@
 
 FlashList v2 has been rebuilt from the ground up and delivers fast performance, higher precision, and better ease of use compared to v1. We've achieved all this while moving to a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates. It also introduces several new features compared to v1.
 
-## React Native's old architecture support
-
 > ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. Old architecture will be supported while FlashList v2 is in alpha/beta and will be dropped once it's ready. When run on old architecture, we just fall back to v1.x which doesn't have any of the new features.
+
+> ⚠️ **IMPORTANT:** FlashList v2.x is in alpha and may have some issues. Please report any issues or edge cases you run into. We're actively working on testing and optimizing v2 so some things might change in the final version.
 
 ### Web support
 
