@@ -57,7 +57,7 @@ const MyList = () => {
   />
   ```
 
-- `optimizeItemArrangement`: When enabled, MasonryFlashList will try to reduce differences in column height by modifying item order.
+- `optimizeItemArrangement`: When enabled, masonry layout will try to reduce differences in column height by modifying item order.
 - `onStartReached`: Called when the scroll position gets within `onStartReachedThreshold` of the start of the content.
 
   ```jsx
@@ -135,6 +135,7 @@ const MyList = () => {
 
 ## Things to know
 
+- `keyExtractor` is important to prevent glitches due to item layout changes when going upwards. We highly recommend having a valid `keyExtractor` with v2.
 - Avoid adding keys directly to components which can break recycling. Same as v1. More info [here](https://shopify.github.io/flash-list/docs/fundamentals/performant-components/#remove-key-prop).
 - `useLayoutState`: This is similar to `useState` but communicates the change in state to FlashList. It's useful if you want to resize a child component based on a local state. Item layout changes will still be detected using `onLayout` callback in the absence of `useLayoutState`, which might not look as smooth on a case-by-case basis.
 
