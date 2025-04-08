@@ -2,7 +2,7 @@
 
 # FlashList v2
 
-FlashList v2 aims to be faster, more precise, and easier to use compared to v1. We plan to achieve all of this and move to being a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates.
+FlashList v2 has been rebuilt from the ground up and delivers fast performance, higher precision, and better ease of use compared to v1. We've achieved all this while moving to a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates. It also introduces several new features compared to v1.
 
 ## React Native's old architecture support
 
