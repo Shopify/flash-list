@@ -41,7 +41,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     ) {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
-        console.log("-----> recomputeLayouts");
+        //console.log("-----> recomputeLayouts");
 
         //update all widths
         for (let i = 0; i < this.layouts.length; i++) {

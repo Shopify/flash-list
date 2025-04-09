@@ -41,7 +41,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       prevHorizontal !== this.horizontal
     ) {
       if (this.layouts.length > 0) {
-        console.log("-----> recomputeLayouts", this.horizontal);
+        //console.log("-----> recomputeLayouts", this.horizontal);
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
       }

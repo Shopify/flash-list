@@ -169,7 +169,7 @@ export class RecyclerViewManager<T> {
       );
     }
     if (!(this.layoutManager instanceof LayoutManagerClass)) {
-      console.log("-----> new LayoutManagerClass");
+      //console.log("-----> new LayoutManagerClass");
 
       this.layoutManager = new LayoutManagerClass(
         {

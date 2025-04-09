@@ -178,18 +178,18 @@ const RecyclerViewComponent = <T,>(
       );
 
       //comapre height with stored layout
-      const storedLayout = recyclerViewManager.getLayout(index);
-      if (
-        storedLayout.height !== layout.height &&
-        storedLayout.isHeightMeasured
-      ) {
-        console.log(
-          "height changed",
-          index,
-          layout.height,
-          storedLayout.height
-        );
-      }
+      //const storedLayout = recyclerViewManager.getLayout(index);
+      // if (
+      //   storedLayout.height !== layout.height &&
+      //   storedLayout.isHeightMeasured
+      // ) {
+      //   console.log(
+      //     "height changed",
+      //     index,
+      //     layout.height,
+      //     storedLayout.height
+      //   );
+      // }
       return { index, dimensions: layout };
     });
 
@@ -295,14 +295,14 @@ const RecyclerViewComponent = <T,>(
         areDimensionsNotEqual(width, size.width) ||
         areDimensionsNotEqual(height, size.height)
       ) {
-        console.log(
-          "invalid size",
-          index,
-          width,
-          size.width,
-          height,
-          size.height
-        );
+        // console.log(
+        //   "invalid size",
+        //   index,
+        //   width,
+        //   size.width,
+        //   height,
+        //   size.height
+        // );
         // TODO: Add a warning for missing useLayoutState
         recyclerViewContext.layout();
       }
@@ -398,7 +398,7 @@ const RecyclerViewComponent = <T,>(
     );
   }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
 
-  console.log("render");
+  //console.log("render");
 
   // Render the main RecyclerView structure
   return (
@@ -418,12 +418,12 @@ const RecyclerViewComponent = <T,>(
               containerViewSizeRef.current?.height ?? 0
             )
           ) {
-            console.log(
-              "onLayout",
+            // console.log(
+            //   "onLayout",
 
-              recyclerViewManager.getWindowSize(),
-              event.nativeEvent.layout
-            );
+            //   recyclerViewManager.getWindowSize(),
+            //   event.nativeEvent.layout
+            // );
             recyclerViewContext.layout();
           }
         }}

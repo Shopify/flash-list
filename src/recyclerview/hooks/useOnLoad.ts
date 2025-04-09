@@ -43,7 +43,7 @@ export const useOnListLoad = <T>(
     //   ToastAndroid.SHORT
     // );
     //console.log("----------> dataCollector", dataCollectorString);
-    console.log("----------> elapsedTimeInMs", elapsedTimeInMs);
+    //console.log("----------> elapsedTimeInMs", elapsedTimeInMs);
     requestAnimationFrame(() => {
       if (!isUnmounted.current) {
         onLoad?.({ elapsedTimeInMs });

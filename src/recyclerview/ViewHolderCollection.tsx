@@ -92,10 +92,10 @@ export const ViewHolderCollection = <TItem,>(
 
   useLayoutEffect(() => {
     if (renderId > 0) {
-      console.log(
-        "parent layout trigger due to child container size change",
-        fixedContainerSize
-      );
+      // console.log(
+      //   "parent layout trigger due to child container size change",
+      //   fixedContainerSize
+      // );
       recyclerViewContext?.layout();
     }
   }, [fixedContainerSize]);
