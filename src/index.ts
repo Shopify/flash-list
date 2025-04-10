@@ -1,12 +1,9 @@
-import { RecyclerView } from "./recyclerview/RecyclerView";
-import LegacyFlashList from "./FlashList";
+import { default as OriginalFlashList } from "./FlashList";
 import { isNewCoreEnabled } from "./enableNewCore";
+import { RecyclerView } from "./recyclerview/RecyclerView";
 
-const FlashList = (isNewCoreEnabled()
-  ? RecyclerView
-  : LegacyFlashList) as unknown as typeof LegacyFlashList;
-
-export { FlashList };
+// Keep this unmodified for TS type checking
+export { default as FlashList } from "./FlashList";
 export {
   FlashListProps,
   ContentStyle,
@@ -54,3 +51,14 @@ export { default as CellContainer } from "./native/cell-container/CellContainer"
 export { RecyclerView } from "./recyclerview/RecyclerView";
 export { RecyclerViewProps } from "./recyclerview/RecyclerViewProps";
 export { useRecyclerViewContext } from "./recyclerview/RecyclerViewContextProvider";
+
+// @ts-ignore - This is ignored by TypeScript but will be present in the compiled JS
+// In the compiled JS, this will override the previous FlashList export with a conditional one
+if (typeof module !== "undefined" && module.exports) {
+  Object.defineProperty(module.exports, "FlashList", {
+    get: function () {
+      return isNewCoreEnabled() ? RecyclerView : OriginalFlashList;
+    },
+    configurable: true,
+  });
+}
