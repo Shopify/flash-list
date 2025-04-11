@@ -21,10 +21,23 @@ export const ExamplesScreen = () => {
 
   const data: ExampleItem[] = [
     { title: "List", destination: "List" },
+    { title: "Horizontal List", destination: "HorizontalList" },
+    { title: "Carousel", destination: "Carousel" },
+    { title: "Grid", destination: "Grid" },
+    { title: "Masonry", destination: "Masonry" },
+    { title: "Complex Masonry", destination: "ComplexMasonry" },
+    {
+      title: "Chat",
+      destination: "Chat",
+    },
     { title: "SectionList", destination: "SectionList" },
     { title: "PaginatedList", destination: "PaginatedList" },
     { title: "Reminders", destination: "Reminders" },
     { title: "Twitter Timeline", destination: "Twitter" },
+    {
+      title: "Twitter Benchmark",
+      destination: "TwitterBenchmark",
+    },
     {
       title: "Twitter FlatList Timeline",
       destination: "TwitterFlatList",
@@ -38,6 +51,10 @@ export const ExamplesScreen = () => {
       destination: "ContactsSectionList",
     },
     {
+      title: "Dynamic Items",
+      destination: "DynamicItems",
+    },
+    {
       title: "Messages",
       destination: "Messages",
     },
@@ -46,14 +63,25 @@ export const ExamplesScreen = () => {
       destination: "MessagesFlatList",
     },
     {
-      title: "Twitter Benchmark",
-      destination: "TwitterBenchmark",
+      title: "CellRenderer Examples",
+      destination: "CellRendererExamples",
     },
     {
-      title: "Twitter Custom Cell Container",
-      destination: "TwitterCustomCellContainer",
+      title: "Header Footer Empty Example",
+      destination: "HeaderFooterExample",
     },
-    { title: "Masonry", destination: "Masonry" },
+    {
+      title: "RecyclerView Handler Test",
+      destination: "RecyclerViewHandlerTest",
+    },
+    {
+      title: "Movie Streaming",
+      destination: "MovieList",
+    },
+    {
+      title: "Layout Options",
+      destination: "LayoutOptions",
+    },
   ];
   return (
     <>

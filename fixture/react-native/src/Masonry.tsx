@@ -1,7 +1,6 @@
 import React from "react";
 import { Text, View, StyleSheet, Platform } from "react-native";
-import { MasonryFlashList } from "@shopify/flash-list";
-
+import { RecyclerView } from "@shopify/flash-list";
 interface MasonryData {
   index: number;
   height: number;
@@ -17,10 +16,10 @@ export function Masonry() {
   });
   return (
     <View style={styles.container}>
-      <MasonryFlashList
+      <RecyclerView
         testID="MasonryList"
         data={data}
-        optimizeItemArrangement
+        masonry
         overrideItemLayout={(layout, item) => {
           layout.size = item.height;
         }}
@@ -68,9 +67,6 @@ export function Masonry() {
         }}
         renderItem={({ item }) => {
           return <Component item={item} />;
-        }}
-        getColumnFlex={(_, index) => {
-          return index === 1 ? 2 : 1;
         }}
         onLoad={({ elapsedTimeInMs }) => {
           console.log("List Load Time", elapsedTimeInMs);
