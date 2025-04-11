@@ -1,5 +1,5 @@
 export default interface ViewToken {
-  item: any;
+  item: any; //TODO: fix this type
   key: string;
   index: number | null;
   isViewable: boolean;

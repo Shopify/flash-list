@@ -5,8 +5,13 @@ import {
   StyleSheet,
   ActivityIndicator,
   ViewabilityConfig,
+  FlatList,
 } from "react-native";
-import { BlankAreaEventHandler, FlashList } from "@shopify/flash-list";
+import {
+  BlankAreaEventHandler,
+  FlashList,
+  RecyclerView,
+} from "@shopify/flash-list";
 
 import { DebugContext } from "../Debug";
 
@@ -34,10 +39,39 @@ const Twitter = ({
     debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData
   );
   const viewabilityConfig = useRef<ViewabilityConfig>({
-    waitForInteraction: true,
+    waitForInteraction: false,
     itemVisiblePercentThreshold: 50,
     minimumViewTime: 1000,
   }).current;
+
+  return (
+    <RecyclerView
+      ref={instance}
+      keyExtractor={(item) => {
+        return item.id;
+      }}
+      data={debugContext.emptyListEnabled ? [] : tweets}
+      ItemSeparatorComponent={Divider}
+      renderItem={({ item }) => {
+        return <TweetCell tweet={item} />;
+      }}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={(info) => {
+        //console.log(info);
+      }}
+    />
+  );
+
+  return (
+    <FlatList
+      ref={instance}
+      // estimatedItemSize={150}
+      data={debugContext.emptyListEnabled ? [] : tweets}
+      renderItem={({ item }) => {
+        return <TweetCell tweet={item} />;
+      }}
+    />
+  );
 
   return (
     <FlashList
