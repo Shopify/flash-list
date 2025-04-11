@@ -54,7 +54,11 @@ export { useRecyclerViewContext } from "./recyclerview/RecyclerViewContextProvid
 
 // @ts-ignore - This is ignored by TypeScript but will be present in the compiled JS
 // In the compiled JS, this will override the previous FlashList export with a conditional one
-if (typeof module !== "undefined" && module.exports) {
+if (
+  typeof module !== "undefined" &&
+  module.exports &&
+  process?.env?.NODE_ENV !== "test"
+) {
   Object.defineProperty(module.exports, "FlashList", {
     get: function () {
       return isNewCoreEnabled() ? RecyclerView : OriginalFlashList;
