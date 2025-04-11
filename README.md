@@ -14,7 +14,7 @@ Web support might be added sometime in the future. We plan on shipping the RN ve
 
 ## Installation
 
-Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.
+Add the package to your project via `yarn add @shopify/flash-list@alpha` and run `pod install` in the `ios` directory.
 
 ## Usage
 
