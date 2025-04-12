@@ -17,7 +17,7 @@ import React from "react";
  * getValidComponent(<MyComponent />)
  */
 export const getValidComponent = (
-  component: React.ComponentType<any> | React.ReactElement | null | undefined
+  component: React.ComponentType | React.ReactElement | null | undefined
 ): React.ReactElement | null => {
   if (React.isValidElement(component)) {
     return component;
