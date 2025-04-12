@@ -124,12 +124,14 @@ export function useRecyclerViewController<T>(
       handlerMethods.scrollToOffset({
         offset,
         animated: false,
+        skipFirstItemOffset: false,
       });
 
       setTimeout(() => {
         handlerMethods.scrollToOffset({
           offset,
           animated: false,
+          skipFirstItemOffset: false,
         });
       }, 0);
     }
