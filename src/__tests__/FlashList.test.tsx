@@ -551,6 +551,121 @@ describe("FlashList", () => {
     });
   });
 
+  it("retrigers viewability events when recomputeViewableItems is called", () => {
+    const onViewableItemsChanged = jest.fn();
+    const flashList = mountFlashList({
+      estimatedItemSize: 300,
+      onViewableItemsChanged,
+      viewabilityConfig: {
+        itemVisiblePercentThreshold: 50,
+        minimumViewTime: 0,
+      },
+    });
+
+    // Initial viewable items
+    expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+
+    onViewableItemsChanged.mockClear();
+
+    flashList.instance.recomputeViewableItems();
+
+    expect(onViewableItemsChanged).toHaveBeenCalledWith({
+      changed: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+      viewableItems: [
+        {
+          index: 0,
+          isViewable: true,
+          item: "One",
+          key: "0",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 1,
+          isViewable: true,
+          item: "Two",
+          key: "1",
+          timestamp: expect.any(Number),
+        },
+        {
+          index: 2,
+          isViewable: true,
+          item: "Three",
+          key: "2",
+          timestamp: expect.any(Number),
+        },
+      ],
+    });
+  });
+
   it("should not overlap header with sitcky index 0", () => {
     const HeaderComponent = () => {
       return <Text>Empty</Text>;
@@ -855,5 +970,32 @@ describe("FlashList", () => {
       });
     expect(hasLayoutItems).toBe(true);
     flashList.unmount();
+  });
+  it("warns if rendered size is too small but only when it remain small for a duration", () => {
+    const flashList = mountFlashList({
+      data: new Array(1).fill("1"),
+    });
+    const warn = jest.spyOn(console, "warn").mockReturnValue();
+
+    const triggerLayout = (height: number, time: number) => {
+      flashList.find(ScrollView)?.trigger("onLayout", {
+        nativeEvent: { layout: { height, width: 900 } },
+      });
+      jest.advanceTimersByTime(time);
+    };
+
+    triggerLayout(0, 500);
+    triggerLayout(100, 1000);
+    triggerLayout(0, 1200);
+
+    expect(warn).toHaveBeenCalledTimes(1);
+
+    triggerLayout(100, 500);
+    triggerLayout(0, 500);
+
+    flashList.unmount();
+    jest.advanceTimersByTime(1200);
+
+    expect(warn).toHaveBeenCalledTimes(1);
   });
 });

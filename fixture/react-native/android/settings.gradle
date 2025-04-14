@@ -1,0 +1,8 @@
+pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'FlatListPro'
+include ':app'
+include ':flash_list'
+project(':flash_list').projectDir = new File(rootProject.projectDir, '../../android')
+includeBuild('../node_modules/@react-native/gradle-plugin')

@@ -1,0 +1,32 @@
+# CocoaPods
+ios/Pods/
+
+# Xcode
+ios/xcuserdata/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/*
+!ios/*.xcodeproj/project.pbxproj
+!ios/*.xcodeproj/xcshareddata/
+!ios/*.xcworkspace/contents.xcworkspacedata
+ios/**/xcshareddata/WorkspaceSettings.xcsettings
+
+# Android
+
+android/*.hprof
+
+**/.xcode.env.local
+**/*.xcprivacy
+
+
+# e2e
+
+e2e/artifacts/ios/diff
+e2e/artifacts/android/diff
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

@@ -7,6 +7,58 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.7.6] - 2025-03-19
+
+- Fix React 18 ref error
+  - https://github.com/Shopify/flash-list/pull/1573
+
+## [1.7.5] - 2025-03-13
+
+- Fix React 19 ref error
+  - https://github.com/Shopify/flash-list/pull/1554
+
+## [1.7.3] - 2025-01-30
+
+- Changes for RN 0.77 support
+  - https://github.com/Shopify/flash-list/pull/1484
+
+## [1.7.2] - 2024-11-07
+
+- Update sticky headers when data changes without changing stickyHeaderIndices updated
+  - https://github.com/Shopify/flash-list/pull/1267
+
+## [1.7.1] - 2024-08-07
+
+- Add recomputeViewableItems method
+  - https://github.com/Shopify/flash-list/pull/1296
+- Fix first sticky header is not rendering when data changed
+  - https://github.com/Shopify/flash-list/issues/814
+
+## [1.7.0] - 2024-07-03
+
+- Update internal dependency and fixture app to `react-native@0.72`.
+  - https://github.com/Shopify/flash-list/pull/1076
+- Fix stale reference to onScroll and onLoad
+  - https://github.com/Shopify/flash-list/pull/1112
+- Fix Android RN 0.73 namespace requirement
+  - https://github.com/Shopify/flash-list/pull/1216
+- New architecture support
+  - https://github.com/Shopify/flash-list/pull/550
+- Upgrade recyclerlistview to v4.2.1
+  - https://github.com/Shopify/flash-list/pull/1236
+
+## [1.6.4] - 2024-03-18
+
+- Fix `ItemSeparatorComponent ` position for the `inverted` flashlist
+  - https://github.com/Shopify/flash-list/pull/1046
+- Do not show render size unsuable warning in better layout changes
+  - https://github.com/Shopify/flash-list/pull/1092
+
+## [1.6.3] - 2023-11-09
+
+- Changes for RN 0.73 support
+  - https://github.com/Shopify/flash-list/pull/930
+
 ## [1.6.2] - 2023-10-19
 
 - Move shouldRefreshWithAnchoring configuration so it is possible to disable it from outside FlashList by invalidating layout

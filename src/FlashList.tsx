@@ -94,7 +94,8 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private postLoadTimeoutId?: ReturnType<typeof setTimeout>;
-  private sizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
+  private itemSizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
+  private renderedSizeWarningTimeoutId?: ReturnType<typeof setTimeout>;
 
   private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
@@ -291,8 +292,9 @@ class FlashList<T> extends React.PureComponent<
   componentWillUnmount() {
     this.viewabilityManager.dispose();
     this.clearPostLoadTimeout();
-    if (this.sizeWarningTimeoutId !== undefined) {
-      clearTimeout(this.sizeWarningTimeoutId);
+    this.clearRenderSizeWarningTimeout();
+    if (this.itemSizeWarningTimeoutId !== undefined) {
+      clearTimeout(this.itemSizeWarningTimeoutId);
     }
   }
 
@@ -430,8 +432,11 @@ class FlashList<T> extends React.PureComponent<
 
   private validateListSize(event: LayoutChangeEvent) {
     const { height, width } = event.nativeEvent.layout;
+    this.clearRenderSizeWarningTimeout();
     if (Math.floor(height) <= 1 || Math.floor(width) <= 1) {
-      console.warn(WarningList.unusableRenderedSize);
+      this.renderedSizeWarningTimeoutId = setTimeout(() => {
+        console.warn(WarningList.unusableRenderedSize);
+      }, 1000);
     }
   }
 
@@ -662,6 +667,7 @@ class FlashList<T> extends React.PureComponent<
   private getCellContainerChild = (index: number) => {
     return (
       <>
+        {this.props.inverted ? this.separator(index) : null}
         <View
           style={{
             flexDirection:
@@ -672,7 +678,7 @@ class FlashList<T> extends React.PureComponent<
         >
           {this.rowRendererWithIndex(index, RenderTargetOptions.Cell)}
         </View>
-        {this.separator(index)}
+        {this.props.inverted ? null : this.separator(index)}
       </>
     );
   };
@@ -687,7 +693,7 @@ class FlashList<T> extends React.PureComponent<
 
   private stickyOverrideRowRenderer = (
     _: any,
-    __: any,
+    rowData: any,
     index: number,
     ___: any
   ) => {
@@ -695,6 +701,8 @@ class FlashList<T> extends React.PureComponent<
       <PureComponentWrapper
         ref={this.stickyContentRef}
         enabled={this.isStickyEnabled}
+        // We're passing rowData to ensure that sticky headers are updated when data changes
+        rowData={rowData}
         arg={index}
         renderer={this.rowRendererSticky}
       />
@@ -724,7 +732,7 @@ class FlashList<T> extends React.PureComponent<
 
   private runAfterOnLoad = () => {
     if (this.props.estimatedItemSize === undefined) {
-      this.sizeWarningTimeoutId = setTimeout(() => {
+      this.itemSizeWarningTimeoutId = setTimeout(() => {
         const averageItemSize = Math.floor(
           this.state.layoutProvider.averageItemSize
         );
@@ -749,6 +757,13 @@ class FlashList<T> extends React.PureComponent<
     if (this.postLoadTimeoutId !== undefined) {
       clearTimeout(this.postLoadTimeoutId);
       this.postLoadTimeoutId = undefined;
+    }
+  };
+
+  private clearRenderSizeWarningTimeout = () => {
+    if (this.renderedSizeWarningTimeoutId !== undefined) {
+      clearTimeout(this.renderedSizeWarningTimeoutId);
+      this.renderedSizeWarningTimeoutId = undefined;
     }
   };
 
@@ -857,6 +872,58 @@ class FlashList<T> extends React.PureComponent<
   public recordInteraction = () => {
     this.viewabilityManager.recordInteraction();
   };
+
+  /**
+   * Retriggers viewability calculations. Useful to imperatively trigger viewability calculations.
+   */
+  public recomputeViewableItems = () => {
+    this.viewabilityManager.recomputeViewableItems();
+  };
+
+  /**
+   * Returns the dimensions of the child container.
+   * @returns {Object} The dimensions of the child container.
+   */
+  public getChildContainerDimensions() {
+    return this.rlvRef?.getContentDimension();
+  }
+
+  /**
+   * Returns the layout of the item at the given index.
+   * @param index - The index of the item to get the layout for.
+   * @returns {Object} The layout of the item at the given index.
+   */
+  public getLayout(index: number) {
+    return this.rlvRef?.getLayout(index);
+  }
+
+  /**
+   * Returns the size of the list.
+   * @returns {Object} The size of the list.
+   */
+  public getWindowSize() {
+    return this.rlvRef?.getRenderedSize();
+  }
+
+  /**
+   * Returns the absolute last scroll offset of the list.
+   * @returns {number} The absolute last scroll offset of the list.
+   */
+  public getAbsoluteLastScrollOffset() {
+    return this.rlvRef?.getCurrentScrollOffset() ?? 0;
+  }
+
+  /**
+   * Returns the first item offset of the list.
+   * @returns {number} The first item offset of the list.
+   */
+  public getFirstItemOffset() {
+    return this.firstItemOffset;
+  }
+
+  public getFirstVisibleIndex() {
+    return this.rlvRef?.findApproxFirstVisibleIndex() ?? -1;
+  }
 }
 
 export default FlashList;
