@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { RecyclerView } from "@shopify/flash-list";
 
@@ -58,6 +58,15 @@ const DynamicItems = () => {
     );
   };
 
+  const renderItem = useCallback(
+    ({ item }: { item: Item }) => <ItemRenderer item={item} />,
+    []
+  );
+
+  const keyExtractor = useCallback((item: Item) => item.id, []);
+
+  const ListEmptyComponent = useCallback(() => <Text>No items</Text>, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
@@ -70,9 +79,9 @@ const DynamicItems = () => {
       </View>
       <RecyclerView
         data={items}
-        renderItem={({ item }) => <ItemRenderer item={item} />}
-        keyExtractor={(item) => item.id}
-        ListEmptyComponent={() => <Text>No items</Text>}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        ListEmptyComponent={ListEmptyComponent}
       />
     </View>
   );

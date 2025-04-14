@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { RecyclerView } from "@shopify/flash-list";
 
@@ -14,52 +14,67 @@ const SAMPLE_DATA: ListItem[] = Array.from({ length: 20 }, (_, index) => ({
 
 export const HeaderFooterExample = () => {
   const [showEmpty, setShowEmpty] = useState(false);
-  const data = showEmpty ? [] : SAMPLE_DATA;
+  const data = useMemo(() => (showEmpty ? [] : SAMPLE_DATA), [showEmpty]);
 
-  const renderItem = ({ item }: { item: ListItem }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>{item.title}</Text>
-    </View>
+  const renderItem = useCallback(
+    ({ item }: { item: ListItem }) => (
+      <View style={styles.itemContainer}>
+        <Text style={styles.itemText}>{item.title}</Text>
+      </View>
+    ),
+    []
   );
 
-  const ListHeader = () => (
-    <View style={styles.headerContainer}>
-      <Text style={styles.headerText}>Header Section</Text>
-      <TouchableOpacity
-        style={styles.toggleButton}
-        onPress={() => setShowEmpty(!showEmpty)}
-      >
-        <Text style={styles.buttonText}>
-          {showEmpty ? "Show Items" : "Show Empty"}
+  const toggleEmpty = useCallback(() => setShowEmpty(!showEmpty), [showEmpty]);
+
+  const ListHeader = useCallback(
+    () => (
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>Header Section</Text>
+        <TouchableOpacity style={styles.toggleButton} onPress={toggleEmpty}>
+          <Text style={styles.buttonText}>
+            {showEmpty ? "Show Items" : "Show Empty"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    ),
+    [showEmpty, toggleEmpty]
+  );
+
+  const ListFooter = useCallback(
+    () => (
+      <View style={styles.footerContainer}>
+        <Text style={styles.footerText}>Footer Section</Text>
+      </View>
+    ),
+    []
+  );
+
+  const ListEmpty = useCallback(
+    () => (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No items to display</Text>
+        <Text style={styles.emptySubtext}>
+          Tap the button above to load items
         </Text>
-      </TouchableOpacity>
-    </View>
+      </View>
+    ),
+    []
   );
 
-  const ListFooter = () => (
-    <View style={styles.footerContainer}>
-      <Text style={styles.footerText}>Footer Section</Text>
-    </View>
-  );
+  const contentContainerStyle = useMemo(() => ({ flexGrow: 1 }), []);
 
-  const ListEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>No items to display</Text>
-      <Text style={styles.emptySubtext}>
-        Tap the button above to load items
-      </Text>
-    </View>
-  );
+  const handleLoad = useCallback(() => {
+    console.log("header footer empty example onLoad");
+  }, []);
 
   return (
     <View style={styles.container}>
       <RecyclerView
         data={data}
-        onLoad={() => {
-          console.log("header footer empty example onLoad");
-        }}
+        onLoad={handleLoad}
         renderItem={renderItem}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={contentContainerStyle}
         ListHeaderComponent={ListHeader}
         ListFooterComponent={ListFooter}
         ListEmptyComponent={ListEmpty}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -83,6 +83,10 @@ export function LayoutOptions() {
     </View>
   );
 
+  const renderItem = useCallback(({ item }: { item: ListItem }) => {
+    return <ListItemComponent item={item} />;
+  }, []);
+
   return (
     <View style={styles.container}>
       {renderControls()}
@@ -101,7 +105,7 @@ export function LayoutOptions() {
             layout.size = item.height;
           }
         }}
-        renderItem={({ item }) => <ListItemComponent item={item} />}
+        renderItem={renderItem}
       />
     </View>
   );
