@@ -137,7 +137,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     let maxHeight = 0;
     let i = startIndex;
     let isMeasured = false;
-    // TODO: Manage precision problems
     while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
       const layout = this.layouts[i];
       isMeasured = isMeasured || Boolean(layout.isHeightMeasured);
@@ -168,7 +167,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
         this.requiresRepaint = true;
       }
       i = startIndex;
-      // TODO: Manage precision problems
       while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
         this.layouts[i].minHeight = targetHeight;
         if (targetHeight > 0) {
@@ -191,7 +189,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
    * @returns True if the item fits within bounds
    */
   private checkBounds(itemX: number, width: number): boolean {
-    // TODO: Manage precision problems
     return itemX + width <= this.boundedSize + 0.9;
   }
 
