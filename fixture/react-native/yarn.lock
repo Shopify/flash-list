@@ -1984,18 +1984,6 @@
     wcwidth "^1.0.1"
     yaml "^2.2.1"
 
-"@react-native-community/cli-platform-android@15.0.1":
-  version "15.0.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-android/-/cli-platform-android-15.0.1.tgz#9706fe454d0e2af4680c3ea1937830c93041a35f"
-  integrity sha512-QlAMomj6H6TY6pHwjTYMsHDQLP5eLzjAmyW1qb03w/kyS/72elK2bjsklNWJrscFY9TMQLqw7qoAsXf1m5t/dg==
-  dependencies:
-    "@react-native-community/cli-tools" "15.0.1"
-    chalk "^4.1.2"
-    execa "^5.0.0"
-    fast-glob "^3.3.2"
-    fast-xml-parser "^4.4.1"
-    logkitty "^0.7.1"
-
 "@react-native-community/cli-platform-android@18.0.0":
   version "18.0.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-android/-/cli-platform-android-18.0.0.tgz#6bc69b0cccaa8d8138d31eb9b449e17528cd8f63"
@@ -2350,9 +2338,9 @@
     warn-once "^0.1.0"
 
 "@shopify/flash-list@link:../..":
-  version "1.7.5"
+  version "1.8.0"
   dependencies:
-    recyclerlistview "4.2.2"
+    recyclerlistview "4.2.3"
     tslib "2.8.1"
 
 "@sideway/address@^4.1.3":
