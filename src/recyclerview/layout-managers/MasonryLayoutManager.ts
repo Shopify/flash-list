@@ -48,7 +48,6 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
           this.layouts[i].width = this.getWidth(i);
           this.layouts[i].minHeight = undefined;
         }
-        //TODO: Optimize masonry in general
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
       }

@@ -83,7 +83,6 @@ export const ViewHolderCollection = <TItem,>(
 
   const containerLayout = getChildContainerLayout();
 
-  // TODO: guard againt precision issues
   const fixedContainerSize = horizontal
     ? containerLayout?.height
     : containerLayout?.width;

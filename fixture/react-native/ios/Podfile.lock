@@ -1634,7 +1634,7 @@ PODS:
     - SDWebImageAVIFCoder (~> 0.11.0)
     - SDWebImageWebPCoder (~> 0.14)
     - Yoga
-  - RNFlashList (1.8.0):
+  - RNFlashList (2.0.0-alpha.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2157,7 +2157,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 0f8899ac1bad260bf3b362ee848ef67a70b5a306
   ReactCommon: a30b578194de911fbe1698efb8247bfe4cb6abff
   RNFastImage: 2e4875d5621575b293d6c82e621deb413400b69e
-  RNFlashList: eb8d9251c1cf4d200cb11cf5473c0205fef6f8ba
+  RNFlashList: 864ebfc78393b67774aa5c1c6b8657acd010bde1
   RNGestureHandler: f7b3a72c099e1e29b5b81688678bc9108d44057c
   RNReanimated: fe5c52894886953248a81a10b2a9b6eeb5398d61
   RNScreens: fc78b9b5a1274426d7a59b7d07c272bba13604fa
