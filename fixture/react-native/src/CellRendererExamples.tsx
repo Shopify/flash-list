@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { RecyclerView } from "@shopify/flash-list";
 
 import { tweets as tweetsData } from "./twitter/data/tweets";
+import Tweet from "./twitter/models/Tweet";
 import TweetCell from "./twitter/TweetCell";
 
 // Example 1: Fade-in animation CellRendererComponent
@@ -60,6 +61,10 @@ const ScaleCellRenderer = (props: any) => {
 
 // Main component that combines both examples
 const FlashListCellRenderer = () => {
+  const renderTweet = useCallback(({ item }: { item: Tweet }) => {
+    return <TweetCell tweet={item} />;
+  }, []);
+
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.header}>CellRendererComponent Examples</Text>
@@ -75,7 +80,7 @@ const FlashListCellRenderer = () => {
             {/* @ts-ignore */}
             <RecyclerView
               data={tweetsData}
-              renderItem={({ item }) => <TweetCell tweet={item} />}
+              renderItem={renderTweet}
               CellRendererComponent={FadeInCellRenderer}
               keyExtractor={(item) => item.id}
             />
@@ -88,7 +93,7 @@ const FlashListCellRenderer = () => {
             {/* @ts-ignore */}
             <RecyclerView
               data={tweetsData}
-              renderItem={({ item }) => <TweetCell tweet={item} />}
+              renderItem={renderTweet}
               CellRendererComponent={ScaleCellRenderer}
               keyExtractor={(item) => item.id}
             />

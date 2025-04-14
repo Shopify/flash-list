@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -88,30 +88,33 @@ const Carousel = () => {
   const flatListRef = useRef(null);
   const { width: screenWidth } = useWindowDimensions();
 
-  const renderItem = ({ item }: { item: CarouselItem }) => {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => {
-          console.log(`Pressed ${item.title}`);
-        }}
-        style={[
-          styles.itemContainer,
-          { backgroundColor: item.color, width: screenWidth * 0.8 },
-        ]}
-      >
-        <Image
-          source={{ uri: `${item.image}?auto=format&fit=crop&w=800&q=80` }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <View style={styles.textContainer}>
-          <Text style={styles.itemTitle}>{item.title}</Text>
-          <Text style={styles.itemDescription}>{item.description}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = useCallback(
+    ({ item }: { item: CarouselItem }) => {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => {
+            console.log(`Pressed ${item.title}`);
+          }}
+          style={[
+            styles.itemContainer,
+            { backgroundColor: item.color, width: screenWidth * 0.8 },
+          ]}
+        >
+          <Image
+            source={{ uri: `${item.image}?auto=format&fit=crop&w=800&q=80` }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <View style={styles.textContainer}>
+            <Text style={styles.itemTitle}>{item.title}</Text>
+            <Text style={styles.itemDescription}>{item.description}</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [screenWidth]
+  );
 
   return (
     <View style={styles.container}>

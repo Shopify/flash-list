@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { Text, View, StyleSheet, Platform, Pressable } from "react-native";
 import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
 
@@ -48,23 +48,37 @@ export function Grid() {
 
   const data = useMemo(() => generateData(numItems), [numItems]);
 
+  const contentContainerStyle = useMemo(
+    () => ({
+      padding: 4,
+    }),
+    []
+  );
+
+  const overrideItemLayout = useCallback(
+    (layout: { span: number }, item: GridItem) => {
+      layout.span = item.span ?? 1;
+    },
+    []
+  );
+
+  const renderItem = useCallback(({ item }: { item: GridItem }) => {
+    return <GridItem item={item} />;
+  }, []);
+
+  const keyExtractor = useCallback((item: GridItem) => item.id.toString(), []);
+
   return (
     <View style={styles.container}>
       <RecyclerView
         data={data}
         numColumns={2}
-        contentContainerStyle={{
-          padding: 4,
-        }}
+        contentContainerStyle={contentContainerStyle}
         //maintainVisibleContentPosition={{}}
         initialScrollIndex={25}
-        overrideItemLayout={(layout, item) => {
-          layout.span = item.span;
-        }}
-        renderItem={({ item }) => {
-          return <GridItem item={item} />;
-        }}
-        keyExtractor={(item) => item.id.toString()}
+        overrideItemLayout={overrideItemLayout}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
       />
     </View>
   );

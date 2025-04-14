@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -50,6 +50,25 @@ export function Chat() {
     return <MessageBubble message={item} />;
   }, []);
 
+  const maintainVisibleContentPositionConfig = useMemo(
+    () => ({
+      autoscrollToBottomThreshold: 0.1,
+      startRenderingFromBottom: true,
+    }),
+    []
+  );
+
+  const listHeaderComponent = useMemo(
+    () => (
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Chat Example</Text>
+      </View>
+    ),
+    []
+  );
+
+  const keyExtractor = useCallback((item: ChatMessage) => item.id, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" />
@@ -77,21 +96,14 @@ export function Chat() {
         <RecyclerView
           data={messages}
           drawDistance={500}
-          maintainVisibleContentPosition={{
-            autoscrollToBottomThreshold: 0.1,
-            startRenderingFromBottom: true,
-          }}
+          maintainVisibleContentPosition={maintainVisibleContentPositionConfig}
           onStartReached={() => {
             console.log("onStartReached");
             addMessageAtTop();
           }}
-          ListHeaderComponent={() => (
-            <View style={styles.header}>
-              <Text style={styles.headerTitle}>Chat Example</Text>
-            </View>
-          )}
+          ListHeaderComponent={listHeaderComponent}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={keyExtractor}
         />
       </View>
     </SafeAreaView>

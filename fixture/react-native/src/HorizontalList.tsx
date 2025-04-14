@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable, StatusBar } from "react-native";
 import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
 
@@ -67,6 +67,15 @@ const HorizontalList = React.memo(() => {
   // Memoize the separator component
   const Separator = useMemo(() => () => <View style={styles.separator} />, []);
 
+  // Memoize the renderItem function
+  const renderItem = useCallback(
+    ({ item }: { item: Item }) => <ListItem item={item} />,
+    []
+  );
+
+  // Memoize the keyExtractor function
+  const keyExtractor = useCallback((item: Item) => item.id.toString(), []);
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -75,8 +84,8 @@ const HorizontalList = React.memo(() => {
         horizontal
         data={data}
         initialScrollIndex={2}
-        renderItem={({ item }) => <ListItem item={item} />}
-        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
         ItemSeparatorComponent={Separator}
       />
 
