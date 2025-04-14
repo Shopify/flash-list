@@ -94,7 +94,7 @@ export const ExamplesScreen = () => {
           <Pressable
             style={styles.row}
             onPress={() => {
-              navigate(item.destination);
+              navigate(item.destination as any);
             }}
             testID={item.title}
           >

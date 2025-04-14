@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -142,54 +142,58 @@ const RecyclerViewHandlerTest = () => {
   };
 
   // Render item
-  const renderItem = ({ item, index }: { item: Item; index: number }) => {
-    return (
-      <TouchableOpacity
-        style={[
-          styles.item,
-          {
-            backgroundColor: item.color,
-            height: horizontal ? 150 : item.height,
-            width: horizontal ? item.height : undefined,
-          },
-        ]}
-        onPress={() => scrollToItem(item, true, 0)}
-      >
-        <Text style={styles.itemTitle}>{item.title}</Text>
-        <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
-        <Text style={styles.itemIndex}>Index: {index}</Text>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = useCallback(
+    ({ item, index }: { item: Item; index: number }) => {
+      return (
+        <TouchableOpacity
+          style={[
+            styles.item,
+            {
+              backgroundColor: item.color,
+              height: horizontal ? 150 : item.height,
+              width: horizontal ? item.height : undefined,
+            },
+          ]}
+          onPress={() => scrollToItem(item, true, 0)}
+        >
+          <Text style={styles.itemTitle}>{item.title}</Text>
+          <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
+          <Text style={styles.itemIndex}>Index: {index}</Text>
+        </TouchableOpacity>
+      );
+    },
+    [horizontal]
+  );
 
   // Header component
-  const ListHeaderComponent = () => (
+  const ListHeaderComponent = (
     <View style={[styles.header, horizontal ? styles.horizontalHeader : {}]}>
       <Text style={styles.headerText}>List Header</Text>
     </View>
   );
 
   // Footer component
-  const ListFooterComponent = () => (
+  const ListFooterComponent = (
     <View style={[styles.footer, horizontal ? styles.horizontalFooter : {}]}>
       <Text style={styles.footerText}>List Footer</Text>
     </View>
   );
 
   // Empty component
-  const ListEmptyComponent = () => (
+  const ListEmptyComponent = (
     <View style={styles.empty}>
       <Text style={styles.emptyText}>No items available</Text>
     </View>
   );
-
   // Separator component
-  const ItemSeparatorComponent = () => (
-    <View
-      style={[styles.separator, horizontal ? styles.horizontalSeparator : {}]}
-    />
+  const ItemSeparatorComponent = useCallback(
+    () => (
+      <View
+        style={[styles.separator, horizontal ? styles.horizontalSeparator : {}]}
+      />
+    ),
+    [horizontal]
   );
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainContainer}>

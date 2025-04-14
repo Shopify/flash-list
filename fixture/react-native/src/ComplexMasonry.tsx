@@ -174,6 +174,14 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
     );
   }, [isLoading]);
 
+  // Memoize the renderItem function
+  const renderItem = useCallback(
+    ({ item }: { item: MasonryItem }) => (
+      <MasonryCard item={item} onToggleExpand={handleToggleExpand} />
+    ),
+    [handleToggleExpand]
+  );
+
   return (
     <View style={styles.container}>
       {/* @ts-ignore - RecyclerView has typing issues but works correctly */}
@@ -192,9 +200,7 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
           layout.span = item.span;
         }}
         keyExtractor={(item: MasonryItem) => item.id}
-        renderItem={({ item }: { item: MasonryItem }) => (
-          <MasonryCard item={item} onToggleExpand={handleToggleExpand} />
-        )}
+        renderItem={renderItem}
         ListFooterComponent={renderFooter}
         onEndReached={handleEndReached}
         onEndReachedThreshold={1}

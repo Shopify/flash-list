@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -222,6 +222,12 @@ const CategoryRow = ({ category }: { category: Category }) => {
   useEffect(() => {
     console.log("Moview row mount", category.title);
   }, []);
+
+  const renderMoviePoster = useCallback(
+    ({ item }: { item: Movie }) => <MoviePoster item={item} />,
+    []
+  );
+
   return (
     <View style={styles.categoryContainer}>
       <Text style={styles.categoryTitle}>{category.title}</Text>
@@ -229,7 +235,7 @@ const CategoryRow = ({ category }: { category: Category }) => {
         <RecyclerView
           horizontal
           data={category.movies}
-          renderItem={({ item }) => <MoviePoster item={item} />}
+          renderItem={renderMoviePoster}
           keyExtractor={(item) => `${category.id}-${item.id}`}
           showsHorizontalScrollIndicator={false}
         />
@@ -244,6 +250,16 @@ const MovieList = () => {
 
   const categories = useMemo(() => generateCategories(), []);
 
+  const renderFeaturedMovie = useCallback(
+    () => <FeaturedMovie movie={featuredMovie} />,
+    [featuredMovie]
+  );
+
+  const renderCategoryRow = useCallback(
+    ({ item }: { item: Category }) => <CategoryRow category={item} />,
+    []
+  );
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -255,8 +271,8 @@ const MovieList = () => {
           onLoad={({ elapsedTimeInMs }) => {
             console.log("onLoad ------------>", elapsedTimeInMs);
           }}
-          ListHeaderComponent={() => <FeaturedMovie movie={featuredMovie} />}
-          renderItem={({ item }) => <CategoryRow category={item} />}
+          ListHeaderComponent={renderFeaturedMovie}
+          renderItem={renderCategoryRow}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
         />
