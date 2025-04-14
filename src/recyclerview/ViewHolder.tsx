@@ -118,7 +118,12 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     CompatView) as unknown as any;
 
   return (
-    <CompatContainer ref={viewRef} onLayout={onLayout} style={style}>
+    <CompatContainer
+      ref={viewRef}
+      onLayout={onLayout}
+      style={style}
+      index={index}
+    >
       {children}
       {separator}
     </CompatContainer>
