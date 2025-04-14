@@ -199,8 +199,6 @@ const RecyclerViewComponent = <T,>(
       // Trigger re-render if layout modifications were made
       setRenderId((prev) => prev + 1);
     } else {
-      //console.log("commitLayout");
-      // TODO: reduce perf impact of commitLayout
       viewHolderCollectionRef.current?.commitLayout();
       applyContentOffset();
     }
@@ -433,7 +431,6 @@ const RecyclerViewComponent = <T,>(
           horizontal={horizontal}
           ref={scrollViewRef}
           onScroll={animatedEvent}
-          // TODO: evaluate perf
           maintainVisibleContentPosition={
             maintainVisibleContentPositionInternal
           }

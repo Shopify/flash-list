@@ -33,7 +33,6 @@ function binarySearchVisibleIndex(
     const position = isSortedByX ? layout.x : layout.y;
     const size = isSortedByX ? layout.width : layout.height;
 
-    //TODO: Will this find item bigger than viewport
     if (findFirst) {
       // Logic for finding the first visible index
       if (position >= threshold || position + size >= threshold) {

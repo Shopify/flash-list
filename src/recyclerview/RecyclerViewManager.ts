@@ -40,7 +40,6 @@ export class RecyclerViewManager<T> {
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
-  // TODO: Call getKey anyway if stableIds are present
   private updateRenderStack = (engagedIndices: ConsecutiveNumbers): void => {
     //console.log("updateRenderStack", engagedIndices);
     const newRenderStack = new Map<number, string>();
@@ -230,7 +229,7 @@ export class RecyclerViewManager<T> {
       return true;
     }
     if (this.hasRenderedProgressively) {
-      return this.recomputeEngagedIndices() !== undefined; //TODO: Move to an effect as this can block paint for more than necessary
+      return this.recomputeEngagedIndices() !== undefined;
     } else {
       this.renderProgressively();
     }
