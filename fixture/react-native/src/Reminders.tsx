@@ -188,6 +188,7 @@ const Reminders = () => {
           justifyContent: "space-between",
         }}
       >
+        {/* @ts-ignore - Type compatibility issue between different React versions */}
         <FlashList
           ref={list}
           renderItem={renderItem}

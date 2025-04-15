@@ -149,6 +149,7 @@ export const SectionList = () => {
         </Pressable>
       </View>
 
+      {/* @ts-ignore - Type compatibility issue between different React versions */}
       <FlashList
         ref={list}
         refreshing={refreshing}

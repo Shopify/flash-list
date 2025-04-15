@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { RecyclerView } from "@shopify/flash-list";
 
@@ -10,7 +10,7 @@ interface Item {
 let id = 0;
 
 const ItemRenderer = ({ item }: { item: Item }) => {
-  const [id, setId] = useState(item.id);
+  const id = item.id;
   // log mount and unmount
   useEffect(() => {
     console.log("ItemRenderer mounted");

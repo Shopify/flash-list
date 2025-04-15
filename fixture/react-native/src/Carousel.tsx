@@ -1,14 +1,13 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   Image,
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
-import { RecyclerView, useLayoutState } from "@shopify/flash-list";
+import { RecyclerView } from "@shopify/flash-list";
 
 interface CarouselItem {
   id: string;

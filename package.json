@@ -46,7 +46,7 @@
     "rw": "yarn fixture:expo:start",
     "e2e:up": "cd fixture/react-native/ios && brew tap wix/brew && brew install applesimutils && cd ../../../",
     "e2e:ios": "cd fixture/react-native && yarn e2e:build:ios && yarn e2e:test:ios",
-    "rei": "yarn run-e2e-ios",
+    "rei": "yarn run e2e:ios",
     "e2e:android": "cd fixture/react-native && yarn e2e:build:android && yarn e2e:test:android",
     "rea": "yarn run-e2e-android",
     "predeploy:website": "sh ./build_website.sh",
@@ -75,7 +75,7 @@
     "react": "18.3.1",
     "react-native": "0.76.5",
     "react-test-renderer": "18.2.0",
-    "typescript": "^4.7.4"
+    "typescript": "5.8.3"
   },
   "files": [
     "android",
