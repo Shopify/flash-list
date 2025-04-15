@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  ViewStyle,
-  Pressable,
-} from "react-native";
+import { StyleSheet, View, Image, Text, ViewStyle } from "react-native";
 
 import Author from "./models/Author";
 import Tweet from "./models/Tweet";

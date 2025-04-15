@@ -46,6 +46,7 @@ const Twitter = ({
 
   return (
     <RecyclerView
+      // @ts-ignore - Type mismatch but RecyclerView can accept FlashList ref
       ref={instance}
       keyExtractor={(item) => {
         return item.id;
@@ -64,6 +65,7 @@ const Twitter = ({
 
   return (
     <FlatList
+      // @ts-ignore - Type mismatch but FlatList can accept FlashList ref
       ref={instance}
       // estimatedItemSize={150}
       data={debugContext.emptyListEnabled ? [] : tweets}
@@ -74,6 +76,7 @@ const Twitter = ({
   );
 
   return (
+    // @ts-ignore - Type compatibility issue between different React versions
     <FlashList
       ref={instance}
       onBlankArea={blankAreaTracker}
@@ -94,6 +97,7 @@ const Twitter = ({
           setTweets(reversedTweets);
         }, 500);
       }}
+      // @ts-ignore - Type compatibility issue between different React versions
       CellRendererComponent={CellRendererComponent}
       onEndReached={() => {
         if (!debugContext.pagingEnabled) {
