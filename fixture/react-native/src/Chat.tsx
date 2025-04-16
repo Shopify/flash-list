@@ -35,14 +35,14 @@ export function Chat() {
   );
 
   const addMessageAtTop = useCallback(() => {
-    const newMessages = Array.from({ length: 10 }, () =>
-      generateRandomMessage()
+    const newMessages = Array.from({ length: 10 }, (_, i) =>
+      generateRandomMessage(i)
     );
     setMessages((prev) => [...newMessages, ...prev]);
   }, []);
 
   const addMessageAtBottom = useCallback(() => {
-    const newMessage = generateRandomMessage();
+    const newMessage = generateRandomMessage(messages.length);
     setMessages((prev) => [...prev, newMessage]);
   }, []);
 
@@ -129,11 +129,11 @@ function generateInitialMessages(count: number): ChatMessage[] {
   return messages;
 }
 
-function generateRandomMessage(): ChatMessage {
+function generateRandomMessage(index: number): ChatMessage {
   return {
     id: `msg-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-    text: messageTexts[Math.floor(Math.random() * messageTexts.length)],
-    sender: Math.random() > 0.5 ? "user" : "other",
+    text: messageTexts[index % messageTexts.length],
+    sender: index % 2 === 0 ? "user" : "other",
     timestamp: new Date(),
   };
 }
