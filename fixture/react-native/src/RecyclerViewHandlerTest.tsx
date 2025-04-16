@@ -42,7 +42,7 @@ const generateItems = (count: number): Item[] => {
     id: `item-${i}`,
     title: `Item ${i}`,
     subtitle: `This is a detailed description for item ${i}`,
-    height: Math.floor(Math.random() * 201) + 100, // Random height between 100 and 300
+    height: 100 + Math.floor(Math.sin(i * 0.1) * 50 + 50), // Height variation using sine wave pattern
     color: colors[i % colors.length],
   }));
 };
@@ -203,16 +203,6 @@ const RecyclerViewHandlerTest = () => {
             <Text style={styles.lastActionTitle}>Last Action:</Text>
             <Text style={styles.lastActionText}>{lastAction}</Text>
           </View>
-          <View style={styles.controlRow}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setHorizontal(!horizontal)}
-            >
-              <Text style={styles.buttonText}>
-                {horizontal ? "Switch to Vertical" : "Switch to Horizontal"}
-              </Text>
-            </TouchableOpacity>
-          </View>
 
           <View style={styles.controlRow}>
             <TouchableOpacity
@@ -282,16 +272,6 @@ const RecyclerViewHandlerTest = () => {
               <Text style={styles.buttonText}>Scroll to End</Text>
             </TouchableOpacity>
           </View>
-
-          <View style={styles.controlRow}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => flashScrollIndicators()}
-            >
-              <Text style={styles.buttonText}>Flash Indicators</Text>
-            </TouchableOpacity>
-          </View>
-
           <View style={styles.controlRow}>
             <TouchableOpacity
               style={styles.button}
@@ -309,12 +289,31 @@ const RecyclerViewHandlerTest = () => {
               <Text style={styles.buttonText}>Reset Items</Text>
             </TouchableOpacity>
           </View>
+          <View style={styles.controlRow}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setHorizontal(!horizontal)}
+            >
+              <Text style={styles.buttonText}>
+                {horizontal ? "Switch to Vertical" : "Switch to Horizontal"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.controlRow}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => flashScrollIndicators()}
+            >
+              <Text style={styles.buttonText}>Flash Indicators</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
 
         {/* List Container - Now on the right side */}
         <View style={styles.listContainer}>
           {/* Use FlatList instead of FlashList to avoid import issues */}
           <RecyclerView
+            testID="RecyclerView"
             ref={listRef}
             key={horizontal ? "horizontal" : "vertical"}
             data={items}

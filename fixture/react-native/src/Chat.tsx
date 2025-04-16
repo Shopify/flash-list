@@ -70,7 +70,7 @@ export function Chat() {
   const keyExtractor = useCallback((item: ChatMessage) => item.id, []);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} testID="ChatScreen">
       <StatusBar barStyle="dark-content" />
       <View style={styles.container}>
         <View style={styles.header}>
@@ -155,15 +155,10 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
         ]}
       >
         <Text style={styles.messageText}>{message.text}</Text>
-        <Text style={styles.timestamp}>{formatTime(message.timestamp)}</Text>
       </View>
     </View>
   );
 };
-
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}
 
 const styles = StyleSheet.create({
   safeArea: {

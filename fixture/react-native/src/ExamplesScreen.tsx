@@ -20,7 +20,6 @@ export const ExamplesScreen = () => {
   };
 
   const data: ExampleItem[] = [
-    { title: "List", destination: "List" },
     { title: "Horizontal List", destination: "HorizontalList" },
     { title: "Carousel", destination: "Carousel" },
     { title: "Grid", destination: "Grid" },
@@ -30,17 +29,9 @@ export const ExamplesScreen = () => {
       title: "Chat",
       destination: "Chat",
     },
-    { title: "SectionList", destination: "SectionList" },
-    { title: "PaginatedList", destination: "PaginatedList" },
-    { title: "Reminders", destination: "Reminders" },
-    { title: "Twitter Timeline", destination: "Twitter" },
     {
-      title: "Twitter Benchmark",
-      destination: "TwitterBenchmark",
-    },
-    {
-      title: "Twitter FlatList Timeline",
-      destination: "TwitterFlatList",
+      title: "RecyclerView Handler Test",
+      destination: "RecyclerViewHandlerTest",
     },
     {
       title: "Contacts",
@@ -50,6 +41,22 @@ export const ExamplesScreen = () => {
       title: "Contacts SectionList",
       destination: "ContactsSectionList",
     },
+    { title: "SectionList", destination: "SectionList" },
+    { title: "PaginatedList", destination: "PaginatedList" },
+
+    { title: "Twitter Timeline", destination: "Twitter" },
+
+    {
+      title: "Twitter FlatList Timeline",
+      destination: "TwitterFlatList",
+    },
+    {
+      title: "Twitter Benchmark",
+      destination: "TwitterBenchmark",
+    },
+    { title: "List", destination: "List" },
+
+    { title: "Reminders", destination: "Reminders" },
     {
       title: "Dynamic Items",
       destination: "DynamicItems",
@@ -70,10 +77,7 @@ export const ExamplesScreen = () => {
       title: "Header Footer Empty Example",
       destination: "HeaderFooterExample",
     },
-    {
-      title: "RecyclerView Handler Test",
-      destination: "RecyclerViewHandlerTest",
-    },
+
     {
       title: "Movie Streaming",
       destination: "MovieList",
@@ -90,6 +94,7 @@ export const ExamplesScreen = () => {
         testID="ExamplesFlatList"
         keyExtractor={(item) => item.destination}
         data={data}
+        removeClippedSubviews={false}
         renderItem={({ item }) => (
           <Pressable
             style={styles.row}

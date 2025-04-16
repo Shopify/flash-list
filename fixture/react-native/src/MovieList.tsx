@@ -82,10 +82,10 @@ const generateMovies = (count: number, isFeatured = false): Movie[] => {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
     title: titles[i % titles.length],
-    year: 2020 + Math.floor(Math.random() * 5),
-    genre: genres[Math.floor(Math.random() * genres.length)],
+    year: 2020 + (i % 5),
+    genre: genres[i % genres.length],
     posterColor: colors[i % colors.length],
-    rating: 3 + Math.floor(Math.random() * 3) + Math.random(),
+    rating: 3 + (i % 3) + (i % 10) / 10,
     isFeatured,
   }));
 };
