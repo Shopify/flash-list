@@ -71,6 +71,7 @@ export function Grid() {
   return (
     <View style={styles.container}>
       <RecyclerView
+        testID="GridScreen"
         data={data}
         numColumns={2}
         contentContainerStyle={contentContainerStyle}

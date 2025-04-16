@@ -81,6 +81,7 @@ const HorizontalList = React.memo(() => {
       <StatusBar barStyle="dark-content" />
       <Text style={styles.header}>Horizontal List Example</Text>
       <RecyclerView
+        testID="HorizontalListScreen"
         horizontal
         data={data}
         initialScrollIndex={2}
