@@ -119,6 +119,7 @@ const Carousel = () => {
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Simple Carousel</Text>
       <RecyclerView
+        testID="CarouselScreen"
         style={{ flex: 1 }}
         ref={flatListRef}
         data={carouselData}
