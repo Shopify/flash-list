@@ -45,37 +45,6 @@ const Twitter = ({
   }).current;
 
   return (
-    <RecyclerView
-      // @ts-ignore - Type mismatch but RecyclerView can accept FlashList ref
-      ref={instance}
-      keyExtractor={(item) => {
-        return item.id;
-      }}
-      data={debugContext.emptyListEnabled ? [] : tweets}
-      ItemSeparatorComponent={Divider}
-      renderItem={({ item }) => {
-        return <TweetCell tweet={item} />;
-      }}
-      viewabilityConfig={viewabilityConfig}
-      onViewableItemsChanged={(info) => {
-        //console.log(info);
-      }}
-    />
-  );
-
-  return (
-    <FlatList
-      // @ts-ignore - Type mismatch but FlatList can accept FlashList ref
-      ref={instance}
-      // estimatedItemSize={150}
-      data={debugContext.emptyListEnabled ? [] : tweets}
-      renderItem={({ item }) => {
-        return <TweetCell tweet={item} />;
-      }}
-    />
-  );
-
-  return (
     // @ts-ignore - Type compatibility issue between different React versions
     <FlashList
       ref={instance}
