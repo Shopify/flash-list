@@ -96,6 +96,7 @@ export function useRecyclerViewController<T>(
   const [_, setRenderId] = useState(0);
   const pauseAdjustRef = useRef(false);
   const initialScrollCompletedRef = useRef(false);
+  const lastDataLengthRef = useRef(data?.length ?? 0);
 
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
@@ -170,21 +171,33 @@ export function useRecyclerViewController<T>(
     pendingScrollResolves.current = [];
     resolves.forEach((resolve) => resolve());
 
+    const currentDataLength = props.data?.length ?? 0;
+
     if (
       !props.horizontal &&
       recyclerViewManager.getIsFirstLayoutComplete() &&
       props.keyExtractor &&
+      currentDataLength > 0 &&
       props.maintainVisibleContentPosition?.disabled !== true
     ) {
+      const shouldScanData = currentDataLength !== lastDataLengthRef.current;
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
-        const currentIndexOfFirstVisibleItem = recyclerViewManager
-          .getEngagedIndices()
-          .findValue(
-            (index) =>
-              props.keyExtractor?.(props.data![index], index) ===
-              firstVisibleItemKey.current
-          );
+        const currentIndexOfFirstVisibleItem =
+          recyclerViewManager
+            .getEngagedIndices()
+            .findValue(
+              (index) =>
+                props.keyExtractor?.(props.data![index], index) ===
+                firstVisibleItemKey.current
+            ) ??
+          (shouldScanData
+            ? props.data?.findIndex(
+                (item, index) =>
+                  props.keyExtractor?.(item, index) ===
+                  firstVisibleItemKey.current
+              )
+            : undefined);
 
         if (currentIndexOfFirstVisibleItem !== undefined) {
           // Calculate the difference in position and apply the offset
@@ -197,24 +210,29 @@ export function useRecyclerViewController<T>(
           if (diff !== 0 && !pauseAdjustRef.current) {
             // console.log("diff", diff, firstVisibleItemKey.current);
             scrollAnchorRef.current?.scrollBy(diff);
+            updateScrollOffsetAsync(
+              recyclerViewManager.getAbsoluteLastScrollOffset() + diff
+            );
           }
         }
       }
 
       // Update the tracked first visible item
-      const firstVisibleIndex =
-        recyclerViewManager.getVisibleIndices().startIndex;
+      const firstVisibleIndex = Math.max(
+        0,
+        recyclerViewManager.getVisibleIndices().startIndex
+      );
       if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
-        firstVisibleItemKey.current =
-          props.keyExtractor?.(
-            props.data![firstVisibleIndex],
-            firstVisibleIndex
-          ) ?? "0";
+        firstVisibleItemKey.current = props.keyExtractor(
+          props.data![firstVisibleIndex],
+          firstVisibleIndex
+        );
         firstVisibleItemLayout.current = {
           ...recyclerViewManager.getLayout(firstVisibleIndex),
         };
       }
     }
+    lastDataLengthRef.current = props.data?.length ?? 0;
   }, [props.data, props.keyExtractor, recyclerViewManager]);
 
   const handlerMethods = useMemo(() => {
