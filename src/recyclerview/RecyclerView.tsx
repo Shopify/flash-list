@@ -402,7 +402,11 @@ const RecyclerViewComponent = <T,>(
   return (
     <RecyclerViewContextProvider value={recyclerViewContext}>
       <CompatView
-        style={{ flex: horizontal ? undefined : 1, ...style }}
+        style={{
+          flex: horizontal ? undefined : 1,
+          overflow: "hidden",
+          ...style,
+        }}
         ref={internalViewRef}
         collapsable={false}
         onLayout={(event) => {
