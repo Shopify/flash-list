@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { RecyclerViewProps } from "../RecyclerViewProps";
 import { CompatScroller } from "../components/CompatScroller";

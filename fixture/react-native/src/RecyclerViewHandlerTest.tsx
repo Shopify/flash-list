@@ -69,7 +69,7 @@ const RecyclerViewHandlerTest = () => {
   };
 
   // Scroll methods
-  const scrollToOffset = (offset: number, animated: boolean = true) => {
+  const scrollToOffset = (offset: number, animated = true) => {
     if (listRef.current) {
       listRef.current.scrollToOffset({
         offset,
@@ -81,7 +81,7 @@ const RecyclerViewHandlerTest = () => {
 
   const scrollToIndex = (
     index: number,
-    animated: boolean = true,
+    animated = true,
     viewPosition?: number,
     viewOffset?: number
   ) => {
@@ -104,7 +104,7 @@ const RecyclerViewHandlerTest = () => {
 
   const scrollToItem = (
     item: Item,
-    animated: boolean = true,
+    animated = true,
     viewPosition?: number,
     viewOffset?: number
   ) => {
@@ -125,7 +125,7 @@ const RecyclerViewHandlerTest = () => {
     }
   };
 
-  const scrollToEnd = (animated: boolean = true) => {
+  const scrollToEnd = (animated = true) => {
     if (listRef.current) {
       listRef.current.scrollToEnd({
         animated,
@@ -338,13 +338,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-  },
-  controlTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 12,
-    color: "#333",
   },
   mainContainer: {
     flex: 1,

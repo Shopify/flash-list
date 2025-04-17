@@ -5,13 +5,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   ViewabilityConfig,
-  FlatList,
 } from "react-native";
-import {
-  BlankAreaEventHandler,
-  FlashList,
-  RecyclerView,
-} from "@shopify/flash-list";
+import { BlankAreaEventHandler, FlashList } from "@shopify/flash-list";
 
 import { DebugContext } from "../Debug";
 

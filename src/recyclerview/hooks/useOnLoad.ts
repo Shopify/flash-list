@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import { RecyclerViewManager } from "../RecyclerViewManager";
+
 import { useUnmountFlag } from "./useUnmountFlag";
-//import { ToastAndroid } from "react-native";
+// import { ToastAndroid } from "react-native";
 
 /**
  * Hook to track when the RecyclerView has loaded its items and notify when loading is complete.
@@ -19,7 +21,7 @@ export const useOnListLoad = <T>(
   const loadStartTimeRef = useRef<number>(Date.now());
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const dataLength = recyclerViewManager.getDataLength();
-  //const dataCollector = useRef<number[]>([]);
+  // const dataCollector = useRef<number[]>([]);
   const isUnmounted = useUnmountFlag();
   // Track render cycles by collecting elapsed time on each render
   // useEffect(() => {
@@ -29,6 +31,7 @@ export const useOnListLoad = <T>(
 
   useMemo(() => {
     loadStartTimeRef.current = Date.now();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataLength]);
 
   useOnLoad(recyclerViewManager, () => {
@@ -42,8 +45,8 @@ export const useOnListLoad = <T>(
     //   `onLoad called after ${dataCollectorString}`,
     //   ToastAndroid.SHORT
     // );
-    //console.log("----------> dataCollector", dataCollectorString);
-    //console.log("----------> elapsedTimeInMs", elapsedTimeInMs);
+    // console.log("----------> dataCollector", dataCollectorString);
+    // console.log("----------> elapsedTimeInMs", elapsedTimeInMs);
     requestAnimationFrame(() => {
       if (!isUnmounted.current) {
         onLoad?.({ elapsedTimeInMs });

@@ -17,6 +17,7 @@ const TwitterBenchmark = () => {
     },
     { targetOffset: 200 * 100, speedMultiplier: 8, repeatCount: 20 }
   );
+
   // @ts-ignore - Type compatibility issue with ref passing
   return <Twitter instance={ref} blankAreaTracker={blankAreaTracker} />;
 };

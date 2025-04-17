@@ -5,9 +5,9 @@
  * to adjust the scroll position of the list as the size of content changes without any glitches.
  */
 
-import { useImperativeHandle, useMemo, useState } from "react";
+import React, { useImperativeHandle, useMemo, useState } from "react";
+
 import { CompatView } from "./CompatView";
-import React from "react";
 
 /**
  * Props for the ScrollAnchor component
@@ -31,7 +31,7 @@ export interface ScrollAnchorRef {
  * @returns An invisible anchor element used for scrolling
  */
 export function ScrollAnchor({ scrollAnchorRef }: ScrollAnchorProps) {
-  const [scrollOffset, setScrollOffset] = useState(1000000); //TODO: Fix this value
+  const [scrollOffset, setScrollOffset] = useState(1000000); // TODO: Fix this value
 
   // Expose scrollBy method through ref
   useImperativeHandle(scrollAnchorRef, () => ({

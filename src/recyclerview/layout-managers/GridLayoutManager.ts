@@ -32,11 +32,11 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     ) {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
-        //update all widths
+        // update all widths
         for (let i = 0; i < this.layouts.length; i++) {
           this.layouts[i].width = this.getWidth(i);
         }
-        //console.log("-----> recomputeLayouts");
+        // console.log("-----> recomputeLayouts");
 
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;

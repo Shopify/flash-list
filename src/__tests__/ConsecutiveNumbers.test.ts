@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import { ConsecutiveNumbers } from "../recyclerview/helpers/ConsecutiveNumbers";
 
 describe("ConsecutiveNumbers", () => {

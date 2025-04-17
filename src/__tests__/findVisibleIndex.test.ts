@@ -2,12 +2,13 @@ import {
   findFirstVisibleIndex,
   findLastVisibleIndex,
 } from "../recyclerview/utils/findVisibleIndex";
+import { RVLayout } from "../recyclerview/layout-managers/LayoutManager";
+
 import {
   createPopulatedLayoutManager,
   LayoutManagerType,
   getAllLayouts,
 } from "./helpers/createLayoutManager";
-import { RVLayout } from "../recyclerview/layout-managers/LayoutManager";
 
 describe("findVisibleIndex", () => {
   // Helper function to create mock layouts directly for precise control

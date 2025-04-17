@@ -1,3 +1,5 @@
+import ViewabilityManager from "../viewability/ViewabilityManager";
+
 import { ConsecutiveNumbers } from "./helpers/ConsecutiveNumbers";
 import { RVGridLayoutManagerImpl } from "./layout-managers/GridLayoutManager";
 import {
@@ -14,7 +16,6 @@ import {
   RVEngagedIndicesTrackerImpl,
   Velocity,
 } from "./helpers/EngagedIndicesTracker";
-import ViewabilityManager from "../viewability/ViewabilityManager";
 
 // Abstracts layout manager, key manager and viewability manager and generates render stack (progressively on load)
 export class RecyclerViewManager<T> {
@@ -41,7 +42,7 @@ export class RecyclerViewManager<T> {
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
   private updateRenderStack = (engagedIndices: ConsecutiveNumbers): void => {
-    //console.log("updateRenderStack", engagedIndices);
+    // console.log("updateRenderStack", engagedIndices);
     const newRenderStack = new Map<number, string>();
     for (const [index, key] of this.renderStack) {
       if (!engagedIndices.includes(index)) {
@@ -168,13 +169,13 @@ export class RecyclerViewManager<T> {
       );
     }
     if (!(this.layoutManager instanceof LayoutManagerClass)) {
-      //console.log("-----> new LayoutManagerClass");
+      // console.log("-----> new LayoutManagerClass");
 
       this.layoutManager = new LayoutManagerClass(
         {
           windowSize,
           maxColumns: this.props.numColumns ?? 1,
-          horizontal: !!this.props.horizontal,
+          horizontal: Boolean(this.props.horizontal),
           optimizeItemArrangement: this.props.optimizeItemArrangement ?? true,
           overrideItemLayout: (index, layout) => {
             this.props?.overrideItemLayout?.(
@@ -192,7 +193,7 @@ export class RecyclerViewManager<T> {
       this.layoutManager.updateLayoutParams({
         windowSize,
         maxColumns: this.props.numColumns ?? 1,
-        horizontal: !!this.props.horizontal,
+        horizontal: Boolean(this.props.horizontal),
         optimizeItemArrangement: this.props.optimizeItemArrangement ?? true,
       });
     }
@@ -325,7 +326,7 @@ export class RecyclerViewManager<T> {
       this.engagedIndicesTracker.scrollOffset =
         initialItemOffset ?? 0 + this.firstItemOffset;
     } else {
-      //console.log("initialItemOffset", initialItemOffset, this.firstItemOffset);
+      // console.log("initialItemOffset", initialItemOffset, this.firstItemOffset);
       this.engagedIndicesTracker.scrollOffset =
         (initialItemOffset ?? 0) - this.firstItemOffset;
     }
@@ -336,7 +337,7 @@ export class RecyclerViewManager<T> {
     if (layoutManager) {
       this.applyInitialScrollAdjustment();
       const visibleIndices = this.getVisibleIndices();
-      //console.log("---------> visibleIndices", visibleIndices);
+      // console.log("---------> visibleIndices", visibleIndices);
       this.hasRenderedProgressively = visibleIndices.every(
         (index) =>
           layoutManager.getLayout(index).isHeightMeasured &&

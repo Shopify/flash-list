@@ -1,5 +1,6 @@
-import { FlashListProps } from "../FlashListProps";
 import { ScrollViewProps } from "react-native";
+
+import { FlashListProps } from "../FlashListProps";
 
 export interface RecyclerViewProps<TItem>
   extends Omit<FlashListProps<TItem>, "contentContainerStyle"> {

@@ -75,7 +75,7 @@ export function Grid() {
         data={data}
         numColumns={2}
         contentContainerStyle={contentContainerStyle}
-        //maintainVisibleContentPosition={{}}
+        // maintainVisibleContentPosition={{}}
         initialScrollIndex={25}
         overrideItemLayout={overrideItemLayout}
         renderItem={renderItem}
@@ -88,7 +88,7 @@ export function Grid() {
 const GridItem = ({ item }: { item: GridItem }) => {
   const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
   const baseHeight = 50;
-  const height = isExpanded ? (item.id % 2 == 0 ? 80 : 100) : baseHeight;
+  const height = isExpanded ? (item.id % 2 === 0 ? 80 : 100) : baseHeight;
   return (
     <Pressable onPress={() => setIsExpanded(!isExpanded)}>
       <View
@@ -120,23 +120,6 @@ const styles = StyleSheet.create({
     height: Platform.OS === "web" ? window.innerHeight : undefined,
     backgroundColor: "#f5f5f5",
   },
-  header: {
-    padding: 16,
-    backgroundColor: "#fff",
-    marginBottom: 8,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  headerSubtext: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-  },
   itemWrapper: {
     padding: 16,
     margin: 4,
@@ -152,11 +135,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
-  },
-  spanText: {
-    color: "#fff",
-    marginTop: 8,
-    fontSize: 12,
-    opacity: 0.8,
   },
 });

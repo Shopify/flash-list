@@ -1,5 +1,6 @@
-import { ConsecutiveNumbers } from "./ConsecutiveNumbers";
 import { RVLayoutManager } from "../layout-managers/LayoutManager";
+
+import { ConsecutiveNumbers } from "./ConsecutiveNumbers";
 
 export interface RVEngagedIndicesTracker {
   // Current scroll offset of the list. Directly setting this won't trigger visible indices updates
@@ -32,7 +33,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   // Current scroll position of the list
   public scrollOffset = 0;
   // Distance to pre-render items before and after the visible viewport (in pixels)
-  public drawDistance: number = 250;
+  public drawDistance = 250;
   // Currently rendered item indices (including buffer items)
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
@@ -86,8 +87,8 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
       ? this.smallMultiplier
       : this.largeMultiplier;
 
-    let bufferBefore = Math.ceil(totalBuffer * beforeRatio);
-    let bufferAfter = Math.ceil(totalBuffer * afterRatio);
+    const bufferBefore = Math.ceil(totalBuffer * beforeRatio);
+    const bufferAfter = Math.ceil(totalBuffer * afterRatio);
 
     // STEP 3: Calculate the extended viewport (visible area + buffers)
     // The start position with buffer (never less than 0)
@@ -120,7 +121,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
       extendedEnd
     );
     if (!isHorizontal) {
-      //console.log("newEngagedIndices", newEngagedIndices, this.scrollOffset);
+      // console.log("newEngagedIndices", newEngagedIndices, this.scrollOffset);
     }
     // Only return new indices if they've changed
     const oldEngagedIndices = this.engagedIndices;
@@ -138,15 +139,16 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
    * @returns true if scrolling backward (negative direction), false otherwise
    */
   private isScrollingBackward(velocity?: number): boolean {
-    //update velocity history
+    // update velocity history
     if (velocity) {
       this.velocityHistory[this.velocityIndex] = velocity;
       this.velocityIndex =
         (this.velocityIndex + 1) % this.velocityHistory.length;
     }
-    //should decide based on whether we have more positive or negative values, use for loop
+    // should decide based on whether we have more positive or negative values, use for loop
     let positiveCount = 0;
     let negativeCount = 0;
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < this.velocityHistory.length; i++) {
       if (this.velocityHistory[i] > 0) {
         positiveCount++;
