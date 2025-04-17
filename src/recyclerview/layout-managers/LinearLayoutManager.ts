@@ -96,7 +96,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
         ? lastLayout.x + lastLayout.width
         : this.boundedSize,
       height: this.horizontal
-        ? this.tallestItem?.height ?? 0
+        ? this.tallestItem?.height ?? this.boundedSize
         : lastLayout.y + lastLayout.height,
     };
   }

@@ -1,5 +1,5 @@
 /**
- * A simple wrapper for consecutive integer arrays
+ * A simple wrapper for consecutive postive integer arrays
  * Only stores start and end indices for faster computation as numbers are consecutive.
  */
 export class ConsecutiveNumbers {
@@ -8,7 +8,7 @@ export class ConsecutiveNumbers {
     public readonly endIndex: number
   ) {}
 
-  static readonly EMPTY = new ConsecutiveNumbers(0, -1);
+  static readonly EMPTY = new ConsecutiveNumbers(-1, -2);
 
   /**
    * Get the length of the array

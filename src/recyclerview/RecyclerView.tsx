@@ -22,8 +22,9 @@ import {
 import { RVDimension } from "./layout-managers/LayoutManager";
 import {
   areDimensionsNotEqual,
-  measureLayout,
-  measureLayoutRelative,
+  measureChildContainerLayout,
+  measureItemLayout,
+  measureParentSize,
 } from "./utils/measureLayout";
 import {
   RecyclerViewContext,
@@ -138,11 +139,10 @@ const RecyclerViewComponent = <T,>(
   useLayoutEffect(() => {
     if (internalViewRef.current && childContainerViewRef.current) {
       // Measure the outer and inner container layouts
-      const outerViewLayout = measureLayout(internalViewRef.current, undefined);
-      const childViewLayout = measureLayoutRelative(
+      const outerViewLayout = measureParentSize(internalViewRef.current);
+      const childViewLayout = measureChildContainerLayout(
         childContainerViewRef.current,
-        internalViewRef.current,
-        undefined
+        internalViewRef.current
       );
 
       containerViewSizeRef.current = outerViewLayout;
@@ -172,7 +172,7 @@ const RecyclerViewComponent = <T,>(
       return;
     }
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
-      const layout = measureLayout(
+      const layout = measureItemLayout(
         viewHolderRef.current!,
         recyclerViewManager.getLayout(index)
       );

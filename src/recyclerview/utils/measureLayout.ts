@@ -87,3 +87,42 @@ export function areDimensionsEqual(value1: number, value2: number): boolean {
 export function roundOffPixel(value: number): number {
   return PixelRatio.roundToNearestPixel(value);
 }
+
+/**
+ * Specific method for easier mocking
+ * Measures the layout of parent of RecyclerView
+ * Returns the x, y coordinates and dimensions of the view.
+ * @param view - The React Native View component to measure
+ * @returns An object containing x, y, width, and height measurements
+ */
+export function measureParentSize(view: View): Layout {
+  return measureLayout(view, undefined);
+}
+
+/**
+ * Specific method for easier mocking
+ * Measures the layout of child container of RecyclerView
+ * @param childContainerView
+ * @param parentView
+ * @returns
+ */
+export function measureChildContainerLayout(
+  childContainerView: View,
+  parentView: View
+): Layout {
+  return measureLayoutRelative(childContainerView, parentView, undefined);
+}
+
+/**
+ * Specific method for easier mocking
+ * Measures the layout of items of RecyclerView
+ * @param item
+ * @param oldLayout
+ * @returns
+ */
+export function measureItemLayout(
+  item: View,
+  oldLayout: Layout | undefined
+): Layout {
+  return measureLayout(item, oldLayout);
+}

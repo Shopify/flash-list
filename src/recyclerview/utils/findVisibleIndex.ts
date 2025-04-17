@@ -35,7 +35,7 @@ function binarySearchVisibleIndex(
 
     if (findFirst) {
       // Logic for finding the first visible index
-      if (position >= threshold || position + size >= threshold) {
+      if (position >= threshold || position + size > threshold) {
         // Potential visible index found, continue searching left for earlier visible items
         visibleIndex = mid;
         right = mid - 1;
