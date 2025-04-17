@@ -61,8 +61,8 @@ const ScaleCellRenderer = (props: any) => {
 
 // Main component that combines both examples
 const FlashListCellRenderer = () => {
-  const renderTweet = useCallback(({ item }: { item: Tweet }) => {
-    return <TweetCell tweet={item} />;
+  const renderTweet = useCallback((info: { item: Tweet }) => {
+    return <TweetCell tweet={info.item} />;
   }, []);
 
   return (
@@ -77,7 +77,6 @@ const FlashListCellRenderer = () => {
         <View style={styles.container}>
           <Text style={styles.title}>Fade-In Animation</Text>
           <View style={{ flex: 1 }}>
-            {/* @ts-ignore */}
             <RecyclerView
               data={tweetsData}
               renderItem={renderTweet}
@@ -90,7 +89,6 @@ const FlashListCellRenderer = () => {
         <View style={styles.container}>
           <Text style={styles.title}>Scale Animation</Text>
           <View style={{ flex: 1 }}>
-            {/* @ts-ignore */}
             <RecyclerView
               data={tweetsData}
               renderItem={renderTweet}

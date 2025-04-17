@@ -177,8 +177,8 @@ const RecyclerViewComponent = <T,>(
         recyclerViewManager.getLayout(index)
       );
 
-      //comapre height with stored layout
-      //const storedLayout = recyclerViewManager.getLayout(index);
+      // comapre height with stored layout
+      // const storedLayout = recyclerViewManager.getLayout(index);
       // if (
       //   storedLayout.height !== layout.height &&
       //   storedLayout.isHeightMeasured
@@ -396,7 +396,7 @@ const RecyclerViewComponent = <T,>(
     );
   }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
 
-  //console.log("render");
+  // console.log("render");
 
   // Render the main RecyclerView structure
   return (

@@ -1,10 +1,10 @@
 import { Animated, RefreshControl } from "react-native";
+import React, { useMemo } from "react";
+
 import { RecyclerViewProps } from "../RecyclerViewProps";
-import { useMemo } from "react";
 import { getValidComponent } from "../utils/componentUtils";
 import { CompatView } from "../components/CompatView";
 import { CompatAnimatedScroller } from "../components/CompatScroller";
-import React from "react";
 
 /**
  * Hook that manages secondary props and components for the RecyclerView.
@@ -99,9 +99,11 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     let scrollComponent = CompatAnimatedScroller;
     if (typeof renderScrollComponent === "function") {
       // Create a forwarded ref wrapper for the custom scroll component
-      scrollComponent = React.forwardRef((props, ref) =>
-        (renderScrollComponent as any)({ ...props, ref } as any)
-      ) as any;
+      const ForwardedScrollComponent = React.forwardRef((_props, ref) =>
+        (renderScrollComponent as any)({ ..._props, ref } as any)
+      );
+      ForwardedScrollComponent.displayName = "CompatScrollView";
+      scrollComponent = ForwardedScrollComponent as any;
     } else if (renderScrollComponent) {
       scrollComponent = renderScrollComponent;
     }

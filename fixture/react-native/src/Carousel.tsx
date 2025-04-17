@@ -86,7 +86,6 @@ const carouselData: CarouselItem[] = [
 const Carousel = () => {
   const flatListRef = useRef(null);
   const { width: screenWidth } = useWindowDimensions();
-
   const renderItem = useCallback(
     ({ item }: { item: CarouselItem }) => {
       return (

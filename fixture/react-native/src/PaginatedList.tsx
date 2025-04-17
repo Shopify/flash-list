@@ -8,7 +8,7 @@ import { RecyclerView } from "@shopify/flash-list";
 
 export interface PaginatedListState {
   // This property is used but eslint fails to find its usage.
-  /* eslint-disable react/no-unused-prop-types */
+
   elems: any[];
 }
 

@@ -40,6 +40,12 @@ module.exports = {
     "@typescript-eslint/member-ordering": "off",
     "@typescript-eslint/consistent-indexed-object-style": "off",
     "jsx-a11y/no-autofocus": "off",
+    "line-comment-position": "off",
+    "react/no-unused-prop-types": "off",
+    "no-negated-condition": "off",
+    "no-nested-ternary": "off",
+    "@babel/no-unused-expressions": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
   },
   overrides: [
     {

@@ -44,10 +44,11 @@ export function Chat() {
   const addMessageAtBottom = useCallback(() => {
     const newMessage = generateRandomMessage(messages.length);
     setMessages((prev) => [...prev, newMessage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const renderItem = useCallback(({ item }: { item: ChatMessage }) => {
-    return <MessageBubble message={item} />;
+  const renderItem = useCallback((info: { item: ChatMessage }) => {
+    return <MessageBubble message={info.item} />;
   }, []);
 
   const maintainVisibleContentPositionConfig = useMemo(
@@ -206,9 +207,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
   },
-  listContent: {
-    paddingVertical: 8,
-  },
   messageBubbleContainer: {
     paddingHorizontal: 12,
     marginVertical: 4,
@@ -236,11 +234,5 @@ const styles = StyleSheet.create({
   messageText: {
     fontSize: 16,
     color: "#000000",
-  },
-  timestamp: {
-    fontSize: 12,
-    color: "#7f7f7f",
-    alignSelf: "flex-end",
-    marginTop: 4,
   },
 });

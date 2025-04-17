@@ -88,9 +88,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  listContent: {
-    paddingBottom: 20,
-  },
   headerContainer: {
     padding: 16,
     backgroundColor: "white",

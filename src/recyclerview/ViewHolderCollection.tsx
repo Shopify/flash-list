@@ -5,9 +5,11 @@
  */
 
 import React, { useEffect, useImperativeHandle, useLayoutEffect } from "react";
+
+import { FlashListProps } from "../FlashListProps";
+
 import { ViewHolder, ViewHolderProps } from "./ViewHolder";
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
-import { FlashListProps } from "../FlashListProps";
 import { CompatView } from "./components/CompatView";
 import { useRecyclerViewContext } from "./RecyclerViewContextProvider";
 

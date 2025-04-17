@@ -223,7 +223,7 @@ describe("RecycleKeyManagerImpl", () => {
       const keyA3 = keyManager.getKey("typeA", "item5"); // Generate another A key
       keyManager.recycleKey(keyA3); // Recycle it
       keyManager.clearPool(); // Clear pools again
-      const keyA4 = keyManager.getKey("typeA", "item6"); // Get a new key
+      keyManager.getKey("typeA", "item6"); // Get a new key
       expect(keyManager.hasKeyInPool(keyA3)).toBe(true); // keyA3 is not active
       // keyA4 should be newly generated, not reused from the cleared pool
       // Note: Due to sequential key generation, it *might* match a previous key numerically

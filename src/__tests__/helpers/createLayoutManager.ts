@@ -1,3 +1,4 @@
+/* eslint-disable @shopify/typescript/prefer-pascal-case-enums */
 import {
   LayoutParams,
   RVDimension,
@@ -90,9 +91,9 @@ export function createMockLayoutInfo(
 export function populateLayouts(
   layoutManager: RVLayoutManager,
   itemCount: number,
-  itemWidth: number = 100,
-  itemHeight: number = 100,
-  variableSize: boolean = false
+  itemWidth = 100,
+  itemHeight = 100,
+  variableSize = false
 ): void {
   const layoutInfos: RVLayoutInfo[] = [];
 
@@ -114,9 +115,9 @@ export function createPopulatedLayoutManager(
   type: LayoutManagerType,
   itemCount: number,
   params: Partial<LayoutParams> = {},
-  itemWidth: number = 100,
-  itemHeight: number = 100,
-  variableSize: boolean = false
+  itemWidth = 100,
+  itemHeight = 100,
+  variableSize = false
 ): RVLayoutManager {
   const layoutManager = createLayoutManager(type, params);
   console.log("layoutManager", layoutManager);
@@ -135,5 +136,7 @@ export function createPopulatedLayoutManager(
  */
 export function getAllLayouts(layoutManager: RVLayoutManager): RVLayout[] {
   // Access the internal layouts array
-  return layoutManager["layouts"];
+  return Array.from({ length: layoutManager.getLayoutCount() }, (_, index) =>
+    layoutManager.getLayout(index)
+  );
 }

@@ -343,7 +343,7 @@ export interface FlashListProps<TItem>
    * New arch only
    * If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order.
    */
-  optimizeItemArrangement?: boolean; //TODO: Check if this breaks on item resize or is glitchy
+  optimizeItemArrangement?: boolean; // TODO: Check if this breaks on item resize or is glitchy
 
   /**
    * New arch only

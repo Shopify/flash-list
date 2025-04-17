@@ -93,7 +93,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     ) : null;
   }, [ItemSeparatorComponent, item, trailingItem]);
 
-  //console.log("ViewHolder re-render", index);
+  // console.log("ViewHolder re-render", index);
 
   const children = useMemo(() => {
     return renderItem?.({ item, index, extraData, target }) ?? null;
@@ -113,7 +113,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     zIndex: 0,
   } as const;
 
-  //TODO: Fix this type issue
+  // TODO: Fix this type issue
   const CompatContainer = (CellRendererComponent ??
     CompatView) as unknown as any;
 

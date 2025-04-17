@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable, StatusBar } from "react-native";
 import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
 
@@ -36,7 +36,7 @@ const generateItems = (count: number): Item[] => {
 };
 
 // ListItem component that manages its own expanded state
-const ListItem = React.memo(({ item }: { item: Item }) => {
+const ListItem = ({ item }: { item: Item }) => {
   const [isExpanded, setIsExpanded] = useRecyclingState(false, [item.id]);
 
   const handlePress = () => {
@@ -59,13 +59,14 @@ const ListItem = React.memo(({ item }: { item: Item }) => {
       </Pressable>
     </View>
   );
-});
+};
 
-const HorizontalList = React.memo(() => {
+const Separator = () => <View style={styles.separator} />;
+
+const HorizontalList = () => {
   const [data] = useState<Item[]>(generateItems(20));
 
   // Memoize the separator component
-  const Separator = useMemo(() => () => <View style={styles.separator} />, []);
 
   // Memoize the renderItem function
   const renderItem = useCallback(
@@ -97,7 +98,7 @@ const HorizontalList = React.memo(() => {
       </Text>
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -109,10 +110,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     margin: 16,
     color: "#333",
-  },
-  listContainer: {
-    height: 200,
-    marginBottom: 16,
   },
   itemContainer: {
     width: 150,

@@ -17,7 +17,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   /** Array tracking the current height of each column */
   private columnHeights: number[];
   /** Current column index for sequential placement */
-  private currentColumn: number = 0;
+  private currentColumn = 0;
 
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
@@ -41,9 +41,9 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     ) {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
-        //console.log("-----> recomputeLayouts");
+        // console.log("-----> recomputeLayouts");
 
-        //update all widths
+        // update all widths
         for (let i = 0; i < this.layouts.length; i++) {
           this.layouts[i].width = this.getWidth(i);
           this.layouts[i].minHeight = undefined;
