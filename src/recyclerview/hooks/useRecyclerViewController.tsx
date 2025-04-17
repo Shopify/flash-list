@@ -151,6 +151,7 @@ export function useRecyclerViewController<T>(
   const updateScrollOffsetAsync = useCallback(
     async (offset: number): Promise<void> => {
       return new Promise((resolve) => {
+        // TODO: Make sure we don't scroll beyond content size
         recyclerViewManager.updateScrollOffset(offset);
         // Add the resolve function to the queue
         pendingScrollResolves.current.push(resolve);
