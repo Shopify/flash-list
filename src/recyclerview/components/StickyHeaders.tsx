@@ -64,15 +64,11 @@ export const StickyHeaders = <TItem,>({
   }>({ currentStickyIndex: -1, nextStickyIndex: -1 });
 
   const { currentStickyIndex, nextStickyIndex } = stickyIndices;
-  const hasLayout = recyclerViewManager.hasLayout();
 
   // Memoize sorted indices based on their Y positions
   const sortedIndices = useMemo(() => {
-    if (!hasLayout) {
-      return [];
-    }
     return stickyHeaderIndices.sort((first, second) => first - second);
-  }, [stickyHeaderIndices, hasLayout]);
+  }, [stickyHeaderIndices]);
 
   const compute = useCallback(() => {
     const adjustedValue = recyclerViewManager.getLastScrollOffset();
@@ -114,12 +110,7 @@ export const StickyHeaders = <TItem,>({
         compute();
       },
     }),
-    [
-      stickyHeaderIndices,
-      recyclerViewManager,
-      currentStickyIndex,
-      nextStickyIndex,
-    ]
+    [compute]
   );
 
   const refHolder = useRef(new Map()).current;
