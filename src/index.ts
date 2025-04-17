@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-named-default
 import { default as OriginalFlashList } from "./FlashList";
 import { isNewCoreEnabled } from "./enableNewCore";
 import { RecyclerView } from "./recyclerview/RecyclerView";
@@ -60,7 +61,7 @@ if (
   process?.env?.NODE_ENV !== "test"
 ) {
   Object.defineProperty(module.exports, "FlashList", {
-    get: function () {
+    get() {
       return isNewCoreEnabled() ? RecyclerView : OriginalFlashList;
     },
     configurable: true,

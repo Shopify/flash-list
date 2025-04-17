@@ -13,10 +13,12 @@ import React, {
   useEffect,
 } from "react";
 import { Animated, NativeScrollEvent } from "react-native";
+
 import { FlashListProps } from "../..";
-import { CompatAnimatedView } from "./CompatView";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { ViewHolder } from "../ViewHolder";
+
+import { CompatAnimatedView } from "./CompatView";
 
 /**
  * Props for the StickyHeaders component
@@ -26,7 +28,7 @@ export interface StickyHeaderProps<TItem> {
   /** Array of indices that should have sticky headers */
   stickyHeaderIndices: number[];
   /** The data array being rendered */
-  data: readonly TItem[];
+  data: ReadonlyArray<TItem>;
   /** Animated value tracking scroll position */
   scrollY: Animated.Value;
   /** Function to render each item */
@@ -69,8 +71,8 @@ export const StickyHeaders = <TItem,>({
     if (!hasLayout) {
       return [];
     }
-    return stickyHeaderIndices.sort((a, b) => a - b);
-  }, [stickyHeaderIndices, recyclerViewManager, hasLayout]);
+    return stickyHeaderIndices.sort((first, second) => first - second);
+  }, [stickyHeaderIndices, hasLayout]);
 
   const compute = useCallback(() => {
     const adjustedValue = recyclerViewManager.getLastScrollOffset();

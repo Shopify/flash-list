@@ -7,13 +7,15 @@ import {
   useState,
 } from "react";
 import { I18nManager } from "react-native";
+
 import { RecyclerViewProps } from "../RecyclerViewProps";
 import { CompatScroller } from "../components/CompatScroller";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
-import { useUnmountFlag } from "./useUnmountFlag";
 import { RVLayout } from "../layout-managers/LayoutManager";
 import { ScrollAnchorRef } from "../components/ScrollAnchor";
+
+import { useUnmountFlag } from "./useUnmountFlag";
 
 /**
  * Parameters for scrolling to a specific position in the list.
@@ -193,7 +195,7 @@ export function useRecyclerViewController<T>(
             ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
           };
           if (diff !== 0 && !pauseAdjustRef.current) {
-            //console.log("diff", diff, firstVisibleItemKey.current);
+            // console.log("diff", diff, firstVisibleItemKey.current);
             scrollAnchorRef.current?.scrollBy(diff);
           }
         }
@@ -230,6 +232,7 @@ export function useRecyclerViewController<T>(
         if (scrollViewRef.current) {
           // Adjust offset for RTL layouts in horizontal mode
           if (I18nManager.isRTL && horizontal) {
+            // eslint-disable-next-line no-param-reassign
             offset = adjustOffsetForRTL(
               offset,
               recyclerViewManager.getChildContainerDimensions().width,
@@ -312,8 +315,8 @@ export function useRecyclerViewController<T>(
             let prevFinalOffset = Number.POSITIVE_INFINITY;
             let finalOffset = 0;
             let attempts = 0;
-            const MAX_ATTEMPTS = 5;
-            const OFFSET_TOLERANCE = 1; // 1px tolerance
+            const maxAttempts = 5;
+            const offsetTolerance = 1; // 1px tolerance
 
             do {
               const layout = recyclerViewManager.getLayout(index);
@@ -342,7 +345,7 @@ export function useRecyclerViewController<T>(
               }
 
               // Check if offset has stabilized
-              if (Math.abs(prevFinalOffset - finalOffset) <= OFFSET_TOLERANCE) {
+              if (Math.abs(prevFinalOffset - finalOffset) <= offsetTolerance) {
                 break;
               }
 
@@ -366,7 +369,7 @@ export function useRecyclerViewController<T>(
               await updateScrollOffsetAsync(finalOffset);
 
               attempts++;
-            } while (attempts < MAX_ATTEMPTS);
+            } while (attempts < maxAttempts);
 
             if (animated) {
               const maxOffset =
@@ -393,7 +396,7 @@ export function useRecyclerViewController<T>(
                 );
               }
 
-              //We don't need to add firstItemOffset here as it will be added in scrollToOffset
+              // We don't need to add firstItemOffset here as it will be added in scrollToOffset
               handlerMethods.scrollToOffset({
                 offset: lastScrollOffset,
                 animated: false,

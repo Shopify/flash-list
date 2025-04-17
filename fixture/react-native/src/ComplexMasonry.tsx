@@ -56,10 +56,7 @@ const IMAGE_URLS = [
 ];
 
 // Generate random data for our masonry layout
-const generateMasonryData = (
-  count: number,
-  startIndex: number = 0
-): MasonryItem[] => {
+const generateMasonryData = (count: number, startIndex = 0): MasonryItem[] => {
   return Array.from({ length: count }, (_, index) => {
     // Create a pattern of spans to make it visually interesting
     // Items with span=2 will take up 2 columns
@@ -184,13 +181,12 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
 
   return (
     <View style={styles.container}>
-      {/* @ts-ignore - RecyclerView has typing issues but works correctly */}
       <RecyclerView
         ref={ref}
         testID="ComplexMasonryList"
         data={items}
-        masonry={true}
-        optimizeItemArrangement={true}
+        masonry
+        optimizeItemArrangement
         numColumns={columnCount}
         estimatedItemSize={200}
         overrideItemLayout={(layout: any, item: MasonryItem) => {

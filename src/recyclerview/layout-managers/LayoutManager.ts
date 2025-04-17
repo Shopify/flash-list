@@ -31,7 +31,7 @@ export abstract class RVLayoutManager {
   protected optimizeItemArrangement: boolean;
 
   /** Flag indicating if the layout requires repainting */
-  public requiresRepaint: boolean = false;
+  public requiresRepaint = false;
 
   /** Optional function to determine item type */
   private _getItemType?: (index: number) => string | number;
@@ -40,7 +40,7 @@ export abstract class RVLayoutManager {
   /** Window for tracking average widths by item type */
   private widthAverageWindow: MultiTypeAverageWindow;
   /** Maximum number of items to process in a single layout pass */
-  private maxItemsToProcess: number = 250; // TODO: make this dynamic
+  private maxItemsToProcess = 250; // TODO: make this dynamic
 
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     this.heightAverageWindow = new MultiTypeAverageWindow(5, 200);
@@ -243,6 +243,10 @@ export abstract class RVLayoutManager {
     this.maxColumns = params.maxColumns ?? this.maxColumns;
     this.optimizeItemArrangement =
       params.optimizeItemArrangement ?? this.optimizeItemArrangement;
+  }
+
+  getLayoutCount(): number {
+    return this.layouts.length;
   }
 
   /**

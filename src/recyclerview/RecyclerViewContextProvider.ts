@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+
 import { CompatScroller } from "./components/CompatScroller";
 
 export interface RecyclerViewContext {

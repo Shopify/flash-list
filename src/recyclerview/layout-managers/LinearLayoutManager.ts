@@ -1,6 +1,10 @@
-import { LayoutParams, RVDimension, RVLayoutInfo } from "./LayoutManager";
-import { RVLayout } from "./LayoutManager";
-import { RVLayoutManager } from "./LayoutManager";
+import {
+  LayoutParams,
+  RVDimension,
+  RVLayoutInfo,
+  RVLayout,
+  RVLayoutManager,
+} from "./LayoutManager";
 
 /**
  * LinearLayoutManager implementation that arranges items in a single row or column.
@@ -10,12 +14,12 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   /** The bounded size (width for vertical, height for horizontal) */
   private boundedSize: number;
   /** Whether the bounded size has been set */
-  private hasSize: boolean = false;
+  private hasSize = false;
 
   /** Reference to the tallest item in the layout */
   private tallestItem?: RVLayout;
   /** Height of the tallest item */
-  private tallestItemHeight: number = 0;
+  private tallestItemHeight = 0;
 
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
@@ -41,7 +45,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       prevHorizontal !== this.horizontal
     ) {
       if (this.layouts.length > 0) {
-        //console.log("-----> recomputeLayouts", this.horizontal);
+        // console.log("-----> recomputeLayouts", this.horizontal);
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
       }
@@ -123,7 +127,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
         this.requiresRepaint = true;
         targetMinHeight = 0;
       }
-      //set minHeight for all layouts
+      // set minHeight for all layouts
       for (const layout of this.layouts) {
         if (targetMinHeight > 0) {
           layout.height = newTallestItem.height;
