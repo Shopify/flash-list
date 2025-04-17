@@ -5,7 +5,7 @@ slug: /usage
 sidebar_position: 0
 ---
 
-If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` by changing the component name.
+If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` by changing the component name and adding the `estimatedItemSize` prop or refer to the example below:
 
 ```tsx
 import React from "react";
@@ -26,6 +26,7 @@ const MyList = () => {
     <FlashList
       data={DATA}
       renderItem={({ item }) => <Text>{item.title}</Text>}
+      estimatedItemSize={200}
     />
   );
 };
@@ -33,11 +34,21 @@ const MyList = () => {
 
 To avoid common pitfalls, you can also follow these steps for migrating from `FlatList`, based on our own experiences:
 
-1. Switch from `FlatList` to `FlashList`.
+1. Switch from `FlatList` to `FlashList` and render the list once. You should see a warning about missing `estimatedItemSize` and a suggestion. Set this value as the prop directly.
 2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you’re doing a `.map()` use indices as keys.
 3. Check your [`renderItem`](#renderitem) hierarchy for components that make use of `useState` and verify whether that state would need to be reset if a different item is passed to that component (see [Recycling](https://shopify.github.io/flash-list/docs/recycling))
 4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](#getitemtype) prop to improve performance.
 5. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
+
+:::note `estimatedItemSize`
+[`estimatedItemSize`](#estimateditemsize) is necessary to achieve optimal performance.
+:::
+
+Most of the props from `FlatList` are available in `FlashList`, too. This documentation includes both `FlatList` and additional `FlashList` props and should be used as a primary reference. But you can also read more about the props available in both `FlatList` and `FlashList` [here](https://reactnative.dev/docs/flatlist).
+
+# Props
+
+`FlashList` also has a couple of unique props. You already know about `estimatedItemSize` but there are more props available for minor adjustments.
 
 ### **`renderItem`**
 
