@@ -309,6 +309,7 @@ export abstract class RVLayoutManager {
       const { index, dimensions } = info;
       const storedLayout = this.layouts[index];
       if (
+        !storedLayout ||
         !storedLayout.isHeightMeasured ||
         !storedLayout.isWidthMeasured ||
         areDimensionsNotEqual(storedLayout.height, dimensions.height) ||

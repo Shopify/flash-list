@@ -202,7 +202,7 @@ export function useRecyclerViewController<T>(
       // Update the tracked first visible item
       const firstVisibleIndex =
         recyclerViewManager.getVisibleIndices().startIndex;
-      if (firstVisibleIndex !== undefined) {
+      if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
         firstVisibleItemKey.current =
           props.keyExtractor?.(
             props.data![firstVisibleIndex],
