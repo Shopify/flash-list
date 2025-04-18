@@ -18,7 +18,7 @@ Swap from FlatList in seconds. Get instant performance.
 
 ## React Native's new architecture support
 
-FlashList is compatible with React Native's new architecture however, it's not fully optimized for it yet. You will still gain performance benefits from using FlashList over FlatList. Stayed tuned for more improvements.
+FlashList v1 is compatible with React Native's new architecture however, we have a new version (v2) in alpha that fully leverages the new architecture and comes with more features. Click [here](https://github.com/Shopify/flash-list/tree/new-rlv-prototype?tab=readme-ov-file#flashlist-v2) to know more.
 
 ## Installation
 
