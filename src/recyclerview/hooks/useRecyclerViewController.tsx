@@ -322,113 +322,83 @@ export function useRecyclerViewController<T>(
       }: ScrollToIndexParams) => {
         if (scrollViewRef.current && data && data.length > index) {
           pauseAdjustRef.current = true;
-          const layout = recyclerViewManager.getLayout(index);
+
+          const getFinalOffset = () => {
+            const layout = recyclerViewManager.getLayout(index);
+            const offset = horizontal ? layout.x : layout.y;
+            let finalOffset = offset;
+            // take viewPosition etc into account
+            if (viewPosition !== undefined || viewOffset !== undefined) {
+              const containerSize = horizontal
+                ? recyclerViewManager.getWindowSize().width
+                : recyclerViewManager.getWindowSize().height;
+
+              const itemSize = horizontal ? layout.width : layout.height;
+
+              if (viewPosition !== undefined) {
+                // viewPosition: 0 = top, 0.5 = center, 1 = bottom
+                finalOffset =
+                  offset - (containerSize - itemSize) * viewPosition;
+              }
+
+              if (viewOffset !== undefined) {
+                finalOffset += viewOffset;
+              }
+            }
+            return finalOffset;
+          };
           let lastScrollOffset = recyclerViewManager.getLastScrollOffset();
+          let finalOffset = getFinalOffset();
           const bufferForScroll = horizontal
             ? recyclerViewManager.getWindowSize().width
             : recyclerViewManager.getWindowSize().height;
 
           const bufferForCompute = bufferForScroll * 2;
 
-          if (layout) {
-            let prevFinalOffset = Number.POSITIVE_INFINITY;
-            let finalOffset = 0;
-            let attempts = 0;
-            const maxAttempts = 5;
-            const offsetTolerance = 1; // 1px tolerance
-
-            do {
-              const layout = recyclerViewManager.getLayout(index);
-              if (!layout || isUnmounted.current) break;
-
-              const offset = horizontal ? layout.x : layout.y;
-              finalOffset = offset;
-
-              // Apply viewPosition and viewOffset adjustments if provided
-              if (viewPosition !== undefined || viewOffset !== undefined) {
-                const containerSize = horizontal
-                  ? recyclerViewManager.getWindowSize().width
-                  : recyclerViewManager.getWindowSize().height;
-
-                const itemSize = horizontal ? layout.width : layout.height;
-
-                if (viewPosition !== undefined) {
-                  // viewPosition: 0 = top, 0.5 = center, 1 = bottom
-                  finalOffset =
-                    offset - (containerSize - itemSize) * viewPosition;
-                }
-
-                if (viewOffset !== undefined) {
-                  finalOffset += viewOffset;
-                }
+          if (animated) {
+            if (finalOffset > lastScrollOffset) {
+              lastScrollOffset = Math.max(
+                finalOffset - bufferForCompute,
+                lastScrollOffset
+              );
+              recyclerViewManager.setScrollDirection("forward");
+            } else {
+              lastScrollOffset = Math.min(
+                finalOffset + bufferForCompute,
+                lastScrollOffset
+              );
+              recyclerViewManager.setScrollDirection("backward");
+            }
+            // go from finalOffset to lastScrollOffset in 5 steps
+            for (let i = 0; i < 5; i++) {
+              if (isUnmounted.current) {
+                return;
               }
+              await updateScrollOffsetAsync(
+                finalOffset + (lastScrollOffset - finalOffset) * (i / 4)
+              );
+            }
+            finalOffset = getFinalOffset();
+            const maxOffset = recyclerViewManager.getMaxScrollOffset();
 
-              // Check if offset has stabilized
-              if (Math.abs(prevFinalOffset - finalOffset) <= offsetTolerance) {
-                break;
-              }
-
-              prevFinalOffset = finalOffset;
-
-              if (animated) {
-                if (finalOffset > lastScrollOffset) {
-                  lastScrollOffset = Math.max(
-                    finalOffset - bufferForCompute,
-                    lastScrollOffset
-                  );
-                } else {
-                  lastScrollOffset = Math.min(
-                    finalOffset + bufferForCompute,
-                    lastScrollOffset
-                  );
-                }
-
-                await updateScrollOffsetAsync(lastScrollOffset);
-              }
-              await updateScrollOffsetAsync(finalOffset);
-
-              attempts++;
-            } while (attempts < maxAttempts);
-
-            if (animated) {
-              const maxOffset =
-                (horizontal
-                  ? recyclerViewManager.getChildContainerDimensions().width
-                  : recyclerViewManager.getChildContainerDimensions().height) -
-                (horizontal
-                  ? recyclerViewManager.getWindowSize().width
-                  : recyclerViewManager.getWindowSize().height);
-
-              if (finalOffset > maxOffset) {
-                finalOffset = maxOffset;
-              }
-
-              if (finalOffset > lastScrollOffset) {
-                lastScrollOffset = Math.max(
-                  finalOffset - bufferForScroll,
-                  lastScrollOffset
-                );
-              } else {
-                lastScrollOffset = Math.min(
-                  finalOffset + bufferForScroll,
-                  lastScrollOffset
-                );
-              }
-
-              // We don't need to add firstItemOffset here as it will be added in scrollToOffset
-              handlerMethods.scrollToOffset({
-                offset: lastScrollOffset,
-                animated: false,
-                skipFirstItemOffset: false,
-              });
+            if (finalOffset > maxOffset) {
+              finalOffset = maxOffset;
             }
 
+            // We don't need to add firstItemOffset here as it will be added in scrollToOffset
             handlerMethods.scrollToOffset({
-              offset: finalOffset,
-              animated,
+              offset: lastScrollOffset,
+              animated: false,
               skipFirstItemOffset: false,
             });
           }
+
+          handlerMethods.scrollToOffset({
+            offset: finalOffset,
+            animated,
+            skipFirstItemOffset: false,
+          });
+
           setTimeout(() => {
             pauseAdjustRef.current = false;
           }, 200);

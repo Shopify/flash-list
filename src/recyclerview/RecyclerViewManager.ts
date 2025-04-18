@@ -151,9 +151,26 @@ export class RecyclerViewManager<T> {
     return this.engagedIndicesTracker.scrollOffset;
   }
 
+  getMaxScrollOffset() {
+    return Math.max(
+      0,
+      (this.props.horizontal
+        ? this.getChildContainerDimensions().width
+        : this.getChildContainerDimensions().height) -
+        (this.props.horizontal
+          ? this.getWindowSize().width
+          : this.getWindowSize().height) +
+        this.firstItemOffset
+    );
+  }
+
   // Doesn't include first item offset correction
   getAbsoluteLastScrollOffset() {
     return this.engagedIndicesTracker.scrollOffset + this.firstItemOffset;
+  }
+
+  setScrollDirection(scrollDirection: "forward" | "backward") {
+    this.engagedIndicesTracker.setScrollDirection(scrollDirection);
   }
 
   updateLayoutParams(windowSize: RVDimension, firstItemOffset: number) {
