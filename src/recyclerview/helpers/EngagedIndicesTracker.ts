@@ -22,6 +22,7 @@ export interface RVEngagedIndicesTracker {
   ) => ConsecutiveNumbers | undefined;
   getEngagedIndices: () => ConsecutiveNumbers;
   computeVisibleIndices: (layoutManager: RVLayoutManager) => ConsecutiveNumbers;
+  setScrollDirection: (scrollDirection: "forward" | "backward") => void;
 }
 
 export interface Velocity {
@@ -189,5 +190,15 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
    */
   getEngagedIndices(): ConsecutiveNumbers {
     return this.engagedIndices;
+  }
+
+  setScrollDirection(scrollDirection: "forward" | "backward") {
+    if (scrollDirection === "forward") {
+      this.velocityHistory = [1, 1, 1, 1, 1];
+      this.velocityIndex = 0;
+    } else {
+      this.velocityHistory = [-1, -1, -1, -1, -1];
+      this.velocityIndex = 0;
+    }
   }
 }
