@@ -152,10 +152,13 @@ export function useRecyclerViewController<T>(
     async (offset: number): Promise<void> => {
       return new Promise((resolve) => {
         // TODO: Make sure we don't scroll beyond content size
-        recyclerViewManager.updateScrollOffset(offset);
-        // Add the resolve function to the queue
-        pendingScrollResolves.current.push(resolve);
-        setRenderId((prev) => prev + 1);
+        if (recyclerViewManager.updateScrollOffset(offset) !== undefined) {
+          // Add the resolve function to the queue
+          pendingScrollResolves.current.push(resolve);
+          setRenderId((prev) => prev + 1);
+        } else {
+          resolve();
+        }
       });
     },
     [recyclerViewManager]
@@ -355,20 +358,21 @@ export function useRecyclerViewController<T>(
 
           const bufferForCompute = bufferForScroll * 2;
 
+          if (finalOffset > lastScrollOffset) {
+            lastScrollOffset = Math.max(
+              finalOffset - bufferForCompute,
+              lastScrollOffset
+            );
+            recyclerViewManager.setScrollDirection("forward");
+          } else {
+            lastScrollOffset = Math.min(
+              finalOffset + bufferForCompute,
+              lastScrollOffset
+            );
+            recyclerViewManager.setScrollDirection("backward");
+          }
+
           if (animated) {
-            if (finalOffset > lastScrollOffset) {
-              lastScrollOffset = Math.max(
-                finalOffset - bufferForCompute,
-                lastScrollOffset
-              );
-              recyclerViewManager.setScrollDirection("forward");
-            } else {
-              lastScrollOffset = Math.min(
-                finalOffset + bufferForCompute,
-                lastScrollOffset
-              );
-              recyclerViewManager.setScrollDirection("backward");
-            }
             // go from finalOffset to lastScrollOffset in 5 steps
             for (let i = 0; i < 5; i++) {
               if (isUnmounted.current) {
@@ -378,13 +382,24 @@ export function useRecyclerViewController<T>(
                 finalOffset + (lastScrollOffset - finalOffset) * (i / 4)
               );
             }
-            finalOffset = getFinalOffset();
-            const maxOffset = recyclerViewManager.getMaxScrollOffset();
-
-            if (finalOffset > maxOffset) {
-              finalOffset = maxOffset;
+          } else {
+            // go from lastScrollOffset to finalOffset in 5 steps
+            for (let i = 0; i < 5; i++) {
+              if (isUnmounted.current) {
+                return;
+              }
+              await updateScrollOffsetAsync(
+                lastScrollOffset + (finalOffset - lastScrollOffset) * (i / 4)
+              );
             }
+          }
+          finalOffset = getFinalOffset();
+          const maxOffset = recyclerViewManager.getMaxScrollOffset();
 
+          if (finalOffset > maxOffset) {
+            finalOffset = maxOffset;
+          }
+          if (animated) {
             // We don't need to add firstItemOffset here as it will be added in scrollToOffset
             handlerMethods.scrollToOffset({
               offset: lastScrollOffset,
@@ -392,7 +407,6 @@ export function useRecyclerViewController<T>(
               skipFirstItemOffset: false,
             });
           }
-
           handlerMethods.scrollToOffset({
             offset: finalOffset,
             animated,
