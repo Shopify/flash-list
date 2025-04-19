@@ -6,6 +6,7 @@ import Tweet from "./models/Tweet";
 
 export interface TweetContentProps {
   tweet: Tweet;
+  showFullText?: boolean;
 }
 
 const tweetActions = (
@@ -64,7 +65,7 @@ const GrayText = ({ children, numberOfLines, style }: GrayTextProps) => {
   );
 };
 
-const TweetContent = ({ tweet }: TweetContentProps) => {
+const TweetContent = ({ tweet, showFullText }: TweetContentProps) => {
   return (
     <View style={styles.singleItem}>
       <View style={styles.row}>
@@ -80,7 +81,9 @@ const TweetContent = ({ tweet }: TweetContentProps) => {
             <GrayText>·</GrayText>
             <GrayText>2h</GrayText>
           </View>
-          <Text style={styles.description}>{tweet.fullText}</Text>
+          <Text style={styles.description}>
+            {showFullText ? tweet.fullText + tweet.fullText : tweet.fullText}
+          </Text>
           <View style={styles.rowActions}>
             {tweetActions(
               tweet.retweetCount,

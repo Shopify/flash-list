@@ -20,6 +20,7 @@ const DebugScreen = () => {
   };
 
   return (
+    // @ts-ignore - Type compatibility issue between different React versions
     <FlashList
       keyExtractor={(item: DebugItem) => {
         return item.name;
