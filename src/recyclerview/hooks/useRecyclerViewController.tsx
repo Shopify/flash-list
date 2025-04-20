@@ -255,11 +255,15 @@ export function useRecyclerViewController<T>(
           // Adjust offset for RTL layouts in horizontal mode
           if (I18nManager.isRTL && horizontal) {
             // eslint-disable-next-line no-param-reassign
-            offset = adjustOffsetForRTL(
-              offset,
-              recyclerViewManager.getChildContainerDimensions().width,
-              recyclerViewManager.getWindowSize().width
-            );
+            offset =
+              adjustOffsetForRTL(
+                offset,
+                recyclerViewManager.getChildContainerDimensions().width,
+                recyclerViewManager.getWindowSize().width
+              ) +
+              (skipFirstItemOffset
+                ? recyclerViewManager.firstItemOffset
+                : -recyclerViewManager.firstItemOffset);
           }
 
           // Calculate the final offset including first item offset if needed

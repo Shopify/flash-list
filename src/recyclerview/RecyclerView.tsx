@@ -87,7 +87,7 @@ const RecyclerViewComponent = <T,>(
   // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);
   const internalViewRef = useRef<CompatView>(null);
-  const childContainerViewRef = useRef<CompatView>(null);
+  const firstChildViewRef = useRef<CompatView>(null);
   const containerViewSizeRef = useRef<RVDimension | undefined>(undefined);
   const pendingChildIds = useRef<Set<string>>(new Set()).current;
 
@@ -132,16 +132,18 @@ const RecyclerViewComponent = <T,>(
     scrollViewRef
   );
 
+  const isHorizontalRTL = I18nManager.isRTL && horizontal;
+
   /**
    * Initialize the RecyclerView by measuring and setting up the window size
    * This effect runs when the component mounts or when layout changes
    */
   useLayoutEffect(() => {
-    if (internalViewRef.current && childContainerViewRef.current) {
+    if (internalViewRef.current && firstChildViewRef.current) {
       // Measure the outer and inner container layouts
       const outerViewLayout = measureParentSize(internalViewRef.current);
-      const childViewLayout = measureChildContainerLayout(
-        childContainerViewRef.current,
+      const firstChildViewLayout = measureChildContainerLayout(
+        firstChildViewRef.current,
         internalViewRef.current
       );
 
@@ -149,16 +151,23 @@ const RecyclerViewComponent = <T,>(
 
       // Calculate offset of first item
       const firstItemOffset = horizontal
-        ? childViewLayout.x - outerViewLayout.x
-        : childViewLayout.y - outerViewLayout.y;
+        ? firstChildViewLayout.x - outerViewLayout.x
+        : firstChildViewLayout.y - outerViewLayout.y;
 
       // Update the RecyclerView manager with window dimensions
       recyclerViewManager.updateLayoutParams(
         {
-          width: horizontal ? outerViewLayout.width : childViewLayout.width,
-          height: horizontal ? childViewLayout.height : outerViewLayout.height,
+          width: horizontal
+            ? outerViewLayout.width
+            : firstChildViewLayout.width,
+          height: horizontal
+            ? firstChildViewLayout.height
+            : outerViewLayout.height,
         },
-        firstItemOffset
+        isHorizontalRTL && recyclerViewManager.hasLayout()
+          ? firstItemOffset -
+              recyclerViewManager.getChildContainerDimensions().width
+          : firstItemOffset
       );
     }
   });
@@ -215,7 +224,7 @@ const RecyclerViewComponent = <T,>(
         : event.nativeEvent.contentOffset.y;
 
       // Handle RTL (Right-to-Left) layout adjustments
-      if (I18nManager.isRTL && horizontal) {
+      if (isHorizontalRTL) {
         scrollOffset = adjustOffsetForRTL(
           scrollOffset,
           event.nativeEvent.contentSize.width,
@@ -245,7 +254,7 @@ const RecyclerViewComponent = <T,>(
       // Call user-provided onScroll handler
       onScroll?.(event);
     },
-    [horizontal, recyclerViewManager]
+    [horizontal, isHorizontalRTL, recyclerViewManager]
   );
 
   // Create context for child components
@@ -391,7 +400,7 @@ const RecyclerViewComponent = <T,>(
           width: horizontal ? 0 : undefined,
           minHeight: shouldRenderFromBottom ? adjustmentMinHeight : undefined,
         }}
-        ref={childContainerViewRef}
+        ref={firstChildViewRef}
       />
     );
   }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
@@ -445,8 +454,9 @@ const RecyclerViewComponent = <T,>(
           {maintainVisibleContentPositionInternal && (
             <ScrollAnchor scrollAnchorRef={scrollAnchorRef} />
           )}
+          {isHorizontalRTL && viewToMeasureBoundedSize}
           {renderHeader}
-          {viewToMeasureBoundedSize}
+          {!isHorizontalRTL && viewToMeasureBoundedSize}
           {/* Main list content */}
           <ViewHolderCollection
             viewHolderCollectionRef={viewHolderCollectionRef}
