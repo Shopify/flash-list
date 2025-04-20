@@ -77,6 +77,8 @@ const HorizontalList = () => {
   // Memoize the keyExtractor function
   const keyExtractor = useCallback((item: Item) => item.id.toString(), []);
 
+  const header = <ListItem item={{ id: 0, title: "Header", color: "red" }} />;
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -89,6 +91,7 @@ const HorizontalList = () => {
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ItemSeparatorComponent={Separator}
+        ListHeaderComponent={header}
       />
 
       <Text style={styles.description}>
