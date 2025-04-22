@@ -34,13 +34,16 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     progressViewOffset,
     onRefresh,
     data,
+    refreshControl: customRefreshControl,
   } = props;
 
   /**
    * Creates the refresh control component if onRefresh is provided.
    */
   const refreshControl = useMemo(() => {
-    if (onRefresh) {
+    if (customRefreshControl) {
+      return customRefreshControl;
+    } else if (onRefresh) {
       return (
         <RefreshControl
           refreshing={Boolean(refreshing)}
@@ -50,7 +53,7 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
       );
     }
     return undefined;
-  }, [onRefresh, refreshing, progressViewOffset]);
+  }, [onRefresh, refreshing, progressViewOffset, customRefreshControl]);
 
   /**
    * Creates the header component with optional styling.
