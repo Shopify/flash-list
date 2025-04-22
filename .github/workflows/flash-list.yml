@@ -7,7 +7,6 @@ on:
   pull_request:
 
 env:
-  RUBY_VERSION: 3.0.3
   NODE_VERSION: 20.4.0
 
 jobs:
@@ -16,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
@@ -31,9 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
@@ -48,8 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: |
@@ -61,9 +60,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
@@ -76,9 +75,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
@@ -90,7 +89,7 @@ jobs:
           mkdir -p /tmp/artifacts
           yarn react-native bundle --entry-file index.js --platform ios --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
       - name: Archive iOS bundle artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ios-bundle-artifacts
           path: /tmp/artifacts
@@ -100,9 +99,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
@@ -114,7 +113,7 @@ jobs:
           mkdir -p /tmp/artifacts
           yarn react-native bundle --entry-file index.js --platform android --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
       - name: Archive Android bundle artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: android-bundle-artifacts
           path: /tmp/artifacts
@@ -124,16 +123,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
       - name: Ruby setup
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
       - name: Install dependencies
         run: |
@@ -154,12 +152,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: "17"
       - name: Ruby setup
         uses: ruby/setup-ruby@v1
         with:
@@ -179,9 +182,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
@@ -206,7 +209,8 @@ jobs:
           yarn e2e:build:ios
           yarn e2e:test:ios
       - name: Archive iOS e2e artifacts
-        uses: actions/upload-artifact@v3
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
           name: ios-e2e-artifacts
-          path: fixture/e2e/artifacts/ios/diff/*.png
+          path: fixture/react-native/e2e/artifacts/ios/diff/*.png

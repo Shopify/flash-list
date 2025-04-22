@@ -6,9 +6,7 @@ module.exports = {
   dependencies: {
     "@shopify/flash-list": {
       root,
-      platforms: {
-        ios: null,
-      },
+      platforms: {},
     },
   },
 };

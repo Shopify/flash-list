@@ -16,6 +16,10 @@ Swap from FlatList in seconds. Get instant performance.
 
 </div>
 
+## React Native's new architecture support
+
+FlashList v1 is compatible with React Native's new architecture however, we have a new version (v2) in alpha that fully leverages the new architecture and comes with more features. Click [here](https://github.com/Shopify/flash-list/tree/new-rlv-prototype?tab=readme-ov-file#flashlist-v2) to know more.
+
 ## Installation
 
 Add the package to your project via `yarn add @shopify/flash-list` and run `pod install` in the `ios` directory.

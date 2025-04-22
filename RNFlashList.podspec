@@ -1,6 +1,7 @@
 require 'json'
 
 package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
+new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED']
 
 Pod::Spec.new do |s|
   s.name             = 'RNFlashList'
@@ -15,8 +16,18 @@ Pod::Spec.new do |s|
   s.requires_arc     = true
   s.swift_version    = '5.0'
 
-  # Dependencies
-  s.dependency 'React-Core'
+  if new_arch_enabled
+    s.pod_target_xcconfig = {
+      'OTHER_SWIFT_FLAGS' => '-D RCT_NEW_ARCH_ENABLED',
+    }
+  end
+
+  # install_modules_dependencies is available since RN 0.71
+  if respond_to?(:install_modules_dependencies, true)
+    install_modules_dependencies(s)
+  else
+    s.dependency "React-Core"
+  end
 
   # Tests spec
   s.test_spec 'Tests' do |test_spec|
