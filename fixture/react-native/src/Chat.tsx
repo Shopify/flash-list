@@ -96,7 +96,6 @@ export function Chat() {
 
         <RecyclerView
           data={messages}
-          drawDistance={500}
           maintainVisibleContentPosition={maintainVisibleContentPositionConfig}
           onStartReached={() => {
             console.log("onStartReached");
