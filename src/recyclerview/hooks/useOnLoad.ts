@@ -46,7 +46,7 @@ export const useOnListLoad = <T>(
     //   ToastAndroid.SHORT
     // );
     // console.log("----------> dataCollector", dataCollectorString);
-    // console.log("----------> FlashList v2 Load elapsedTimeInMs", elapsedTimeInMs);
+    // console.log("----------> FlashList v2 load in", `${elapsedTimeInMs} ms`);
     requestAnimationFrame(() => {
       if (!isUnmounted.current) {
         onLoad?.({ elapsedTimeInMs });
