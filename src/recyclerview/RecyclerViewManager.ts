@@ -29,6 +29,7 @@ export class RecyclerViewManager<T> {
   private hasRenderedProgressively = false;
   private props: RecyclerViewProps<T>;
   private itemViewabilityManager: ViewabilityManager<T>;
+  private allocatedKeyTracker: Set<string> = new Set();
 
   public disableRecycling = false;
   public firstItemOffset = 0;
@@ -41,8 +42,11 @@ export class RecyclerViewManager<T> {
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
+  // TODO: Write comprehensive tests for this function
   private updateRenderStack = (engagedIndices: ConsecutiveNumbers): void => {
     // console.log("updateRenderStack", engagedIndices);
+
+    this.allocatedKeyTracker.clear();
     const newRenderStack = new Map<number, string>();
     for (const [index, key] of this.renderStack) {
       if (!engagedIndices.includes(index)) {
@@ -53,14 +57,24 @@ export class RecyclerViewManager<T> {
       this.recycleKeyManager.clearPool();
     }
     for (const index of engagedIndices) {
+      const currentKey = this.renderStack.get(index);
+
+      if (
+        currentKey &&
+        !this.disableRecycling &&
+        !this.allocatedKeyTracker.has(currentKey)
+      ) {
+        this.recycleKeyManager.recycleKey(currentKey);
+      }
+
       const newKey = this.recycleKeyManager.getKey(
         this.getItemType(index),
         this.getStableId(index),
-        this.renderStack.get(index)
+        currentKey
       );
+      this.allocatedKeyTracker.add(newKey);
       newRenderStack.set(index, newKey);
     }
-
     //  DANGER
     for (const [index, key] of this.renderStack) {
       if (
@@ -68,6 +82,7 @@ export class RecyclerViewManager<T> {
         !newRenderStack.has(index) &&
         index < (this.props.data?.length ?? 0)
       ) {
+        this.allocatedKeyTracker.add(key);
         newRenderStack.set(index, key);
       }
     }
