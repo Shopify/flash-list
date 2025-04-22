@@ -178,8 +178,9 @@ const MyHeavyComponent = () => {
   return ...;
 };
 
+const MemoizedMyHeavyComponent = memo(MyHeavyComponent);
+
 const MyItem = ({ item }: { item: any }) => {
-  const MemoizedMyHeavyComponent = memo(MyHeavyComponent);
   return (
     <>
       <MemoizedMyHeavyComponent />
