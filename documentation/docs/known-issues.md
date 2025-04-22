@@ -12,3 +12,7 @@ FlashList and FlatList have very different internal. While the API is almost the
 ### 1) Horizontal lists + RTL Layout
 
 We have a limitation where we're not able to read the padding applied on the list using `contentContainerStyle`. Small values shouldn't cause an issue; however, if you require precise `scrollTo` or `initialScrollIndex`, then apply padding or margin to the header instead. Please note that this applies only to RTL language layouts.
+
+### 2) Horizontal Lists with headers
+
+If the horizontal list has a fixed size or header, we assume that the height of the list is fixed. If your use case requires the list to match the size of the items or resize based on tallest child, just skip using the header. You can just render the header as the first item in the list and give it a separate type using `getItemType`.
