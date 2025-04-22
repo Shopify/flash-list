@@ -10,7 +10,7 @@ interface Item {
 let id = 0;
 
 const ItemRenderer = ({ item }: { item: Item }) => {
-  const id = item.id;
+  const [viewId] = useState(item.id);
   // log mount and unmount
   useEffect(() => {
     console.log("ItemRenderer mounted");
@@ -22,7 +22,7 @@ const ItemRenderer = ({ item }: { item: Item }) => {
     <View style={styles.itemContainer}>
       <Text style={styles.text}>Index: {item.index}</Text>
       <Text style={styles.text}>Data ID: {item.id}</Text>
-      <Text style={styles.text}>View ID: {id}</Text>
+      <Text style={styles.text}>View ID: {viewId}</Text>
     </View>
   );
 };
