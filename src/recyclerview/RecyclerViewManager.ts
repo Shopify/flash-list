@@ -33,6 +33,7 @@ export class RecyclerViewManager<T> {
 
   public disableRecycling = false;
   public firstItemOffset = 0;
+  public ignoreScrollEvents = false;
 
   constructor(props: RecyclerViewProps<T>) {
     this.props = props;

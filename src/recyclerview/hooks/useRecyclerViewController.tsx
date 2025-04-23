@@ -16,6 +16,7 @@ import { RVLayout } from "../layout-managers/LayoutManager";
 import { ScrollAnchorRef } from "../components/ScrollAnchor";
 
 import { useUnmountFlag } from "./useUnmountFlag";
+import { useUnmountAwareCallbacks } from "./useUnmountAwareCallbacks";
 
 /**
  * Parameters for scrolling to a specific position in the list.
@@ -97,6 +98,7 @@ export function useRecyclerViewController<T>(
   const pauseAdjustRef = useRef(false);
   const initialScrollCompletedRef = useRef(false);
   const lastDataLengthRef = useRef(data?.length ?? 0);
+  const { setTimeout } = useUnmountAwareCallbacks();
 
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
@@ -184,7 +186,7 @@ export function useRecyclerViewController<T>(
       currentDataLength > 0 &&
       props.maintainVisibleContentPosition?.disabled !== true
     ) {
-      const shouldScanData = currentDataLength !== lastDataLengthRef.current;
+      const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
         const currentIndexOfFirstVisibleItem =
@@ -195,7 +197,7 @@ export function useRecyclerViewController<T>(
                 props.keyExtractor?.(props.data![index], index) ===
                 firstVisibleItemKey.current
             ) ??
-          (shouldScanData
+          (hasDataChanged
             ? props.data?.findIndex(
                 (item, index) =>
                   props.keyExtractor?.(item, index) ===
@@ -214,9 +216,15 @@ export function useRecyclerViewController<T>(
           if (diff !== 0 && !pauseAdjustRef.current) {
             // console.log("diff", diff, firstVisibleItemKey.current);
             scrollAnchorRef.current?.scrollBy(diff);
-            updateScrollOffsetAsync(
-              recyclerViewManager.getAbsoluteLastScrollOffset() + diff
-            );
+            if (hasDataChanged) {
+              updateScrollOffsetAsync(
+                recyclerViewManager.getAbsoluteLastScrollOffset() + diff
+              );
+              recyclerViewManager.ignoreScrollEvents = true;
+              setTimeout(() => {
+                recyclerViewManager.ignoreScrollEvents = false;
+              }, 100);
+            }
           }
         }
       }
@@ -237,7 +245,7 @@ export function useRecyclerViewController<T>(
       }
     }
     lastDataLengthRef.current = props.data?.length ?? 0;
-  }, [props.data, props.keyExtractor, recyclerViewManager]);
+  }, [props.data, props.keyExtractor, recyclerViewManager, setTimeout]);
 
   const handlerMethods = useMemo(() => {
     return {

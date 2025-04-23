@@ -218,6 +218,9 @@ const RecyclerViewComponent = <T,>(
    */
   const onScrollHandler = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (recyclerViewManager.ignoreScrollEvents) {
+        return;
+      }
       let velocity = event.nativeEvent.velocity;
       let scrollOffset = horizontal
         ? event.nativeEvent.contentOffset.x
@@ -237,7 +240,6 @@ const RecyclerViewComponent = <T,>(
           };
         }
       }
-
       // Update scroll position and trigger re-render if needed
       if (recyclerViewManager.updateScrollOffset(scrollOffset, velocity)) {
         setRenderId((prev) => prev + 1);
@@ -405,7 +407,7 @@ const RecyclerViewComponent = <T,>(
     );
   }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
 
-  // console.log("render");
+  // console.log("render", recyclerViewManager.getRenderStack());
 
   // Render the main RecyclerView structure
   return (
