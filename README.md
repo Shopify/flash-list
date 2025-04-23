@@ -181,6 +181,36 @@ const MyList = () => {
   };
   ```
 
+- `useMappingHelper`: Returns a function that helps create optimal mapping keys for items when using `.map()` in your render methods. Using this ensures optimized recycling and performance for FlashList.
+
+  ```jsx
+  import { useMappingHelper } from "@shopify/flash-list";
+
+  const MyComponent = ({ items }) => {
+    const { getMappingKey } = useMappingHelper();
+
+    return (
+      <FlashList
+        data={items}
+        renderItem={({ item }) => <ItemComponent item={item} />}
+      />
+    );
+  };
+
+  // When mapping over items inside components:
+  const NestedList = ({ items }) => {
+    const { getMappingKey } = useMappingHelper();
+
+    return (
+      <View>
+        {items.map((item, index) => (
+          <Text key={getMappingKey(index, item.id)}>{item.title}</Text>
+        ))}
+      </View>
+    );
+  };
+  ```
+
 - If you're nesting horizontal FlashLists in vertical lists, we highly recommend the vertical list to be FlashList too. We have optimizations to wait for child layout to complete which can improve load times.
 - For chat apps, consider increasing drawDistance to 500 or higher if you're going to add a lot of items to the top. Higher drawDistance can remove some flickers. 500-1000 for chat can be okay. We would like to hear from you if you run into issues.
 - Memoizing props passed to FlashList is more important in v2. v1 was more selective about updating items, but this was often perceived as a bug by developers. We will not follow that approach and will instead allow developers to ensure that props are memoized. We will stop re-renders of children wherever it is obvious.

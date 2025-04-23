@@ -617,6 +617,67 @@ const GridItem = ({ item }) => {
 };
 ```
 
+### useMappingHelper
+
+```tsx
+const { getMappingKey } = useMappingHelper();
+```
+
+Returns a function that helps create a mapping key for items when using `.map()` in your render methods. Using this ensures that performance is optimal for FlashList by providing consistent keys that work with the recycling system.
+
+The `getMappingKey` function takes two parameters:
+
+- `index`: The index of the item in the array
+- `itemKey`: A unique identifier for the item (string, number, or bigint)
+
+It returns the appropriate key value to use in the `key` prop based on the current context.
+
+**Basic usage:**
+
+```jsx
+import { useMappingHelper } from "@shopify/flash-list";
+
+const MyComponent = ({ items }) => {
+  const { getMappingKey } = useMappingHelper();
+
+  return (
+    <View>
+      {items.map((item, index) => (
+        <Text key={getMappingKey(index, item.id)}>{item.title}</Text>
+      ))}
+    </View>
+  );
+};
+```
+
+**When to use it:**
+
+- When mapping over arrays to create lists of components inside FlashList items
+- When building nested components that render multiple items from an array
+- To ensure consistent key generation that works well with FlashList's recycling system
+
+```jsx
+import { useMappingHelper } from "@shopify/flash-list";
+
+const ProductList = ({ products }) => {
+  const { getMappingKey } = useMappingHelper();
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Featured Products</Text>
+      <View style={styles.grid}>
+        {products.map((product, index) => (
+          <ProductCard
+            key={getMappingKey(index, product.id)}
+            product={product}
+          />
+        ))}
+      </View>
+    </View>
+  );
+};
+```
+
 # FlashList methods
 
 ### `prepareForLayoutAnimationRender()`
