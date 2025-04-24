@@ -22,7 +22,7 @@ import {
 import { RVDimension } from "./layout-managers/LayoutManager";
 import {
   areDimensionsNotEqual,
-  measureChildContainerLayout,
+  measureFirstChildLayout,
   measureItemLayout,
   measureParentSize,
 } from "./utils/measureLayout";
@@ -142,7 +142,7 @@ const RecyclerViewComponent = <T,>(
     if (internalViewRef.current && firstChildViewRef.current) {
       // Measure the outer and inner container layouts
       const outerViewLayout = measureParentSize(internalViewRef.current);
-      const firstChildViewLayout = measureChildContainerLayout(
+      const firstChildViewLayout = measureFirstChildLayout(
         firstChildViewRef.current,
         internalViewRef.current
       );
@@ -222,9 +222,21 @@ const RecyclerViewComponent = <T,>(
         return;
       }
       let velocity = event.nativeEvent.velocity;
+
       let scrollOffset = horizontal
         ? event.nativeEvent.contentOffset.x
         : event.nativeEvent.contentOffset.y;
+
+      if (!velocity) {
+        const velocityValue =
+          recyclerViewManager.getAbsoluteLastScrollOffset() < scrollOffset
+            ? 1
+            : -1;
+        velocity = {
+          x: horizontal ? velocityValue : 0,
+          y: horizontal ? 0 : velocityValue,
+        };
+      }
 
       // Handle RTL (Right-to-Left) layout adjustments
       if (isHorizontalRTL) {

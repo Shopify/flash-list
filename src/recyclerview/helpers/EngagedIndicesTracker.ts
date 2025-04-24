@@ -34,6 +34,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   // Current scroll position of the list
   public scrollOffset = 0;
   // Distance to pre-render items before and after the visible viewport (in pixels)
+  // TODO: Increase this value for web
   public drawDistance = 250;
   // Currently rendered item indices (including buffer items)
   private engagedIndices = ConsecutiveNumbers.EMPTY;
