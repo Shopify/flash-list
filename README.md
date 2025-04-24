@@ -10,7 +10,7 @@ FlashList v2 has been rebuilt from the ground up and delivers fast performance, 
 
 ### Web support
 
-Web support might be added sometime in the future. We plan on shipping the RN version first.
+FlashList v2 has web support. Most of the features should work but we're not actively testing it right now. If you run into an issue, please raise it on GitHub.
 
 ## Installation
 

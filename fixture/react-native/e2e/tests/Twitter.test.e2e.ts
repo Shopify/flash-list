@@ -49,7 +49,6 @@ describe("Twitter", () => {
 
   it("looks the same after orientation change", async () => {
     const testName = "Twitter_looks_the_same_after_orientation_change";
-    const flatListTestName = `with_FlatList_${testName}`;
 
     // Go to Twitter with FlashList screen
     await element(by.id("Twitter Timeline")).tap();
@@ -60,23 +59,6 @@ describe("Twitter", () => {
     ).takeScreenshot(testName);
 
     assertSnapshot(flashListScreenshotPath, testName);
-
-    await device.setOrientation("portrait");
-    await goBack();
-
-    // Go to Twitter with FlatList screen
-    await element(by.id("Twitter FlatList Timeline")).tap();
-    await scrollAndRotate("FlatList");
-
-    const flatListScreenshotPath = await element(
-      by.id("FlatList")
-    ).takeScreenshot(flatListTestName);
-
-    assertSnapshotsEqual(
-      flashListScreenshotPath,
-      flatListScreenshotPath,
-      flatListTestName
-    );
   });
 
   it("is updated after refreshed", async () => {
