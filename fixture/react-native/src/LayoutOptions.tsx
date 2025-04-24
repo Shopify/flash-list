@@ -98,13 +98,7 @@ export function LayoutOptions() {
         masonry={!isHorizontal && isMasonry}
         optimizeItemArrangement={optimizeItemArrangement}
         keyExtractor={(item) => item.id.toString()}
-        estimatedItemSize={150}
         contentContainerStyle={{ padding: 4 }}
-        overrideItemLayout={(layout, item) => {
-          if (isMasonry) {
-            layout.size = item.height;
-          }
-        }}
         renderItem={renderItem}
       />
     </View>

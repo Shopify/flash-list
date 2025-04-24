@@ -267,7 +267,6 @@ const MovieList = () => {
       <View style={styles.listContainer}>
         <RecyclerView
           data={categories}
-          drawDistance={10}
           onLoad={({ elapsedTimeInMs }) => {
             console.log("onLoad ------------>", elapsedTimeInMs);
           }}

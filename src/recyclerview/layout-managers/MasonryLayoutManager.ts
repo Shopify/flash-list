@@ -23,7 +23,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     super(params, previousLayoutManager);
     this.boundedSize = params.windowSize.width;
     this.optimizeItemArrangement = params.optimizeItemArrangement ?? false;
-    this.columnHeights = Array(this.maxColumns).fill(0);
+    this.columnHeights = this.columnHeights ?? Array(this.maxColumns).fill(0);
   }
 
   /**
