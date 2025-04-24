@@ -15,7 +15,7 @@ interface Layout {
  * @param view - The React Native View component to measure
  * @returns An object containing x, y, width, and height measurements
  */
-export function measureLayout(view: View, oldLayout: Layout | undefined) {
+function measureLayout(view: View, oldLayout: Layout | undefined) {
   // const layout = view.unstable_getBoundingClientRect();
   // layout.width = roundOffPixel(layout.width);
   // layout.height = roundOffPixel(layout.height);
@@ -31,7 +31,7 @@ export function measureLayout(view: View, oldLayout: Layout | undefined) {
  * @param relativeTo - The reference view to measure against
  * @returns An object containing x, y, width, and height measurements
  */
-export function measureLayoutRelative(
+function measureLayoutRelative(
   view: View,
   relativeTo: View,
   oldLayout: Layout | undefined
@@ -106,7 +106,7 @@ export function measureParentSize(view: View): Layout {
  * @param parentView
  * @returns
  */
-export function measureChildContainerLayout(
+export function measureFirstChildLayout(
   childContainerView: View,
   parentView: View
 ): Layout {

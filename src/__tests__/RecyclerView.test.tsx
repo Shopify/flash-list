@@ -18,7 +18,7 @@ jest.mock("../recyclerview/utils/measureLayout", () => {
       width: 400,
       height: 900,
     })),
-    measureChildContainerLayout: jest.fn().mockImplementation(() => ({
+    measureFirstChildLayout: jest.fn().mockImplementation(() => ({
       x: 0,
       y: 0,
       width: 400,
