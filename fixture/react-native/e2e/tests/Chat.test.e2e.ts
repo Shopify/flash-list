@@ -21,6 +21,8 @@ describe("Chat", () => {
   it("add messages at top and capture screenshot", async () => {
     // First capture the initial state
     const initialTestName = "Chat_initial_state";
+    // add a delay to ensure the screen is loaded
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     const initialScreenshotPath = await element(by.id("ChatScreen"))
       .atIndex(0)
       .takeScreenshot(initialTestName);
