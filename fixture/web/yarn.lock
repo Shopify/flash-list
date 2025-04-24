@@ -1577,10 +1577,10 @@
     component-type "^1.2.1"
     join-component "^1.1.0"
 
-"@shopify/flash-list@^2.0.0-alpha.8":
-  version "2.0.0-alpha.8"
-  resolved "https://npm.shopify.io/node/@shopify/flash-list/-/flash-list-2.0.0-alpha.8.tgz#766fa48339f0602cf36aaaa98eaf2276e0f7f73b"
-  integrity sha512-yAB8XcMVyoJcR6eo96N7mIRW99Ab4AY3CusjtqVsDuUNqPg8GvFTzfwM9LqaaiiGekgAjfmm64TIWQD7+Hdbxw==
+"@shopify/flash-list@^2.0.0-alpha.9":
+  version "2.0.0-alpha.9"
+  resolved "https://npm.shopify.io/node/@shopify/flash-list/-/flash-list-2.0.0-alpha.9.tgz#37c0805c3b3da92215bb225df11c669a108d2ade"
+  integrity sha512-lEZ61g2gWUoHatBjKBo1C0iOYiYPfXs/KWcyq2MeQSeXoJXVRPapzLoPsG3GFzbyVC7ZzCtjN6PgCcnt1z+U1A==
   dependencies:
     recyclerlistview "4.2.3"
     tslib "2.8.1"
