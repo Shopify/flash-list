@@ -2,6 +2,7 @@ import { BaseItemAnimator } from "recyclerlistview";
 
 const PlatformConfig = {
   defaultDrawDistance: 250,
+  supportsOffsetCorrection: true,
   invertedTransformStyle: { transform: [{ scaleY: -1 }] },
   invertedTransformStyleHorizontal: { transform: [{ scaleX: -1 }] },
 };

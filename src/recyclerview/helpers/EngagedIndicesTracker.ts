@@ -1,3 +1,4 @@
+import { PlatformConfig } from "../../native/config/PlatformHelper";
 import { RVLayoutManager } from "../layout-managers/LayoutManager";
 
 import { ConsecutiveNumbers } from "./ConsecutiveNumbers";
@@ -35,7 +36,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   public scrollOffset = 0;
   // Distance to pre-render items before and after the visible viewport (in pixels)
   // TODO: Increase this value for web
-  public drawDistance = 250;
+  public drawDistance = PlatformConfig.defaultDrawDistance;
   // Currently rendered item indices (including buffer items)
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
