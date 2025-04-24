@@ -14,6 +14,7 @@ import { RecyclerViewManager } from "../RecyclerViewManager";
 import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
 import { RVLayout } from "../layout-managers/LayoutManager";
 import { ScrollAnchorRef } from "../components/ScrollAnchor";
+import { PlatformConfig } from "../../native/config/PlatformHelper";
 
 import { useUnmountFlag } from "./useUnmountFlag";
 import { useUnmountAwareCallbacks } from "./useUnmountAwareCallbacks";
@@ -215,7 +216,14 @@ export function useRecyclerViewController<T>(
           };
           if (diff !== 0 && !pauseAdjustRef.current) {
             // console.log("diff", diff, firstVisibleItemKey.current);
-            scrollAnchorRef.current?.scrollBy(diff);
+            if (PlatformConfig.supportsOffsetCorrection) {
+              scrollAnchorRef.current?.scrollBy(diff);
+            } else {
+              scrollViewRef.current?.scrollTo({
+                y: recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
+                animated: false,
+              });
+            }
             if (hasDataChanged) {
               updateScrollOffsetAsync(
                 recyclerViewManager.getAbsoluteLastScrollOffset() + diff

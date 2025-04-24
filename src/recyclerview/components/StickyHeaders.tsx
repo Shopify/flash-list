@@ -151,6 +151,7 @@ export const StickyHeaders = <TItem,>({
           top: 0,
           left: 0,
           right: 0,
+          zIndex: 1,
           transform: [{ translateY }],
         }}
       >

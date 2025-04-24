@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 let useNewCore: boolean | undefined;
 export function enableNewCore(enable: boolean) {
   useNewCore = enable;
@@ -15,7 +17,7 @@ function isReactNativeNewArchitecture(): boolean {
     // Check for TurboModule system
     const hasTurboModule = Boolean((global as any)?.__turboModuleProxy);
 
-    return hasFabricUIManager || hasTurboModule;
+    return hasFabricUIManager || hasTurboModule || Platform.OS === "web";
   } catch {
     return false;
   }

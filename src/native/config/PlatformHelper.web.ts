@@ -4,7 +4,8 @@ import { BaseItemAnimator } from "recyclerlistview";
 import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platform/reactnative/itemanimators/defaultjsanimator/DefaultJSItemAnimator";
 
 const PlatformConfig = {
-  defaultDrawDistance: 2000,
+  defaultDrawDistance: 500,
+  supportsOffsetCorrection: false,
   invertedTransformStyle: { transform: [{ scaleY: -1 }] },
   invertedTransformStyleHorizontal: { transform: [{ scaleX: -1 }] },
 };
