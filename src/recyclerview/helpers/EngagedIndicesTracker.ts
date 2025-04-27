@@ -8,6 +8,8 @@ export interface RVEngagedIndicesTracker {
   scrollOffset: number;
   // Total distance (in pixels) to pre-render items before and after the visible viewport
   drawDistance: number;
+  // Whether to use offset projection to predict the next scroll offset
+  enableOffsetProjection: boolean;
 
   /**
    * Updates the scroll offset and calculates which items should be rendered (engaged indices).
@@ -21,9 +23,31 @@ export interface RVEngagedIndicesTracker {
     velocity: Velocity | null | undefined,
     layoutManager: RVLayoutManager
   ) => ConsecutiveNumbers | undefined;
+
+  /**
+   * Returns the currently engaged (rendered) indices.
+   * This includes both visible items and buffer items.
+   * @returns The last computed set of engaged indices
+   */
   getEngagedIndices: () => ConsecutiveNumbers;
+
+  /**
+   * Computes the visible indices in the viewport.
+   * @param layoutManager - Layout manager to fetch item positions and dimensions
+   * @returns Indices of items currently visible in the viewport
+   */
   computeVisibleIndices: (layoutManager: RVLayoutManager) => ConsecutiveNumbers;
+
+  /**
+   * Sets the scroll direction for velocity history tracking.
+   * @param scrollDirection - The direction of scrolling ("forward" or "backward")
+   */
   setScrollDirection: (scrollDirection: "forward" | "backward") => void;
+
+  /**
+   * Resets the velocity history based on the current scroll direction.
+   */
+  resetVelocityHistory: () => void;
 }
 
 export interface Velocity {
@@ -37,12 +61,19 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   // Distance to pre-render items before and after the visible viewport (in pixels)
   // TODO: Increase this value for web
   public drawDistance = PlatformConfig.defaultDrawDistance;
+
+  // Whether to use offset projection to predict the next scroll offset
+  public enableOffsetProjection = true;
+
+  // Internal override to disable offset projection
+  private forceDisableOffsetProjection = false;
+
   // Currently rendered item indices (including buffer items)
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
   // Buffer distribution multipliers for scroll direction optimization
-  private smallMultiplier = 0.1; // Used for buffer in the opposite direction of scroll
-  private largeMultiplier = 0.9; // Used for buffer in the direction of scroll
+  private smallMultiplier = 0.5; // Used for buffer in the opposite direction of scroll
+  private largeMultiplier = 0.5; // Used for buffer in the direction of scroll
 
   // Circular buffer to track recent scroll velocities for direction detection
   private velocityHistory = [-1, -1, -1, -1, -1];
@@ -67,18 +98,28 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
     // STEP 1: Determine the currently visible viewport
     const windowSize = layoutManager.getWindowsSize();
     const isHorizontal = layoutManager.isHorizontal();
-    const viewportStart = offset;
+
+    // Update velocity history
+    if (velocity) {
+      this.updateVelocityHistory(isHorizontal ? velocity.x : velocity.y);
+    }
+
+    // Determine scroll direction to optimize buffer distribution
+    const isScrollingBackward = this.isScrollingBackward();
+
+    const timeMs = 16;
+    const viewportStart =
+      this.enableOffsetProjection && !this.forceDisableOffsetProjection
+        ? this.getProjectedScrollOffset(offset, timeMs)
+        : offset;
+    // console.log("timeMs", timeMs, offset, viewportStart);
+
     const viewportSize = isHorizontal ? windowSize.width : windowSize.height;
     const viewportEnd = viewportStart + viewportSize;
 
     // STEP 2: Determine buffer size and distribution
     // The total extra space where items will be pre-rendered
-    const totalBuffer = this.drawDistance * 2;
-
-    // Determine scroll direction to optimize buffer distribution
-    const isScrollingBackward = this.isScrollingBackward(
-      isHorizontal ? velocity?.x : velocity?.y
-    );
+    const totalBuffer = this.drawDistance;
 
     // Distribute more buffer in the direction of scrolling
     // When scrolling forward: more buffer after viewport
@@ -136,18 +177,20 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   }
 
   /**
+   * Updates the velocity history with a new velocity value.
+   * @param velocity - Current scroll velocity component (x or y)
+   */
+  private updateVelocityHistory(velocity: number) {
+    this.velocityHistory[this.velocityIndex] = velocity;
+    this.velocityIndex = (this.velocityIndex + 1) % this.velocityHistory.length;
+  }
+
+  /**
    * Determines scroll direction by analyzing recent velocity history.
    * Uses a majority voting system on the last 5 velocity values.
-   * @param velocity - Current scroll velocity component (x or y)
    * @returns true if scrolling backward (negative direction), false otherwise
    */
-  private isScrollingBackward(velocity?: number): boolean {
-    // update velocity history
-    if (velocity) {
-      this.velocityHistory[this.velocityIndex] = velocity;
-      this.velocityIndex =
-        (this.velocityIndex + 1) % this.velocityHistory.length;
-    }
+  private isScrollingBackward(): boolean {
     // should decide based on whether we have more positive or negative values, use for loop
     let positiveCount = 0;
     let negativeCount = 0;
@@ -160,6 +203,33 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
       }
     }
     return positiveCount < negativeCount;
+  }
+
+  /**
+   * Calculates the average velocity based on velocity history
+   * @returns Average velocity over the recent history
+   */
+  private getAverageVelocity(): number {
+    let sum = 0;
+
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < this.velocityHistory.length; i++) {
+      sum += this.velocityHistory[i];
+    }
+    return sum / this.velocityHistory.length;
+  }
+
+  /**
+   * Projects the next scroll offset based on average velocity
+   * @param timeMs Time in milliseconds to predict ahead
+   * @returns Projected scroll offset
+   */
+  private getProjectedScrollOffset(offset: number, timeMs: number): number {
+    const averageVelocity = this.getAverageVelocity();
+
+    // Convert time from ms to seconds for velocity calculation
+    // Predict next position: current position + (velocity * time)
+    return offset + averageVelocity * timeMs;
   }
 
   /**
@@ -201,6 +271,18 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
     } else {
       this.velocityHistory = [-1, -1, -1, -1, -1];
       this.velocityIndex = 0;
+    }
+  }
+
+  /**
+   * Resets the velocity history based on the current scroll direction.
+   * This ensures that the velocity history is always in sync with the current scroll direction.
+   */
+  resetVelocityHistory() {
+    if (this.isScrollingBackward()) {
+      this.setScrollDirection("backward");
+    } else {
+      this.setScrollDirection("forward");
     }
   }
 }

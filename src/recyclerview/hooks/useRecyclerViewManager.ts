@@ -2,11 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 
 import { RecyclerViewProps } from "../RecyclerViewProps";
 import { RecyclerViewManager } from "../RecyclerViewManager";
+import { VelocityTracker } from "../helpers/VelocityTracker";
 
 export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   const [recyclerViewManager] = useState<RecyclerViewManager<T>>(
     () => new RecyclerViewManager(props)
   );
+  const [velocityTracker] = useState(() => new VelocityTracker());
+
   const { data } = props;
 
   useMemo(() => {
@@ -23,8 +26,9 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   useEffect(() => {
     return () => {
       recyclerViewManager.dispose();
+      velocityTracker.dispose();
     };
   }, []);
 
-  return { recyclerViewManager };
+  return { recyclerViewManager, velocityTracker };
 };
