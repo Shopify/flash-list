@@ -109,7 +109,8 @@ const RecyclerViewComponent = <T,>(
   );
 
   // Initialize core RecyclerView manager and content offset management
-  const { recyclerViewManager } = useRecyclerViewManager(props);
+  const { recyclerViewManager, velocityTracker } =
+    useRecyclerViewManager(props);
   const { applyContentOffset, applyInitialScrollIndex } =
     useRecyclerViewController(
       recyclerViewManager,
@@ -218,25 +219,13 @@ const RecyclerViewComponent = <T,>(
    */
   const onScrollHandler = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (recyclerViewManager.ignoreScrollEvents) {
+      if (recyclerViewManager.asyncUpdateInProgress) {
         return;
       }
-      let velocity = event.nativeEvent.velocity;
 
       let scrollOffset = horizontal
         ? event.nativeEvent.contentOffset.x
         : event.nativeEvent.contentOffset.y;
-
-      if (!velocity) {
-        const velocityValue =
-          recyclerViewManager.getAbsoluteLastScrollOffset() < scrollOffset
-            ? 1
-            : -1;
-        velocity = {
-          x: horizontal ? velocityValue : 0,
-          y: horizontal ? 0 : velocityValue,
-        };
-      }
 
       // Handle RTL (Right-to-Left) layout adjustments
       if (isHorizontalRTL) {
@@ -245,17 +234,22 @@ const RecyclerViewComponent = <T,>(
           event.nativeEvent.contentSize.width,
           event.nativeEvent.layoutMeasurement.width
         );
-        if (velocity) {
-          velocity = {
-            x: -velocity.x,
-            y: velocity.y,
-          };
+      }
+
+      velocityTracker.computeVelocity(
+        scrollOffset,
+        recyclerViewManager.getAbsoluteLastScrollOffset(),
+        Boolean(horizontal),
+        (velocity, isMomentumEnd) => {
+          if (isMomentumEnd) {
+            recyclerViewManager.resetAverageVelocity();
+          }
+          // Update scroll position and trigger re-render if needed
+          if (recyclerViewManager.updateScrollOffset(scrollOffset, velocity)) {
+            setRenderId((prev) => prev + 1);
+          }
         }
-      }
-      // Update scroll position and trigger re-render if needed
-      if (recyclerViewManager.updateScrollOffset(scrollOffset, velocity)) {
-        setRenderId((prev) => prev + 1);
-      }
+      );
 
       // Update sticky headers and check bounds
       stickyHeaderRef.current?.reportScrollEvent(event.nativeEvent);

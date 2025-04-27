@@ -30,10 +30,19 @@ export class RecyclerViewManager<T> {
   private props: RecyclerViewProps<T>;
   private itemViewabilityManager: ViewabilityManager<T>;
   private allocatedKeyTracker: Set<string> = new Set();
+  private _asyncUpdateInProgress = false;
+  private _isDisposed = false;
 
   public disableRecycling = false;
   public firstItemOffset = 0;
-  public ignoreScrollEvents = false;
+
+  public get asyncUpdateInProgress() {
+    return this._asyncUpdateInProgress;
+  }
+
+  public get isDisposed() {
+    return this._isDisposed;
+  }
 
   constructor(props: RecyclerViewProps<T>) {
     this.props = props;
@@ -91,6 +100,11 @@ export class RecyclerViewManager<T> {
     this.renderStack = newRenderStack;
   };
 
+  setAsyncUpdateInProgress(value: boolean) {
+    this._asyncUpdateInProgress = value;
+    this.engagedIndicesTracker.enableOffsetProjection = !value;
+  }
+
   updateProps(props: RecyclerViewProps<T>) {
     this.props = props;
     this.engagedIndicesTracker.drawDistance =
@@ -111,7 +125,7 @@ export class RecyclerViewManager<T> {
     offset: number,
     velocity?: Velocity
   ): ConsecutiveNumbers | undefined {
-    if (this.layoutManager) {
+    if (this.layoutManager && !this.isDisposed) {
       const engagedIndices = this.engagedIndicesTracker.updateScrollOffset(
         offset - this.firstItemOffset,
         velocity,
@@ -187,6 +201,10 @@ export class RecyclerViewManager<T> {
 
   setScrollDirection(scrollDirection: "forward" | "backward") {
     this.engagedIndicesTracker.setScrollDirection(scrollDirection);
+  }
+
+  resetAverageVelocity() {
+    this.engagedIndicesTracker.resetVelocityHistory();
   }
 
   updateLayoutParams(windowSize: RVDimension, firstItemOffset: number) {
@@ -304,6 +322,7 @@ export class RecyclerViewManager<T> {
   }
 
   dispose() {
+    this._isDisposed = true;
     this.itemViewabilityManager.dispose();
   }
 

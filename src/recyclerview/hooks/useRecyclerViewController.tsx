@@ -228,9 +228,9 @@ export function useRecyclerViewController<T>(
               updateScrollOffsetAsync(
                 recyclerViewManager.getAbsoluteLastScrollOffset() + diff
               );
-              recyclerViewManager.ignoreScrollEvents = true;
+              recyclerViewManager.setAsyncUpdateInProgress(true);
               setTimeout(() => {
-                recyclerViewManager.ignoreScrollEvents = false;
+                recyclerViewManager.setAsyncUpdateInProgress(false);
               }, 100);
             }
           }
@@ -349,7 +349,9 @@ export function useRecyclerViewController<T>(
           index >= 0 &&
           index < data.length
         ) {
+          // Pause the scroll offset adjustments
           pauseAdjustRef.current = true;
+          recyclerViewManager.setAsyncUpdateInProgress(true);
 
           const getFinalOffset = () => {
             const layout = recyclerViewManager.getLayout(index);
@@ -442,6 +444,9 @@ export function useRecyclerViewController<T>(
           if (finalOffset > maxOffset) {
             finalOffset = maxOffset;
           }
+
+          recyclerViewManager.setAsyncUpdateInProgress(false);
+
           if (animated) {
             // We don't need to add firstItemOffset here as it's already added
             handlerMethods.scrollToOffset({
