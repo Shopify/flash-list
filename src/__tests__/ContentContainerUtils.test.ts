@@ -67,6 +67,14 @@ describe("ContentContainerUtils", () => {
       paddingLeft: 1,
       paddingRight: 0,
     });
+    expect(
+      updateContentStyle({}, { paddingLeft: "invalid", paddingVertical: "1%" })
+    ).toEqual({
+      paddingTop: 0,
+      paddingBottom: 0,
+      paddingLeft: 0,
+      paddingRight: 0,
+    });
   });
   it("computes correct layout manager insets", () => {
     expect(
