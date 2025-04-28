@@ -47,6 +47,7 @@ import { useSecondaryProps } from "./hooks/useSecondaryProps";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
 import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
 import { useRecyclerViewController } from "./hooks/useRecyclerViewController";
+import { RenderTimeTracker } from "./helpers/RenderTimeTracker";
 
 /**
  * Main RecyclerView component that handles list rendering, scrolling, and item recycling.
@@ -83,6 +84,10 @@ const RecyclerViewComponent = <T,>(
     onCommitLayoutEffect,
     ...rest
   } = props;
+
+  const [renderTimeTracker] = useState(() => new RenderTimeTracker());
+
+  renderTimeTracker.startTracking();
 
   // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -491,6 +496,10 @@ const RecyclerViewComponent = <T,>(
               onCommitLayoutEffect?.();
             }}
             onCommitEffect={() => {
+              renderTimeTracker.markRenderComplete();
+              recyclerViewManager.updateAverageRenderTime(
+                renderTimeTracker.getAverageRenderTime()
+              );
               applyInitialScrollIndex();
               checkBounds();
               recyclerViewManager.computeItemViewability();

@@ -10,6 +10,8 @@ export interface RVEngagedIndicesTracker {
   drawDistance: number;
   // Whether to use offset projection to predict the next scroll offset
   enableOffsetProjection: boolean;
+  // Average render time of the list
+  averageRenderTime: number;
 
   /**
    * Updates the scroll offset and calculates which items should be rendered (engaged indices).
@@ -65,6 +67,9 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   // Whether to use offset projection to predict the next scroll offset
   public enableOffsetProjection = true;
 
+  // Average render time of the list
+  public averageRenderTime = 16;
+
   // Internal override to disable offset projection
   private forceDisableOffsetProjection = false;
 
@@ -72,8 +77,8 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
   // Buffer distribution multipliers for scroll direction optimization
-  private smallMultiplier = 0.2; // Used for buffer in the opposite direction of scroll
-  private largeMultiplier = 0.8; // Used for buffer in the direction of scroll
+  private smallMultiplier = 0.3; // Used for buffer in the opposite direction of scroll
+  private largeMultiplier = 0.7; // Used for buffer in the direction of scroll
 
   // Circular buffer to track recent scroll velocities for direction detection
   private velocityHistory = [0, 0, 0, -0.1, -0.1];
@@ -106,13 +111,12 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
 
     // Determine scroll direction to optimize buffer distribution
     const isScrollingBackward = this.isScrollingBackward();
-
-    const timeMs = 16;
     const viewportStart =
       this.enableOffsetProjection && !this.forceDisableOffsetProjection
-        ? this.getProjectedScrollOffset(offset, timeMs)
+        ? this.getProjectedScrollOffset(offset, this.averageRenderTime)
         : offset;
-    // console.log("timeMs", timeMs, offset, viewportStart);
+
+    // console.log("timeMs", this.averageRenderTime, offset, viewportStart);
 
     const viewportSize = isHorizontal ? windowSize.width : windowSize.height;
     const viewportEnd = viewportStart + viewportSize;

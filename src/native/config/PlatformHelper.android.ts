@@ -3,6 +3,7 @@ import { BaseItemAnimator } from "recyclerlistview";
 const PlatformConfig = {
   defaultDrawDistance: 250,
   supportsOffsetCorrection: true,
+  trackAverageRenderTimeForOffsetProjection: true,
   // Using rotate instead of scaleY on Android to avoid performance issues. Issue: https://github.com/Shopify/flash-list/issues/751
   invertedTransformStyle: { transform: [{ rotate: "180deg" }] },
   invertedTransformStyleHorizontal: { transform: [{ rotate: "180deg" }] },

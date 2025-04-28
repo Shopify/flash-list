@@ -139,6 +139,10 @@ export class RecyclerViewManager<T> {
     return undefined;
   }
 
+  updateAverageRenderTime(time: number) {
+    this.engagedIndicesTracker.averageRenderTime = time;
+  }
+
   getIsFirstLayoutComplete() {
     return this.isFirstLayoutComplete;
   }

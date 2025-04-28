@@ -6,6 +6,7 @@ import { DefaultJSItemAnimator } from "recyclerlistview/dist/reactnative/platfor
 const PlatformConfig = {
   defaultDrawDistance: 500,
   supportsOffsetCorrection: false,
+  trackAverageRenderTimeForOffsetProjection: false,
   invertedTransformStyle: { transform: [{ scaleY: -1 }] },
   invertedTransformStyleHorizontal: { transform: [{ scaleX: -1 }] },
 };
