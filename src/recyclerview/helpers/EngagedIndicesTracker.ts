@@ -72,11 +72,11 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   private engagedIndices = ConsecutiveNumbers.EMPTY;
 
   // Buffer distribution multipliers for scroll direction optimization
-  private smallMultiplier = 0.5; // Used for buffer in the opposite direction of scroll
-  private largeMultiplier = 0.5; // Used for buffer in the direction of scroll
+  private smallMultiplier = 0.2; // Used for buffer in the opposite direction of scroll
+  private largeMultiplier = 0.8; // Used for buffer in the direction of scroll
 
   // Circular buffer to track recent scroll velocities for direction detection
-  private velocityHistory = [-1, -1, -1, -1, -1];
+  private velocityHistory = [0, 0, 0, -0.1, -0.1];
   private velocityIndex = 0;
 
   /**
@@ -119,7 +119,7 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
 
     // STEP 2: Determine buffer size and distribution
     // The total extra space where items will be pre-rendered
-    const totalBuffer = this.drawDistance;
+    const totalBuffer = this.drawDistance * 2;
 
     // Distribute more buffer in the direction of scrolling
     // When scrolling forward: more buffer after viewport
@@ -164,9 +164,12 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
       extendedStart,
       extendedEnd
     );
-    if (!isHorizontal) {
-      // console.log("newEngagedIndices", newEngagedIndices, this.scrollOffset);
-    }
+    // console.log(
+    //   "newEngagedIndices",
+    //   newEngagedIndices,
+    //   this.scrollOffset,
+    //   viewportStart
+    // );
     // Only return new indices if they've changed
     const oldEngagedIndices = this.engagedIndices;
     this.engagedIndices = newEngagedIndices;
@@ -206,30 +209,37 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   }
 
   /**
-   * Calculates the average velocity based on velocity history
-   * @returns Average velocity over the recent history
+   * Calculates the median velocity based on velocity history
+   * Medina works better agains outliers
+   * @returns Median velocity over the recent history
    */
-  private getAverageVelocity(): number {
-    let sum = 0;
+  private getMedianVelocity(): number {
+    // Make a copy of velocity history and sort it
+    const sortedVelocities = [...this.velocityHistory].sort(
+      (valueA, valueB) => valueA - valueB
+    );
+    const length = sortedVelocities.length;
 
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < this.velocityHistory.length; i++) {
-      sum += this.velocityHistory[i];
+    // If length is odd, return the middle element
+    if (length % 2 === 1) {
+      return sortedVelocities[Math.floor(length / 2)];
     }
-    return sum / this.velocityHistory.length;
+
+    // If length is even, return the average of the two middle elements
+    const midIndex = length / 2;
+    return (sortedVelocities[midIndex - 1] + sortedVelocities[midIndex]) / 2;
   }
 
   /**
-   * Projects the next scroll offset based on average velocity
+   * Projects the next scroll offset based on median velocity
    * @param timeMs Time in milliseconds to predict ahead
    * @returns Projected scroll offset
    */
   private getProjectedScrollOffset(offset: number, timeMs: number): number {
-    const averageVelocity = this.getAverageVelocity();
-
+    const medianVelocity = this.getMedianVelocity();
     // Convert time from ms to seconds for velocity calculation
     // Predict next position: current position + (velocity * time)
-    return offset + averageVelocity * timeMs;
+    return offset + medianVelocity * timeMs;
   }
 
   /**
@@ -266,10 +276,10 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
 
   setScrollDirection(scrollDirection: "forward" | "backward") {
     if (scrollDirection === "forward") {
-      this.velocityHistory = [1, 1, 1, 1, 1];
+      this.velocityHistory = [0, 0, 0, 0.1, 0.1];
       this.velocityIndex = 0;
     } else {
-      this.velocityHistory = [-1, -1, -1, -1, -1];
+      this.velocityHistory = [0, 0, 0, -0.1, -0.1];
       this.velocityIndex = 0;
     }
   }

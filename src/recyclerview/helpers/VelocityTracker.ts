@@ -29,17 +29,24 @@ export class VelocityTracker<T> {
     ) => void
   ) {
     // Clear any pending momentum end timeout
-    if (this.timeoutId !== null) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
-    }
+    this.cleanUp();
     // Calculate time since last update
     const currentTime = Date.now();
-    const timeSinceLastUpdate = currentTime - this.lastUpdateTime;
-    this.lastUpdateTime = currentTime;
+    const timeSinceLastUpdate = Math.max(1, currentTime - this.lastUpdateTime);
 
     // Calculate velocity as distance/time
     const newVelocity = (newOffset - oldOffset) / timeSinceLastUpdate;
+
+    // console.log(
+    //   "newVelocity",
+    //   newOffset,
+    //   oldOffset,
+    //   currentTime,
+    //   this.lastUpdateTime,
+    //   timeSinceLastUpdate,
+    //   newVelocity
+    // );
+    this.lastUpdateTime = currentTime;
 
     // Apply velocity to the correct axis
     this.velocity.x = isHorizontal ? newVelocity : 0;
@@ -50,6 +57,7 @@ export class VelocityTracker<T> {
 
     // Set timeout to signal momentum end after 100ms of no updates
     this.timeoutId = setTimeout(() => {
+      this.cleanUp();
       this.lastUpdateTime = Date.now();
       this.velocity.x = 0;
       this.velocity.y = 0;
@@ -60,9 +68,10 @@ export class VelocityTracker<T> {
   /**
    * Cleans up resources by clearing any pending timeout
    */
-  dispose() {
+  cleanUp() {
     if (this.timeoutId !== null) {
       clearTimeout(this.timeoutId);
+      this.timeoutId = null;
     }
   }
 }
