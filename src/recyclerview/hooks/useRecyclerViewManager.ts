@@ -26,7 +26,7 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   useEffect(() => {
     return () => {
       recyclerViewManager.dispose();
-      velocityTracker.dispose();
+      velocityTracker.cleanUp();
     };
   }, []);
 

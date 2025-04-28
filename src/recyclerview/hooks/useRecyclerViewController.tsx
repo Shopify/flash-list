@@ -96,7 +96,7 @@ export function useRecyclerViewController<T>(
   const { horizontal, data } = props;
   const isUnmounted = useUnmountFlag();
   const [_, setRenderId] = useState(0);
-  const pauseAdjustRef = useRef(false);
+  const pauseOffsetCorrection = useRef(false);
   const initialScrollCompletedRef = useRef(false);
   const lastDataLengthRef = useRef(data?.length ?? 0);
   const { setTimeout } = useUnmountAwareCallbacks();
@@ -119,10 +119,10 @@ export function useRecyclerViewController<T>(
       // Use setTimeout to ensure that we keep trying to scroll on first few renders
       setTimeout(() => {
         initialScrollCompletedRef.current = true;
-        pauseAdjustRef.current = false;
+        pauseOffsetCorrection.current = false;
       }, 100);
 
-      pauseAdjustRef.current = true;
+      pauseOffsetCorrection.current = true;
 
       const offset = horizontal
         ? recyclerViewManager.getLayout(initialScrollIndex).x
@@ -214,7 +214,7 @@ export function useRecyclerViewController<T>(
           firstVisibleItemLayout.current = {
             ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
           };
-          if (diff !== 0 && !pauseAdjustRef.current) {
+          if (diff !== 0 && !pauseOffsetCorrection.current) {
             // console.log("diff", diff, firstVisibleItemKey.current);
             if (PlatformConfig.supportsOffsetCorrection) {
               scrollAnchorRef.current?.scrollBy(diff);
@@ -228,9 +228,9 @@ export function useRecyclerViewController<T>(
               updateScrollOffsetAsync(
                 recyclerViewManager.getAbsoluteLastScrollOffset() + diff
               );
-              recyclerViewManager.setAsyncUpdateInProgress(true);
+              recyclerViewManager.ignoreScrollEvents = true;
               setTimeout(() => {
-                recyclerViewManager.setAsyncUpdateInProgress(false);
+                recyclerViewManager.ignoreScrollEvents = false;
               }, 100);
             }
           }
@@ -320,7 +320,9 @@ export function useRecyclerViewController<T>(
             animated,
           });
         }
-        scrollViewRef.current!.scrollToEnd({ animated });
+        setTimeout(() => {
+          scrollViewRef.current!.scrollToEnd({ animated });
+        }, 0);
       },
 
       /**
@@ -350,8 +352,8 @@ export function useRecyclerViewController<T>(
           index < data.length
         ) {
           // Pause the scroll offset adjustments
-          pauseAdjustRef.current = true;
-          recyclerViewManager.setAsyncUpdateInProgress(true);
+          pauseOffsetCorrection.current = true;
+          recyclerViewManager.setOffsetProjectionEnabled(false);
 
           const getFinalOffset = () => {
             const layout = recyclerViewManager.getLayout(index);
@@ -421,7 +423,6 @@ export function useRecyclerViewController<T>(
                 (startScrollOffset - finalOffset) * (i / (steps - 1))
               : startScrollOffset +
                 (finalOffset - startScrollOffset) * (i / (steps - 1));
-
             await updateScrollOffsetAsync(nextOffset);
             const newFinalOffset = getFinalOffset();
             if (
@@ -445,8 +446,6 @@ export function useRecyclerViewController<T>(
             finalOffset = maxOffset;
           }
 
-          recyclerViewManager.setAsyncUpdateInProgress(false);
-
           if (animated) {
             // We don't need to add firstItemOffset here as it's already added
             handlerMethods.scrollToOffset({
@@ -461,9 +460,13 @@ export function useRecyclerViewController<T>(
             skipFirstItemOffset: true,
           });
 
-          setTimeout(() => {
-            pauseAdjustRef.current = false;
-          }, 200);
+          setTimeout(
+            () => {
+              pauseOffsetCorrection.current = false;
+              recyclerViewManager.setOffsetProjectionEnabled(true);
+            },
+            animated ? 300 : 200
+          );
         }
       },
 

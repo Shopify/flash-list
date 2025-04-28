@@ -30,14 +30,14 @@ export class RecyclerViewManager<T> {
   private props: RecyclerViewProps<T>;
   private itemViewabilityManager: ViewabilityManager<T>;
   private allocatedKeyTracker: Set<string> = new Set();
-  private _asyncUpdateInProgress = false;
   private _isDisposed = false;
 
   public disableRecycling = false;
   public firstItemOffset = 0;
+  public ignoreScrollEvents = false;
 
-  public get asyncUpdateInProgress() {
-    return this._asyncUpdateInProgress;
+  public get isOffsetProjectionEnabled() {
+    return this.engagedIndicesTracker.enableOffsetProjection;
   }
 
   public get isDisposed() {
@@ -100,9 +100,8 @@ export class RecyclerViewManager<T> {
     this.renderStack = newRenderStack;
   };
 
-  setAsyncUpdateInProgress(value: boolean) {
-    this._asyncUpdateInProgress = value;
-    this.engagedIndicesTracker.enableOffsetProjection = !value;
+  setOffsetProjectionEnabled(value: boolean) {
+    this.engagedIndicesTracker.enableOffsetProjection = value;
   }
 
   updateProps(props: RecyclerViewProps<T>) {
@@ -203,7 +202,7 @@ export class RecyclerViewManager<T> {
     this.engagedIndicesTracker.setScrollDirection(scrollDirection);
   }
 
-  resetAverageVelocity() {
+  resetVelocityCompute() {
     this.engagedIndicesTracker.resetVelocityHistory();
   }
 

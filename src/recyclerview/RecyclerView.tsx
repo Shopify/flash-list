@@ -219,7 +219,7 @@ const RecyclerViewComponent = <T,>(
    */
   const onScrollHandler = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (recyclerViewManager.asyncUpdateInProgress) {
+      if (recyclerViewManager.ignoreScrollEvents) {
         return;
       }
 
@@ -241,8 +241,15 @@ const RecyclerViewComponent = <T,>(
         recyclerViewManager.getAbsoluteLastScrollOffset(),
         Boolean(horizontal),
         (velocity, isMomentumEnd) => {
+          if (recyclerViewManager.ignoreScrollEvents) {
+            return;
+          }
+
           if (isMomentumEnd) {
-            recyclerViewManager.resetAverageVelocity();
+            if (!recyclerViewManager.isOffsetProjectionEnabled) {
+              return;
+            }
+            recyclerViewManager.resetVelocityCompute();
           }
           // Update scroll position and trigger re-render if needed
           if (recyclerViewManager.updateScrollOffset(scrollOffset, velocity)) {
