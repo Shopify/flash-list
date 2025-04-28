@@ -54,6 +54,8 @@ describe("Twitter", () => {
     await element(by.id("Twitter Timeline")).tap();
     // Scroll 500px down and change orientation to lansdsape
     await scrollAndRotate("FlashList");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const flashListScreenshotPath = await element(
       by.id("FlashList")
     ).takeScreenshot(testName);
