@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, View, Image, Text, ViewStyle } from "react-native";
+import { StyleSheet, View, Text, ViewStyle } from "react-native";
+import FastImage from "@d11/react-native-fast-image";
 
 import Author from "./models/Author";
 import Tweet from "./models/Tweet";
@@ -9,35 +10,42 @@ export interface TweetContentProps {
   showFullText?: boolean;
 }
 
-const tweetActions = (
-  retweets: React.ReactNode,
-  comments: React.ReactNode,
-  likes: React.ReactNode
-) => {
+const TweetActions = ({
+  retweets,
+  comments,
+  likes,
+}: {
+  retweets: number;
+  comments: number;
+  likes: number;
+}) => {
   return (
     <View style={[styles.rowActions, styles.actionBar]}>
       <View style={styles.elemAction}>
-        <Image
+        <FastImage
           style={styles.actionButton}
           source={require("assets/comment.png")}
         />
         <Text style={styles.actionText}>{comments}</Text>
       </View>
       <View style={styles.elemAction}>
-        <Image
+        <FastImage
           style={styles.actionButton}
           source={require("assets/retweet.png")}
         />
         <Text style={styles.actionText}>{retweets}</Text>
       </View>
       <View style={styles.elemAction}>
-        <Image
+        <FastImage
           style={styles.actionButton}
           source={require("assets/like.png")}
         />
         <Text style={styles.actionText}>{likes}</Text>
       </View>
-      <Image style={styles.actionButton} source={require("assets/share.png")} />
+      <FastImage
+        style={styles.actionButton}
+        source={require("assets/share.png")}
+      />
     </View>
   );
 };
@@ -85,11 +93,11 @@ const TweetContent = ({ tweet, showFullText }: TweetContentProps) => {
             {showFullText ? tweet.fullText + tweet.fullText : tweet.fullText}
           </Text>
           <View style={styles.rowActions}>
-            {tweetActions(
-              tweet.retweetCount,
-              tweet.replyCount,
-              tweet.favoriteCount
-            )}
+            <TweetActions
+              retweets={tweet.retweetCount}
+              comments={tweet.replyCount}
+              likes={tweet.favoriteCount}
+            />
           </View>
         </View>
       </View>
