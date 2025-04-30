@@ -70,7 +70,15 @@ export const StickyHeaders = <TItem,>({
     return stickyHeaderIndices.sort((first, second) => first - second);
   }, [stickyHeaderIndices]);
 
+  const legthInvalid =
+    sortedIndices.length === 0 ||
+    recyclerViewManager.getDataLength() <=
+      sortedIndices[sortedIndices.length - 1];
+
   const compute = useCallback(() => {
+    if (legthInvalid) {
+      return;
+    }
     const adjustedValue = recyclerViewManager.getLastScrollOffset();
 
     // Binary search for current sticky index
@@ -96,7 +104,13 @@ export const StickyHeaders = <TItem,>({
         nextStickyIndex: newNextStickyIndex,
       });
     }
-  }, [currentStickyIndex, nextStickyIndex, recyclerViewManager, sortedIndices]);
+  }, [
+    currentStickyIndex,
+    nextStickyIndex,
+    recyclerViewManager,
+    sortedIndices,
+    legthInvalid,
+  ]);
 
   useEffect(() => {
     compute();
