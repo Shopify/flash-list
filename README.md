@@ -2,7 +2,7 @@
 
 # FlashList v2
 
-FlashList v2 has been rebuilt from the ground up and delivers fast performance, higher precision, and better ease of use compared to v1. We've achieved all this while moving to a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates. It also introduces several new features compared to v1.
+FlashList v2 has been rebuilt from the ground up for RN's new architecture and delivers fast performance, higher precision, and better ease of use compared to v1. We've achieved all this while moving to a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates. It also introduces several new features compared to v1.
 
 > ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. **Old architecture will only be supported while FlashList v2 is in alpha/beta and will be dropped once it's ready.** When run on old architecture, we just fall back to v1.x which doesn't have any of the new features.
 
