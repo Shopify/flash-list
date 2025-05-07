@@ -1,4 +1,3 @@
-/* eslint-disable @shopify/strict-component-boundaries */
 import { DebugOption } from "../../src/Debug/DebugOptions";
 import { assertSnapshotsEqual, assertSnapshot } from "../utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "../utils/SnapshotLocation";
