@@ -19,6 +19,8 @@ import {
   NativeSyntheticEvent,
 } from "react-native";
 
+import { FlashListRef } from "../FlashListRef";
+
 import { RVDimension } from "./layout-managers/LayoutManager";
 import {
   areDimensionsNotEqual,
@@ -55,7 +57,7 @@ import { RenderTimeTracker } from "./helpers/RenderTimeTracker";
  */
 const RecyclerViewComponent = <T,>(
   props: RecyclerViewProps<T>,
-  ref: React.Ref<any>
+  ref: React.Ref<FlashListRef<T>>
 ) => {
   // Destructure props and initialize refs
   const {
@@ -535,7 +537,7 @@ const RecyclerViewComponent = <T,>(
 
 // Type definition for the RecyclerView component
 type RecyclerViewType = <T>(
-  props: RecyclerViewProps<T> & { ref?: React.Ref<any> }
+  props: RecyclerViewProps<T> & { ref?: React.Ref<FlashListRef<T>> }
 ) => React.JSX.Element;
 
 // Create and export the memoized, forwarded ref component

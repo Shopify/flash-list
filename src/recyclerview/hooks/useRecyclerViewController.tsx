@@ -43,7 +43,7 @@ import { useUnmountAwareTimeout } from "./useUnmountAwareCallbacks";
  */
 export function useRecyclerViewController<T>(
   recyclerViewManager: RecyclerViewManager<T>,
-  ref: React.Ref<any>,
+  ref: React.Ref<FlashListRef<T>>,
   scrollViewRef: RefObject<CompatScroller>,
   scrollAnchorRef: React.RefObject<ScrollAnchorRef>
 ) {
@@ -157,7 +157,7 @@ export function useRecyclerViewController<T>(
       // Update the tracked first visible item
       const firstVisibleIndex = Math.max(
         0,
-        recyclerViewManager.getVisibleIndices().startIndex
+        recyclerViewManager.computeVisibleIndices().startIndex
       );
       if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
         firstVisibleItemKey.current = keyExtractor(
@@ -431,7 +431,7 @@ export function useRecyclerViewController<T>(
         return recyclerViewManager.getWindowSize();
       },
       getLayout: (index: number) => {
-        return recyclerViewManager.getLayout(index);
+        return recyclerViewManager.tryGetLayout(index);
       },
       getAbsoluteLastScrollOffset: () => {
         return recyclerViewManager.getAbsoluteLastScrollOffset();
@@ -442,11 +442,11 @@ export function useRecyclerViewController<T>(
       recordInteraction: () => {
         recyclerViewManager.recordInteraction();
       },
-      getVisibleIndices: () => {
-        return recyclerViewManager.getVisibleIndices();
+      computeVisibleIndices: () => {
+        return recyclerViewManager.computeVisibleIndices();
       },
       getFirstVisibleIndex: () => {
-        return recyclerViewManager.getVisibleIndices().startIndex;
+        return recyclerViewManager.computeVisibleIndices().startIndex;
       },
       recomputeViewableItems: () => {
         recyclerViewManager.recomputeViewableItems();
