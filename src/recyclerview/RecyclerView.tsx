@@ -76,7 +76,6 @@ const RecyclerViewComponent = <T,>(
     ListFooterComponentStyle,
     ItemSeparatorComponent,
     renderScrollComponent,
-    onScroll,
     disableRecycling,
     style,
     stickyHeaderIndices,
@@ -116,13 +115,12 @@ const RecyclerViewComponent = <T,>(
   // Initialize core RecyclerView manager and content offset management
   const { recyclerViewManager, velocityTracker } =
     useRecyclerViewManager(props);
-  const { applyContentOffset, applyInitialScrollIndex } =
+  const { applyContentOffset, applyInitialScrollIndex, handlerMethods } =
     useRecyclerViewController(
       recyclerViewManager,
       ref,
       scrollViewRef,
-      scrollAnchorRef,
-      props
+      scrollAnchorRef
     );
 
   // Initialize view holder collection ref
@@ -132,11 +130,7 @@ const RecyclerViewComponent = <T,>(
   useOnListLoad(recyclerViewManager, onLoad);
 
   // Hook to detect when scrolling reaches list bounds
-  const { checkBounds } = useBoundDetection(
-    recyclerViewManager,
-    props,
-    scrollViewRef
-  );
+  const { checkBounds } = useBoundDetection(recyclerViewManager, scrollViewRef);
 
   const isHorizontalRTL = I18nManager.isRTL && horizontal;
 
@@ -182,6 +176,7 @@ const RecyclerViewComponent = <T,>(
    * Effect to handle layout updates for list items
    * This ensures proper positioning and recycling of items
    */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (pendingChildIds.size > 0) {
       return;
@@ -272,22 +267,31 @@ const RecyclerViewComponent = <T,>(
       recyclerViewManager.computeItemViewability();
 
       // Call user-provided onScroll handler
-      onScroll?.(event);
+      recyclerViewManager.props.onScroll?.(event);
     },
-    [horizontal, isHorizontalRTL, recyclerViewManager]
+    [
+      checkBounds,
+      horizontal,
+      isHorizontalRTL,
+      recyclerViewManager,
+      velocityTracker,
+    ]
   );
 
   // Create context for child components
-  const recyclerViewContext: RecyclerViewContext = useMemo(() => {
+  const recyclerViewContext: RecyclerViewContext<T> = useMemo(() => {
     return {
       layout: () => {
         setLayoutTreeId((prev) => prev + 1);
       },
       getRef: () => {
-        return ref;
+        if (recyclerViewManager.isDisposed) {
+          return null;
+        }
+        return handlerMethods;
       },
       getScrollViewRef: () => {
-        return scrollViewRef;
+        return scrollViewRef.current;
       },
       markChildLayoutAsPending: (id: string) => {
         pendingChildIds.add(id);
@@ -299,7 +303,7 @@ const RecyclerViewComponent = <T,>(
         }
       },
     };
-  }, [setLayoutTreeId]);
+  }, [handlerMethods, pendingChildIds, recyclerViewManager, setLayoutTreeId]);
 
   const parentRecyclerViewContext = useRecyclerViewContext();
   const recyclerViewId = useId();
@@ -334,7 +338,7 @@ const RecyclerViewComponent = <T,>(
         recyclerViewContext.layout();
       }
     },
-    [recyclerViewManager]
+    [recyclerViewContext, recyclerViewManager]
   );
 
   // Get secondary props and components
@@ -374,7 +378,14 @@ const RecyclerViewComponent = <T,>(
       );
     }
     return null;
-  }, [data, stickyHeaderIndices, renderItem, extraData]);
+  }, [
+    data,
+    stickyHeaderIndices,
+    renderItem,
+    scrollY,
+    recyclerViewManager,
+    extraData,
+  ]);
 
   // Set up scroll event handling with animation support for sticky headers
   const animatedEvent = useMemo(() => {
@@ -385,7 +396,7 @@ const RecyclerViewComponent = <T,>(
       );
     }
     return onScrollHandler;
-  }, [onScrollHandler, stickyHeaders]);
+  }, [onScrollHandler, scrollY, stickyHeaders]);
 
   const maintainVisibleContentPositionInternal = useMemo(() => {
     if (maintainVisibleContentPosition?.disabled || horizontal) {
@@ -396,7 +407,7 @@ const RecyclerViewComponent = <T,>(
         minIndexForVisible: 0,
       };
     }
-  }, [maintainVisibleContentPosition]);
+  }, [horizontal, maintainVisibleContentPosition]);
 
   const shouldRenderFromBottom =
     maintainVisibleContentPositionInternal?.startRenderingFromBottom ?? false;

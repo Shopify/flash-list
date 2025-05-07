@@ -8,7 +8,13 @@ import {
 } from "react";
 import { I18nManager } from "react-native";
 
-import { RecyclerViewProps } from "../RecyclerViewProps";
+import {
+  ScrollToOffsetParams,
+  ScrollToIndexParams,
+  ScrollToItemParams,
+  ScrollToEdgeParams,
+  FlashListRef,
+} from "../../FlashListRef";
 import { CompatScroller } from "../components/CompatScroller";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
@@ -17,58 +23,7 @@ import { ScrollAnchorRef } from "../components/ScrollAnchor";
 import { PlatformConfig } from "../../native/config/PlatformHelper";
 
 import { useUnmountFlag } from "./useUnmountFlag";
-import { useUnmountAwareCallbacks } from "./useUnmountAwareCallbacks";
-
-/**
- * Parameters for scrolling to a specific position in the list.
- * Extends ScrollToEdgeParams to include view positioning options.
- */
-export interface ScrollToParams extends ScrollToEdgeParams {
-  /** Position of the target item relative to the viewport (0 = top, 0.5 = center, 1 = bottom) */
-  viewPosition?: number;
-  /** Additional offset to apply after viewPosition calculation */
-  viewOffset?: number;
-}
-
-/**
- * Parameters for scrolling to a specific offset in the list.
- * Used when you want to scroll to an exact pixel position.
- */
-export interface ScrollToOffsetParams extends ScrollToParams {
-  /** The pixel offset to scroll to */
-  offset: number;
-  /**
-   * If true, the first item offset will not be added to the offset calculation.
-   * First offset represents header size or top padding.
-   */
-  skipFirstItemOffset?: boolean;
-}
-
-/**
- * Parameters for scrolling to a specific index in the list.
- * Used when you want to scroll to a specific item by its position in the data array.
- */
-export interface ScrollToIndexParams extends ScrollToParams {
-  /** The index of the item to scroll to */
-  index: number;
-}
-
-/**
- * Parameters for scrolling to a specific item in the list.
- * Used when you want to scroll to a specific item by its data value.
- */
-export interface ScrollToItemParams<T> extends ScrollToParams {
-  /** The item to scroll to */
-  item: T;
-}
-
-/**
- * Base parameters for scrolling to the edges of the list.
- */
-export interface ScrollToEdgeParams {
-  /** Whether the scroll should be animated */
-  animated?: boolean;
-}
+import { useUnmountAwareTimeout } from "./useUnmountAwareCallbacks";
 
 /**
  * Comprehensive hook that manages RecyclerView scrolling behavior and provides
@@ -90,58 +45,19 @@ export function useRecyclerViewController<T>(
   recyclerViewManager: RecyclerViewManager<T>,
   ref: React.Ref<any>,
   scrollViewRef: RefObject<CompatScroller>,
-  scrollAnchorRef: React.RefObject<ScrollAnchorRef>,
-  props: RecyclerViewProps<T>
+  scrollAnchorRef: React.RefObject<ScrollAnchorRef>
 ) {
-  const { horizontal, data } = props;
   const isUnmounted = useUnmountFlag();
   const [_, setRenderId] = useState(0);
   const pauseOffsetCorrection = useRef(false);
   const initialScrollCompletedRef = useRef(false);
-  const lastDataLengthRef = useRef(data?.length ?? 0);
-  const { setTimeout } = useUnmountAwareCallbacks();
+  const lastDataLengthRef = useRef(recyclerViewManager.props.data?.length ?? 0);
+  const { setTimeout } = useUnmountAwareTimeout();
 
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
   const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
   const pendingScrollResolves = useRef<(() => void)[]>([]);
-
-  const applyInitialScrollIndex = useCallback(() => {
-    const initialScrollIndex =
-      recyclerViewManager.getInitialScrollIndex() ?? -1;
-    const dataLength = props.data?.length ?? 0;
-    if (
-      initialScrollIndex >= 0 &&
-      initialScrollIndex < dataLength &&
-      !initialScrollCompletedRef.current &&
-      recyclerViewManager.getIsFirstLayoutComplete()
-    ) {
-      // Use setTimeout to ensure that we keep trying to scroll on first few renders
-      setTimeout(() => {
-        initialScrollCompletedRef.current = true;
-        pauseOffsetCorrection.current = false;
-      }, 100);
-
-      pauseOffsetCorrection.current = true;
-
-      const offset = horizontal
-        ? recyclerViewManager.getLayout(initialScrollIndex).x
-        : recyclerViewManager.getLayout(initialScrollIndex).y;
-      handlerMethods.scrollToOffset({
-        offset,
-        animated: false,
-        skipFirstItemOffset: false,
-      });
-
-      setTimeout(() => {
-        handlerMethods.scrollToOffset({
-          offset,
-          animated: false,
-          skipFirstItemOffset: false,
-        });
-      }, 0);
-    }
-  }, [recyclerViewManager, props.data]);
 
   // Handle initial scroll position when the list first loads
   //   useOnLoad(recyclerViewManager, () => {
@@ -173,19 +89,21 @@ export function useRecyclerViewController<T>(
    * the user's current view position when new messages are added.
    */
   const applyContentOffset = useCallback(async () => {
+    const { horizontal, data, keyExtractor, maintainVisibleContentPosition } =
+      recyclerViewManager.props;
     // Resolve all pending scroll updates from previous calls
     const resolves = pendingScrollResolves.current;
     pendingScrollResolves.current = [];
     resolves.forEach((resolve) => resolve());
 
-    const currentDataLength = props.data?.length ?? 0;
+    const currentDataLength = data?.length ?? 0;
 
     if (
-      !props.horizontal &&
+      !horizontal &&
       recyclerViewManager.getIsFirstLayoutComplete() &&
-      props.keyExtractor &&
+      keyExtractor &&
       currentDataLength > 0 &&
-      props.maintainVisibleContentPosition?.disabled !== true
+      maintainVisibleContentPosition?.disabled !== true
     ) {
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
       // If we have a tracked first visible item, maintain its position
@@ -195,14 +113,13 @@ export function useRecyclerViewController<T>(
             .getEngagedIndices()
             .findValue(
               (index) =>
-                props.keyExtractor?.(props.data![index], index) ===
+                keyExtractor?.(data![index], index) ===
                 firstVisibleItemKey.current
             ) ??
           (hasDataChanged
-            ? props.data?.findIndex(
+            ? data?.findIndex(
                 (item, index) =>
-                  props.keyExtractor?.(item, index) ===
-                  firstVisibleItemKey.current
+                  keyExtractor?.(item, index) === firstVisibleItemKey.current
               )
             : undefined);
 
@@ -243,8 +160,8 @@ export function useRecyclerViewController<T>(
         recyclerViewManager.getVisibleIndices().startIndex
       );
       if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
-        firstVisibleItemKey.current = props.keyExtractor(
-          props.data![firstVisibleIndex],
+        firstVisibleItemKey.current = keyExtractor(
+          data![firstVisibleIndex],
           firstVisibleIndex
         );
         firstVisibleItemLayout.current = {
@@ -252,12 +169,20 @@ export function useRecyclerViewController<T>(
         };
       }
     }
-    lastDataLengthRef.current = props.data?.length ?? 0;
-  }, [props.data, props.keyExtractor, recyclerViewManager, setTimeout]);
+    lastDataLengthRef.current = data?.length ?? 0;
+  }, [
+    recyclerViewManager,
+    scrollAnchorRef,
+    scrollViewRef,
+    setTimeout,
+    updateScrollOffsetAsync,
+  ]);
 
-  const handlerMethods = useMemo(() => {
+  const handlerMethods: FlashListRef<T> = useMemo(() => {
     return {
-      props,
+      get props() {
+        return recyclerViewManager.props;
+      },
       /**
        * Scrolls the list to a specific offset position.
        * Handles RTL layouts and first item offset adjustments.
@@ -267,6 +192,7 @@ export function useRecyclerViewController<T>(
         animated,
         skipFirstItemOffset = true,
       }: ScrollToOffsetParams) => {
+        const { horizontal } = recyclerViewManager.props;
         if (scrollViewRef.current) {
           // Adjust offset for RTL layouts in horizontal mode
           if (I18nManager.isRTL && horizontal) {
@@ -314,6 +240,7 @@ export function useRecyclerViewController<T>(
        * Scrolls to the end of the list.
        */
       scrollToEnd: async ({ animated }: ScrollToEdgeParams = {}) => {
+        const { data } = recyclerViewManager.props;
         if (data && data.length > 0) {
           await handlerMethods.scrollToIndex({
             index: data.length - 1,
@@ -345,6 +272,7 @@ export function useRecyclerViewController<T>(
         viewPosition,
         viewOffset,
       }: ScrollToIndexParams) => {
+        const { horizontal, data } = recyclerViewManager.props;
         if (
           scrollViewRef.current &&
           data &&
@@ -480,11 +408,10 @@ export function useRecyclerViewController<T>(
         viewPosition,
         viewOffset,
       }: ScrollToItemParams<T>) => {
+        const { data } = recyclerViewManager.props;
         if (scrollViewRef.current && data) {
           // Find the index of the item in the data array
-          const index = Array.from(data).findIndex(
-            (dataItem) => dataItem === item
-          );
+          const index = data.findIndex((dataItem) => dataItem === item);
           if (index >= 0) {
             handlerMethods.scrollToIndex({
               index,
@@ -531,7 +458,52 @@ export function useRecyclerViewController<T>(
         recyclerViewManager.disableRecycling = true;
       },
     };
-  }, [horizontal, data, recyclerViewManager]);
+  }, [
+    recyclerViewManager,
+    scrollViewRef,
+    setTimeout,
+    isUnmounted,
+    updateScrollOffsetAsync,
+  ]);
+
+  const applyInitialScrollIndex = useCallback(() => {
+    const { horizontal, data } = recyclerViewManager.props;
+
+    const initialScrollIndex =
+      recyclerViewManager.getInitialScrollIndex() ?? -1;
+    const dataLength = data?.length ?? 0;
+    if (
+      initialScrollIndex >= 0 &&
+      initialScrollIndex < dataLength &&
+      !initialScrollCompletedRef.current &&
+      recyclerViewManager.getIsFirstLayoutComplete()
+    ) {
+      // Use setTimeout to ensure that we keep trying to scroll on first few renders
+      setTimeout(() => {
+        initialScrollCompletedRef.current = true;
+        pauseOffsetCorrection.current = false;
+      }, 100);
+
+      pauseOffsetCorrection.current = true;
+
+      const offset = horizontal
+        ? recyclerViewManager.getLayout(initialScrollIndex).x
+        : recyclerViewManager.getLayout(initialScrollIndex).y;
+      handlerMethods.scrollToOffset({
+        offset,
+        animated: false,
+        skipFirstItemOffset: false,
+      });
+
+      setTimeout(() => {
+        handlerMethods.scrollToOffset({
+          offset,
+          animated: false,
+          skipFirstItemOffset: false,
+        });
+      }, 0);
+    }
+  }, [handlerMethods, recyclerViewManager, setTimeout]);
 
   // Expose imperative methods through the ref
   useImperativeHandle(
@@ -539,8 +511,8 @@ export function useRecyclerViewController<T>(
     () => {
       return { ...scrollViewRef.current, ...handlerMethods };
     },
-    [handlerMethods]
+    [handlerMethods, scrollViewRef]
   );
 
-  return { applyContentOffset, applyInitialScrollIndex };
+  return { applyContentOffset, applyInitialScrollIndex, handlerMethods };
 }

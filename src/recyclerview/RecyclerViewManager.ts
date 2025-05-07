@@ -27,7 +27,7 @@ export class RecyclerViewManager<T> {
   private renderStack: Map<number, string> = new Map();
   private isFirstLayoutComplete = false;
   private hasRenderedProgressively = false;
-  private props: RecyclerViewProps<T>;
+  private propsRef: RecyclerViewProps<T>;
   private itemViewabilityManager: ViewabilityManager<T>;
   private allocatedKeyTracker: Set<string> = new Set();
   private _isDisposed = false;
@@ -45,7 +45,7 @@ export class RecyclerViewManager<T> {
   }
 
   constructor(props: RecyclerViewProps<T>) {
-    this.props = props;
+    this.propsRef = props;
     this.engagedIndicesTracker = new RVEngagedIndicesTrackerImpl();
     this.recycleKeyManager = new RecycleKeyManagerImpl();
     this.itemViewabilityManager = new ViewabilityManager<T>(this as any);
@@ -90,7 +90,7 @@ export class RecyclerViewManager<T> {
       if (
         this.recycleKeyManager.hasKeyInPool(key) &&
         !newRenderStack.has(index) &&
-        index < (this.props.data?.length ?? 0)
+        index < (this.propsRef.data?.length ?? 0)
       ) {
         this.allocatedKeyTracker.add(key);
         newRenderStack.set(index, key);
@@ -100,15 +100,19 @@ export class RecyclerViewManager<T> {
     this.renderStack = newRenderStack;
   };
 
+  get props() {
+    return this.propsRef;
+  }
+
   setOffsetProjectionEnabled(value: boolean) {
     this.engagedIndicesTracker.enableOffsetProjection = value;
   }
 
   updateProps(props: RecyclerViewProps<T>) {
-    this.props = props;
+    this.propsRef = props;
     this.engagedIndicesTracker.drawDistance =
       props.drawDistance ?? this.engagedIndicesTracker.drawDistance;
-    if (this.props.drawDistance === 0) {
+    if (this.propsRef.drawDistance === 0) {
       this.initialDrawBatchSize = 1;
     } else {
       this.initialDrawBatchSize = (props.numColumns ?? 1) * 2;
@@ -124,7 +128,7 @@ export class RecyclerViewManager<T> {
     offset: number,
     velocity?: Velocity
   ): ConsecutiveNumbers | undefined {
-    if (this.layoutManager && !this.isDisposed) {
+    if (this.layoutManager && !this._isDisposed) {
       const engagedIndices = this.engagedIndicesTracker.updateScrollOffset(
         offset - this.firstItemOffset,
         velocity,
@@ -187,10 +191,10 @@ export class RecyclerViewManager<T> {
   getMaxScrollOffset() {
     return Math.max(
       0,
-      (this.props.horizontal
+      (this.propsRef.horizontal
         ? this.getChildContainerDimensions().width
         : this.getChildContainerDimensions().height) -
-        (this.props.horizontal
+        (this.propsRef.horizontal
           ? this.getWindowSize().width
           : this.getWindowSize().height) +
         this.firstItemOffset
@@ -216,7 +220,7 @@ export class RecyclerViewManager<T> {
     if (
       this.layoutManager &&
       Boolean(this.layoutManager?.isHorizontal()) !==
-        Boolean(this.props.horizontal)
+        Boolean(this.propsRef.horizontal)
     ) {
       throw new Error(
         "Horizontal prop cannot be toggled, you can use a key on FlashList to recreate it."
@@ -228,16 +232,17 @@ export class RecyclerViewManager<T> {
       this.layoutManager = new LayoutManagerClass(
         {
           windowSize,
-          maxColumns: this.props.numColumns ?? 1,
-          horizontal: Boolean(this.props.horizontal),
-          optimizeItemArrangement: this.props.optimizeItemArrangement ?? true,
+          maxColumns: this.propsRef.numColumns ?? 1,
+          horizontal: Boolean(this.propsRef.horizontal),
+          optimizeItemArrangement:
+            this.propsRef.optimizeItemArrangement ?? true,
           overrideItemLayout: (index, layout) => {
-            this.props?.overrideItemLayout?.(
+            this.propsRef?.overrideItemLayout?.(
               layout,
-              this.props.data![index],
+              this.propsRef.data![index],
               index,
-              this.props.numColumns ?? 1,
-              this.props.extraData
+              this.propsRef.numColumns ?? 1,
+              this.propsRef.extraData
             );
           },
         },
@@ -246,9 +251,9 @@ export class RecyclerViewManager<T> {
     } else {
       this.layoutManager.updateLayoutParams({
         windowSize,
-        maxColumns: this.props.numColumns ?? 1,
-        horizontal: Boolean(this.props.horizontal),
-        optimizeItemArrangement: this.props.optimizeItemArrangement ?? true,
+        maxColumns: this.propsRef.numColumns ?? 1,
+        horizontal: Boolean(this.propsRef.horizontal),
+        optimizeItemArrangement: this.propsRef.optimizeItemArrangement ?? true,
       });
     }
   }
@@ -295,7 +300,7 @@ export class RecyclerViewManager<T> {
     // Using higher buffer for masonry to avoid missing items
     this.itemViewabilityManager.shouldListenToVisibleIndices &&
       this.itemViewabilityManager.updateViewableItems(
-        this.props.masonry
+        this.propsRef.masonry
           ? this.engagedIndicesTracker.getEngagedIndices().toArray()
           : this.getVisibleIndices().toArray()
       );
@@ -311,7 +316,7 @@ export class RecyclerViewManager<T> {
 
   processDataUpdate() {
     if (this.hasLayout()) {
-      this.modifyChildrenLayout([], this.props.data?.length ?? 0);
+      this.modifyChildrenLayout([], this.propsRef.data?.length ?? 0);
       if (!this.recomputeEngagedIndices()) {
         // recomputeEngagedIndices will update the render stack if there are any changes in the engaged indices.
         // It's important to update render stack so that elements are assgined right keys incase items were deleted.
@@ -331,28 +336,28 @@ export class RecyclerViewManager<T> {
 
   getInitialScrollIndex() {
     return (
-      this.props.initialScrollIndex ??
-      (this.props.maintainVisibleContentPosition?.startRenderingFromBottom
+      this.propsRef.initialScrollIndex ??
+      (this.propsRef.maintainVisibleContentPosition?.startRenderingFromBottom
         ? this.getDataLength() - 1
         : undefined)
     );
   }
 
   getDataLength() {
-    return this.props.data?.length ?? 0;
+    return this.propsRef.data?.length ?? 0;
   }
 
   private getLayoutManagerClass() {
     // throw errors for incompatible props
-    if (this.props.masonry && this.props.horizontal) {
+    if (this.propsRef.masonry && this.propsRef.horizontal) {
       throw new Error("Masonry and horizontal props are incompatible");
     }
-    if ((this.props.numColumns ?? 1) > 1 && this.props.horizontal) {
+    if ((this.propsRef.numColumns ?? 1) > 1 && this.propsRef.horizontal) {
       throw new Error("numColumns and horizontal props are incompatible");
     }
-    return this.props.masonry
+    return this.propsRef.masonry
       ? RVMasonryLayoutManagerImpl
-      : (this.props.numColumns ?? 1) > 1 && !this.props.horizontal
+      : (this.propsRef.numColumns ?? 1) > 1 && !this.propsRef.horizontal
       ? RVGridLayoutManagerImpl
       : RVLinearLayoutManagerImpl;
   }
@@ -366,7 +371,7 @@ export class RecyclerViewManager<T> {
     const initialItemLayout = this.layoutManager?.getLayout(
       initialScrollIndex ?? 0
     );
-    const initialItemOffset = this.props.horizontal
+    const initialItemOffset = this.propsRef.horizontal
       ? initialItemLayout?.x
       : initialItemLayout?.y;
 
@@ -421,13 +426,14 @@ export class RecyclerViewManager<T> {
 
   private getItemType(index: number): string {
     return (
-      this.props.getItemType?.(this.props.data![index], index) ?? "default"
+      this.propsRef.getItemType?.(this.propsRef.data![index], index) ??
+      "default"
     ).toString();
   }
 
   private getStableId(index: number): string {
     return (
-      this.props.keyExtractor?.(this.props.data![index], index) ??
+      this.propsRef.keyExtractor?.(this.propsRef.data![index], index) ??
       index.toString()
     );
   }

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RecyclerViewManager } from "../RecyclerViewManager";
 
-import { useUnmountFlag } from "./useUnmountFlag";
+import { useUnmountAwareAnimationFrame } from "./useUnmountAwareCallbacks";
 // import { ToastAndroid } from "react-native";
 
 /**
@@ -22,7 +22,7 @@ export const useOnListLoad = <T>(
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const dataLength = recyclerViewManager.getDataLength();
   // const dataCollector = useRef<number[]>([]);
-  const isUnmounted = useUnmountFlag();
+  const { requestAnimationFrame } = useUnmountAwareAnimationFrame();
   // Track render cycles by collecting elapsed time on each render
   // useEffect(() => {
   //   const elapsedTimeInMs = Date.now() - loadStartTimeRef.current;
@@ -48,10 +48,8 @@ export const useOnListLoad = <T>(
     // console.log("----------> dataCollector", dataCollectorString);
     // console.log("----------> FlashList v2 load in", `${elapsedTimeInMs} ms`);
     requestAnimationFrame(() => {
-      if (!isUnmounted.current) {
-        onLoad?.({ elapsedTimeInMs });
-        setIsLoaded(true);
-      }
+      onLoad?.({ elapsedTimeInMs });
+      setIsLoaded(true);
     });
   });
 

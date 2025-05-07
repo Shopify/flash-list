@@ -1,14 +1,14 @@
 import React from "react";
 import { render } from "@quilted/react-testing";
 
-import { useUnmountAwareCallbacks } from "../recyclerview/hooks/useUnmountAwareCallbacks";
+import { useUnmountAwareTimeout } from "../recyclerview/hooks/useUnmountAwareCallbacks";
 
 const TestComponent = ({
   onRender,
 }: {
-  onRender: (api: ReturnType<typeof useUnmountAwareCallbacks>) => void;
+  onRender: (api: ReturnType<typeof useUnmountAwareTimeout>) => void;
 }) => {
-  const api = useUnmountAwareCallbacks();
+  const api = useUnmountAwareTimeout();
   onRender(api);
   return null;
 };
@@ -24,7 +24,7 @@ describe("useUnmountAwareCallbacks", () => {
   });
 
   it("returns a setTimeout function", () => {
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
     render(
       <TestComponent
         onRender={(hookApi) => {
@@ -40,7 +40,7 @@ describe("useUnmountAwareCallbacks", () => {
 
   it("executes the callback after the specified delay", () => {
     const callback = jest.fn();
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
 
     render(
       <TestComponent
@@ -63,7 +63,7 @@ describe("useUnmountAwareCallbacks", () => {
   it("executes multiple callbacks after their respective delays", () => {
     const callback1 = jest.fn();
     const callback2 = jest.fn();
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
 
     render(
       <TestComponent
@@ -94,7 +94,7 @@ describe("useUnmountAwareCallbacks", () => {
 
   it("clears all timeouts when the component unmounts", () => {
     const callback = jest.fn();
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
 
     const component = render(
       <TestComponent
@@ -123,7 +123,7 @@ describe("useUnmountAwareCallbacks", () => {
 
   it("removes timeout from tracking set once it executes", () => {
     const callback = jest.fn();
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
 
     const component = render(
       <TestComponent
@@ -157,7 +157,7 @@ describe("useUnmountAwareCallbacks", () => {
     const callback1 = jest.fn();
     const callback2 = jest.fn();
     const callback3 = jest.fn();
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
 
     const component = render(
       <TestComponent
@@ -193,7 +193,7 @@ describe("useUnmountAwareCallbacks", () => {
 
   it("handles callbacks that trigger new timeouts", () => {
     const finalCallback = jest.fn();
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
 
     render(
       <TestComponent
@@ -222,7 +222,7 @@ describe("useUnmountAwareCallbacks", () => {
 
   it("handles zero delay timeouts", () => {
     const callback = jest.fn();
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
 
     render(
       <TestComponent
@@ -247,7 +247,7 @@ describe("useUnmountAwareCallbacks", () => {
       throw new Error("Test error");
     });
     const successCallback = jest.fn();
-    let api: ReturnType<typeof useUnmountAwareCallbacks> | undefined;
+    let api: ReturnType<typeof useUnmountAwareTimeout> | undefined;
 
     // Suppress error log during test
     const originalConsoleError = console.error;

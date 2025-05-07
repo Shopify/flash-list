@@ -17,32 +17,32 @@ interface ListItem {
   height: number;
 }
 
+// Generate colors for the items
+const colors = [
+  "#FF5252", // Red
+  "#FF4081", // Pink
+  "#E040FB", // Purple
+  "#7C4DFF", // Deep Purple
+  "#536DFE", // Indigo
+  "#448AFF", // Blue
+  "#40C4FF", // Light Blue
+  "#18FFFF", // Cyan
+  "#64FFDA", // Teal
+  "#69F0AE", // Green
+  "#B2FF59", // Light Green
+  "#EEFF41", // Lime
+  "#FFFF00", // Yellow
+  "#FFD740", // Amber
+  "#FFAB40", // Orange
+  "#FF6E40", // Deep Orange
+];
+
 export function LayoutOptions() {
   // Configuration states
   const [numColumns, setNumColumns] = useState(1);
   const [isHorizontal, setIsHorizontal] = useState(false);
   const [isMasonry, setIsMasonry] = useState(false);
   const [optimizeItemArrangement, setOptimizeItemArrangement] = useState(false);
-
-  // Generate colors for the items
-  const colors = [
-    "#FF5252", // Red
-    "#FF4081", // Pink
-    "#E040FB", // Purple
-    "#7C4DFF", // Deep Purple
-    "#536DFE", // Indigo
-    "#448AFF", // Blue
-    "#40C4FF", // Light Blue
-    "#18FFFF", // Cyan
-    "#64FFDA", // Teal
-    "#69F0AE", // Green
-    "#B2FF59", // Light Green
-    "#EEFF41", // Lime
-    "#FFFF00", // Yellow
-    "#FFD740", // Amber
-    "#FFAB40", // Orange
-    "#FF6E40", // Deep Orange
-  ];
 
   // Generate data
   const data: ListItem[] = useMemo(() => {

@@ -1,20 +1,26 @@
 import { createContext, useContext } from "react";
 
+import { FlashListRef } from "../FlashListRef";
+
 import { CompatScroller } from "./components/CompatScroller";
 
-export interface RecyclerViewContext {
+export interface RecyclerViewContext<T> {
   layout: () => void;
-  getRef: () => React.Ref<any>;
-  getScrollViewRef: () => React.RefObject<CompatScroller | null>;
+  getRef: () => FlashListRef<T> | null;
+  getScrollViewRef: () => CompatScroller | null;
   markChildLayoutAsPending: (id: string) => void;
   unmarkChildLayoutAsPending: (id: string) => void;
 }
 
 const RecyclerViewContextInstance = createContext<
-  RecyclerViewContext | undefined
+  RecyclerViewContext<unknown> | undefined
 >(undefined);
 
 export const RecyclerViewContextProvider = RecyclerViewContextInstance.Provider;
-export function useRecyclerViewContext() {
-  return useContext(RecyclerViewContextInstance);
+export function useRecyclerViewContext<T>():
+  | RecyclerViewContext<T>
+  | undefined {
+  return useContext(RecyclerViewContextInstance) as
+    | RecyclerViewContext<T>
+    | undefined;
 }

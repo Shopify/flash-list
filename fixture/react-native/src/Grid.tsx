@@ -8,43 +8,42 @@ interface GridItem {
   color: string;
   span?: number;
 }
+const colors = [
+  "#FF5252",
+  "#FF4081",
+  "#E040FB",
+  "#7C4DFF",
+  "#536DFE",
+  "#448AFF",
+  "#40C4FF",
+  "#18FFFF",
+  "#64FFDA",
+  "#69F0AE",
+  "#B2FF59",
+  "#EEFF41",
+  "#FFFF00",
+  "#FFD740",
+  "#FFAB40",
+  "#FF6E40",
+];
+// Generate data using a loop
+const generateData = (count: number): GridItem[] => {
+  const items: GridItem[] = [];
+  for (let i = 0; i < count; i++) {
+    items.push({
+      id: i,
+      title: `Item ${i}`,
+      span: i % 9 === 0 ? 2 : 1,
+      color: colors[i % colors.length], // Cycle through colors
+    });
+  }
+  return items;
+};
 
 export function Grid() {
   const [numItems] = useState(1000); // Default to 100 items
 
   // Generate colors for the grid items
-  const colors = [
-    "#FF5252",
-    "#FF4081",
-    "#E040FB",
-    "#7C4DFF",
-    "#536DFE",
-    "#448AFF",
-    "#40C4FF",
-    "#18FFFF",
-    "#64FFDA",
-    "#69F0AE",
-    "#B2FF59",
-    "#EEFF41",
-    "#FFFF00",
-    "#FFD740",
-    "#FFAB40",
-    "#FF6E40",
-  ];
-
-  // Generate data using a loop
-  const generateData = (count: number): GridItem[] => {
-    const items: GridItem[] = [];
-    for (let i = 0; i < count; i++) {
-      items.push({
-        id: i,
-        title: `Item ${i}`,
-        span: i % 9 === 0 ? 2 : 1,
-        color: colors[i % colors.length], // Cycle through colors
-      });
-    }
-    return items;
-  };
 
   const data = useMemo(() => generateData(numItems), [numItems]);
 
