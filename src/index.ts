@@ -5,6 +5,7 @@ import { RecyclerView } from "./recyclerview/RecyclerView";
 
 // Keep this unmodified for TS type checking
 export { default as FlashList } from "./FlashList";
+export { FlashListRef } from "./FlashListRef";
 export {
   FlashListProps,
   ContentStyle,

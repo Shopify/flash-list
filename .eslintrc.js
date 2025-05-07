@@ -18,6 +18,7 @@ module.exports = {
     "@shopify/jsx-no-complex-expressions": "off",
     "@shopify/react-prefer-private-members": "off",
     "eslint-comments/disable-enable-pair": "off",
+    "@shopify/strict-component-boundaries": "off",
     "import/no-cycle": "off",
     "import/no-named-as-default": "off",
     "max-params": "off",

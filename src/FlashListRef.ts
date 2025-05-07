@@ -1,5 +1,6 @@
 import type { RVLayout } from "./recyclerview/layout-managers/LayoutManager";
 import { RecyclerViewProps } from "./recyclerview/RecyclerViewProps";
+import { CompatScroller } from "./recyclerview/components/CompatScroller";
 
 /**
  * Base parameters for scrolling to the edges of the list.
@@ -112,7 +113,7 @@ export interface FlashListRef<T> {
    *
    * @returns The native scroll view reference
    */
-  getNativeScrollRef: () => any;
+  getNativeScrollRef: () => CompatScroller | null;
 
   /**
    * Returns a reference to the scroll responder.
@@ -121,7 +122,7 @@ export interface FlashListRef<T> {
    *
    * @returns The scroll responder
    */
-  getScrollResponder: () => any;
+  getScrollResponder: CompatScroller["getScrollResponder"];
 
   /**
    * Returns the underlying scrollable node.
@@ -231,7 +232,7 @@ export interface FlashListRef<T> {
    * const itemLayout = listRef.current?.getLayout(5);
    * console.log(`Item 5 position: (${itemLayout.x}, ${itemLayout.y})`);
    */
-  getLayout: (index: number) => RVLayout;
+  getLayout: (index: number) => RVLayout | undefined;
 
   /**
    * Returns the absolute last scroll offset.
@@ -268,7 +269,7 @@ export interface FlashListRef<T> {
    * const { startIndex, endIndex } = listRef.current?.getVisibleIndices();
    * console.log(`Visible items: ${startIndex} to ${endIndex}`);
    */
-  getVisibleIndices: () => { startIndex: number; endIndex: number };
+  computeVisibleIndices: () => { startIndex: number; endIndex: number };
 
   /**
    * Returns the index of the first visible item.
@@ -283,7 +284,7 @@ export interface FlashListRef<T> {
   getFirstVisibleIndex: () => number;
 
   /**
-   * Forces recalculation of viewable items.
+   * Forces recalculation of viewable items (vieability callbacks).
    *
    * Call this after any operation that might affect item visibility but
    * doesn't trigger a scroll event.

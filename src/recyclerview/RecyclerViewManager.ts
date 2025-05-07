@@ -160,6 +160,13 @@ export class RecyclerViewManager<T> {
     return this.layoutManager.getLayout(index);
   }
 
+  tryGetLayout(index: number) {
+    if (this.layoutManager && this.layoutManager.getLayoutCount() > index) {
+      return this.layoutManager.getLayout(index);
+    }
+    return undefined;
+  }
+
   // Doesn't include header / foot etc
   getChildContainerDimensions() {
     if (!this.layoutManager) {
@@ -262,7 +269,7 @@ export class RecyclerViewManager<T> {
     return this.layoutManager !== undefined;
   }
 
-  getVisibleIndices() {
+  computeVisibleIndices() {
     if (!this.layoutManager) {
       throw new Error(
         "LayoutManager is not initialized, visible indices are not unavailable"
@@ -302,7 +309,7 @@ export class RecyclerViewManager<T> {
       this.itemViewabilityManager.updateViewableItems(
         this.propsRef.masonry
           ? this.engagedIndicesTracker.getEngagedIndices().toArray()
-          : this.getVisibleIndices().toArray()
+          : this.computeVisibleIndices().toArray()
       );
   }
 
@@ -396,7 +403,7 @@ export class RecyclerViewManager<T> {
     const layoutManager = this.layoutManager;
     if (layoutManager) {
       this.applyInitialScrollAdjustment();
-      const visibleIndices = this.getVisibleIndices();
+      const visibleIndices = this.computeVisibleIndices();
       // console.log("---------> visibleIndices", visibleIndices);
       this.hasRenderedProgressively = visibleIndices.every(
         (index) =>

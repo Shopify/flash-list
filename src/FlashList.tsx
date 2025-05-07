@@ -42,6 +42,7 @@ import {
   hasUnsupportedKeysInContentContainerStyle,
   updateContentStyle,
 } from "./utils/ContentContainerUtils";
+import { ScrollToEdgeParams } from "./FlashListRef";
 
 interface StickyProps extends StickyContainerProps {
   children: any;
@@ -923,6 +924,29 @@ class FlashList<T> extends React.PureComponent<
 
   public getFirstVisibleIndex() {
     return this.rlvRef?.findApproxFirstVisibleIndex() ?? -1;
+  }
+
+  flashScrollIndicators() {
+    this.getNativeScrollRef()?.flashScrollIndicators();
+  }
+
+  getNativeScrollRef() {
+    return (this.rlvRef as any)?._scrollComponent?._scrollViewRef;
+  }
+
+  getScrollResponder() {
+    return this.getNativeScrollRef()?.getScrollResponder();
+  }
+
+  scrollToTop(params?: ScrollToEdgeParams) {
+    this.rlvRef?.scrollToTop(params?.animated);
+  }
+
+  computeVisibleIndices() {
+    console.warn(
+      "computeVisibleIndices is not implemented in old architecture"
+    );
+    return { startIndex: -1, endIndex: -2 };
   }
 }
 

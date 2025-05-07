@@ -105,7 +105,7 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
       const ForwardedScrollComponent = React.forwardRef((_props, ref) =>
         (renderScrollComponent as any)({ ..._props, ref } as any)
       );
-      ForwardedScrollComponent.displayName = "CompatScrollView";
+      ForwardedScrollComponent.displayName = "CustomScrollView";
       scrollComponent = ForwardedScrollComponent as any;
     } else if (renderScrollComponent) {
       scrollComponent = renderScrollComponent;
