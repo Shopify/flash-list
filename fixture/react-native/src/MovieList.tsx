@@ -219,10 +219,6 @@ const MoviePoster = ({ item }: { item: Movie }) => {
 
 // Category row component
 const CategoryRow = ({ category }: { category: Category }) => {
-  useEffect(() => {
-    console.log("Moview row mount", category.title);
-  }, []);
-
   const renderMoviePoster = useCallback(
     ({ item }: { item: Movie }) => <MoviePoster item={item} />,
     []

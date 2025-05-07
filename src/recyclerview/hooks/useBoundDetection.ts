@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { RecyclerViewManager } from "../RecyclerViewManager";
-import { RecyclerViewProps } from "../RecyclerViewProps";
 import { CompatScroller } from "../components/CompatScroller";
+
+import { useUnmountAwareAnimationFrame } from "./useUnmountAwareCallbacks";
 
 /**
  * Hook to detect when the scroll position reaches near the start or end of the list
@@ -17,7 +18,6 @@ import { CompatScroller } from "../components/CompatScroller";
  */
 export function useBoundDetection<T>(
   recyclerViewManager: RecyclerViewManager<T>,
-  props: RecyclerViewProps<T>,
   scrollViewRef: React.RefObject<CompatScroller>
 ) {
   // Track whether we've already triggered the end reached callback to prevent duplicate calls
@@ -26,22 +26,27 @@ export function useBoundDetection<T>(
   const pendingStartReached = useRef(false);
   // Track whether we should auto-scroll to bottom when new content is added
   const pendingAutoscrollToBottom = useRef(false);
-  const { horizontal, data, maintainVisibleContentPosition } = props;
+  const { data } = recyclerViewManager.props;
+  const { requestAnimationFrame } = useUnmountAwareAnimationFrame();
 
   /**
    * Checks if the scroll position is near the start or end of the list
    * and triggers appropriate callbacks if configured.
    */
   const checkBounds = useCallback(() => {
+    const {
+      onEndReached,
+      onStartReached,
+      maintainVisibleContentPosition,
+      horizontal,
+      onEndReachedThreshold: onEndReachedThresholdProp,
+      onStartReachedThreshold: onStartReachedThresholdProp,
+    } = recyclerViewManager.props;
     // Skip all calculations if neither callback is provided and autoscroll is disabled
     const autoscrollToBottomThreshold =
       maintainVisibleContentPosition?.autoscrollToBottomThreshold ?? -1;
 
-    if (
-      !props.onEndReached &&
-      !props.onStartReached &&
-      autoscrollToBottomThreshold < 0
-    ) {
+    if (!onEndReached && !onStartReached && autoscrollToBottomThreshold < 0) {
       return;
     }
 
@@ -50,7 +55,7 @@ export function useBoundDetection<T>(
         recyclerViewManager.getAbsoluteLastScrollOffset();
       const contentSize = recyclerViewManager.getChildContainerDimensions();
       const windowSize = recyclerViewManager.getWindowSize();
-      const isHorizontal = props.horizontal === true;
+      const isHorizontal = horizontal === true;
 
       // Calculate dimensions based on scroll direction
       const visibleLength = isHorizontal ? windowSize.width : windowSize.height;
@@ -59,8 +64,8 @@ export function useBoundDetection<T>(
         recyclerViewManager.firstItemOffset;
 
       // Check if we're near the end of the list
-      if (props.onEndReached) {
-        const onEndReachedThreshold = props.onEndReachedThreshold ?? 0.5;
+      if (onEndReached) {
+        const onEndReachedThreshold = onEndReachedThresholdProp ?? 0.5;
         const endThresholdDistance = onEndReachedThreshold * visibleLength;
 
         const isNearEnd =
@@ -69,27 +74,27 @@ export function useBoundDetection<T>(
 
         if (isNearEnd && !pendingEndReached.current) {
           pendingEndReached.current = true;
-          props.onEndReached();
+          onEndReached();
         }
         pendingEndReached.current = isNearEnd;
       }
 
       // Check if we're near the start of the list
-      if (props.onStartReached) {
-        const onStartReachedThreshold = props.onStartReachedThreshold ?? 0.2;
+      if (onStartReached) {
+        const onStartReachedThreshold = onStartReachedThresholdProp ?? 0.2;
         const startThresholdDistance = onStartReachedThreshold * visibleLength;
 
         const isNearStart = lastScrollOffset <= startThresholdDistance;
 
         if (isNearStart && !pendingStartReached.current) {
           pendingStartReached.current = true;
-          props.onStartReached();
+          onStartReached();
         }
         pendingStartReached.current = isNearStart;
       }
 
       // Handle auto-scrolling to bottom for vertical lists
-      if (!horizontal) {
+      if (!isHorizontal) {
         const autoscrollToBottomThresholdDistance =
           autoscrollToBottomThreshold * visibleLength;
 
@@ -104,11 +109,13 @@ export function useBoundDetection<T>(
         }
       }
     }
-  }, [recyclerViewManager, props]);
+  }, [recyclerViewManager]);
 
   // Reset end reached state when data changes
   useMemo(() => {
     pendingEndReached.current = false;
+    // needs to run only when data changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   // Auto-scroll to bottom when new content is added and we're near the bottom
@@ -119,7 +126,7 @@ export function useBoundDetection<T>(
         pendingAutoscrollToBottom.current = false;
       });
     }
-  }, [data]);
+  }, [data, requestAnimationFrame, scrollViewRef]);
 
   return {
     checkBounds,

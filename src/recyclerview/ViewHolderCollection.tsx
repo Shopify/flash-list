@@ -99,18 +99,24 @@ export const ViewHolderCollection = <TItem,>(
       // );
       recyclerViewContext?.layout();
     }
+    // we need to run this callback on when fixedContainerSize changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fixedContainerSize]);
 
   useLayoutEffect(() => {
     if (renderId > 0) {
       onCommitLayoutEffect?.();
     }
+    // we need to run this callback on when renderId changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [renderId]);
 
   useEffect(() => {
     if (renderId > 0) {
       onCommitEffect?.();
     }
+    // we need to run this callback on when renderId changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [renderId]);
 
   // Expose forceUpdate through ref

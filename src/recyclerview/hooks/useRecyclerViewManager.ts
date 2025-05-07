@@ -14,6 +14,8 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
 
   useMemo(() => {
     recyclerViewManager.updateProps(props);
+    // used to update props so rule can be disabled
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
 
   /**
@@ -21,6 +23,8 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
    */
   useMemo(() => {
     recyclerViewManager.processDataUpdate();
+    // used to process data update so rule can be disabled
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
@@ -28,6 +32,8 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
       recyclerViewManager.dispose();
       velocityTracker.cleanUp();
     };
+    // needs to run only on unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { recyclerViewManager, velocityTracker };
