@@ -88,7 +88,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   );
 
   const separator = useMemo(() => {
-    return ItemSeparatorComponent ? (
+    return ItemSeparatorComponent && trailingItem !== undefined ? (
       <ItemSeparatorComponent leadingItem={item} trailingItem={trailingItem} />
     ) : null;
   }, [ItemSeparatorComponent, item, trailingItem]);

@@ -272,12 +272,11 @@ export function useRecyclerViewController<T>(
         viewPosition,
         viewOffset,
       }: ScrollToIndexParams) => {
-        const { horizontal, data } = recyclerViewManager.props;
+        const { horizontal } = recyclerViewManager.props;
         if (
           scrollViewRef.current &&
-          data &&
           index >= 0 &&
-          index < data.length
+          index < recyclerViewManager.getDataLength()
         ) {
           // Pause the scroll offset adjustments
           pauseOffsetCorrection.current = true;
@@ -352,6 +351,14 @@ export function useRecyclerViewController<T>(
               : startScrollOffset +
                 (finalOffset - startScrollOffset) * (i / (steps - 1));
             await updateScrollOffsetAsync(nextOffset);
+
+            // In case some change happens in the middle of this operation
+            // and the index is out of bounds, scroll to the end
+            if (index >= recyclerViewManager.getDataLength()) {
+              handlerMethods.scrollToEnd({ animated });
+              return;
+            }
+
             const newFinalOffset = getFinalOffset();
             if (
               (newFinalOffset < initialTargetOffset &&
