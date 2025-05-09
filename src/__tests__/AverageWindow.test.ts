@@ -1,4 +1,4 @@
-import { AverageWindow } from "../utils/AverageWindow";
+import { AverageWindow, MultiTypeAverageWindow } from "../utils/AverageWindow";
 
 describe("AverageWindow", () => {
   const fillAverageWindow = (
@@ -76,5 +76,53 @@ describe("AverageWindow", () => {
     for (let i = 1; i < 300; i++) {
       expect(averageWindow2["getNextIndex"]()).toBe(i % size);
     }
+  });
+});
+
+describe("MultiTypeAverageWindow", () => {
+  it("should maintain separate averages for different types", () => {
+    const windowSize = 10;
+    const multiTypeAverageWindow = new MultiTypeAverageWindow(windowSize);
+
+    multiTypeAverageWindow.addValue(10, "type1");
+    multiTypeAverageWindow.addValue(20, "type2");
+
+    expect(multiTypeAverageWindow.getCurrentValue("type1")).toBe(10);
+    expect(multiTypeAverageWindow.getCurrentValue("type2")).toBe(20);
+  });
+
+  it("should update averages correctly for each type", () => {
+    const windowSize = 5;
+    const multiTypeAverageWindow = new MultiTypeAverageWindow(windowSize);
+
+    multiTypeAverageWindow.addValue(10, "type1");
+    multiTypeAverageWindow.addValue(20, "type1");
+    multiTypeAverageWindow.addValue(30, "type1");
+
+    multiTypeAverageWindow.addValue(5, "type2");
+    multiTypeAverageWindow.addValue(15, "type2");
+
+    expect(multiTypeAverageWindow.getCurrentValue("type1")).toBe(20);
+    expect(multiTypeAverageWindow.getCurrentValue("type2")).toBe(10);
+  });
+
+  it("should return 0 for non-existent types", () => {
+    const windowSize = 5;
+    const multiTypeAverageWindow = new MultiTypeAverageWindow(windowSize);
+
+    expect(multiTypeAverageWindow.getCurrentValue("nonExistentType")).toBe(0);
+  });
+
+  it("should reset all averages", () => {
+    const windowSize = 5;
+    const multiTypeAverageWindow = new MultiTypeAverageWindow(windowSize);
+
+    multiTypeAverageWindow.addValue(10, "type1");
+    multiTypeAverageWindow.addValue(20, "type2");
+
+    multiTypeAverageWindow.reset();
+
+    expect(multiTypeAverageWindow.getCurrentValue("type1")).toBe(0);
+    expect(multiTypeAverageWindow.getCurrentValue("type2")).toBe(0);
   });
 });
