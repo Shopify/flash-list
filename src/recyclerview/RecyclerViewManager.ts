@@ -117,6 +117,9 @@ export class RecyclerViewManager<T> {
     } else {
       this.initialDrawBatchSize = (props.numColumns ?? 1) * 2;
     }
+    this.initialDrawBatchSize =
+      this.propsRef.overrideProps?.initialDrawBatchSize ??
+      this.initialDrawBatchSize;
   }
 
   /**

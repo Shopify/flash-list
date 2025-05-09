@@ -23,6 +23,12 @@ export interface ListRenderItemInfo<TItem> {
   extraData?: any;
 }
 
+export interface OverrideProps {
+  initialDrawBatchSize?: number;
+  // rest can be string to any
+  [key: string]: any;
+}
+
 export type RenderTarget = "Cell" | "StickyHeader" | "Measurement";
 
 export const RenderTargetOptions: Record<string, RenderTarget> = {
@@ -293,7 +299,7 @@ export interface FlashListProps<TItem>
   /**
    * For debugging and exception use cases, internal props will be overriden with these values if used
    */
-  overrideProps?: object;
+  overrideProps?: OverrideProps;
 
   /**
    * Set this when offset is needed for the loading indicator to show correctly.

@@ -114,8 +114,8 @@ export abstract class RVLayoutManager {
   /**
    * Gets indices of items currently visible in the viewport.
    * Uses binary search for efficient lookup.
-   * @param unboundDimensionStart Start position of viewport
-   * @param unboundDimensionEnd End position of viewport
+   * @param unboundDimensionStart Start position of viewport (start X or start Y)
+   * @param unboundDimensionEnd End position of viewport (end X or end Y)
    * @returns ConsecutiveNumbers containing visible indices
    */
   getVisibleLayouts(
