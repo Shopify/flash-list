@@ -15,14 +15,14 @@ jest.mock("../recyclerview/utils/measureLayout", () => {
     measureParentSize: jest.fn().mockImplementation(() => ({
       x: 0,
       y: 0,
-      width: 400,
-      height: 900,
+      width: 399,
+      height: 899,
     })),
     measureFirstChildLayout: jest.fn().mockImplementation(() => ({
       x: 0,
       y: 0,
-      width: 400,
-      height: 900,
+      width: 399,
+      height: 899,
     })),
     measureItemLayout: jest.fn().mockImplementation(() => ({
       x: 0,
@@ -33,37 +33,91 @@ jest.mock("../recyclerview/utils/measureLayout", () => {
   };
 });
 
+const renderRecyclerView = (args: {
+  numColumns?: number;
+  masonry?: boolean;
+  horizontal?: boolean;
+}) => {
+  const { numColumns = 1, masonry = false, horizontal = false } = args;
+  return render(
+    <RecyclerView
+      data={[
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+      ]}
+      masonry={masonry}
+      overrideProps={{ initialDrawBatchSize: 1 }}
+      drawDistance={0}
+      numColumns={numColumns}
+      horizontal={horizontal}
+      renderItem={({ item }) => <Text>{item}</Text>}
+    />
+  );
+};
+
 describe("RecyclerView", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
   });
+  describe("Linear Layout", () => {
+    it("renders items ", () => {
+      const result = renderRecyclerView({});
 
-  it("renders items ", () => {
-    const result = render(
-      <RecyclerView
-        data={[
-          "One",
-          "Two",
-          "Three",
-          "Four",
-          "Five",
-          "Six",
-          "Seven",
-          "Eight",
-          "Nine",
-          "Ten",
-          "Eleven",
-          "Twelve",
-          "Thirteen",
-          "Fourteen",
-          "Fifteen",
-        ]}
-        renderItem={({ item }) => <Text>{item}</Text>}
-      />
-    );
+      expect(result).toContainReactComponent(Text, { children: 0 });
+      expect(result).not.toContainReactComponent(Text, { children: 11 });
+    });
+  });
 
-    expect(result).toContainReactComponent(Text, { children: "One" });
-    expect(result).not.toContainReactComponent(Text, { children: "Eleven" });
+  describe("Masonry Layout", () => {
+    it("renders items with masonry", () => {
+      const result = renderRecyclerView({ masonry: true });
+
+      expect(result).toContainReactComponent(Text, { children: 0 });
+    });
+    it("should not render item 18, 19 with numColumns 2", () => {
+      const result = renderRecyclerView({ numColumns: 2, masonry: true });
+
+      expect(result).toContainReactComponent(Text, {
+        children: 17,
+      });
+      expect(result).not.toContainReactComponent(Text, {
+        children: 18,
+      });
+
+      expect(result).not.toContainReactComponent(Text, {
+        children: 19,
+      });
+    });
+  });
+
+  describe("Grid Layout", () => {
+    it("renders items with numColumns 2", () => {
+      const result = renderRecyclerView({ numColumns: 2 });
+
+      expect(result).toContainReactComponent(Text, { children: 0 });
+    });
+    it("should not render item 18, 19 with numColumns 2", () => {
+      const result = renderRecyclerView({ numColumns: 2 });
+
+      expect(result).toContainReactComponent(Text, {
+        children: 17,
+      });
+      expect(result).not.toContainReactComponent(Text, {
+        children: 18,
+      });
+
+      expect(result).not.toContainReactComponent(Text, {
+        children: 19,
+      });
+    });
+  });
+
+  describe("Horizontal Layout", () => {
+    it("renders items with horizontal", () => {
+      const result = renderRecyclerView({ horizontal: true });
+
+      expect(result).toContainReactComponent(Text, { children: 0 });
+      expect(result).not.toContainReactComponent(Text, { children: 4 });
+    });
   });
 });
