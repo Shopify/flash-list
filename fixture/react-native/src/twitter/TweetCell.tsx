@@ -13,12 +13,12 @@ export interface TweetCellProps {
 }
 
 const TweetCell = ({ tweet }: TweetCellProps) => {
-  const { navigate } =
-    useNavigation<StackNavigationProp<RootStackParamList, "Twitter">>();
+  // const { navigate } =
+  //   useNavigation<StackNavigationProp<RootStackParamList, "Twitter">>();
   return (
     <Pressable
       onPress={() => {
-        navigate("TweetDetailScreen", { tweet });
+        // navigate("TweetDetailScreen", { tweet });
       }}
     >
       <TweetContent tweet={tweet} />
