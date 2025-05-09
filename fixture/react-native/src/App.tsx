@@ -24,7 +24,7 @@ const App = () => {
   return (
     <DebugContextProvider>
       <View style={{ flex: 1, backgroundColor: "red" }}>
-        <TwitterBenchmark />
+        <NavigationTree />
       </View>
     </DebugContextProvider>
   );

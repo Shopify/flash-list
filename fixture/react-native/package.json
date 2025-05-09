@@ -19,12 +19,12 @@
     "@react-navigation/stack": "^6.4.1",
     "@shopify/flash-list": "link:../../",
     "react": "19.0.0",
-    "react-native": "0.78.0-rc.4",
+    "react-native": "0.78.2",
     "react-native-fast-image": "^8.6.3",
-    "react-native-gesture-handler": "^2.23.1",
-    "react-native-reanimated": "^3.16.6",
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-reanimated": "^3.17.5",
     "react-native-safe-area-context": "^5.4.0",
-    "react-native-screens": "^4.4.0"
+    "react-native-screens": "^4.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
