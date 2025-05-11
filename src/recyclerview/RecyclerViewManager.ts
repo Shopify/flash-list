@@ -164,7 +164,11 @@ export class RecyclerViewManager<T> {
   }
 
   tryGetLayout(index: number) {
-    if (this.layoutManager && this.layoutManager.getLayoutCount() > index) {
+    if (
+      this.layoutManager &&
+      index >= 0 &&
+      index < this.layoutManager.getLayoutCount()
+    ) {
       return this.layoutManager.getLayout(index);
     }
     return undefined;
