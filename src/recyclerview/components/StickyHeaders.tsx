@@ -58,12 +58,24 @@ export const StickyHeaders = <TItem,>({
   data,
   extraData,
 }: StickyHeaderProps<TItem>) => {
-  const [stickyIndices, setStickyIndices] = useState<{
+  const [stickyHeaderState, setStickyHeaderState] = useState<{
     currentStickyIndex: number;
     nextStickyIndex: number;
-  }>({ currentStickyIndex: -1, nextStickyIndex: -1 });
+    currentStickyHeight: number;
+    nextStickyY: number;
+  }>({
+    currentStickyIndex: -1,
+    nextStickyIndex: -1,
+    currentStickyHeight: 0,
+    nextStickyY: 0,
+  });
 
-  const { currentStickyIndex, nextStickyIndex } = stickyIndices;
+  const {
+    currentStickyIndex,
+    nextStickyIndex,
+    nextStickyY,
+    currentStickyHeight,
+  } = stickyHeaderState;
 
   // Memoize sorted indices based on their Y positions
   const sortedIndices = useMemo(() => {
@@ -79,12 +91,12 @@ export const StickyHeaders = <TItem,>({
     if (legthInvalid) {
       return;
     }
-    const adjustedValue = recyclerViewManager.getLastScrollOffset();
+    const adjustedScrollOffset = recyclerViewManager.getLastScrollOffset();
 
     // Binary search for current sticky index
     const currentIndexInArray = findCurrentStickyIndex(
       sortedIndices,
-      adjustedValue,
+      adjustedScrollOffset,
       (index) => recyclerViewManager.getLayout(index).y
     );
 
@@ -95,13 +107,23 @@ export const StickyHeaders = <TItem,>({
       newNextStickyIndex = -1;
     }
 
+    const newNextStickyY =
+      (recyclerViewManager.tryGetLayout(newNextStickyIndex)?.y ?? 0) +
+      recyclerViewManager.firstItemOffset;
+    const newCurrentStickyHeight =
+      recyclerViewManager.tryGetLayout(newStickyIndex)?.height ?? 0;
+
     if (
       newStickyIndex !== currentStickyIndex ||
-      newNextStickyIndex !== nextStickyIndex
+      newNextStickyIndex !== nextStickyIndex ||
+      newNextStickyY !== nextStickyY ||
+      newCurrentStickyHeight !== currentStickyHeight
     ) {
-      setStickyIndices({
+      setStickyHeaderState({
         currentStickyIndex: newStickyIndex,
         nextStickyIndex: newNextStickyIndex,
+        nextStickyY: newNextStickyY,
+        currentStickyHeight: newCurrentStickyHeight,
       });
     }
   }, [
@@ -110,6 +132,8 @@ export const StickyHeaders = <TItem,>({
     recyclerViewManager,
     sortedIndices,
     legthInvalid,
+    nextStickyY,
+    currentStickyHeight,
   ]);
 
   useEffect(() => {
@@ -139,20 +163,20 @@ export const StickyHeaders = <TItem,>({
       });
     }
 
-    const currentLayout = recyclerViewManager.getLayout(currentStickyIndex);
-    const nextLayout = recyclerViewManager.getLayout(nextStickyIndex);
-
-    const pushStartsAt = nextLayout.y - currentLayout.height;
+    const pushStartsAt = nextStickyY - currentStickyHeight;
 
     return scrollY.interpolate({
-      inputRange: [
-        pushStartsAt + recyclerViewManager.firstItemOffset,
-        nextLayout.y + recyclerViewManager.firstItemOffset,
-      ],
-      outputRange: [0, -currentLayout.height],
+      inputRange: [pushStartsAt, nextStickyY],
+      outputRange: [0, -currentStickyHeight],
       extrapolate: "clamp",
     });
-  }, [currentStickyIndex, nextStickyIndex, recyclerViewManager, scrollY]);
+  }, [
+    currentStickyHeight,
+    currentStickyIndex,
+    nextStickyIndex,
+    nextStickyY,
+    scrollY,
+  ]);
 
   // Memoize header content
   const headerContent = useMemo(() => {
