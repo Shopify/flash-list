@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
@@ -48,7 +49,7 @@ const generateItems = (count: number): Item[] => {
 };
 
 const RecyclerViewHandlerTest = () => {
-  const [items, setItems] = useState<Item[]>(generateItems(100));
+  const [items, setItems] = useState<Item[]>(generateItems(10000));
   const [horizontal, setHorizontal] = useState(false);
   const [lastAction, setLastAction] = useState("None");
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -149,8 +150,9 @@ const RecyclerViewHandlerTest = () => {
           style={[
             styles.item,
             {
+              flex: 1,
               backgroundColor: item.color,
-              height: horizontal ? 150 : item.height,
+              minHeight: horizontal ? 150 : item.height,
               width: horizontal ? item.height : undefined,
             },
           ]}
@@ -194,6 +196,15 @@ const RecyclerViewHandlerTest = () => {
     ),
     [horizontal]
   );
+  const { width } = useWindowDimensions();
+
+  const numColumns = useMemo(() => {
+    if (width > 1200) return 4;
+    if (width > 800) return 3;
+    if (width > 600) return 2;
+    return 1;
+  }, [width]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainContainer}>
@@ -317,6 +328,7 @@ const RecyclerViewHandlerTest = () => {
             ref={listRef}
             key={horizontal ? "horizontal" : "vertical"}
             data={items}
+            numColumns={numColumns}
             renderItem={renderItem}
             horizontal={horizontal}
             ListHeaderComponent={ListHeaderComponent}
@@ -345,7 +357,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   listContainer: {
-    flex: 2, // Takes 2/3 of the space
+    flex: 4, // Takes 2/3 of the space
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
