@@ -78,12 +78,10 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
    */
   getLayoutSize(): RVDimension {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
-    const lastRowTallestItem = this.processAndReturnTallestItemInRow(
-      this.layouts.length - 1
-    );
+    const totalHeight = this.computeTotalHeight(this.layouts.length - 1);
     return {
       width: this.boundedSize,
-      height: lastRowTallestItem.y + lastRowTallestItem.height,
+      height: totalHeight,
     };
   }
 
@@ -93,7 +91,9 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
    * @param endIndex Ending index of items to recompute
    */
   recomputeLayouts(startIndex: number, endIndex: number): void {
-    const newStartIndex = this.locateFirstNeighbourIndex(startIndex);
+    const newStartIndex = this.locateFirstNeighbourIndex(
+      Math.max(0, startIndex - 1)
+    );
     const startVal = this.getLayout(newStartIndex);
 
     let startX = startVal.x;
@@ -102,7 +102,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     for (let i = newStartIndex; i <= endIndex; i++) {
       const layout = this.getLayout(i);
       if (!this.checkBounds(startX, layout.width)) {
-        const tallestItem = this.processAndReturnTallestItemInRow(i);
+        const tallestItem = this.processAndReturnTallestItemInRow(i - 1);
         startY = tallestItem.y + tallestItem.height;
         startX = 0;
       }
@@ -110,6 +110,9 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       layout.x = startX;
       layout.y = startY;
       startX += layout.width;
+    }
+    if (endIndex === this.layouts.length - 1) {
+      this.processAndReturnTallestItemInRow(endIndex);
     }
   }
 
@@ -183,6 +186,26 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   }
 
   /**
+   * Computes the total height of the layout.
+   * @param index Index of the last item in the layout
+   * @returns Total height of the layout
+   */
+  private computeTotalHeight(index: number): number {
+    const startIndex = this.locateFirstNeighbourIndex(index);
+    const y = this.layouts[startIndex].y;
+    let maxHeight = 0;
+    let i = startIndex;
+    while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
+      maxHeight = Math.max(maxHeight, this.layouts[i].height);
+      i++;
+      if (i >= this.layouts.length) {
+        break;
+      }
+    }
+    return y + maxHeight;
+  }
+
+  /**
    * Checks if an item can fit within the bounded width.
    * @param itemX Starting X position of the item
    * @param width Width of the item
@@ -201,7 +224,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     if (startIndex === 0) {
       return 0;
     }
-    let i = startIndex - 1;
+    let i = startIndex;
     for (; i >= 0; i--) {
       if (this.layouts[i].x === 0) {
         break;
