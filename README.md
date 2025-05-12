@@ -8,6 +8,10 @@ FlashList v2 has been rebuilt from the ground up for RN's new architecture and d
 
 > ⚠️ **IMPORTANT:** FlashList v2.x is in alpha and may have some issues. Please report any issues or edge cases you run into. We're actively working on testing and optimizing v2 so some things might change in the final version. We also highly recommend using it with RN 0.78+ for optimal performance.
 
+### Old architecture / FlashList v1
+
+If you're running on old architecture or using FlashList v1.x, you can access the documentation specific to v1 here: [FlashList v1 Documentation](https://shopify.github.io/flash-list/docs/1.x/).
+
 ### Web support
 
 FlashList v2 has web support. Most of the features should work but we're not actively testing it right now. If you run into an issue, please raise it on GitHub.
