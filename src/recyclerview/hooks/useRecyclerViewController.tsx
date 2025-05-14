@@ -462,7 +462,7 @@ export function useRecyclerViewController<T>(
        * Disables item recycling in preparation for layout animations.
        */
       prepareForLayoutAnimationRender: () => {
-        recyclerViewManager.disableRecycling = true;
+        recyclerViewManager.disableRecycling(true);
       },
     };
   }, [

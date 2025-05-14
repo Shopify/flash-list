@@ -342,6 +342,15 @@ export interface FlashListProps<TItem>
 
   /**
    * New arch only
+   * Maximum number of items in the recycle pool. These are the items that are cached in the recycle pool when they are scrolled off the screen.
+   * Unless you have a huge number of item types, you shouldn't need to set this.
+   * Setting this to 0, will disable the recycle pool and items will unmount once they are scrolled off the screen.
+   * There's no limit by default.
+   */
+  maxItemsInRecyclePool?: number;
+
+  /**
+   * New arch only
    * Enable masonry layout.
    */
   masonry?: boolean;
@@ -365,12 +374,6 @@ export interface FlashListProps<TItem>
    * within half the visible length of the list. Default value is 0.2.
    */
   onStartReachedThreshold?: FlashListProps<TItem>["onEndReachedThreshold"];
-
-  /**
-   * New arch only
-   * If true, the RecyclerView will not recycle items.
-   */
-  disableRecycling?: boolean;
 
   /**
    * New arch only

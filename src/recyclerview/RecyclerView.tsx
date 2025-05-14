@@ -78,7 +78,6 @@ const RecyclerViewComponent = <T,>(
     ListFooterComponentStyle,
     ItemSeparatorComponent,
     renderScrollComponent,
-    disableRecycling,
     style,
     stickyHeaderIndices,
     maintainVisibleContentPosition,
@@ -516,7 +515,7 @@ const RecyclerViewComponent = <T,>(
               applyInitialScrollIndex();
               checkBounds();
               recyclerViewManager.computeItemViewability();
-              recyclerViewManager.disableRecycling = Boolean(disableRecycling);
+              recyclerViewManager.disableRecycling(false);
             }}
             CellRendererComponent={CellRendererComponent}
             ItemSeparatorComponent={ItemSeparatorComponent}

@@ -278,6 +278,13 @@ Enable masonry layout for grid-like interfaces with varying item heights. When u
 />
 ```
 
+### `maxItemsInRecyclePool`
+
+Maximum number of items in the recycle pool. These are the items that are cached in the recycle pool when they are scrolled off the screen. Unless you have a huge number of item types, you shouldn't need to set this.
+
+Setting this to 0, will disable the recycle pool and items will unmount once they are scrolled off the screen.
+There's no limit by default.
+
 ### `numColumns`
 
 Multiple columns can only be rendered with `horizontal={false}` and will zig-zag like a `flexWrap` layout. Items should all be the same height - masonry layouts are not supported.

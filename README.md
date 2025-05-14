@@ -74,7 +74,7 @@ const MyList = () => {
   ```
 
 - `onStartReachedThreshold`: How far from the start the top edge of the list must be to trigger `onStartReached`.
-- `disableRecycling`: If true, the FlashList will not recycle items.
+- `maxItemsInRecyclePool`: Maximum number of items in the recycle pool (Not required unless the number of item types is huge).
 - `style`: Style for the FlashList's parent container. We highly recommend not adding padding which can impact the size of the ScrollView inside. We operate on the assumption that the size of parent view and ScrollView is the same. In most cases, `contentContainerStyle` should be enough so avoid using this.
 - `maintainVisibleContentPosition`: Configuration for maintaining scroll position when content changes:
   - `disabled`: Set to true to disable this feature (enabled by default).

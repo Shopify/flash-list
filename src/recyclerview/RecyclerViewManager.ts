@@ -9,30 +9,26 @@ import {
 } from "./layout-managers/LayoutManager";
 import { RVLinearLayoutManagerImpl } from "./layout-managers/LinearLayoutManager";
 import { RVMasonryLayoutManagerImpl } from "./layout-managers/MasonryLayoutManager";
-import { RecycleKeyManagerImpl, RecycleKeyManager } from "./RecycleKeyManager";
 import { RecyclerViewProps } from "./RecyclerViewProps";
 import {
   RVEngagedIndicesTracker,
   RVEngagedIndicesTrackerImpl,
   Velocity,
 } from "./helpers/EngagedIndicesTracker";
-
-// Abstracts layout manager, key manager and viewability manager and generates render stack (progressively on load)
+import { RenderStackManager } from "./RenderStackManager";
+// Abstracts layout manager, render stack manager and viewability manager and generates render stack (progressively on load)
 export class RecyclerViewManager<T> {
   private initialDrawBatchSize = 1;
   private engagedIndicesTracker: RVEngagedIndicesTracker;
-  private recycleKeyManager: RecycleKeyManager;
+  private renderStackManager: RenderStackManager;
   private layoutManager?: RVLayoutManager;
   // Map of index to key
-  private renderStack: Map<number, string> = new Map();
   private isFirstLayoutComplete = false;
   private hasRenderedProgressively = false;
   private propsRef: RecyclerViewProps<T>;
   private itemViewabilityManager: ViewabilityManager<T>;
-  private allocatedKeyTracker: Set<string> = new Set();
   private _isDisposed = false;
 
-  public disableRecycling = false;
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
 
@@ -45,59 +41,24 @@ export class RecyclerViewManager<T> {
   }
 
   constructor(props: RecyclerViewProps<T>) {
+    this.getStableId = this.getStableId.bind(this);
+    this.getItemType = this.getItemType.bind(this);
     this.propsRef = props;
     this.engagedIndicesTracker = new RVEngagedIndicesTrackerImpl();
-    this.recycleKeyManager = new RecycleKeyManagerImpl();
+    this.renderStackManager = new RenderStackManager(
+      props.maxItemsInRecyclePool
+    );
     this.itemViewabilityManager = new ViewabilityManager<T>(this as any);
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
-  // TODO: Write comprehensive tests for this function
   private updateRenderStack = (engagedIndices: ConsecutiveNumbers): void => {
-    // console.log("updateRenderStack", engagedIndices);
-
-    this.allocatedKeyTracker.clear();
-    const newRenderStack = new Map<number, string>();
-    for (const [index, key] of this.renderStack) {
-      if (!engagedIndices.includes(index)) {
-        this.recycleKeyManager.recycleKey(key);
-      }
-    }
-    if (this.disableRecycling) {
-      this.recycleKeyManager.clearPool();
-    }
-    for (const index of engagedIndices) {
-      const currentKey = this.renderStack.get(index);
-
-      if (
-        currentKey &&
-        !this.disableRecycling &&
-        !this.allocatedKeyTracker.has(currentKey)
-      ) {
-        this.recycleKeyManager.recycleKey(currentKey);
-      }
-
-      const newKey = this.recycleKeyManager.getKey(
-        this.getItemType(index),
-        this.getStableId(index),
-        currentKey
-      );
-      this.allocatedKeyTracker.add(newKey);
-      newRenderStack.set(index, newKey);
-    }
-    //  DANGER
-    for (const [index, key] of this.renderStack) {
-      if (
-        this.recycleKeyManager.hasKeyInPool(key) &&
-        !newRenderStack.has(index) &&
-        index < (this.propsRef.data?.length ?? 0)
-      ) {
-        this.allocatedKeyTracker.add(key);
-        newRenderStack.set(index, key);
-      }
-    }
-
-    this.renderStack = newRenderStack;
+    this.renderStackManager.sync(
+      this.getStableId,
+      this.getItemType,
+      engagedIndices,
+      this.getDataLength()
+    );
   };
 
   get props() {
@@ -154,6 +115,10 @@ export class RecyclerViewManager<T> {
     return this.isFirstLayoutComplete;
   }
 
+  disableRecycling(disable: boolean) {
+    this.renderStackManager.disableRecycling = disable;
+  }
+
   getLayout(index: number) {
     if (!this.layoutManager) {
       throw new Error(
@@ -185,7 +150,7 @@ export class RecyclerViewManager<T> {
   }
 
   getRenderStack() {
-    return this.renderStack;
+    return this.renderStackManager.getRenderStack();
   }
 
   getWindowSize() {
@@ -431,7 +396,7 @@ export class RecyclerViewManager<T> {
             0,
             Math.min(
               visibleIndices.length,
-              this.renderStack.size + this.initialDrawBatchSize
+              this.getRenderStack().size + this.initialDrawBatchSize
             )
           )
         );

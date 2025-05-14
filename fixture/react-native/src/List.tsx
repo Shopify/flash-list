@@ -2,15 +2,14 @@
  Use this component inside your React Native Application.
  A scrollable list with different item type
  */
-import React, { useRef, useState } from "react";
-import {
-  View,
-  Text,
-  Pressable,
-  LayoutAnimation,
-  StyleSheet,
-} from "react-native";
-import { FlashList, RecyclerView } from "@shopify/flash-list";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import { RecyclerView, FlashListRef } from "@shopify/flash-list";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+} from "react-native-reanimated";
 
 const generateArray = (size: number) => {
   const arr = new Array(size);
@@ -22,41 +21,44 @@ const generateArray = (size: number) => {
 
 const List = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [data, setData] = useState(generateArray(100));
+  const [data, setData] = useState(() => generateArray(100));
 
-  const list = useRef<FlashList<number> | null>(null);
+  const list = useRef<FlashListRef<number> | null>(null);
 
-  const removeItem = (item: number) => {
-    setData(
-      data.filter((dataItem) => {
-        return dataItem !== item;
-      })
-    );
+  const removeItem = useCallback((item: number) => {
     list.current?.prepareForLayoutAnimationRender();
-    // after removing the item, we start animation
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  };
 
-  const renderItem = ({ item }: { item: number }) => {
-    const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
-    return (
-      <Pressable
-        onPress={() => {
-          removeItem(item);
-        }}
-      >
-        <View
-          style={{
-            ...styles.container,
-            backgroundColor: item > 97 ? "red" : backgroundColor,
-            height: item % 2 === 0 ? 100 : 200,
+    setData((prevData) => {
+      return prevData.filter((dataItem) => {
+        return dataItem !== item;
+      });
+    });
+  }, []);
+
+  const renderItem = useCallback(
+    ({ item }: { item: number }) => {
+      const backgroundColor = item % 2 === 0 ? "#00a1f1" : "#ffbb00";
+      console.log("renderItem", item);
+      return (
+        <Pressable
+          onPress={() => {
+            removeItem(item);
           }}
         >
-          <Text>Cell Id: {item}</Text>
-        </View>
-      </Pressable>
-    );
-  };
+          <View
+            style={{
+              ...styles.container,
+              backgroundColor: item > 97 ? "red" : backgroundColor,
+              height: item % 2 === 0 ? 100 : 200,
+            }}
+          >
+            <Text>Cell Id: {item}</Text>
+          </View>
+        </Pressable>
+      );
+    },
+    [removeItem]
+  );
 
   return (
     <RecyclerView
@@ -68,6 +70,7 @@ const List = () => {
           setRefreshing(false);
         }, 2000);
       }}
+      CellRendererComponent={CellRenderer}
       keyExtractor={(item: number) => {
         return item.toString();
       }}
@@ -82,6 +85,16 @@ const List = () => {
 
 export default List;
 
+const CellRenderer = (props: any) => {
+  return (
+    <Animated.View
+      {...props}
+      layout={LinearTransition}
+      entering={FadeIn}
+      exiting={FadeOut}
+    />
+  );
+};
 const styles = StyleSheet.create({
   container: {
     justifyContent: "space-around",
