@@ -534,6 +534,9 @@ const RecyclerViewComponent = <T,>(
   );
 };
 
+// Set displayName for the inner component
+RecyclerViewComponent.displayName = "FlashList";
+
 // Type definition for the RecyclerView component
 type RecyclerViewType = <T>(
   props: RecyclerViewProps<T> & { ref?: React.Ref<FlashListRef<T>> }
