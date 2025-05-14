@@ -15,7 +15,7 @@ const TwitterBenchmark = () => {
         alert(res.formattedString);
       }
     },
-    { targetOffset: 200 * 100, speedMultiplier: 8, repeatCount: 20 }
+    { targetOffset: 200 * 100, speedMultiplier: 2, repeatCount: 5 }
   );
 
   // @ts-ignore - Type compatibility issue with ref passing
