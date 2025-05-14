@@ -21,7 +21,7 @@ export interface ViewHolderCollectionProps<TItem> {
   /** The data array to be rendered */
   data: FlashListProps<TItem>["data"];
   /** Map of indices to React keys for each rendered item */
-  renderStack: Map<number, string>;
+  renderStack: Map<string, { index: number }>;
   /** Function to get layout information for a specific index */
   getLayout: (index: number) => RVLayout;
   /** Ref to control layout updates from parent components */
@@ -120,12 +120,16 @@ export const ViewHolderCollection = <TItem,>(
   }, [renderId]);
 
   // Expose forceUpdate through ref
-  useImperativeHandle(viewHolderCollectionRef, () => ({
-    commitLayout: () => {
-      // This will trigger a re-render of the component
-      setRenderId((prev) => prev + 1);
-    },
-  }));
+  useImperativeHandle(
+    viewHolderCollectionRef,
+    () => ({
+      commitLayout: () => {
+        // This will trigger a re-render of the component
+        setRenderId((prev) => prev + 1);
+      },
+    }),
+    [setRenderId]
+  );
 
   const hasData = data && data.length > 0;
 
@@ -134,6 +138,17 @@ export const ViewHolderCollection = <TItem,>(
     height: containerLayout?.height,
   };
 
+  // sort by index and log
+  // const sortedRenderStack = Array.from(renderStack.entries()).sort(
+  //   ([, a], [, b]) => a.index - b.index
+  // );
+  // console.log(
+  //   "sortedRenderStack",
+  //   sortedRenderStack.map(([reactKey, { index }]) => {
+  //     return `${index} => ${reactKey}`;
+  //   })
+  // );
+
   return (
     <CompatView
       // TODO: Take care of web scroll bar here
@@ -141,7 +156,7 @@ export const ViewHolderCollection = <TItem,>(
     >
       {containerLayout &&
         hasData &&
-        Array.from(renderStack, ([index, reactKey]) => {
+        Array.from(renderStack.entries(), ([reactKey, { index }]) => {
           const item = data[index];
           const trailingItem = ItemSeparatorComponent
             ? data[index + 1]

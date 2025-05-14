@@ -97,7 +97,10 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
 
   const children = useMemo(() => {
     return renderItem?.({ item, index, extraData, target }) ?? null;
-  }, [item, index, extraData, target, renderItem]);
+    // TODO: Test more thoroughly
+    // We don't really  to re-render the children when the index changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item, extraData, target, renderItem]);
 
   const style = {
     flexDirection: horizontal ? "row" : "column",
@@ -110,7 +113,6 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     maxWidth: layout.maxWidth,
     left: layout.x,
     top: layout.y,
-    zIndex: 0,
   } as const;
 
   // TODO: Fix this type issue

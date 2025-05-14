@@ -76,7 +76,7 @@ export function Grid() {
         contentContainerStyle={contentContainerStyle}
         // maintainVisibleContentPosition={{}}
         initialScrollIndex={25}
-        //overrideItemLayout={overrideItemLayout}
+        // overrideItemLayout={overrideItemLayout}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
       />
