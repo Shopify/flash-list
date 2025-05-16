@@ -58,24 +58,24 @@ export const StickyHeaders = <TItem,>({
   data,
   extraData,
 }: StickyHeaderProps<TItem>) => {
-  const [stickyHeaderState, setStickyHeaderState] = useState<{
-    currentStickyIndex: number;
-    nextStickyIndex: number;
-    currentStickyHeight: number;
-    nextStickyY: number;
-  }>({
-    currentStickyIndex: -1,
-    nextStickyIndex: -1,
-    currentStickyHeight: 0,
-    nextStickyY: 0,
-  });
+  const animatedPushStartsAtRef = useRef(
+    new Animated.Value(Number.MAX_SAFE_INTEGER)
+  );
+  const lastPushStartAtValueRef = useRef(Number.MAX_SAFE_INTEGER);
 
-  const {
-    currentStickyIndex,
-    nextStickyIndex,
-    nextStickyY,
-    currentStickyHeight,
-  } = stickyHeaderState;
+  const animatedHeaderOffset = useMemo(() => {
+    // allow only negative values using interpolate
+    return Animated.subtract(
+      animatedPushStartsAtRef.current,
+      scrollY
+    ).interpolate({
+      inputRange: [-Number.MAX_SAFE_INTEGER, 0],
+      outputRange: [-Number.MAX_SAFE_INTEGER, 0],
+      extrapolate: "clamp",
+    });
+  }, [scrollY]);
+
+  const [currentStickyIndex, setCurrentStickyIndex] = useState(-1);
 
   // Memoize sorted indices based on their Y positions
   const sortedIndices = useMemo(() => {
@@ -113,28 +113,20 @@ export const StickyHeaders = <TItem,>({
     const newCurrentStickyHeight =
       recyclerViewManager.tryGetLayout(newStickyIndex)?.height ?? 0;
 
-    if (
-      newStickyIndex !== currentStickyIndex ||
-      newNextStickyIndex !== nextStickyIndex ||
-      newNextStickyY !== nextStickyY ||
-      newCurrentStickyHeight !== currentStickyHeight
-    ) {
-      setStickyHeaderState({
-        currentStickyIndex: newStickyIndex,
-        nextStickyIndex: newNextStickyIndex,
-        nextStickyY: newNextStickyY,
-        currentStickyHeight: newCurrentStickyHeight,
-      });
+    const newPushStartsAt = newNextStickyY - newCurrentStickyHeight;
+
+    if (newNextStickyIndex === -1) {
+      lastPushStartAtValueRef.current = Number.MAX_SAFE_INTEGER;
+      animatedPushStartsAtRef.current.setValue(Number.MAX_SAFE_INTEGER);
+    } else if (newPushStartsAt !== lastPushStartAtValueRef.current) {
+      lastPushStartAtValueRef.current = newPushStartsAt;
+      animatedPushStartsAtRef.current.setValue(newPushStartsAt);
     }
-  }, [
-    currentStickyIndex,
-    nextStickyIndex,
-    recyclerViewManager,
-    sortedIndices,
-    legthInvalid,
-    nextStickyY,
-    currentStickyHeight,
-  ]);
+
+    if (newStickyIndex !== currentStickyIndex) {
+      setCurrentStickyIndex(newStickyIndex);
+    }
+  }, [legthInvalid, recyclerViewManager, sortedIndices, currentStickyIndex]);
 
   useEffect(() => {
     compute();
@@ -153,31 +145,6 @@ export const StickyHeaders = <TItem,>({
 
   const refHolder = useRef(new Map()).current;
 
-  // Memoize translateY calculation
-  const translateY = useMemo(() => {
-    if (currentStickyIndex === -1 || nextStickyIndex === -1) {
-      return scrollY.interpolate({
-        inputRange: [0, Infinity],
-        outputRange: [0, 0],
-        extrapolate: "clamp",
-      });
-    }
-
-    const pushStartsAt = nextStickyY - currentStickyHeight;
-
-    return scrollY.interpolate({
-      inputRange: [pushStartsAt, nextStickyY],
-      outputRange: [0, -currentStickyHeight],
-      extrapolate: "clamp",
-    });
-  }, [
-    currentStickyHeight,
-    currentStickyIndex,
-    nextStickyIndex,
-    nextStickyY,
-    scrollY,
-  ]);
-
   // Memoize header content
   const headerContent = useMemo(() => {
     if (currentStickyIndex === -1) return null;
@@ -190,7 +157,7 @@ export const StickyHeaders = <TItem,>({
           left: 0,
           right: 0,
           zIndex: 1,
-          transform: [{ translateY }],
+          transform: [{ translateY: animatedHeaderOffset }],
         }}
       >
         <ViewHolder
@@ -205,7 +172,14 @@ export const StickyHeaders = <TItem,>({
         />
       </CompatAnimatedView>
     );
-  }, [currentStickyIndex, data, renderItem, extraData, refHolder, translateY]);
+  }, [
+    currentStickyIndex,
+    data,
+    renderItem,
+    extraData,
+    refHolder,
+    animatedHeaderOffset,
+  ]);
 
   return headerContent;
 };
