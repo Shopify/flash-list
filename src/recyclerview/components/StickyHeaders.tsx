@@ -147,8 +147,6 @@ export const StickyHeaders = <TItem,>({
 
   // Memoize header content
   const headerContent = useMemo(() => {
-    if (currentStickyIndex === -1) return null;
-
     return (
       <CompatAnimatedView
         style={{
@@ -160,16 +158,18 @@ export const StickyHeaders = <TItem,>({
           transform: [{ translateY: animatedHeaderOffset }],
         }}
       >
-        <ViewHolder
-          index={currentStickyIndex}
-          item={data[currentStickyIndex]}
-          renderItem={renderItem}
-          layout={{ x: 0, y: 0, width: 0, height: 0 }}
-          refHolder={refHolder}
-          extraData={extraData}
-          trailingItem={null}
-          target="StickyHeader"
-        />
+        {currentStickyIndex !== -1 ? (
+          <ViewHolder
+            index={currentStickyIndex}
+            item={data[currentStickyIndex]}
+            renderItem={renderItem}
+            layout={{ x: 0, y: 0, width: 0, height: 0 }}
+            refHolder={refHolder}
+            extraData={extraData}
+            trailingItem={null}
+            target="StickyHeader"
+          />
+        ) : null}
       </CompatAnimatedView>
     );
   }, [
