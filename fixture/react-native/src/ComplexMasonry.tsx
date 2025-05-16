@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashListRef, RecyclerView } from "@shopify/flash-list";
 import FastImage from "@d11/react-native-fast-image";
 
 // Define our data structure
@@ -182,7 +182,7 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
   return (
     <View style={styles.container}>
       <RecyclerView
-        ref={ref}
+        ref={ref as React.RefObject<FlashListRef<MasonryItem>>}
         testID="ComplexMasonryList"
         data={items}
         masonry

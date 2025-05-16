@@ -2,7 +2,7 @@
  Use this component inside your React Native Application.
  A scrollable list with different item type
  */
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { RecyclerView, FlashListRef } from "@shopify/flash-list";
 import Animated, {
