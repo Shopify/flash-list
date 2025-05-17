@@ -49,6 +49,11 @@ export interface StickyHeaderRef {
   reportScrollEvent: (event: NativeScrollEvent) => void;
 }
 
+interface StickyHeaderState {
+  currentStickyIndex: number;
+  pushStartsAt: number;
+}
+
 export const StickyHeaders = <TItem,>({
   stickyHeaderIndices,
   renderItem,
@@ -58,26 +63,16 @@ export const StickyHeaders = <TItem,>({
   data,
   extraData,
 }: StickyHeaderProps<TItem>) => {
-  const animatedPushStartsAtRef = useRef(
-    new Animated.Value(Number.MAX_SAFE_INTEGER)
+  const [stickyHeaderState, setStickyHeaderState] = useState<StickyHeaderState>(
+    {
+      currentStickyIndex: -1,
+      pushStartsAt: Number.MAX_SAFE_INTEGER,
+    }
   );
-  const lastPushStartAtValueRef = useRef(Number.MAX_SAFE_INTEGER);
 
-  const animatedHeaderOffset = useMemo(() => {
-    // allow only negative values using interpolate
-    return Animated.subtract(
-      animatedPushStartsAtRef.current,
-      scrollY
-    ).interpolate({
-      inputRange: [-Number.MAX_SAFE_INTEGER, 0],
-      outputRange: [-Number.MAX_SAFE_INTEGER, 0],
-      extrapolate: "clamp",
-    });
-  }, [scrollY]);
+  const { currentStickyIndex, pushStartsAt } = stickyHeaderState;
 
-  const [currentStickyIndex, setCurrentStickyIndex] = useState(-1);
-
-  // Memoize sorted indices based on their Y positions
+  // sort indices and memoize compute
   const sortedIndices = useMemo(() => {
     return stickyHeaderIndices.sort((first, second) => first - second);
   }, [stickyHeaderIndices]);
@@ -107,26 +102,33 @@ export const StickyHeaders = <TItem,>({
       newNextStickyIndex = -1;
     }
 
+    // To make sure header offset is 0 in the interpolate compute
     const newNextStickyY =
-      (recyclerViewManager.tryGetLayout(newNextStickyIndex)?.y ?? 0) +
-      recyclerViewManager.firstItemOffset;
+      newNextStickyIndex === -1
+        ? Number.MAX_SAFE_INTEGER
+        : (recyclerViewManager.tryGetLayout(newNextStickyIndex)?.y ?? 0) +
+          recyclerViewManager.firstItemOffset;
     const newCurrentStickyHeight =
       recyclerViewManager.tryGetLayout(newStickyIndex)?.height ?? 0;
 
     const newPushStartsAt = newNextStickyY - newCurrentStickyHeight;
 
-    if (newNextStickyIndex === -1) {
-      lastPushStartAtValueRef.current = Number.MAX_SAFE_INTEGER;
-      animatedPushStartsAtRef.current.setValue(Number.MAX_SAFE_INTEGER);
-    } else if (newPushStartsAt !== lastPushStartAtValueRef.current) {
-      lastPushStartAtValueRef.current = newPushStartsAt;
-      animatedPushStartsAtRef.current.setValue(newPushStartsAt);
+    if (
+      newStickyIndex !== currentStickyIndex ||
+      newPushStartsAt !== pushStartsAt
+    ) {
+      setStickyHeaderState({
+        currentStickyIndex: newStickyIndex,
+        pushStartsAt: newPushStartsAt,
+      });
     }
-
-    if (newStickyIndex !== currentStickyIndex) {
-      setCurrentStickyIndex(newStickyIndex);
-    }
-  }, [legthInvalid, recyclerViewManager, sortedIndices, currentStickyIndex]);
+  }, [
+    legthInvalid,
+    recyclerViewManager,
+    sortedIndices,
+    currentStickyIndex,
+    pushStartsAt,
+  ]);
 
   useEffect(() => {
     compute();
@@ -145,6 +147,17 @@ export const StickyHeaders = <TItem,>({
 
   const refHolder = useRef(new Map()).current;
 
+  const translateY = useMemo(() => {
+    const currentStickyHeight =
+      recyclerViewManager.tryGetLayout(currentStickyIndex)?.height ?? 0;
+
+    return scrollY.interpolate({
+      inputRange: [pushStartsAt, pushStartsAt + currentStickyHeight],
+      outputRange: [0, -currentStickyHeight],
+      extrapolate: "clamp",
+    });
+  }, [recyclerViewManager, currentStickyIndex, scrollY, pushStartsAt]);
+
   // Memoize header content
   const headerContent = useMemo(() => {
     return (
@@ -155,7 +168,7 @@ export const StickyHeaders = <TItem,>({
           left: 0,
           right: 0,
           zIndex: 1,
-          transform: [{ translateY: animatedHeaderOffset }],
+          transform: [{ translateY }],
         }}
       >
         {currentStickyIndex !== -1 ? (
@@ -172,14 +185,7 @@ export const StickyHeaders = <TItem,>({
         ) : null}
       </CompatAnimatedView>
     );
-  }, [
-    currentStickyIndex,
-    data,
-    renderItem,
-    extraData,
-    refHolder,
-    animatedHeaderOffset,
-  ]);
+  }, [translateY, currentStickyIndex, data, renderItem, refHolder, extraData]);
 
   return headerContent;
 };
