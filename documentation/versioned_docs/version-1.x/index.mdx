@@ -1,0 +1,57 @@
+---
+id: introduction
+title: Introduction 📚
+slug: /
+sidebar_position: 0
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+**Fast & performant React Native list. No more blank cells.**
+
+Swap from FlatList in seconds. Get instant performance.
+
+## Installation
+
+<Tabs
+  defaultValue="react-native"
+  values={[
+    { label: "React Native", value: "react-native" },
+    { label: "Expo", value: "expo" },
+  ]}
+>
+<TabItem value="react-native">
+Add the package to your project via:
+
+```bash
+yarn add @shopify/flash-list
+```
+
+and run `pod install` in the `ios` directory. If you don't use React Native CLI's
+[autolinking](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md)
+feature, you will need to manually link the dependency - read
+[here](/guides/manual-linking) to learn more.
+
+</TabItem>
+<TabItem value="expo">
+
+- ✅ This library can be used with "Expo Go" from SDK 46 upwards or with a development client
+- ✅ You can use this library with [Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
+
+```bash
+npx expo install @shopify/flash-list expo-dev-client
+```
+
+You can then [create a new Development Build](https://docs.expo.dev/development/build/) and begin using `FlashList`.
+
+</TabItem>
+</Tabs>
+
+### Usage
+
+Read more about the usage of `FlashList` [here](/usage)
+
+### App / Playground
+
+The [fixture](https://github.com/Shopify/flash-list/tree/main/fixture) is an example app showing how to use the library.

@@ -17,10 +17,6 @@ There's lots of optimizations that are applicable for _any_ React Native compone
 Always profile performance in the release mode. `FlashList`'s performance between JS dev and release mode differs greatly.
 :::
 
-### `estimatedItemSize`
-
-Ensure [`estimatedItemSize`](/usage#estimateditemsize) is as close as possible to the real average value - see [here](/estimated-item-size#how-to-calculate) how to properly calculate the value for this prop.
-
 ### Remove `key` prop
 
 :::warning
@@ -182,8 +178,9 @@ const MyHeavyComponent = () => {
   return ...;
 };
 
+const MemoizedMyHeavyComponent = memo(MyHeavyComponent);
+
 const MyItem = ({ item }: { item: any }) => {
-  const MemoizedMyHeavyComponent = memo(MyHeavyComponent);
   return (
     <>
       <MemoizedMyHeavyComponent />
