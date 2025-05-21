@@ -16,65 +16,67 @@ export function Masonry() {
     };
   });
   return (
-    <View style={styles.container}>
-      <RecyclerView
-        testID="MasonryList"
-        data={data}
-        masonry
-        overrideItemLayout={(layout, item) => {
-          layout.size = item.height;
-        }}
-        numColumns={columnCount}
-        estimatedItemSize={150}
-        ListHeaderComponent={
-          <Component
-            item={{ index: 0, height: 100 }}
-            text="Header"
-            backgroundColor="red"
-          />
-        }
-        ListFooterComponent={
-          <Component
-            item={{ index: 0, height: 100 }}
-            text="Footer"
-            backgroundColor="lightblue"
-          />
-        }
-        ListEmptyComponent={
-          <Component
-            item={{ index: 0, height: 100 }}
-            text="Empty"
-            backgroundColor="black"
-          />
-        }
-        onViewableItemsChanged={(info) => {
-          info.changed.forEach((item) => {
-            if (item.isViewable) {
-              console.log("Viewable:", item.index);
+    <React.StrictMode>
+      <View style={styles.container}>
+        <RecyclerView
+          testID="MasonryList"
+          data={data}
+          masonry
+          overrideItemLayout={(layout, item) => {
+            layout.size = item.height;
+          }}
+          numColumns={columnCount}
+          estimatedItemSize={150}
+          ListHeaderComponent={
+            <Component
+              item={{ index: 0, height: 100 }}
+              text="Header"
+              backgroundColor="red"
+            />
+          }
+          ListFooterComponent={
+            <Component
+              item={{ index: 0, height: 100 }}
+              text="Footer"
+              backgroundColor="lightblue"
+            />
+          }
+          ListEmptyComponent={
+            <Component
+              item={{ index: 0, height: 100 }}
+              text="Empty"
+              backgroundColor="black"
+            />
+          }
+          onViewableItemsChanged={(info) => {
+            info.changed.forEach((item) => {
+              if (item.isViewable) {
+                console.log("Viewable:", item.index);
+              }
+            });
+          }}
+          keyExtractor={(item, index) => {
+            if (item.index !== index) {
+              console.log("Key Extractor issue @", index);
             }
-          });
-        }}
-        keyExtractor={(item, index) => {
-          if (item.index !== index) {
-            console.log("Key Extractor issue @", index);
-          }
-          return item.index.toString();
-        }}
-        getItemType={(item, index) => {
-          if (item.index !== index) {
-            console.log(index);
-          }
-          return undefined;
-        }}
-        renderItem={({ item }) => {
-          return <Component item={item} />;
-        }}
-        onLoad={({ elapsedTimeInMs }) => {
-          console.log("List Load Time", elapsedTimeInMs);
-        }}
-        contentContainerStyle={{ paddingHorizontal: 2 }}
-      />
-    </View>
+            return item.index.toString();
+          }}
+          getItemType={(item, index) => {
+            if (item.index !== index) {
+              console.log(index);
+            }
+            return undefined;
+          }}
+          renderItem={({ item }) => {
+            return <Component item={item} />;
+          }}
+          onLoad={({ elapsedTimeInMs }) => {
+            console.log("List Load Time", elapsedTimeInMs);
+          }}
+          contentContainerStyle={{ paddingHorizontal: 2 }}
+        />
+      </View>
+    </React.StrictMode>
   );
 }
 
