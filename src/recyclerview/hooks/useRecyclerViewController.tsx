@@ -134,7 +134,7 @@ export function useRecyclerViewController<T>(
           if (diff !== 0 && !pauseOffsetCorrection.current) {
             // console.log("diff", diff, firstVisibleItemKey.current);
             if (PlatformConfig.supportsOffsetCorrection) {
-              //console.log("scrollBy", diff);
+              // console.log("scrollBy", diff);
               scrollAnchorRef.current?.scrollBy(diff);
             } else {
               const scrollToParams = horizontal
@@ -227,6 +227,9 @@ export function useRecyclerViewController<T>(
             animated,
           });
         }
+      },
+      clearLayoutCacheOnUpdate: () => {
+        recyclerViewManager.markLayoutManagerDirty();
       },
 
       // Expose native scroll view methods
