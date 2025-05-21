@@ -68,19 +68,21 @@ export function Grid() {
   const keyExtractor = useCallback((item: GridItem) => item.id.toString(), []);
 
   return (
-    <View style={styles.container}>
-      <RecyclerView
-        testID="GridScreen"
-        data={data}
-        numColumns={2}
-        contentContainerStyle={contentContainerStyle}
-        // maintainVisibleContentPosition={{}}
-        initialScrollIndex={25}
-        overrideItemLayout={overrideItemLayout}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-      />
-    </View>
+    <React.StrictMode>
+      <View style={styles.container}>
+        <RecyclerView
+          testID="GridScreen"
+          data={data}
+          numColumns={2}
+          contentContainerStyle={contentContainerStyle}
+          // maintainVisibleContentPosition={{}}
+          initialScrollIndex={25}
+          overrideItemLayout={overrideItemLayout}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+        />
+      </View>
+    </React.StrictMode>
   );
 }
 
