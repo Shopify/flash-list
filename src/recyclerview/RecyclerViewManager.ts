@@ -322,6 +322,14 @@ export class RecyclerViewManager<T> {
     );
   }
 
+  shouldMaintainVisibleContentPosition() {
+    // Return true if maintainVisibleContentPosition is enabled and not horizontal
+    return (
+      !this.propsRef.maintainVisibleContentPosition?.disabled &&
+      !this.propsRef.horizontal
+    );
+  }
+
   getDataLength() {
     return this.propsRef.data?.length ?? 0;
   }

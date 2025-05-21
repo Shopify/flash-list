@@ -89,8 +89,7 @@ export function useRecyclerViewController<T>(
    * the user's current view position when new messages are added.
    */
   const applyContentOffset = useCallback(async () => {
-    const { horizontal, data, keyExtractor, maintainVisibleContentPosition } =
-      recyclerViewManager.props;
+    const { horizontal, data, keyExtractor } = recyclerViewManager.props;
     // Resolve all pending scroll updates from previous calls
     const resolves = pendingScrollResolves.current;
     pendingScrollResolves.current = [];
@@ -99,11 +98,10 @@ export function useRecyclerViewController<T>(
     const currentDataLength = data?.length ?? 0;
 
     if (
-      !horizontal &&
       recyclerViewManager.getIsFirstLayoutComplete() &&
       keyExtractor &&
       currentDataLength > 0 &&
-      maintainVisibleContentPosition?.disabled !== true
+      recyclerViewManager.shouldMaintainVisibleContentPosition()
     ) {
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
       // If we have a tracked first visible item, maintain its position
@@ -125,21 +123,30 @@ export function useRecyclerViewController<T>(
 
         if (currentIndexOfFirstVisibleItem !== undefined) {
           // Calculate the difference in position and apply the offset
-          const diff =
-            recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y -
-            firstVisibleItemLayout.current!.y;
+          const diff = horizontal
+            ? recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).x -
+              firstVisibleItemLayout.current!.x
+            : recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y -
+              firstVisibleItemLayout.current!.y;
           firstVisibleItemLayout.current = {
             ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
           };
           if (diff !== 0 && !pauseOffsetCorrection.current) {
             // console.log("diff", diff, firstVisibleItemKey.current);
             if (PlatformConfig.supportsOffsetCorrection) {
+              //console.log("scrollBy", diff);
               scrollAnchorRef.current?.scrollBy(diff);
             } else {
-              scrollViewRef.current?.scrollTo({
-                y: recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
-                animated: false,
-              });
+              const scrollToParams = horizontal
+                ? {
+                    x: recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
+                    animated: false,
+                  }
+                : {
+                    y: recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
+                    animated: false,
+                  };
+              scrollViewRef.current?.scrollTo(scrollToParams);
             }
             if (hasDataChanged) {
               updateScrollOffsetAsync(
