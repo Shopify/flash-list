@@ -28,6 +28,7 @@ export class RecyclerViewManager<T> {
   private propsRef: RecyclerViewProps<T>;
   private itemViewabilityManager: ViewabilityManager<T>;
   private _isDisposed = false;
+  private _isLayoutManagerDirty = false;
 
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
@@ -205,6 +206,10 @@ export class RecyclerViewManager<T> {
         "Horizontal prop cannot be toggled, you can use a key on FlashList to recreate it."
       );
     }
+    if (this._isLayoutManagerDirty) {
+      this.layoutManager = undefined;
+      this._isLayoutManagerDirty = false;
+    }
     if (!(this.layoutManager instanceof LayoutManagerClass)) {
       // console.log("-----> new LayoutManagerClass");
 
@@ -311,6 +316,10 @@ export class RecyclerViewManager<T> {
   dispose() {
     this._isDisposed = true;
     this.itemViewabilityManager.dispose();
+  }
+
+  markLayoutManagerDirty() {
+    this._isLayoutManagerDirty = true;
   }
 
   getInitialScrollIndex() {

@@ -185,7 +185,7 @@ const RecyclerViewComponent = <T,>(
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
       const layout = measureItemLayout(
         viewHolderRef.current!,
-        recyclerViewManager.getLayout(index)
+        recyclerViewManager.tryGetLayout(index)
       );
 
       // comapre height with stored layout

@@ -306,4 +306,15 @@ export interface FlashListRef<T> {
    * listRef.current?.prepareForLayoutAnimationRender();
    */
   prepareForLayoutAnimationRender: () => void;
+
+  /**
+   * Clears the layout cache on update.
+   * Call this when you want to clear the layout cache on update.
+   * Can be useful for carousals when orientation changes.
+   * This should be called before the render and not in an effect.
+   *
+   * @example
+   * listRef.current?.clearLayoutCacheOnUpdate();
+   */
+  clearLayoutCacheOnUpdate: () => void;
 }

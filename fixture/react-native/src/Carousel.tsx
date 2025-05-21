@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashListRef, RecyclerView } from "@shopify/flash-list";
 
 interface CarouselItem {
   id: string;
@@ -84,8 +84,11 @@ const carouselData: CarouselItem[] = [
 ];
 
 const Carousel = () => {
-  const flatListRef = useRef(null);
+  const flatListRef = useRef<FlashListRef<CarouselItem>>(null);
   const { width: screenWidth } = useWindowDimensions();
+  const lastVisibleIndexRef = useRef(0);
+  const isLayoutCompleteRef = useRef(false);
+
   const renderItem = useCallback(
     ({ item }: { item: CarouselItem }) => {
       return (
@@ -114,6 +117,25 @@ const Carousel = () => {
     [screenWidth]
   );
 
+  useMemo(() => {
+    if (isLayoutCompleteRef.current) {
+      flatListRef.current?.clearLayoutCacheOnUpdate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screenWidth]);
+
+  useEffect(() => {
+    if (isLayoutCompleteRef.current) {
+      const targetIndex = lastVisibleIndexRef.current;
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          index: targetIndex,
+          animated: false,
+        });
+      }, 0);
+    }
+  }, [screenWidth]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Simple Carousel</Text>
@@ -124,6 +146,20 @@ const Carousel = () => {
         data={carouselData}
         keyExtractor={(item) => item.id}
         horizontal
+        onLoad={() => {
+          isLayoutCompleteRef.current = true;
+        }}
+        viewabilityConfig={{
+          itemVisiblePercentThreshold: 50,
+          minimumViewTime: 0,
+        }}
+        onViewableItemsChanged={({ viewableItems }) => {
+          viewableItems.forEach((item) => {
+            if (item.index !== lastVisibleIndexRef.current && item.isViewable) {
+              lastVisibleIndexRef.current = item.index ?? 0;
+            }
+          });
+        }}
         showsHorizontalScrollIndicator={false}
         snapToInterval={screenWidth * 0.8 + 32}
         decelerationRate="fast"
