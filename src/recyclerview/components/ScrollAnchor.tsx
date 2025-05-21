@@ -15,6 +15,7 @@ import { CompatView } from "./CompatView";
 export interface ScrollAnchorProps {
   /** Ref to access scroll anchor methods */
   scrollAnchorRef: React.Ref<ScrollAnchorRef>;
+  horizontal: boolean;
 }
 
 /**
@@ -31,7 +32,10 @@ export interface ScrollAnchorRef {
  * @param props - Component props
  * @returns An invisible anchor element used for scrolling
  */
-export function ScrollAnchor({ scrollAnchorRef }: ScrollAnchorProps) {
+export function ScrollAnchor({
+  scrollAnchorRef,
+  horizontal,
+}: ScrollAnchorProps) {
   const [scrollOffset, setScrollOffset] = useState(1000000); // TODO: Fix this value
 
   // Expose scrollBy method through ref
@@ -49,10 +53,15 @@ export function ScrollAnchor({ scrollAnchorRef }: ScrollAnchorProps) {
   const anchor = useMemo(() => {
     return (
       <CompatView
-        style={{ position: "absolute", height: 0, top: scrollOffset }}
+        style={{
+          position: "absolute",
+          height: 0,
+          top: horizontal ? 0 : scrollOffset,
+          left: horizontal ? scrollOffset : 0,
+        }}
       />
     );
-  }, [scrollOffset]);
+  }, [scrollOffset, horizontal]);
 
   return anchor;
 }

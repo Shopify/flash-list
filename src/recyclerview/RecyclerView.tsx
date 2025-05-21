@@ -399,19 +399,21 @@ const RecyclerViewComponent = <T,>(
     return onScrollHandler;
   }, [onScrollHandler, scrollY, stickyHeaders]);
 
+  const shouldMaintainVisibleContentPosition =
+    recyclerViewManager.shouldMaintainVisibleContentPosition();
+
   const maintainVisibleContentPositionInternal = useMemo(() => {
-    if (maintainVisibleContentPosition?.disabled || horizontal) {
-      return undefined;
-    } else {
+    if (shouldMaintainVisibleContentPosition) {
       return {
         ...maintainVisibleContentPosition,
         minIndexForVisible: 0,
       };
     }
-  }, [horizontal, maintainVisibleContentPosition]);
+    return undefined;
+  }, [maintainVisibleContentPosition, shouldMaintainVisibleContentPosition]);
 
   const shouldRenderFromBottom =
-    maintainVisibleContentPositionInternal?.startRenderingFromBottom ?? false;
+    maintainVisibleContentPosition?.startRenderingFromBottom ?? false;
 
   // Calculate minimum height adjustment for bottom rendering
   const adjustmentMinHeight = recyclerViewManager.hasLayout()
@@ -484,7 +486,10 @@ const RecyclerViewComponent = <T,>(
         >
           {/* Scroll anchor for maintaining content position */}
           {maintainVisibleContentPositionInternal && (
-            <ScrollAnchor scrollAnchorRef={scrollAnchorRef} />
+            <ScrollAnchor
+              horizontal={Boolean(horizontal)}
+              scrollAnchorRef={scrollAnchorRef}
+            />
           )}
           {isHorizontalRTL && viewToMeasureBoundedSize}
           {renderHeader}
