@@ -117,10 +117,21 @@ export class RenderStackManager {
     // Remove items that are no longer in the dataset
     for (const [key, keyInfo] of this.keyMap.entries()) {
       const { index, itemType, stableId } = keyInfo;
-      if (index >= dataLength || getStableId(index) !== stableId) {
-        this.deleteKeyFromRecyclePool(itemType, key);
-        this.stableIdMap.delete(stableId);
-        itemsToDelete.push(key);
+      const isIndexOutOfBounds = index >= dataLength;
+      const hasInvalidStableId =
+        !isIndexOutOfBounds && getStableId(index) !== stableId;
+      if (isIndexOutOfBounds || hasInvalidStableId) {
+        if (
+          hasInvalidStableId &&
+          !engagedIndices.includes(index) &&
+          this.stableIdMap.get(stableId) === key
+        ) {
+          keyInfo.stableId = getStableId(index);
+        } else {
+          this.deleteKeyFromRecyclePool(itemType, key);
+          this.stableIdMap.delete(stableId);
+          itemsToDelete.push(key);
+        }
       }
     }
 
