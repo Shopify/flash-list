@@ -140,6 +140,7 @@ export class RenderStackManager {
     for (const [key, keyInfo] of this.keyMap.entries()) {
       const { index, itemType, stableId } = keyInfo;
       if (index >= dataLength || getStableId(index) !== stableId) {
+        // TODO: Find a way to reusue the key, instead of deleting it
         this.deleteKeyFromRecyclePool(itemType, key);
         this.stableIdMap.delete(stableId);
         itemsToDelete.push(key);
