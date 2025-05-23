@@ -38,8 +38,8 @@ export function createLayoutParams(
     horizontal: params.horizontal ?? false,
     maxColumns: params.maxColumns ?? 1,
     optimizeItemArrangement: params.optimizeItemArrangement ?? true,
-    overrideItemLayout: params.overrideItemLayout,
-    getItemType: params.getItemType,
+    overrideItemLayout: params.overrideItemLayout ?? (() => {}),
+    getItemType: params.getItemType ?? (() => "default"),
   };
 }
 
@@ -120,7 +120,6 @@ export function createPopulatedLayoutManager(
   variableSize = false
 ): RVLayoutManager {
   const layoutManager = createLayoutManager(type, params);
-  console.log("layoutManager", layoutManager);
   populateLayouts(
     layoutManager,
     itemCount,
