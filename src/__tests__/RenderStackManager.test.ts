@@ -425,6 +425,23 @@ describe("RenderStackManager edge cases", () => {
     expect(keys2).toEqual(keys1);
   });
 
+  it("should not delete keys from pool if they are not visible on index changes when going from mock6 to mock7", () => {
+    const rsm = new RenderStackManager();
+    runSyncAndGetEntireKeyMapKeys(rsm, mock6);
+    runSyncAndGetEntireKeyMapKeys(rsm, mock7, new ConsecutiveNumbers(3, 5));
+    const keys = getKeysForMockItems(rsm, mock7);
+    expect(keys).toEqual(["0", "1", "2", "3", "4", "5", "6", "7"]);
+  });
+
+  it("should delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (disableRecycling = true)", () => {
+    const rsm = new RenderStackManager();
+    rsm.disableRecycling = true;
+    runSyncAndGetEntireKeyMapKeys(rsm, mock6);
+    runSyncAndGetEntireKeyMapKeys(rsm, mock7, new ConsecutiveNumbers(3, 5));
+    const keys = getKeysForMockItems(rsm, mock7);
+    expect(keys).toEqual(["0", "2", "3", "4", "5", "6", "7", "8"]);
+  });
+
   it("should correctly handle partial replacement of items, reusing keys for stable items and recycling for replaced ones", () => {
     const rsm = new RenderStackManager();
     const initialMock = createMockData([
