@@ -147,6 +147,35 @@ const mock7 = {
   length: mock7Data.length,
 };
 
+const mock8Data = [
+  { id: 16, name: "Item 16", itemType: "type1" },
+  { id: 17, name: "Item 17", itemType: "type1" },
+  { id: 18, name: "Item 18", itemType: "type1" },
+  { id: 19, name: "Item 19", itemType: "type1" },
+  { id: 20, name: "Item 20", itemType: "type1" },
+  { id: 1, name: "Item 1", itemType: "type1" },
+  { id: 2, name: "Item 2", itemType: "type1" },
+  { id: 3, name: "Item 3", itemType: "type1" },
+  { id: 4, name: "Item 4", itemType: "type1" },
+  { id: 5, name: "Item 5", itemType: "type1" },
+  { id: 6, name: "Item 6", itemType: "type1" },
+  { id: 7, name: "Item 7", itemType: "type1" },
+  { id: 8, name: "Item 8", itemType: "type1" },
+  { id: 9, name: "Item 9", itemType: "type1" },
+  { id: 10, name: "Item 10", itemType: "type1" },
+  { id: 11, name: "Item 11", itemType: "type1" },
+  { id: 12, name: "Item 12", itemType: "type1" },
+  { id: 13, name: "Item 13", itemType: "type1" },
+  { id: 14, name: "Item 14", itemType: "type1" },
+  { id: 15, name: "Item 15", itemType: "type1" },
+];
+const mock8 = {
+  data: mock8Data,
+  getStableId: (index: number) => mock8Data[index].id.toString(),
+  getItemType: (index: number) => mock8Data[index].itemType,
+  length: mock8Data.length,
+};
+
 // Helper to create mock data structures
 const createMockData = (
   items: { id: string | number; itemType: string; name?: string }[]
@@ -430,7 +459,31 @@ describe("RenderStackManager edge cases", () => {
     runSyncAndGetEntireKeyMapKeys(rsm, mock6);
     runSyncAndGetEntireKeyMapKeys(rsm, mock7, new ConsecutiveNumbers(3, 5));
     const keys = getKeysForMockItems(rsm, mock7);
-    expect(keys).toEqual(["0", "1", "2", "3", "4", "5", "6", "7"]);
+    expect(keys).toEqual(["0", "1", "2", "3", "4", "5", "6"]);
+  });
+
+  it("should not delete keys from pool if they are not visible on index changes when going from mock3 to mock8", () => {
+    const rsm = new RenderStackManager();
+    runSyncAndGetEntireKeyMapKeys(rsm, mock3, new ConsecutiveNumbers(0, 10));
+    runSyncAndGetEntireKeyMapKeys(rsm, mock8, new ConsecutiveNumbers(0, 13));
+    const keys = getKeysForMockItems(rsm, mock8);
+    console.log("keys", keys);
+    expect(keys).toEqual([
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+    ]);
   });
 
   it("should delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (disableRecycling = true)", () => {
@@ -438,6 +491,23 @@ describe("RenderStackManager edge cases", () => {
     rsm.disableRecycling = true;
     runSyncAndGetEntireKeyMapKeys(rsm, mock6);
     runSyncAndGetEntireKeyMapKeys(rsm, mock7, new ConsecutiveNumbers(3, 5));
+    const keys = getKeysForMockItems(rsm, mock7);
+    expect(keys).toEqual(["0", "2", "3", "4", "5", "6", "8"]);
+  });
+
+  it("should not delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (all engaged)", () => {
+    const rsm = new RenderStackManager();
+    runSyncAndGetEntireKeyMapKeys(rsm, mock6);
+    runSyncAndGetEntireKeyMapKeys(rsm, mock7);
+    const keys = getKeysForMockItems(rsm, mock7);
+    expect(keys).toEqual(["0", "1", "2", "3", "4", "5", "6", "7"]);
+  });
+
+  it("should delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (all engaged,disableRecycling = true)", () => {
+    const rsm = new RenderStackManager();
+    rsm.disableRecycling = true;
+    runSyncAndGetEntireKeyMapKeys(rsm, mock6);
+    runSyncAndGetEntireKeyMapKeys(rsm, mock7);
     const keys = getKeysForMockItems(rsm, mock7);
     expect(keys).toEqual(["0", "2", "3", "4", "5", "6", "7", "8"]);
   });

@@ -58,8 +58,6 @@ export class RenderStackManager {
   ) {
     this.clearRecyclePool();
 
-    const validIndicesInPool = new Array<number>();
-
     // Recycle keys for items that are no longer valid or visible
     this.keyMap.forEach((keyInfo, key) => {
       const { index, stableId, itemType } = keyInfo;
@@ -68,7 +66,6 @@ export class RenderStackManager {
         return;
       }
       if (!engagedIndices.includes(index)) {
-        validIndicesInPool.push(index);
         this.recycleKey(key);
         return;
       }
@@ -90,6 +87,16 @@ export class RenderStackManager {
     for (const index of engagedIndices) {
       if (!this.hasOptimizedKey(getStableId(index))) {
         this.syncItem(index, getItemType(index), getStableId(index));
+      }
+    }
+
+    // create indices that are not in the engagedIndices and less than dataLength
+    // select only indices that are not in the engagedIndices
+    const validIndicesInPool: number[] = [];
+    for (const keyInfo of this.keyMap.values()) {
+      const index = keyInfo.index;
+      if (index < dataLength && !engagedIndices.includes(index)) {
+        validIndicesInPool.push(index);
       }
     }
 
