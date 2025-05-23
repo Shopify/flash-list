@@ -3,9 +3,11 @@ import ViewabilityManager from "../viewability/ViewabilityManager";
 import { ConsecutiveNumbers } from "./helpers/ConsecutiveNumbers";
 import { RVGridLayoutManagerImpl } from "./layout-managers/GridLayoutManager";
 import {
+  LayoutParams,
   RVDimension,
   RVLayoutInfo,
   RVLayoutManager,
+  SpanSizeInfo,
 } from "./layout-managers/LayoutManager";
 import { RVLinearLayoutManagerImpl } from "./layout-managers/LinearLayoutManager";
 import { RVMasonryLayoutManagerImpl } from "./layout-managers/MasonryLayoutManager";
@@ -44,6 +46,7 @@ export class RecyclerViewManager<T> {
   constructor(props: RecyclerViewProps<T>) {
     this.getStableId = this.getStableId.bind(this);
     this.getItemType = this.getItemType.bind(this);
+    this.overrideItemLayout = this.overrideItemLayout.bind(this);
     this.propsRef = props;
     this.engagedIndicesTracker = new RVEngagedIndicesTrackerImpl();
     this.renderStackManager = new RenderStackManager(
@@ -210,35 +213,23 @@ export class RecyclerViewManager<T> {
       this.layoutManager = undefined;
       this._isLayoutManagerDirty = false;
     }
+    const layoutManagerParams: LayoutParams = {
+      windowSize,
+      maxColumns: this.propsRef.numColumns ?? 1,
+      horizontal: Boolean(this.propsRef.horizontal),
+      optimizeItemArrangement: this.propsRef.optimizeItemArrangement ?? true,
+      overrideItemLayout: this.overrideItemLayout,
+      getItemType: this.getItemType,
+    };
     if (!(this.layoutManager instanceof LayoutManagerClass)) {
       // console.log("-----> new LayoutManagerClass");
 
       this.layoutManager = new LayoutManagerClass(
-        {
-          windowSize,
-          maxColumns: this.propsRef.numColumns ?? 1,
-          horizontal: Boolean(this.propsRef.horizontal),
-          optimizeItemArrangement:
-            this.propsRef.optimizeItemArrangement ?? true,
-          overrideItemLayout: (index, layout) => {
-            this.propsRef?.overrideItemLayout?.(
-              layout,
-              this.propsRef.data![index],
-              index,
-              this.propsRef.numColumns ?? 1,
-              this.propsRef.extraData
-            );
-          },
-        },
+        layoutManagerParams,
         this.layoutManager
       );
     } else {
-      this.layoutManager.updateLayoutParams({
-        windowSize,
-        maxColumns: this.propsRef.numColumns ?? 1,
-        horizontal: Boolean(this.propsRef.horizontal),
-        optimizeItemArrangement: this.propsRef.optimizeItemArrangement ?? true,
-      });
+      this.layoutManager.updateLayoutParams(layoutManagerParams);
     }
   }
 
@@ -431,6 +422,16 @@ export class RecyclerViewManager<T> {
     return (
       this.propsRef.keyExtractor?.(this.propsRef.data![index], index) ??
       index.toString()
+    );
+  }
+
+  private overrideItemLayout(index: number, layout: SpanSizeInfo) {
+    this.propsRef?.overrideItemLayout?.(
+      layout,
+      this.propsRef.data![index],
+      index,
+      this.propsRef.numColumns ?? 1,
+      this.propsRef.extraData
     );
   }
 }

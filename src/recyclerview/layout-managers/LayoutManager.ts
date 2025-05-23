@@ -24,8 +24,6 @@ export abstract class RVLayoutManager {
   protected spanSizeInfo: SpanSizeInfo = {};
   /** Maximum number of columns in the layout */
   protected maxColumns: number;
-  /** Optional callback to override default item layout */
-  protected overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
 
   /** Whether to optimize item placement for better space utilization */
   protected optimizeItemArrangement: boolean;
@@ -33,8 +31,10 @@ export abstract class RVLayoutManager {
   /** Flag indicating if the layout requires repainting */
   public requiresRepaint = false;
 
+  /** Optional callback to override default item layout */
+  private overrideItemLayout: (index: number, layout: SpanSizeInfo) => void;
   /** Optional function to determine item type */
-  private _getItemType?: (index: number) => string | number;
+  private getItemType: (index: number) => string;
   /** Window for tracking average heights by item type */
   private heightAverageWindow: MultiTypeAverageWindow;
   /** Window for tracking average widths by item type */
@@ -45,7 +45,7 @@ export abstract class RVLayoutManager {
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     this.heightAverageWindow = new MultiTypeAverageWindow(5, 200);
     this.widthAverageWindow = new MultiTypeAverageWindow(5, 200);
-    this._getItemType = params.getItemType;
+    this.getItemType = params.getItemType;
     this.overrideItemLayout = params.overrideItemLayout;
     this.layouts = previousLayoutManager?.layouts ?? [];
     if (previousLayoutManager) {
@@ -55,15 +55,6 @@ export abstract class RVLayoutManager {
       this.windowSize = params.windowSize;
       this.maxColumns = params.maxColumns ?? 1;
     }
-  }
-
-  /**
-   * Gets the type of an item at the given index.
-   * @param index Index of the item
-   * @returns Item type or "default" if not specified
-   */
-  private getItemType(index: number): string | number {
-    return this._getItemType?.(index) ?? "default";
   }
 
   /**
@@ -275,7 +266,7 @@ export abstract class RVLayoutManager {
    */
   protected getSpanSizeInfo(index: number): SpanSizeInfo {
     this.spanSizeInfo.span = undefined;
-    this.overrideItemLayout?.(index, this.spanSizeInfo);
+    this.overrideItemLayout(index, this.spanSizeInfo);
     return this.spanSizeInfo;
   }
 
@@ -348,31 +339,31 @@ export interface LayoutParams {
    * Determines if the list scrolls horizontally (true) or vertically (false)
    * Affects how items are positioned and which dimension is used for scrolling
    */
-  horizontal?: boolean;
+  horizontal: boolean;
 
   /**
    * Maximum number of columns in a grid layout
    * Controls how many items can be placed side by side
    */
-  maxColumns?: number;
+  maxColumns: number;
 
   /**
    * When true, attempts to optimize item placement for better space utilization
    * May affect the ordering of items to minimize empty space
    */
-  optimizeItemArrangement?: boolean;
+  optimizeItemArrangement: boolean;
 
   /**
    * Callback to manually override layout properties for specific items
    * Allows custom control over span and size for individual items
    */
-  overrideItemLayout?: (index: number, layout: SpanSizeInfo) => void;
+  overrideItemLayout: (index: number, layout: SpanSizeInfo) => void;
 
   /**
    * Function to determine the type of an item at a specific index
    * Used for size estimation and optimization based on item types
    */
-  getItemType?: (index: number) => string | number;
+  getItemType: (index: number) => string;
 }
 
 /**
