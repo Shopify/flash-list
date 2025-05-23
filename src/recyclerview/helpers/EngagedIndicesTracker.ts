@@ -61,7 +61,6 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
   // Current scroll position of the list
   public scrollOffset = 0;
   // Distance to pre-render items before and after the visible viewport (in pixels)
-  // TODO: Increase this value for web
   public drawDistance = PlatformConfig.defaultDrawDistance;
 
   // Whether to use offset projection to predict the next scroll offset

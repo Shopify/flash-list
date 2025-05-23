@@ -153,10 +153,7 @@ export const ViewHolderCollection = <TItem,>(
   // );
 
   return (
-    <CompatView
-      // TODO: Take care of web scroll bar here
-      style={hasData && containerStyle}
-    >
+    <CompatView style={hasData && containerStyle}>
       {containerLayout &&
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
