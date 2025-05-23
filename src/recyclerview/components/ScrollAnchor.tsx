@@ -28,7 +28,6 @@ export interface ScrollAnchorRef {
 
 /**
  * ScrollAnchor component that provides programmatic scrolling capabilities using maintainVisibleContentPosition property
- * TODO: Implement this for web
  * @param props - Component props
  * @returns An invisible anchor element used for scrolling
  */
