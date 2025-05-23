@@ -136,6 +136,9 @@ export const ViewHolderCollection = <TItem,>(
   const containerStyle = {
     width: horizontal ? containerLayout?.width : undefined,
     height: containerLayout?.height,
+    // TODO: Temp workaround, useLayoutEffect doesn't block paint in some cases
+    // We need to investigate why this is happening
+    opacity: renderId > 0 ? 1 : 0,
   };
 
   // sort by index and log
