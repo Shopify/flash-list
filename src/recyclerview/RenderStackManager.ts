@@ -56,9 +56,10 @@ export class RenderStackManager {
     engagedIndices: ConsecutiveNumbers,
     dataLength: number
   ) {
-    if (this.disableRecycling) {
-      this.clearRecyclePool();
-    }
+    this.clearRecyclePool();
+
+    const validIndicesInPool = new Array<number>();
+
     // Recycle keys for items that are no longer valid or visible
     this.keyMap.forEach((keyInfo, key) => {
       const { index, stableId, itemType } = keyInfo;
@@ -66,13 +67,14 @@ export class RenderStackManager {
         this.recycleKey(key);
         return;
       }
-      const newStableId = getStableId(index);
-      const newItemType = getItemType(index);
-      if (stableId !== newStableId || itemType !== newItemType) {
+      if (!engagedIndices.includes(index)) {
+        validIndicesInPool.push(index);
         this.recycleKey(key);
         return;
       }
-      if (!engagedIndices.includes(index)) {
+      const newStableId = getStableId(index);
+      const newItemType = getItemType(index);
+      if (stableId !== newStableId || itemType !== newItemType) {
         this.recycleKey(key);
       }
     });
@@ -86,6 +88,19 @@ export class RenderStackManager {
 
     // Second pass: process remaining items that need new keys
     for (const index of engagedIndices) {
+      if (!this.hasOptimizedKey(getStableId(index))) {
+        this.syncItem(index, getItemType(index), getStableId(index));
+      }
+    }
+
+    // First pass: process items that already have optimized keys
+    for (const index of validIndicesInPool) {
+      if (this.hasOptimizedKey(getStableId(index))) {
+        this.syncItem(index, getItemType(index), getStableId(index));
+      }
+    }
+
+    for (const index of validIndicesInPool) {
       if (!this.hasOptimizedKey(getStableId(index))) {
         this.syncItem(index, getItemType(index), getStableId(index));
       }
@@ -219,7 +234,10 @@ export class RenderStackManager {
    * This operation does not affect currently active keys.
    */
   private clearRecyclePool() {
-    this.recycleKeyPools.clear();
+    // iterate over all pools and clear them
+    for (const pool of this.recycleKeyPools.values()) {
+      pool.clear();
+    }
   }
 
   /**
