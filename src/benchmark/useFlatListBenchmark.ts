@@ -25,7 +25,7 @@ export function useFlatListBenchmark(
 ) {
   useEffect(() => {
     const cancellable = new Cancellable();
-    if (flatListRef.current) {
+    if (flatListRef.current && flatListRef.current.props) {
       if (!(Number(flatListRef.current.props.data?.length) > 0)) {
         throw new Error("Data is empty, cannot run benchmark");
       }
@@ -71,7 +71,7 @@ async function runScrollBenchmark(
   scrollSpeedMultiplier: number
 ): Promise<void> {
   if (flatListRef.current) {
-    const horizontal = flatListRef.current.props.horizontal;
+    const horizontal = Boolean(flatListRef.current.props?.horizontal);
 
     const fromX = 0;
     const fromY = 0;

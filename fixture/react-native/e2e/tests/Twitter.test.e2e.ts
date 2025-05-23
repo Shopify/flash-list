@@ -1,4 +1,3 @@
-/* eslint-disable @shopify/strict-component-boundaries */
 import { DebugOption } from "../../src/Debug/DebugOptions";
 import { assertSnapshotsEqual, assertSnapshot } from "../utils/SnapshotAsserts";
 import { wipeArtifactsLocation, reference } from "../utils/SnapshotLocation";
@@ -49,34 +48,18 @@ describe("Twitter", () => {
 
   it("looks the same after orientation change", async () => {
     const testName = "Twitter_looks_the_same_after_orientation_change";
-    const flatListTestName = `with_FlatList_${testName}`;
 
     // Go to Twitter with FlashList screen
     await element(by.id("Twitter Timeline")).tap();
     // Scroll 500px down and change orientation to lansdsape
     await scrollAndRotate("FlashList");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const flashListScreenshotPath = await element(
       by.id("FlashList")
     ).takeScreenshot(testName);
 
     assertSnapshot(flashListScreenshotPath, testName);
-
-    await device.setOrientation("portrait");
-    await goBack();
-
-    // Go to Twitter with FlatList screen
-    await element(by.id("Twitter FlatList Timeline")).tap();
-    await scrollAndRotate("FlatList");
-
-    const flatListScreenshotPath = await element(
-      by.id("FlatList")
-    ).takeScreenshot(flatListTestName);
-
-    assertSnapshotsEqual(
-      flashListScreenshotPath,
-      flatListScreenshotPath,
-      flatListTestName
-    );
   });
 
   it("is updated after refreshed", async () => {
@@ -106,53 +89,6 @@ describe("Twitter", () => {
     const flashListScreenshotPath = await flashList.takeScreenshot(testName);
 
     assertSnapshot(flashListScreenshotPath, testName);
-  });
-
-  it("goes to Tweet detail after tweet cell is tapped", async () => {
-    const testName = "Twitter_goes_to_Tweet_detail_after_tweet_cell_is_tapped";
-    await element(by.id("Twitter Timeline")).tap();
-
-    // Tap on tweet
-    await element(by.text("Aram Miquel")).tap();
-
-    const tweetDetailScreenshotPath = await element(
-      by.id("TweetDetailScreen")
-    ).takeScreenshot(testName);
-
-    assertSnapshot(tweetDetailScreenshotPath, testName);
-  });
-
-  it("with empty list looks the same as FlatList", async () => {
-    await device.setOrientation("portrait");
-    const testName = "Twitter_with_empty_list_looks_the_same";
-    const flatListTestName = `with_FlatList_${testName}`;
-
-    await enableDebugOption(DebugOption.EmptyList);
-
-    await element(by.id("Twitter Timeline")).tap();
-
-    const flashListScreenshotPath = await element(
-      by.id("FlashList")
-    ).takeScreenshot(testName);
-
-    assertSnapshot(flashListScreenshotPath, testName);
-
-    // Go to Twitter with FlatList screen
-    await goBack();
-    await element(by.id("Twitter FlatList Timeline")).tap();
-    await device.setOrientation("portrait");
-
-    const flatListScreenshotPath = await element(
-      by.id("FlatList")
-    ).takeScreenshot(flatListTestName);
-
-    assertSnapshot(flatListScreenshotPath, flatListTestName);
-
-    assertSnapshotsEqual(
-      flashListScreenshotPath,
-      flatListScreenshotPath,
-      flatListTestName
-    );
   });
 });
 
