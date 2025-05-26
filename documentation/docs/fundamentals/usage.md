@@ -34,7 +34,7 @@ const MyList = () => {
 To avoid common pitfalls, you can also follow these steps for migrating from `FlatList`, based on our own experiences:
 
 1. Switch from `FlatList` to `FlashList`.
-2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you're doing a `.map()` use indices as keys.
+2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you're doing a `.map()` use our hook called [`useMappingHelper`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper).
 3. Check your [`renderItem`](#renderitem) hierarchy for components that make use of `useState` and verify whether that state would need to be reset if a different item is passed to that component (see [Recycling](https://shopify.github.io/flash-list/docs/recycling))
 4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](#getitemtype) prop to improve performance.
 5. Do not test performance with JS dev mode on. Make sure you're in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
@@ -63,7 +63,7 @@ Provides additional metadata like `index`
 
 - `item` (`Object`): The item from `data` being rendered.
 - `index` (`number`): The index corresponding to this item in the `data` array.
-- `target` (`string`) FlashList may render your items for multiple reasons.
+- `target` (`string`): FlashList may render your items for multiple reasons.
   - `Cell` - This is for your list item.
   - `Measurement` - Might be invoked for size measurement and won't be visible. You can ignore this in analytics.
   - `StickyHeader` - This is for your sticky header. Use this to change your item's appearance while it's being used as a sticky header.
