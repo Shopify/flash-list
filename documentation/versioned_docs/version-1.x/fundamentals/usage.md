@@ -35,10 +35,10 @@ const MyList = () => {
 To avoid common pitfalls, you can also follow these steps for migrating from `FlatList`, based on our own experiences:
 
 1. Switch from `FlatList` to `FlashList` and render the list once. You should see a warning about missing `estimatedItemSize` and a suggestion. Set this value as the prop directly.
-2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you’re doing a `.map()` use indices as keys.
+2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you're doing a `.map()` use indices as keys.
 3. Check your [`renderItem`](#renderitem) hierarchy for components that make use of `useState` and verify whether that state would need to be reset if a different item is passed to that component (see [Recycling](https://shopify.github.io/flash-list/docs/recycling))
 4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](#getitemtype) prop to improve performance.
-5. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
+5. Do not test performance with JS dev mode on. Make sure you're in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
 
 :::note `estimatedItemSize`
 [`estimatedItemSize`](#estimateditemsize) is necessary to achieve optimal performance.
@@ -289,7 +289,7 @@ inverted?: boolean;
 keyExtractor?: (item: object, index: number) => string;
 ```
 
-Used to extract a unique key for a given item at the specified index. Key is used for optimizing performance. Defining `keyExtractor` is also necessary when doing [layout animations](/guides/layout-animation) to uniquely identify animated components.
+Used to extract a unique key for a given item at the specified index. Key is used for optimizing performance. Defining `keyExtractor` is also necessary when doing [layout animations](../guides/layout-animation.md) to uniquely identify animated components.
 
 ### `numColumns`
 
@@ -388,7 +388,7 @@ getItemType?: (
 ) => string | number | undefined;
 ```
 
-Allows developers to specify item types. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined. You can see example of how to use this prop [here](/fundamentals/performant-components#getitemtype).
+Allows developers to specify item types. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined. You can see example of how to use this prop [here](performant-components.md#getitemtype).
 
 :::warning Performance
 This method is called very frequently. Keep it fast.

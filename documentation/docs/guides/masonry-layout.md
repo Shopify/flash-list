@@ -36,7 +36,7 @@ const MyMasonryList = () => {
 There are some props that `MasonryFlashList` does not support when compared to `FlashList`:
 
 - [`horizontal`](../fundamentals/usage.md#horizontal)
-- [`inverted`](../fundamentals/usage.md#inverted)
+- `inverted`
 - [`initialScrollIndex`](../fundamentals/usage.md#initialscrollindex)
 - [`viewabilityConfigCallbackPairs`](../fundamentals/usage.md#viewabilityconfigcallbackpairs)
 - [`onBlankArea`](../fundamentals/usage.md#onblankarea)

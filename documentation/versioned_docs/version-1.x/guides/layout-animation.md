@@ -5,7 +5,7 @@ title: LayoutAnimation
 
 [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) is a popular way how to animate views in React Native.
 
-FlashList does support `LayoutAnimation`s but you need to call [`prepareForLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before React Native's [`LayoutAnimation.configureNext`](https://reactnative.dev/docs/layoutanimation#configurenext). `prepareForLayoutAnimationRender` is an instance method, so you have to keep a reference to your `FlashList` instance via the [`ref`](https://reactjs.org/docs/refs-and-the-dom.html) prop:
+FlashList does support `LayoutAnimation`s but you need to call [`prepareForLayoutAnimationRender()`](../fundamentals/usage.md#prepareforlayoutanimationrender) before React Native's [`LayoutAnimation.configureNext`](https://reactnative.dev/docs/layoutanimation#configurenext). `prepareForLayoutAnimationRender` is an instance method, so you have to keep a reference to your `FlashList` instance via the [`ref`](https://reactjs.org/docs/refs-and-the-dom.html) prop:
 
 ```tsx
 // This must be called before `LayoutAnimation.configureNext` in order for the animation to run properly.
@@ -14,7 +14,7 @@ listRef.current?.prepareForLayoutAnimationRender();
 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 ```
 
-For the animation to work properly, you additionally need to add [`keyExtractor`](/usage#keyextractor) prop to your `FlashList` component if you have not already done so.
+For the animation to work properly, you additionally need to add [`keyExtractor`](../fundamentals/usage.md#keyextractor) prop to your `FlashList` component if you have not already done so.
 
 :::note
 `LayoutAnimation` is experimental on Android, so we cannot guarantee its stability when used with `FlashList`.

@@ -4,7 +4,7 @@ title: Testing with Jest
 slug: /testing
 ---
 
-Since `FlashList` does not immediately render but waits for the size of the underlying `ScrollView` (unless you specify [`estimatedListSize`](usage#estimatedlistsize)), we need to mock triggering `onLayout` event.
+Since `FlashList` does not immediately render but waits for the size of the underlying `ScrollView` (unless you specify `estimatedListSize`), we need to mock triggering `onLayout` event.
 
 ## Setup
 

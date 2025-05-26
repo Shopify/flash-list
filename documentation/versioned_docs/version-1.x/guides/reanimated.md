@@ -9,7 +9,7 @@ We support view animations and most of [layout animations](https://docs.swmansio
 
 ## Layout Animations
 
-For layout animations, similarly to the React Native API, you need to call [`prepareLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before removing or inserting an element that you want to animate. Note that we currently support only [entering](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/entryAnimations) and [exiting](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/exitAnimations) animations. **[Layout transitions](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/layoutTransitions) are not supported** as of now.
+For layout animations, similarly to the React Native API, you need to call [`prepareLayoutAnimationRender()`](../fundamentals/usage.md#prepareforlayoutanimationrender) before removing or inserting an element that you want to animate. Note that we currently support only [entering](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/entryAnimations) and [exiting](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/exitAnimations) animations. **[Layout transitions](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/layoutTransitions) are not supported** as of now.
 
 ## Hooks
 

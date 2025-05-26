@@ -11,7 +11,7 @@ One important thing to understand is how `FlashList` works under the hood. When 
 
 ## Optimizations
 
-There's lots of optimizations that are applicable for _any_ React Native component and which might help render times of your item components as well. Usage of `useCallback`, `useMemo`, and `useRef` is advised - but don't use these blindly, always [measure the performance](/performance-troubleshooting) before and after making your changes.
+There's lots of optimizations that are applicable for _any_ React Native component and which might help render times of your item components as well. Usage of `useCallback`, `useMemo`, and `useRef` is advised - but don't use these blindly, always measure the performance before and after making your changes.
 
 :::note
 Always profile performance in the release mode. `FlashList`'s performance between JS dev and release mode differs greatly.

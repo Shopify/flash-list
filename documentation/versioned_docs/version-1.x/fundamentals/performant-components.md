@@ -11,7 +11,7 @@ One important thing to understand is how `FlashList` works under the hood. When 
 
 ## Optimizations
 
-There's lots of optimizations that are applicable for _any_ React Native component and which might help render times of your item components as well. Usage of `useCallback`, `useMemo`, and `useRef` is advised - but don't use these blindly, always [measure the performance](/performance-troubleshooting) before and after making your changes.
+There's lots of optimizations that are applicable for _any_ React Native component and which might help render times of your item components as well. Usage of `useCallback`, `useMemo`, and `useRef` is advised - but don't use these blindly, always [measure the performance](performance-troubleshooting.md) before and after making your changes.
 
 :::note
 Always profile performance in the release mode. `FlashList`'s performance between JS dev and release mode differs greatly.
@@ -19,7 +19,7 @@ Always profile performance in the release mode. `FlashList`'s performance betwee
 
 ### `estimatedItemSize`
 
-Ensure [`estimatedItemSize`](/usage#estimateditemsize) is as close as possible to the real average value - see [here](/estimated-item-size#how-to-calculate) how to properly calculate the value for this prop.
+Ensure [`estimatedItemSize`](usage.md#estimateditemsize) is as close as possible to the real average value - see [here](estimated-item-size.md#how-to-calculate) how to properly calculate the value for this prop.
 
 ### Remove `key` prop
 
@@ -102,7 +102,7 @@ If you do any calculations that might take a lot of resources, consider memoizin
 
 ### `getItemType`
 
-**If you have different types of cell components and these are vastly different, consider leveraging the [`getItemType` prop](/usage#getitemtype)**. For example, if we were building a messages list, we could write it like this:
+**If you have different types of cell components and these are vastly different, consider leveraging the [`getItemType` prop](usage.md#getitemtype)**. For example, if we were building a messages list, we could write it like this:
 
 ```tsx
 // A message can be either a text or an image
