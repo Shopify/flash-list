@@ -121,7 +121,10 @@ export function useRecyclerViewController<T>(
               )
             : undefined);
 
-        if (currentIndexOfFirstVisibleItem !== undefined) {
+        if (
+          currentIndexOfFirstVisibleItem !== undefined &&
+          currentIndexOfFirstVisibleItem >= 0
+        ) {
           // Calculate the difference in position and apply the offset
           const diff = horizontal
             ? recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).x -
