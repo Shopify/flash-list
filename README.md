@@ -37,7 +37,7 @@ FlashList v2 has web support. Most of the features should work but we're not act
 
 ## Installation
 
-Add the package to your project via `yarn add @shopify/flash-list@alpha` and run `pod install` in the `ios` directory.
+Add the package to your project via `yarn add @shopify/flash-list@rc` and run `pod install` in the `ios` directory.
 
 ## Usage
 
