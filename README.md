@@ -1,12 +1,31 @@
 ![FlashList Image](./FlashList.png)
 
+<div align="center">
+  <a href="https://shopify.github.io/flash-list/">Website</a> •
+  <a href="https://discord.gg/k2gzABTfav">Discord</a> •
+  <a href="https://shopify.github.io/flash-list/docs/">Getting started</a> •
+  <a href="https://shopify.github.io/flash-list/docs/usage">Usage</a> •
+  <a href="https://shopify.github.io/flash-list/docs/fundamentals/performant-components">Writing performant components</a> •
+  <a href="https://shopify.github.io/flash-list/docs/known-issues">Known Issues</a>
+<br><br>
+
+**Fast & performant React Native list. No more blank cells.**
+
+Swap from FlatList in seconds. Get instant performance.
+
+</div>
+
 # FlashList v2
 
 FlashList v2 has been rebuilt from the ground up for RN's new architecture and delivers fast performance, higher precision, and better ease of use compared to v1. We've achieved all this while moving to a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates. It also introduces several new features compared to v1.
 
-> ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. **Old architecture will only be supported while FlashList v2 is in alpha/beta and will be dropped once it's ready.** When run on old architecture, we just fall back to v1.x which doesn't have any of the new features.
+> ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. **Old architecture will only be supported while FlashList v2 is in alpha/beta/rc and will be dropped once it's ready.** When run on old architecture, we just fall back to v1.x which doesn't have any of the new features.
 
-> ⚠️ **IMPORTANT:** FlashList v2.x is in alpha and may have some issues. Please report any issues or edge cases you run into. We're actively working on testing and optimizing v2 so some things might change in the final version. We also highly recommend using it with RN 0.78+ for optimal performance.
+### Is v2 production ready?
+
+Yes, please use one of the release candidates if you want to ship to production `2.0.0-rc.x`. While we can make some changes in the final version, we expect release candidates to be quite stable. Use the alpha track if you want to test new changes quickly and don't mind occasional bugs.
+
+> ⚠️ **IMPORTANT:** FlashList v2.x's alpha track moves quickly and can have some issues. Please report any issues or edge cases you run into. We're actively working on testing and optimizing v2. We also highly recommend using it with RN 0.78+ for optimal performance.
 
 ### Old architecture / FlashList v1
 
@@ -48,99 +67,18 @@ const MyList = () => {
 };
 ```
 
-## New props
+To avoid common pitfalls, you can also follow these steps for migrating from `FlatList`, based on our own experience:
 
-- `masonry`: Enable masonry layout for grid-like interfaces with varying item heights.
+1. Simply from `FlatList` to `FlashList` and render the list.
+2. **Important**: Scan your [`renderItem`](https://shopify.github.io/flash-list/docs/usage/#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you’re doing a `.map()` use our hook called [`useMappingHelper`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper).
+3. Check your [`renderItem`](https://shopify.github.io/flash-list/docs/usage/#renderitem) hierarchy for components that make use of `useState` and verify whether that state would need to be reset if a different item is passed to that component (see [Recycling](https://shopify.github.io/flash-list/docs/recycling))
+4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](https://shopify.github.io/flash-list/docs/usage/#getitemtype) prop to improve performance.
+5. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
+6. Memoizing props passed to FlashList is more important in v2. v1 was more selective about updating items, but this was often perceived as a bug by developers. We will not follow that approach and will instead allow developers to ensure that props are memoized. We will stop re-renders of children wherever it is obvious.
 
-  ```jsx
-  <FlashList
-    data={data}
-    masonry
-    numColumns={3}
-    renderItem={({ item }) => <MasonryItem item={item} />}
-  />
-  ```
-
-- `optimizeItemArrangement`: When enabled, masonry layout will try to reduce differences in column height by modifying item order.
-- `onStartReached`: Called when the scroll position gets within `onStartReachedThreshold` of the start of the content.
-
-  ```jsx
-  <FlashList
-    data={messageData}
-    onStartReached={() => loadOlderMessages()}
-    onStartReachedThreshold={0.1}
-    renderItem={({ item }) => <MessageItem message={item} />}
-  />
-  ```
-
-- `onStartReachedThreshold`: How far from the start the top edge of the list must be to trigger `onStartReached`.
-- `maxItemsInRecyclePool`: Maximum number of items in the recycle pool (Not required unless the number of item types is huge).
-- `style`: Style for the FlashList's parent container. We highly recommend not adding padding which can impact the size of the ScrollView inside. We operate on the assumption that the size of parent view and ScrollView is the same. In most cases, `contentContainerStyle` should be enough so avoid using this.
-- `maintainVisibleContentPosition`: Configuration for maintaining scroll position when content changes:
-  - `disabled`: Set to true to disable this feature (enabled by default).
-  - `autoscrollToTopThreshold`: Automatically scroll to maintain position when content is added at the top.
-  - `autoscrollToBottomThreshold`: Automatically scroll to maintain position when content is added at the bottom.
-  - `startRenderingFromBottom`: If true, initial render will start from the bottom, useful for chat interfaces.
-  ```jsx
-  <FlashList
-    data={chatMessages}
-    maintainVisibleContentPosition={{
-      autoscrollToBottomThreshold: 0.2,
-      startRenderingFromBottom: true,
-    }}
-    renderItem={({ item }) => <ChatMessage message={item} />}
-  />
-  ```
-- `onCommitLayoutEffect`: Called before layout is committed. Can be used to measure list and make changes before paint. Doing setState inside the callback can lead to infinite loops. Make sure FlashList's props are memoized.
-
-## Deprecated (will be removed after alpha/beta)
-
-- `estimatedItemSize`: No longer used.
-- `estimatedListSize`: No longer used.
-- `estimatedFirstItemOffset`: No longer used.
-- `inverted`: We have added `maintainVisibleContentPosition` support, so we don't want to maintain inverted mode.
-- `onBlankArea`: We don't have plans to add or continue supporting this prop.
-- `disableHorizontalListHeightMeasurement`: No longer needed.
-- `disableAutoLayout`: There's no auto layout in v2.
-- `MasonryFlashList` will be replaced by `masonry` prop.
-- `getColumnFlex` from `MasonryFlashList` will not be supported in FlashList v2 with `masonry` prop.
-
-## Changed props
-
-- `overrideItemLayout`: This used to allow a way to change the span of items and provide size estimates. In v2, span is supported, but we no longer read the size estimates.
-  ```jsx
-  <FlashList
-    data={gridData}
-    numColumns={2}
-    overrideItemLayout={(layout, item) => {
-      layout.span = item.span; // Set span
-    }}
-    renderItem={({ item }) => <GridItem item={item} />}
-  />
-  ```
-
-## New features
-
-- `masonry` is now a prop on FlashList. It's now also possible to use `overrideItemLayout` with `masonry`.
-- `maintainVisibleContentPosition` is available and now enabled by default. We use this to reduce visible glitches as much as possible. Chat apps without inverted will also be possible. Please note that if you plan on adding a large number of rows on top of the list, then you may want to increase the drawDistance on the list.
-- `onStartReached` callback is now available with a configurable threshold.
-- We've also added support for RTL layouts.
-
-## Improvements
-
-- `scrollToIndex` and `scrollToItem` are much more precise.
-- Scrolling upwards after orientation change doesn't cause layout glitches. The same is true for scrolling to items and scrolling upwards.
-- `stickyHeaders` use an Animated implementation, so minor gaps between them while scrolling aren't visible anymore.
-- FlashList does not ask for any estimates, which makes it much easier to use.
-- Horizontal Lists are much improved, and items can also resize within the lists. We no longer render an extra item to measure list height.
-- In Grid layout, if side-by-side items have different heights, then the shorter item will match the height of the tallest item. This wasn't possible in v1.
-- The ref of FlashList has many more useful methods like `getVisibleIndices` and `getLayout`.
-- `contentContainerStyle` prop is fully supported now.
-
-## Things to know
+## Other things to know
 
 - `keyExtractor` is important to prevent glitches due to item layout changes when going upwards. We highly recommend having a valid `keyExtractor` with v2.
-- Avoid adding keys directly to components which can break recycling. Same as v1. More info [here](https://shopify.github.io/flash-list/docs/fundamentals/performant-components/#remove-key-prop).
 - `useLayoutState`: This is similar to `useState` but communicates the change in state to FlashList. It's useful if you want to resize a child component based on a local state. Item layout changes will still be detected using `onLayout` callback in the absence of `useLayoutState`, which might not look as smooth on a case-by-case basis.
 
   ```jsx
@@ -216,9 +154,7 @@ const MyList = () => {
   ```
 
 - If you're nesting horizontal FlashLists in vertical lists, we highly recommend the vertical list to be FlashList too. We have optimizations to wait for child layout to complete which can improve load times.
-- For chat apps, consider increasing drawDistance to 500 or higher if you're going to add a lot of items to the top. Higher drawDistance can remove some flickers. 500-1000 for chat can be okay. We would like to hear from you if you run into issues.
-- Memoizing props passed to FlashList is more important in v2. v1 was more selective about updating items, but this was often perceived as a bug by developers. We will not follow that approach and will instead allow developers to ensure that props are memoized. We will stop re-renders of children wherever it is obvious.
 
 ## App / Playground
 
-The [fixture](https://github.com/Shopify/flash-list/tree/new-rlv-prototype/fixture) is an example app showing how to use the library.
+The [fixture](./fixture/) is an example app showing how to use the library.

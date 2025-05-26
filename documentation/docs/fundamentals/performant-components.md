@@ -10,6 +10,8 @@ Before assessing your list's performance, make sure you are in release mode. On 
 FlashList can appear to be slower than FlatList in dev mode. The primary reason is a much smaller and fixed [window size](https://reactnative.dev/docs/virtualizedlist#windowsize) equivalent. Click [here](https://reactnative.dev/docs/performance#running-in-development-mode-devtrue) to know more about why you shouldn't profile with dev mode on.
 :::
 
+Memoizing props passed to FlashList is more important in v2. v1 was more selective about updating items, but this was often perceived as a bug by developers. We will not follow that approach and will instead allow developers to ensure that props are memoized. We will stop re-renders of children wherever it is obvious.
+
 # Writing Performant Components
 
 While `FlashList` does its best to achieve high performance, it will still perform poorly if your item components are slow to render. In this post, let's dive deeper into how you can remedy this.
