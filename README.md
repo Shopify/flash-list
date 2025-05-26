@@ -208,7 +208,7 @@ const MyList = () => {
     return (
       <View>
         {items.map((item, index) => (
-          <Text key={getMappingKey(index, item.id)}>{item.title}</Text>
+          <Text key={getMappingKey(item.id, index)}>{item.title}</Text>
         ))}
       </View>
     );

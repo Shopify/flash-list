@@ -10,7 +10,7 @@ import { useRecyclerViewContext } from "../RecyclerViewContextProvider";
 export const useMappingHelper = () => {
   const recyclerViewContext = useRecyclerViewContext();
   const getMappingKey = useCallback(
-    (index: number, itemKey: string | number | bigint) => {
+    (itemKey: string | number | bigint, index: number) => {
       return recyclerViewContext ? index : itemKey;
     },
     [recyclerViewContext]

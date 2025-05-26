@@ -9,111 +9,82 @@ Masonry Layout allows you to create a grid of items with different heights. It i
 <img src="https://user-images.githubusercontent.com/7811728/188055598-41f5c961-0dd0-4bb9-bc6e-22d78596a036.png" height="500"/>
 </div>
 
-To get started, import `MasonryFlashList` from `@shopify/flash-list` and use it just like you would use `FlashList`:
+## FlashList with masonry prop (v2)
+
+In v2, masonry layout is enabled using the `masonry` prop on `FlashList`.
 
 ```tsx
 import React from "react";
-import { View, Text, StatusBar } from "react-native";
-import { MasonryFlashList } from "@shopify/flash-list";
+import { View, Text } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { DATA } from "./data";
 
 const MyMasonryList = () => {
   return (
-    <MasonryFlashList
+    <FlashList
       data={DATA}
+      masonry
       numColumns={2}
       renderItem={({ item }) => <Text>{item.title}</Text>}
-      estimatedItemSize={200}
     />
   );
 };
 ```
 
-**Note:** If you want `MasonryFlashList` to optimize item arrangement, enable `optimizeItemArrangement` and pass a valid [`overrideItemLayout`](../fundamentals/usage.md#overrideitemlayout) function.
+### With `overrideItemLayout`
 
-## Unsupported Props
+When you want to customize item layout (such as setting different spans), you can use [`overrideItemLayout`](../fundamentals/usage.md#overrideitemlayout):
 
-There are some props that `MasonryFlashList` does not support when compared to `FlashList`:
+```tsx
+import React from "react";
+import { View, Text, Image } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 
-- [`horizontal`](../fundamentals/usage.md#horizontal)
-- `inverted`
-- [`initialScrollIndex`](../fundamentals/usage.md#initialscrollindex)
-- [`viewabilityConfigCallbackPairs`](../fundamentals/usage.md#viewabilityconfigcallbackpairs)
-- [`onBlankArea`](../fundamentals/usage.md#onblankarea)
+interface MasonryItem {
+  id: string;
+  title: string;
+  height: number;
+  span: number; // Number of columns this item should span
+  imageUrl: string;
+}
 
-## Additional Props
+const MyMasonryList = () => {
+  return (
+    <FlashList
+      data={data}
+      masonry
+      numColumns={3}
+      overrideItemLayout={(layout, item) => {
+        // Set the span based on the item's span property
+        layout.span = item.span;
+        // Note: In v2, size estimates are no longer needed in overrideItemLayout
+        // The actual height is determined by the rendered component
+      }}
+      renderItem={({ item }) => (
+        <View style={{ backgroundColor: "#f0f0f0", margin: 4 }}>
+          <Image source={{ uri: item.imageUrl }} style={{ flex: 1 }} />
+          <Text>{item.title}</Text>
+        </View>
+      )}
+      keyExtractor={(item) => item.id}
+    />
+  );
+};
+```
 
-`MasonryFlashList` supports these additional props on top of `FlashList`:
-
-### `optimizeItemArrangement`
+### `optimizeItemArrangement` prop
 
 ```tsx
 optimizeItemArrangement?: boolean;
 ```
 
-If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order. If `true`, specifying [`overrideItemLayout`](../fundamentals/usage.md#overrideitemlayout) is required. Default value is `false`.
+When enabled with `masonry` layout, this will try to reduce differences in column height by modifying item order. Default is `true`.
 
-### `getColumnFlex`
+## Migration from v1
 
-```tsx
-getColumnFlex?: (
-  items: T[],
-  columnIndex: number,
-  maxColumns: number,
-  extraData?: any
-) => number;
-```
+If you're migrating from v1's `MasonryFlashList`, here are the key changes:
 
-`getColumnFlex` allows you to change the column widths of the list. This is helpful if you want some columns to be wider than the others.
-
-Example:
-
-```tsx
-// if `numColumns` is `3`, you can return `2` for `index 1` and `1` for the rest to achieve a `1:2:1` split by width.
-getColumnFlex={(items, index, maxColumns, extraData) => {
-    return index === 1 ? 2 : 1;
-}}
-```
-
-## Additional information in `renderItem` arguments
-
-```tsx
-export interface MasonryListRenderItemInfo<TItem>
-  extends ListRenderItemInfo<TItem> {
-  columnSpan: number;
-  columnIndex: number;
-}
-```
-
-When using `MasonryFlashList` the `renderItem` prop callback will be called with two additional properties on the `info` object.
-
-`columnIndex`: A number representing the index of the column in which the item is rendered. When using `optimizeItemArrangement` this becomes more important as the items are no longer spread linearly across the columns.
-
-`columnSpan`: A number representing how many columns a given item may span, for now this will always return `1`.
-
-## Methods
-
-`MasonryFlashList` exposes the some methods that `FlashList` does. These are:
-
-### `scrollToEnd()`
-
-```tsx
-scrollToEnd?: (params?: { animated?: boolean | null | undefined });
-```
-
-Scrolls to the end of the content.
-
-### `scrollToOffset()`
-
-```tsx
-scrollToOffset(params: {
-  animated?: boolean | null | undefined;
-  offset: number;
-});
-```
-
-Scroll to a specific content pixel offset in the list.
-
-Parameter `offset` expects the offset to scroll to.
-
-Parameter `animated` (`false` by default) defines whether the list should animate while scrolling.
+1. **Use `FlashList` with `masonry` prop** instead of `MasonryFlashList`
+2. **`overrideItemLayout` no longer needs size estimates** - only use it for setting `layout.span`
+3. **`getColumnFlex` is not supported** in v2 masonry layout
+4. **Item heights are determined by actual rendered component** rather than estimates

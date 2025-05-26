@@ -662,7 +662,7 @@ const MyComponent = ({ items }) => {
   return (
     <View>
       {items.map((item, index) => (
-        <Text key={getMappingKey(index, item.id)}>{item.title}</Text>
+        <Text key={getMappingKey(item.id, index)}>{item.title}</Text>
       ))}
     </View>
   );
@@ -674,28 +674,6 @@ const MyComponent = ({ items }) => {
 - When mapping over arrays to create lists of components inside FlashList items
 - When building nested components that render multiple items from an array
 - To ensure consistent key generation that works well with FlashList's recycling system
-
-```jsx
-import { useMappingHelper } from "@shopify/flash-list";
-
-const ProductList = ({ products }) => {
-  const { getMappingKey } = useMappingHelper();
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Featured Products</Text>
-      <View style={styles.grid}>
-        {products.map((product, index) => (
-          <ProductCard
-            key={getMappingKey(index, product.id)}
-            product={product}
-          />
-        ))}
-      </View>
-    </View>
-  );
-};
-```
 
 # FlashList methods
 
