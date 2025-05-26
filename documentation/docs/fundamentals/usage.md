@@ -5,7 +5,7 @@ slug: /usage
 sidebar_position: 0
 ---
 
-If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` by changing the component name and adding the `estimatedItemSize` prop or refer to the example below:
+If you are familiar with [FlatList](https://reactnative.dev/docs/flatlist), you already know how to use `FlashList`. You can try out `FlashList` by changing the component name.
 
 ```tsx
 import React from "react";
@@ -26,7 +26,6 @@ const MyList = () => {
     <FlashList
       data={DATA}
       renderItem={({ item }) => <Text>{item.title}</Text>}
-      estimatedItemSize={200}
     />
   );
 };
@@ -34,21 +33,11 @@ const MyList = () => {
 
 To avoid common pitfalls, you can also follow these steps for migrating from `FlatList`, based on our own experiences:
 
-1. Switch from `FlatList` to `FlashList` and render the list once. You should see a warning about missing `estimatedItemSize` and a suggestion. Set this value as the prop directly.
-2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you’re doing a `.map()` use indices as keys.
+1. Switch from `FlatList` to `FlashList`.
+2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you're doing a `.map()` use indices as keys.
 3. Check your [`renderItem`](#renderitem) hierarchy for components that make use of `useState` and verify whether that state would need to be reset if a different item is passed to that component (see [Recycling](https://shopify.github.io/flash-list/docs/recycling))
 4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](#getitemtype) prop to improve performance.
-5. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
-
-:::note `estimatedItemSize`
-[`estimatedItemSize`](#estimateditemsize) is necessary to achieve optimal performance.
-:::
-
-Most of the props from `FlatList` are available in `FlashList`, too. This documentation includes both `FlatList` and additional `FlashList` props and should be used as a primary reference. But you can also read more about the props available in both `FlatList` and `FlashList` [here](https://reactnative.dev/docs/flatlist).
-
-# Props
-
-`FlashList` also has a couple of unique props. You already know about `estimatedItemSize` but there are more props available for minor adjustments.
+5. Do not test performance with JS dev mode on. Make sure you're in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
 
 ### **`renderItem`**
 
@@ -92,16 +81,6 @@ For simplicity, data is a plain array of items of a given type.
 data: ItemT[];
 ```
 
-### **`estimatedItemSize`**
-
-```ts
-estimatedItemSize?: number;
-```
-
-`estimatedItemSize` is a single numeric value that hints `FlashList` about the approximate size of the items before they're rendered. `FlashList` can then use this information to decide how many items it needs to draw on the screen before initial load and while scrolling. If most of the items are of **different sizes**, you can think of an average or median value and if most items are of **the same size**, just use that number. A quick look at `Element Inspector` can help you determine this. If you're confused between two values, the smaller value is a better choice. If you don't specify this prop, you will get a warning with a value you can use. We recommend not ignoring that warning and defining `estimatedItemSize` before the list gets to your users.
-
----
-
 ### `CellRendererComponent`
 
 Each cell is rendered using this element. Can be a React Component Class, or a render function. The root component should always be a `CellContainer` which is also the default component used. Ensure that the original `props` are passed to the returned `CellContainer`. The `props` contain the following properties:
@@ -117,10 +96,6 @@ Each cell is rendered using this element. Can be a React Component Class, or a r
   - `height`: Determines height of the element (present when list is horizontal)
 
 When using with `react-native-reanimated`, you can wrap `CellContainer` in `Animated.createAnimatedComponent` (this is similar to using `Animated.View`):
-
-:::note
-Changing layout of the cell can conflict with the native layout operations. You may need to set `disableAutoLayout` to `true` to prevent this.
-:::
 
 ```ts
 const AnimatedCellContainer = Animated.createAnimatedComponent(CellContainer);
@@ -207,25 +182,13 @@ export type ContentStyle = Pick<
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
 
-### `disableAutoLayout`
+### `disableRecycling`
 
 ```tsx
-disableAutoLayout?: boolean;
+disableRecycling?: boolean;
 ```
 
-FlashList applies some fixes to layouts of its children which can conflict with custom `CellRendererComponent` implementations. You can disable this behavior by setting this to `true`.
-
-:::note
-Recommendation: Set this to `true` while you apply special behavior to the `CellRendererComponent`. Once done set this to `false` again.
-:::
-
-### `disableHorizontalListHeightMeasurement`
-
-```tsx
-disableHorizontalListHeightMeasurement?: boolean;
-```
-
-FlashList attempts to measure size of horizontal lists by drawing an extra list item in advance. This can sometimes cause issues when used with `initialScrollIndex` in lists with very little content. You might see some amount of over scroll. When set to true the list's rendered size needs to be deterministic (i.e., height and width greater than 0) as FlashList will skip rendering the extra item for measurement. Default value is `false`.
+If true, the FlashList will not recycle items, which can be useful for debugging or in specific scenarios where recycling causes issues. We don't recommend disabling recycling.
 
 ### `drawDistance`
 
@@ -234,22 +197,6 @@ drawDistance?: number;
 ```
 
 Draw distance for advanced rendering (in `dp`/`px`).
-
-### `estimatedFirstItemOffset`
-
-```tsx
-estimatedFirstItemOffset?: number;
-```
-
-`estimatedFirstItemOffset` specifies how far the first item is drawn from start of the list window or offset of the first item of the list (not the header). This prop is necessary if you're using [initialScrollIndex](#initialscrollindex) prop. Before the initial draw, the list does not know the size of a header or any special margin/padding that might have been applied using header styles etc. If this isn't provided initialScrollIndex might not scroll to the provided index.
-
-### `estimatedListSize`
-
-```tsx
-estimatedListSize?: { height: number; width: number }
-```
-
-Estimated visible height and width of the list. It is not the scroll content size. Defining this prop will enable the list to be rendered immediately. Without it, the list first needs to measure its size, leading to a small delay during the first render.
 
 ### `extraData`
 
@@ -275,14 +222,6 @@ Instead of starting at the top with the first item, start at `initialScrollIndex
 initialScrollIndex?: number;
 ```
 
-### `inverted`
-
-Reverses the direction of scroll. Uses scale transforms of `-1`.
-
-```tsx
-inverted?: boolean;
-```
-
 ### `keyExtractor`
 
 ```tsx
@@ -290,6 +229,61 @@ keyExtractor?: (item: object, index: number) => string;
 ```
 
 Used to extract a unique key for a given item at the specified index. Key is used for optimizing performance. Defining `keyExtractor` is also necessary when doing [layout animations](/guides/layout-animation) to uniquely identify animated components.
+
+### `maintainVisibleContentPosition`
+
+```tsx
+maintainVisibleContentPosition?: {
+  disabled?: boolean;
+  autoscrollToTopThreshold?: number;
+  autoscrollToBottomThreshold?: number;
+  startRenderingFromBottom?: boolean;
+};
+```
+
+Configuration for maintaining scroll position when content changes. This is enabled by default to reduce visible glitches.
+
+- `disabled`: Set to true to disable this feature. It's enabled by default.
+- `autoscrollToTopThreshold`: Automatically scroll to maintain position when content is added at the top.
+- `autoscrollToBottomThreshold`: Automatically scroll to maintain position when content is added at the bottom.
+- `startRenderingFromBottom`: If true, initial render will start from the bottom, useful for chat interfaces.
+
+Example:
+
+```jsx
+<FlashList
+  data={chatMessages}
+  maintainVisibleContentPosition={{
+    autoscrollToBottomThreshold: 0.2,
+    startRenderingFromBottom: true,
+  }}
+  renderItem={({ item }) => <ChatMessage message={item} />}
+/>
+```
+
+### `masonry`
+
+```tsx
+masonry?: boolean;
+```
+
+Enable masonry layout for grid-like interfaces with varying item heights. When used with `numColumns > 1`, this creates a masonry-style layout.
+
+```jsx
+<FlashList
+  data={data}
+  masonry
+  numColumns={3}
+  renderItem={({ item }) => <MasonryItem item={item} />}
+/>
+```
+
+### `maxItemsInRecyclePool`
+
+Maximum number of items in the recycle pool. These are the items that are cached in the recycle pool when they are scrolled off the screen. Unless you have a huge number of item types, you shouldn't need to set this.
+
+Setting this to 0, will disable the recycle pool and items will unmount once they are scrolled off the screen.
+There's no limit by default.
 
 ### `numColumns`
 
@@ -323,6 +317,14 @@ This callback will be triggered even if the blanks are excepted - for example, w
 This event isn't synced with `onScroll` event from the JS layer but works with native methods `onDraw` (Android) and `layoutSubviews` (iOS).
 :::
 
+### `onCommitLayoutEffect`
+
+```tsx
+onCommitLayoutEffect?: () => void;
+```
+
+Called before layout is committed. Can be used to measure list and make changes before paint. Doing setState inside the callback can lead to infinite loops. Make sure FlashList's props are memoized.
+
 ### `onEndReached`
 
 ```tsx
@@ -347,6 +349,51 @@ onLoad: (info: { elapsedTimeInMs: number }) => void;
 
 This event is raised once the list has drawn items on the screen. It also reports elapsedTimeInMs which is the time it took to draw the items. This is required because FlashList doesn't render items in the first cycle. Items are drawn after it measures itself at the end of first render. If you're using ListEmptyComponent, this event is raised as soon as ListEmptyComponent is rendered.
 
+### `onRefresh`
+
+```tsx
+onRefresh?: () => void;
+```
+
+If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the `refreshing` prop correctly.
+
+### `getItemType`
+
+```tsx
+getItemType?: (
+    item: T,
+    index: number,
+    extraData?: any
+) => string | number | undefined;
+```
+
+Allows developers to specify item types. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined. You can see example of how to use this prop [here](performant-components.md#getitemtype).
+
+### `onStartReached`
+
+```tsx
+onStartReached?: () => void;
+```
+
+Called once when the scroll position gets within `onStartReachedThreshold` of the start of the content. Useful for loading older content in infinite scroll scenarios like chat applications.
+
+```jsx
+<FlashList
+  data={messageData}
+  onStartReached={() => loadOlderMessages()}
+  onStartReachedThreshold={0.1}
+  renderItem={({ item }) => <MessageItem message={item} />}
+/>
+```
+
+### `onStartReachedThreshold`
+
+```tsx
+onStartReachedThreshold?: number;
+```
+
+How far from the start (in units of visible length of the list) the top edge of the list must be from the start of the content to trigger the `onStartReached` callback. Value of 0.5 will trigger `onStartReached` when the start of the content is within half the visible length of the list from the top.
+
 ### `onViewableItemsChanged`
 
 ```tsx
@@ -370,35 +417,19 @@ Called when the viewability of rows changes, as defined by the `viewabilityConfi
 If you are tracking the time a view becomes (non-)visible, use the `timestamp` property. We make no guarantees that in the future viewability callbacks will be invoked as soon as they happen - for example, they might be deferred until JS thread is less busy.
 :::
 
-### `onRefresh`
+### `optimizeItemArrangement`
 
 ```tsx
-onRefresh?: () => void;
+optimizeItemArrangement?: boolean;
 ```
 
-If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the `refreshing` prop correctly.
-
-### `getItemType`
-
-```tsx
-getItemType?: (
-    item: T,
-    index: number,
-    extraData?: any
-) => string | number | undefined;
-```
-
-Allows developers to specify item types. This will improve recycling if you have different types of items in the list. Right type will be used for the right item.Default type is 0. If you don't want to change for an indexes just return undefined. You can see example of how to use this prop [here](/fundamentals/performant-components#getitemtype).
-
-:::warning Performance
-This method is called very frequently. Keep it fast.
-:::
+When enabled with `masonry` layout, this will try to reduce differences in column height by modifying item order. Default is `true`.
 
 ### `overrideItemLayout`
 
 ```tsx
 overrideItemLayout?: (
-    layout: { span?: number; size?: number },
+    layout: { span?: number;},
     item: T,
     index: number,
     maxColumns: number,
@@ -406,14 +437,22 @@ overrideItemLayout?: (
 ) => void;
 ```
 
-This method can be used to provide explicit size estimates or change column span of an item.
+This method can be used to change column span of an item.
 
-Providing specific estimates is a good idea when you can calculate sizes reliably. FlashList will prefer this value over `estimatedItemSize` for that specific item.
-Precise estimates will also improve precision of `scrollToIndex` method and `initialScrollIndex` prop. If you have a `separator` below your items, you can include its size in the estimate.
+In v2, span is supported, but size estimates are no longer needed or read.
 
 Changing item span is useful when you have grid layouts (numColumns > 1) and you want few items to be bigger than the rest.
 
-Modify the given layout. Do not return any value from the method. FlashList will fallback to default values if this is ignored.
+```jsx
+<FlashList
+  data={gridData}
+  numColumns={2}
+  overrideItemLayout={(layout, item) => {
+    layout.span = item.span; // Set span
+  }}
+  renderItem={({ item }) => <GridItem item={item} />}
+/>
+```
 
 :::warning Performance
 This method is called very frequently. Keep it fast.
@@ -462,6 +501,14 @@ renderScrollComponent?:
 ```
 
 Rendered as the main scrollview.
+
+### `style`
+
+```tsx
+style?: StyleProp<ViewStyle>;
+```
+
+Style for the FlashList's parent container. It's highly recommended to avoid adding padding which can impact the size of the ScrollView inside. We operate on the assumption that the size of parent view and ScrollView is the same. In most cases, `contentContainerStyle` should be enough, so avoid using this.
 
 ### `viewabilityConfig`
 
@@ -526,6 +573,107 @@ viewabilityConfigCallbackPairs: ViewabilityConfigCallbackPairs | undefined;
 ```
 
 List of `ViewabilityConfig`/`onViewableItemsChanged` pairs. A specific `onViewableItemsChanged` will be called when its corresponding `ViewabilityConfig`'s conditions are met.
+
+# Hooks
+
+### useLayoutState
+
+```tsx
+const [state, setState] = useLayoutState(initialState);
+```
+
+This is similar to `useState` but communicates the change in state to FlashList. It's useful if you want to resize a child component based on a local state. Item layout changes will still be detected using `onLayout` callback in the absence of `useLayoutState`, which might not look as smooth on a case-by-case basis.
+
+```jsx
+import { useLayoutState } from "@shopify/flash-list";
+
+const MyItem = ({ item }) => {
+  const [isExpanded, setIsExpanded] = useLayoutState(false);
+  const height = isExpanded ? 150 : 80;
+
+  return (
+    <Pressable onPress={() => setIsExpanded(!isExpanded)}>
+      <View style={{ height, padding: 16 }}>
+        <Text>{item.title}</Text>
+      </View>
+    </Pressable>
+  );
+};
+```
+
+### useRecyclingState
+
+```tsx
+const [state, setState] = useRecyclingState(
+  initialState,
+  dependencies,
+  resetCallback
+);
+```
+
+Similar to `useState` but accepts a dependency array. On change of deps, the state gets reset without an additional `setState` call. Useful for maintaining local item state if really necessary. It also has the functionality of `useLayoutState` built in.
+
+```jsx
+import { useRecyclingState } from "@shopify/flash-list";
+
+const GridItem = ({ item }) => {
+  const [isExpanded, setIsExpanded] = useRecyclingState(
+    false,
+    [item.id],
+    () => {
+      // runs on reset. Can be used to reset scroll positions of nested horizontal lists
+    }
+  );
+  const height = isExpanded ? 100 : 50;
+
+  return (
+    <Pressable onPress={() => setIsExpanded(!isExpanded)}>
+      <View style={{ height, backgroundColor: item.color }}>
+        <Text>{item.title}</Text>
+      </View>
+    </Pressable>
+  );
+};
+```
+
+### useMappingHelper
+
+```tsx
+const { getMappingKey } = useMappingHelper();
+```
+
+Returns a function that helps create a mapping key for items when using `.map()` in your render methods. Using this ensures that performance is optimal for FlashList by providing consistent keys that work with the recycling system.
+
+The `getMappingKey` function takes two parameters:
+
+- `index`: The index of the item in the array
+- `itemKey`: A unique identifier for the item (string, number, or bigint)
+
+It returns the appropriate key value to use in the `key` prop based on the current context.
+
+**Basic usage:**
+
+```jsx
+import { useMappingHelper } from "@shopify/flash-list";
+
+const MyComponent = ({ items }) => {
+  const { getMappingKey } = useMappingHelper();
+
+  return (
+    <View>
+      {items.map((item, index) => (
+        <Text key={getMappingKey(item.id, index)}>{item.title}</Text>
+      ))}
+    </View>
+  );
+};
+```
+
+**When to use it:**
+
+- When mapping over arrays to create lists of components inside FlashList items
+- When building nested components that render multiple items from an array
+- To ensure consistent key generation that works well with FlashList's recycling system
 
 # FlashList methods
 
@@ -605,6 +753,86 @@ Param `offset` expects the offset to scroll to. In case of `horizontal` is true,
 
 Param `animated` (`false` by default) defines whether the list should do an animation while scrolling.
 
+### `getVisibleIndices()`
+
+Returns an array of indices that are currently visible in the list.
+
+```tsx
+getVisibleIndices(): number[];
+```
+
+### `getLayout()`
+
+Returns the current layout information for the list.
+
+```tsx
+getLayout(): { x: number, y: number, width: number; height: number };
+```
+
+### `flashScrollIndicators()`
+
+Shows the scroll indicators momentarily.
+
+```tsx
+flashScrollIndicators(): void;
+```
+
+### `getNativeScrollRef()`
+
+Returns a reference to the underlying scroll view.
+
+```tsx
+getNativeScrollRef(): React.RefObject<CompatScroller>;
+```
+
+### `getScrollResponder()`
+
+Returns the scroll responder of the underlying scroll view.
+
+```tsx
+getScrollResponder(): any;
+```
+
+### `getScrollableNode()`
+
+Returns the native scrollable node of the underlying scroll view.
+
+```tsx
+getScrollableNode(): any;
+```
+
+### `scrollToTop()`
+
+Scrolls to the top of the list.
+
+```tsx
+scrollToTop(params?: { animated?: boolean }): void;
+```
+
+### `getFirstItemOffset()`
+
+Returns the offset of the first item (useful for calculating header size or top padding).
+
+```tsx
+getFirstItemOffset(): number;
+```
+
+### `getWindowSize()`
+
+Returns the current rendered dimensions of the list.
+
+```tsx
+getWindowSize(): { width: number, height: number };
+```
+
+### `getFirstVisibleIndex()`
+
+Returns the index of the first visible item in the list.
+
+```tsx
+getFirstVisibleIndex(): number;
+```
+
 # ScrollView props
 
 `FlashList`, as `FlatList`, uses `ScrollView` under the hood. You can take a look into the React Native documentation for [`ScrollView`](https://reactnative.dev/docs/scrollview) to see the exhaustive list of props.
@@ -616,17 +844,6 @@ The following props from `FlatList` are currently not implemented:
 - [`columnWrapperStyle`](https://reactnative.dev/docs/flatlist#columnwrapperstyle)
 - [`debug`](https://reactnative.dev/docs/virtualizedlist#debug)
 - [`listKey`](https://reactnative.dev/docs/virtualizedlist#listkey)
-- [`onScrollToIndexFailed`](https://reactnative.dev/docs/virtualizedlist#onscrolltoindexfailed)
-- [`windowSize`](https://reactnative.dev/docs/virtualizedlist#windowsize)
-
-Unsupported methods:
-
-- [`flashScrollIndicators()`](https://reactnative.dev/docs/flatlist#flashscrollindicators)
-- [`hasMore`](https://reactnative.dev/docs/virtualizedlist#hasmore)
-- [`getChildContext`](https://reactnative.dev/docs/virtualizedlist#getchildcontext)
-- [`getNativeScrollRef()`​](https://reactnative.dev/docs/flatlist#getnativescrollref)
-- [`getScrollRef`](https://reactnative.dev/docs/virtualizedlist#getscrollref)
-- [`getScrollResponder()`](https://reactnative.dev/docs/flatlist#getscrollresponder)
 
 There are also `FlatList` props that would bring no value if ported to `FlashList` due to the differences in their underlying implementation:
 
@@ -637,5 +854,7 @@ There are also `FlatList` props that would bring no value if ported to `FlashLis
 - [`recordInteraction`](https://reactnative.dev/docs/virtualizedlist#recordinteraction)
 - [`setNativeProps`](https://reactnative.dev/docs/virtualizedlist#setnativeprops)
 - [`updateCellsBatchingPeriod`](https://reactnative.dev/docs/virtualizedlist#updatecellsbatchingperiod)
+- [`onScrollToIndexFailed`](https://reactnative.dev/docs/virtualizedlist#onscrolltoindexfailed)
+- [`windowSize`](https://reactnative.dev/docs/virtualizedlist#windowsize)
 
 We don't currently plan to implement these props.

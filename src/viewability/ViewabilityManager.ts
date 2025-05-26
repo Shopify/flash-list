@@ -102,15 +102,18 @@ export default class ViewabilityManager<T> {
   private createViewabilityHelper = (
     viewabilityConfig: ViewabilityConfig | null | undefined,
     onViewableItemsChanged:
-      | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+      | ((info: {
+          viewableItems: ViewToken<T>[];
+          changed: ViewToken<T>[];
+        }) => void)
       | null
       | undefined
   ) => {
-    const mapViewToken: (index: number, isViewable: boolean) => ViewToken = (
+    const mapViewToken: (index: number, isViewable: boolean) => ViewToken<T> = (
       index: number,
       isViewable: boolean
     ) => {
-      const item = this.flashListRef.props.data?.[index];
+      const item = this.flashListRef.props.data![index];
       const key =
         item === undefined || this.flashListRef.props.keyExtractor === undefined
           ? index.toString()

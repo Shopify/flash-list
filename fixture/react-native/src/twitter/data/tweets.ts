@@ -2,7 +2,7 @@
 
 import Tweet from "../models/Tweet";
 
-export const tweets: Tweet[] = [
+export const initialTweets: Tweet[] = [
   {
     author: {
       name: "Aram Miquel",
@@ -2018,3 +2018,10 @@ export const tweets: Tweet[] = [
     favoriteCount: 0,
   },
 ];
+
+export const tweets: Tweet[] = Array(10000)
+  .fill(0)
+  .map((_, index) => ({
+    ...initialTweets[index % initialTweets.length],
+    id: index.toString(),
+  }));

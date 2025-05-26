@@ -258,7 +258,7 @@ const MasonryFlashListComponent = React.forwardRef(
                   ? (info) => {
                       updateViewTokens(info.viewableItems);
                       updateViewTokens(info.changed);
-                      onViewableItemsChanged?.(info);
+                      onViewableItemsChanged?.(info as any);
                     }
                   : undefined
               }
@@ -437,7 +437,7 @@ const getFlashListScrollView = (
   FlashListScrollView.displayName = "FlashListScrollView";
   return FlashListScrollView;
 };
-const updateViewTokens = (tokens: ViewToken[]) => {
+const updateViewTokens = (tokens: ViewToken<any>[]) => {
   const length = tokens.length;
   for (let i = 0; i < length; i++) {
     const token = tokens[i];

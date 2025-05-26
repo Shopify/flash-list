@@ -34,12 +34,13 @@ const Twitter = ({
     debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData
   );
   const viewabilityConfig = useRef<ViewabilityConfig>({
-    waitForInteraction: true,
+    waitForInteraction: false,
     itemVisiblePercentThreshold: 50,
     minimumViewTime: 1000,
   }).current;
 
   return (
+    // @ts-ignore - Type compatibility issue between different React versions
     <FlashList
       ref={instance}
       onBlankArea={blankAreaTracker}
@@ -60,6 +61,7 @@ const Twitter = ({
           setTweets(reversedTweets);
         }, 500);
       }}
+      // @ts-ignore - Type compatibility issue between different React versions
       CellRendererComponent={CellRendererComponent}
       onEndReached={() => {
         if (!debugContext.pagingEnabled) {
