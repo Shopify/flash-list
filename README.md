@@ -17,7 +17,7 @@ Swap from FlatList in seconds. Get instant performance.
 
 # FlashList v2
 
-FlashList v2 has been rebuilt from the ground up for RN's new architecture and delivers fast performance, higher precision, and better ease of use compared to v1. We've achieved all this while moving to a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates. It also introduces several new features compared to v1.
+FlashList v2 has been rebuilt from the ground up for RN's new architecture and delivers fast performance, higher precision, and better ease of use compared to v1. We've achieved all this while moving to a JS-only solution! One of the key advantages of FlashList v2 is that it doesn't require any estimates. It also introduces several new features compared to v1. To know more about what's new in v2 click [here](https://shopify.github.io/flash-list/docs/v2-changes).
 
 > ⚠️ **IMPORTANT:** FlashList v2.x has been designed to fully leverage the new architecture. **Old architecture will only be supported while FlashList v2 is in alpha/beta/rc and will be dropped once it's ready.** When run on old architecture, we just fall back to v1.x which doesn't have any of the new features.
 
