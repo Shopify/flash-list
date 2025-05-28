@@ -177,6 +177,8 @@ export type ContentStyle = Pick<
   | "padding"
   | "paddingVertical"
   | "paddingHorizontal"
+  | "minWidth"
+  | "minHeight"
 >;
 ```
 
