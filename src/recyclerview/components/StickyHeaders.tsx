@@ -74,7 +74,7 @@ export const StickyHeaders = <TItem,>({
 
   // sort indices and memoize compute
   const sortedIndices = useMemo(() => {
-    return stickyHeaderIndices.sort((first, second) => first - second);
+    return [...stickyHeaderIndices].sort((first, second) => first - second);
   }, [stickyHeaderIndices]);
 
   const legthInvalid =
