@@ -439,6 +439,18 @@ const RecyclerViewComponent = <T,>(
     );
   }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
 
+  const scrollAnchor = useMemo(() => {
+    if (shouldMaintainVisibleContentPosition) {
+      return (
+        <ScrollAnchor
+          horizontal={Boolean(horizontal)}
+          scrollAnchorRef={scrollAnchorRef}
+        />
+      );
+    }
+    return null;
+  }, [horizontal, shouldMaintainVisibleContentPosition]);
+
   // console.log("render", recyclerViewManager.getRenderStack());
 
   // Render the main RecyclerView structure
@@ -485,12 +497,7 @@ const RecyclerViewComponent = <T,>(
           {...overrideProps}
         >
           {/* Scroll anchor for maintaining content position */}
-          {maintainVisibleContentPositionInternal && (
-            <ScrollAnchor
-              horizontal={Boolean(horizontal)}
-              scrollAnchorRef={scrollAnchorRef}
-            />
-          )}
+          {scrollAnchor}
           {isHorizontalRTL && viewToMeasureBoundedSize}
           {renderHeader}
           {!isHorizontalRTL && viewToMeasureBoundedSize}
