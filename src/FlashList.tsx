@@ -6,6 +6,7 @@ import {
   NativeSyntheticEvent,
   StyleSheet,
   NativeScrollEvent,
+  Platform,
 } from "react-native";
 import {
   BaseItemAnimator,
@@ -31,10 +32,12 @@ import {
   RenderTargetOptions,
 } from "./FlashListProps";
 import {
+  addInvertedWheelHandler,
   getCellContainerPlatformStyles,
   getFooterContainer,
   getItemAnimator,
   PlatformConfig,
+  removeInvertedWheelHandler,
 } from "./native/config/PlatformHelper";
 import {
   ContentStyleExplicit,
@@ -100,6 +103,8 @@ class FlashList<T> extends React.PureComponent<
 
   private isEmptyList = false;
   private viewabilityManager: ViewabilityManager<T>;
+
+  private hasInvertedWheelHandler = false;
 
   private itemAnimator?: BaseItemAnimator;
 
@@ -284,10 +289,27 @@ class FlashList<T> extends React.PureComponent<
     }
   };
 
+  private updateWebScrollHandler() {
+    if (Platform.OS !== "web" || !this.rlvRef) return;
+
+    removeInvertedWheelHandler(this.rlvRef);
+    this.hasInvertedWheelHandler = false;
+
+    if (this.props.inverted) {
+      addInvertedWheelHandler(
+        this.rlvRef,
+        this.props.horizontal ? "horizontal" : "vertical"
+      );
+      this.hasInvertedWheelHandler = true;
+    }
+  }
+
   componentDidMount() {
     if (this.props.data?.length === 0) {
       this.raiseOnLoadEventIfNeeded();
     }
+
+    this.updateWebScrollHandler();
   }
 
   componentWillUnmount() {
@@ -296,6 +318,19 @@ class FlashList<T> extends React.PureComponent<
     this.clearRenderSizeWarningTimeout();
     if (this.itemSizeWarningTimeoutId !== undefined) {
       clearTimeout(this.itemSizeWarningTimeoutId);
+    }
+
+    if (this.hasInvertedWheelHandler) {
+      removeInvertedWheelHandler(this.rlvRef);
+    }
+  }
+
+  componentDidUpdate(prevProps: FlashListProps<T>) {
+    if (
+      prevProps.inverted !== this.props.inverted ||
+      prevProps.horizontal !== this.props.horizontal
+    ) {
+      this.updateWebScrollHandler();
     }
   }
 
@@ -480,9 +515,11 @@ class FlashList<T> extends React.PureComponent<
         >
           {children}
         </AutoLayoutView>
-        {this.isEmptyList
-          ? this.getValidComponent(this.props.ListEmptyComponent)
-          : null}
+        {this.isEmptyList ? (
+          <View style={this.getTransform()}>
+            {this.getValidComponent(this.props.ListEmptyComponent)}
+          </View>
+        ) : null}
         <PureComponentWrapper
           enabled={this.isListLoaded || children.length > 0 || this.isEmptyList}
           contentStyle={this.props.contentContainerStyle}
@@ -643,7 +680,16 @@ class FlashList<T> extends React.PureComponent<
   };
 
   private rowRendererSticky = (index: number) => {
-    return this.rowRendererWithIndex(index, RenderTargetOptions.StickyHeader);
+    return (
+      <View
+        style={{
+          flexDirection: this.props.horizontal ? "row" : "column",
+          ...this.getTransform(),
+        }}
+      >
+        {this.rowRendererWithIndex(index, RenderTargetOptions.StickyHeader)}
+      </View>
+    );
   };
 
   private rowRendererWithIndex = (index: number, target: RenderTarget) => {
