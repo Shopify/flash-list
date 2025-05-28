@@ -22,17 +22,21 @@ export default class ViewabilityManager<T> {
       this.viewabilityHelpers.push(
         this.createViewabilityHelper(
           flashListRef.props.viewabilityConfig,
-          flashListRef.props.onViewableItemsChanged
+          (info) => {
+            flashListRef.props.onViewableItemsChanged?.(info);
+          }
         )
       );
     }
     (flashListRef.props.viewabilityConfigCallbackPairs ?? []).forEach(
-      (pair) => {
+      (pair, index) => {
         this.viewabilityHelpers.push(
-          this.createViewabilityHelper(
-            pair.viewabilityConfig,
-            pair.onViewableItemsChanged
-          )
+          this.createViewabilityHelper(pair.viewabilityConfig, (info) => {
+            const callback =
+              flashListRef.props.viewabilityConfigCallbackPairs?.[index]
+                ?.onViewableItemsChanged;
+            callback?.(info);
+          })
         );
       }
     );
