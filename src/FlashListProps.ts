@@ -300,7 +300,7 @@ export interface FlashListProps<TItem>
   ) => void;
 
   /**
-   * For debugging and exception use cases, internal props will be overriden with these values if used
+   * For debugging and exception use cases, internal props will be overridden with these values if used.
    */
   overrideProps?: OverrideProps;
 
