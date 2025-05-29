@@ -86,6 +86,10 @@ export const ExamplesScreen = () => {
       title: "Layout Options",
       destination: "LayoutOptions",
     },
+    {
+      title: "Showcase App",
+      destination: "ShowcaseApp",
+    },
   ];
   return (
     <>

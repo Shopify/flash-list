@@ -26,6 +26,7 @@ import RecyclerViewHandlerTest from "./RecyclerViewHandlerTest";
 import MovieList from "./MovieList";
 import Carousel from "./Carousel";
 import { LayoutOptions } from "./LayoutOptions";
+import ShowcaseApp from "./ShowcaseApp";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -85,6 +86,11 @@ const NavigationTree = () => {
             name="LayoutOptions"
             component={LayoutOptions}
             options={{ title: "Layout Options" }}
+          />
+          <Stack.Screen
+            name="ShowcaseApp"
+            component={ShowcaseApp}
+            options={{ title: "Showcase App" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />

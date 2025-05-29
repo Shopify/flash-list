@@ -30,4 +30,5 @@ export type RootStackParamList = {
   MovieList: undefined;
   Carousel: undefined;
   LayoutOptions: undefined;
+  ShowcaseApp: undefined;
 };
