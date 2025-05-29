@@ -1,6 +1,10 @@
-import { Dispatch, SetStateAction, useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
-import { useLayoutState } from "./useLayoutState";
+import { LayoutStateSetter, useLayoutState } from "./useLayoutState";
+
+export type RecyclingStateSetter<T> = LayoutStateSetter<T>;
+
+export type RecyclingStateInitialValue<T> = T | (() => T);
 
 /**
  * A custom hook that provides state management with automatic reset functionality.
@@ -16,10 +20,10 @@ import { useLayoutState } from "./useLayoutState";
  *   - A setState function that works like useState's setState
  */
 export function useRecyclingState<T>(
-  initialState: T | (() => T),
+  initialState: RecyclingStateInitialValue<T>,
   deps: React.DependencyList,
   onReset?: () => void
-): [T, Dispatch<SetStateAction<T>>] {
+): [T, RecyclingStateSetter<T>] {
   // Store the current state value in a ref to persist between renders
   const valueStore = useRef<T>();
   // Use layoutState to trigger re-renders when state changes
@@ -42,8 +46,8 @@ export function useRecyclingState<T>(
    * Proxy setState function that updates the stored value and triggers a re-render.
    * Only triggers a re-render if the new value is different from the current value.
    */
-  const setStateProxy = useCallback(
-    (newValue: T | ((prevValue: T) => T)) => {
+  const setStateProxy: RecyclingStateSetter<T> = useCallback(
+    (newValue, skipParentLayout) => {
       // Calculate next state value from function or direct value
       const nextState =
         typeof newValue === "function"
@@ -53,7 +57,7 @@ export function useRecyclingState<T>(
       // Only update and trigger re-render if value has changed
       if (nextState !== valueStore.current) {
         valueStore.current = nextState;
-        setCounter((prev) => prev + 1);
+        setCounter((prev) => prev + 1, skipParentLayout);
       }
     },
     [setCounter]
