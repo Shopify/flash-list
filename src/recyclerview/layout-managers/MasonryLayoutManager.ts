@@ -19,10 +19,13 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   /** Current column index for sequential placement */
   private currentColumn = 0;
 
+  /** If there's a span change for masonry layout, we need to recompute all the widths */
+  private fullRelayoutRequired = false;
+
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
     this.boundedSize = params.windowSize.width;
-    this.optimizeItemArrangement = params.optimizeItemArrangement ?? false;
+    this.optimizeItemArrangement = params.optimizeItemArrangement;
     this.columnHeights = this.columnHeights ?? Array(this.maxColumns).fill(0);
   }
 
@@ -44,10 +47,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         // console.log("-----> recomputeLayouts");
 
         // update all widths
-        for (let i = 0; i < this.layouts.length; i++) {
-          this.layouts[i].width = this.getWidth(i);
-          this.layouts[i].minHeight = undefined;
-        }
+        this.updateAllWidths();
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
       }
@@ -69,6 +69,13 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
       layout.isWidthMeasured = true;
       this.layouts[index] = layout;
     }
+
+    // TODO: Can be optimized
+    if (this.fullRelayoutRequired) {
+      this.updateAllWidths();
+      this.fullRelayoutRequired = false;
+      return 0;
+    }
   }
 
   /**
@@ -85,6 +92,14 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
     layout.isWidthMeasured = true;
     layout.enforcedWidth = true;
+  }
+
+  /**
+   * Handles span change for an item.
+   * @param index Index of the item
+   */
+  handleSpanChange(index: number) {
+    this.fullRelayoutRequired = true;
   }
 
   /**
@@ -124,7 +139,8 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
     for (let i = startIndex; i < itemCount; i++) {
       const layout = this.getLayout(i);
-      const span = this.getSpanSizeInfo(i).span ?? 1;
+      // Skip tracking span because we're not changing widths
+      const span = this.getSpan(i, true);
 
       if (this.optimizeItemArrangement) {
         if (span === 1) {
@@ -147,8 +163,14 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
    * @returns Width of the item
    */
   private getWidth(index: number): number {
-    const span = this.getSpanSizeInfo(index).span ?? 1;
-    return (this.boundedSize / this.maxColumns) * span;
+    return (this.boundedSize / this.maxColumns) * this.getSpan(index);
+  }
+
+  private updateAllWidths() {
+    for (let i = 0; i < this.layouts.length; i++) {
+      this.layouts[i].width = this.getWidth(i);
+      this.layouts[i].minHeight = undefined;
+    }
   }
 
   /**

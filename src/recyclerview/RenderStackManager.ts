@@ -26,6 +26,8 @@ export class RenderStackManager {
   // Counter for generating unique sequential keys
   private keyCounter: number;
 
+  private unProcessedIndices: Set<number>;
+
   /**
    * @param maxItemsInRecyclePool - Maximum number of items that can be in the recycle pool
    */
@@ -35,6 +37,7 @@ export class RenderStackManager {
     this.keyMap = new Map();
     this.stableIdMap = new Map();
     this.keyCounter = 0;
+    this.unProcessedIndices = new Set();
   }
 
   /**
@@ -57,6 +60,7 @@ export class RenderStackManager {
     dataLength: number
   ) {
     this.clearRecyclePool();
+    this.unProcessedIndices.clear();
 
     // Recycle keys for items that are no longer valid or visible
     this.keyMap.forEach((keyInfo, key) => {
@@ -64,6 +68,9 @@ export class RenderStackManager {
       if (index >= dataLength) {
         this.recycleKey(key);
         return;
+      }
+      if (!this.disableRecycling) {
+        this.unProcessedIndices.add(index);
       }
       if (!engagedIndices.includes(index)) {
         this.recycleKey(key);
@@ -114,7 +121,7 @@ export class RenderStackManager {
     }
 
     // Clean up stale items and manage the recycle pool size
-    this.cleanup(getStableId, engagedIndices, dataLength);
+    this.cleanup(getStableId, getItemType, engagedIndices, dataLength);
   }
 
   /**
@@ -131,6 +138,7 @@ export class RenderStackManager {
    */
   private cleanup(
     getStableId: (index: number) => string,
+    getItemType: (index: number) => string,
     engagedIndices: ConsecutiveNumbers,
     dataLength: number
   ) {
@@ -139,11 +147,27 @@ export class RenderStackManager {
     // Remove items that are no longer in the dataset
     for (const [key, keyInfo] of this.keyMap.entries()) {
       const { index, itemType, stableId } = keyInfo;
-      if (index >= dataLength || getStableId(index) !== stableId) {
-        // TODO: Find a way to reusue the key, instead of deleting it
-        this.deleteKeyFromRecyclePool(itemType, key);
-        this.stableIdMap.delete(stableId);
-        itemsToDelete.push(key);
+      const indexOutOfBounds = index >= dataLength;
+      const hasStableIdChanged =
+        !indexOutOfBounds && getStableId(index) !== stableId;
+
+      if (indexOutOfBounds || hasStableIdChanged) {
+        const nextIndex = this.unProcessedIndices.values().next().value;
+        let shouldDeleteKey = true;
+
+        if (nextIndex !== undefined) {
+          const nextItemType = getItemType(nextIndex);
+          const nextStableId = getStableId(nextIndex);
+          if (itemType === nextItemType) {
+            this.syncItem(nextIndex, nextItemType, nextStableId);
+            shouldDeleteKey = false;
+          }
+        }
+        if (shouldDeleteKey) {
+          this.deleteKeyFromRecyclePool(itemType, key);
+          this.stableIdMap.delete(stableId);
+          itemsToDelete.push(key);
+        }
       }
     }
 
@@ -214,6 +238,8 @@ export class RenderStackManager {
       this.stableIdMap.get(stableId) ||
       this.getKeyFromRecyclePool(itemType) ||
       this.generateKey();
+
+    this.unProcessedIndices.delete(index);
 
     const keyInfo = this.keyMap.get(newKey);
     if (keyInfo) {

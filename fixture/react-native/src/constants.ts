@@ -21,6 +21,7 @@ export type RootStackParamList = {
   Masonry: undefined;
   ComplexMasonry: undefined;
   Grid: undefined;
+  DynamicColumnSpan: undefined;
   HorizontalList: undefined;
   Chat: undefined;
   CellRendererExamples: undefined;
@@ -30,4 +31,5 @@ export type RootStackParamList = {
   MovieList: undefined;
   Carousel: undefined;
   LayoutOptions: undefined;
+  ShowcaseApp: undefined;
 };

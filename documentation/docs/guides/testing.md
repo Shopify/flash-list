@@ -4,7 +4,7 @@ title: Testing with Jest
 slug: /testing
 ---
 
-Since `FlashList` does not immediately render but waits for the size of the underlying `ScrollView` (unless you specify `estimatedListSize`), we need to mock triggering `onLayout` event.
+By default `FlashList` will mount all items in the test environment. You can use the following mock to setup measurements to prevent everything from mounting. You can also create your own mock.
 
 ## Setup
 

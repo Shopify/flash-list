@@ -14,6 +14,9 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   /** The width of the bounded area for the grid */
   private boundedSize: number;
 
+  /** If there's a span change for grid layout, we need to recompute all the widths */
+  private fullRelayoutRequired = false;
+
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
     this.boundedSize = params.windowSize.width;
@@ -33,10 +36,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
         // update all widths
-        for (let i = 0; i < this.layouts.length; i++) {
-          this.layouts[i].width = this.getWidth(i);
-        }
-        // console.log("-----> recomputeLayouts");
+        this.updateAllWidths();
 
         this.recomputeLayouts(0, this.layouts.length - 1);
         this.requiresRepaint = true;
@@ -57,6 +57,13 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
     }
+
+    // TODO: Can be optimized
+    if (this.fullRelayoutRequired) {
+      this.updateAllWidths();
+      this.fullRelayoutRequired = false;
+      return 0;
+    }
   }
 
   /**
@@ -73,12 +80,20 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   }
 
   /**
+   * Handles span change for an item.
+   * @param index Index of the item
+   */
+  handleSpanChange(index: number) {
+    this.fullRelayoutRequired = true;
+  }
+
+  /**
    * Returns the total size of the layout area.
    * @returns RVDimension containing width and height of the layout
    */
   getLayoutSize(): RVDimension {
     if (this.layouts.length === 0) return { width: 0, height: 0 };
-    const totalHeight = this.computeTotalHeight(this.layouts.length - 1);
+    const totalHeight = this.computeTotalHeightTillRow(this.layouts.length - 1);
     return {
       width: this.boundedSize,
       height: totalHeight,
@@ -91,7 +106,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
    * @param endIndex Ending index of items to recompute
    */
   recomputeLayouts(startIndex: number, endIndex: number): void {
-    const newStartIndex = this.locateFirstNeighbourIndex(
+    const newStartIndex = this.locateFirstIndexInRow(
       Math.max(0, startIndex - 1)
     );
     const startVal = this.getLayout(newStartIndex);
@@ -122,25 +137,23 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
    * @returns Width of the item
    */
   private getWidth(index: number): number {
-    const span = this.getSpanSizeInfo(index).span ?? 1;
-    return (this.boundedSize / this.maxColumns) * span;
+    return (this.boundedSize / this.maxColumns) * this.getSpan(index);
   }
 
   /**
    * Processes items in a row and returns the tallest item.
    * Also handles height normalization for items in the same row.
    * Tallest item per row helps in forcing tallest items height on neighbouring items.
-   * @param index Index of the last item in the row
+   * @param endIndex Index of the last item in the row
    * @returns The tallest item in the row
    */
-  private processAndReturnTallestItemInRow(index: number): RVLayout {
-    const startIndex = this.locateFirstNeighbourIndex(index);
-    const y = this.layouts[startIndex].y;
+  private processAndReturnTallestItemInRow(endIndex: number): RVLayout {
+    const startIndex = this.locateFirstIndexInRow(endIndex);
     let tallestItem: RVLayout | undefined;
     let maxHeight = 0;
     let i = startIndex;
     let isMeasured = false;
-    while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
+    while (i <= endIndex) {
       const layout = this.layouts[i];
       isMeasured = isMeasured || Boolean(layout.isHeightMeasured);
       maxHeight = Math.max(maxHeight, layout.height);
@@ -156,7 +169,9 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
         break;
       }
     }
-
+    if (!tallestItem && maxHeight > 0) {
+      maxHeight = Number.MAX_SAFE_INTEGER;
+    }
     tallestItem = tallestItem ?? this.layouts[startIndex];
 
     if (!isMeasured) {
@@ -170,7 +185,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
         this.requiresRepaint = true;
       }
       i = startIndex;
-      while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
+      while (i <= endIndex) {
         this.layouts[i].minHeight = targetHeight;
         if (targetHeight > 0) {
           this.layouts[i].height = targetHeight;
@@ -187,15 +202,15 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
 
   /**
    * Computes the total height of the layout.
-   * @param index Index of the last item in the layout
+   * @param endIndex Index of the last item in the row
    * @returns Total height of the layout
    */
-  private computeTotalHeight(index: number): number {
-    const startIndex = this.locateFirstNeighbourIndex(index);
+  private computeTotalHeightTillRow(endIndex: number): number {
+    const startIndex = this.locateFirstIndexInRow(endIndex);
     const y = this.layouts[startIndex].y;
     let maxHeight = 0;
     let i = startIndex;
-    while (Math.ceil(this.layouts[i].y) === Math.ceil(y)) {
+    while (i <= endIndex) {
       maxHeight = Math.max(maxHeight, this.layouts[i].height);
       i++;
       if (i >= this.layouts.length) {
@@ -203,6 +218,12 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       }
     }
     return y + maxHeight;
+  }
+
+  private updateAllWidths() {
+    for (let i = 0; i < this.layouts.length; i++) {
+      this.layouts[i].width = this.getWidth(i);
+    }
   }
 
   /**
@@ -217,14 +238,14 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
 
   /**
    * Locates the index of the first item in the current row.
-   * @param startIndex Index to start searching from
+   * @param itemIndex Index to start searching from
    * @returns Index of the first item in the row
    */
-  private locateFirstNeighbourIndex(startIndex: number): number {
-    if (startIndex === 0) {
+  private locateFirstIndexInRow(itemIndex: number): number {
+    if (itemIndex === 0) {
       return 0;
     }
-    let i = startIndex;
+    let i = itemIndex;
     for (; i >= 0; i--) {
       if (this.layouts[i].x === 0) {
         break;

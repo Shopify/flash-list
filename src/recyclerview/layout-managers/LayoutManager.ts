@@ -20,8 +20,6 @@ export abstract class RVLayoutManager {
   protected layouts: RVLayout[];
   /** Dimensions of the visible window/viewport */
   protected windowSize: RVDimension;
-  /** Information about item spans and sizes */
-  protected spanSizeInfo: SpanSizeInfo = {};
   /** Maximum number of columns in the layout */
   protected maxColumns: number;
 
@@ -41,6 +39,13 @@ export abstract class RVLayoutManager {
   private widthAverageWindow: MultiTypeAverageWindow;
   /** Maximum number of items to process in a single layout pass */
   private maxItemsToProcess = 250; // TODO: make this dynamic
+  /** Information about item spans and sizes */
+  private spanSizeInfo: SpanSizeInfo = {};
+  /** Span tracker for each item */
+  private spanTracker: (number | undefined)[] = [];
+
+  /** Current max index with changed layout */
+  private currentMaxIndexWithChangedLayout = -1;
 
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     this.heightAverageWindow = new MultiTypeAverageWindow(5, 200);
@@ -164,37 +169,46 @@ export abstract class RVLayoutManager {
 
     if (this.layouts.length > totalItemCount) {
       this.layouts.length = totalItemCount;
+      this.spanTracker.length = totalItemCount;
       minRecomputeIndex = totalItemCount - 1; // <0 gets skipped so it's safe to set to totalItemCount - 1
     }
     // update average windows
     minRecomputeIndex = Math.min(
       minRecomputeIndex,
-      this.computeEstimatesAndMinRecomputeIndex(layoutInfo)
+      this.computeEstimatesAndMinMaxChangedLayout(layoutInfo)
     );
 
     if (this.layouts.length < totalItemCount && totalItemCount > 0) {
       const startIndex = this.layouts.length;
       this.layouts.length = totalItemCount;
+      this.spanTracker.length = totalItemCount;
       for (let i = startIndex; i < totalItemCount; i++) {
         this.getLayout(i);
+        this.getSpan(i);
       }
       this.recomputeLayouts(startIndex, totalItemCount - 1);
     }
-    minRecomputeIndex = Math.min(
-      minRecomputeIndex,
-      this.processLayoutInfo(layoutInfo, totalItemCount) ?? minRecomputeIndex
-    );
+
     // compute minRecomputeIndex
+
     minRecomputeIndex = Math.min(
       minRecomputeIndex,
-      this.computeEstimatesAndMinRecomputeIndex(layoutInfo)
+      this.computeMinIndexWithChangedSpan(layoutInfo),
+      this.processLayoutInfo(layoutInfo, totalItemCount) ?? minRecomputeIndex,
+      this.computeEstimatesAndMinMaxChangedLayout(layoutInfo)
     );
+
     if (minRecomputeIndex >= 0 && minRecomputeIndex < totalItemCount) {
+      const maxRecomputeIndex = this.getMaxRecomputeIndex(minRecomputeIndex);
       this.recomputeLayouts(
         this.getMinRecomputeIndex(minRecomputeIndex),
-        this.getMaxRecomputeIndex(minRecomputeIndex)
+        maxRecomputeIndex
       );
+      if (maxRecomputeIndex + 1 < totalItemCount) {
+        this.layouts[maxRecomputeIndex + 1].repositionPending = true;
+      }
     }
+    this.currentMaxIndexWithChangedLayout = -1;
   }
 
   /**
@@ -260,15 +274,29 @@ export abstract class RVLayoutManager {
   protected abstract estimateLayout(index: number): void;
 
   /**
-   * Gets span size information for an item, applying any overrides.
+   * Gets span for an item, applying any overrides.
+   * This is intended to be called during a relayout call. The value is tracked and used to determine if a span change has occurred.
+   * If skipTracking is true, the operation is not tracked. Can be useful if span is required outside of a relayout call.
+   * The tracker is used to call handleSpanChange if a span change has occurred before relayout call.
+   * // TODO: improve this contract.
    * @param index Index of the item
-   * @returns SpanSizeInfo for the item
+   * @returns Span for the item
    */
-  protected getSpanSizeInfo(index: number): SpanSizeInfo {
+  protected getSpan(index: number, skipTracking = false): number {
     this.spanSizeInfo.span = undefined;
     this.overrideItemLayout(index, this.spanSizeInfo);
-    return this.spanSizeInfo;
+    const span = Math.min(this.spanSizeInfo.span ?? 1, this.maxColumns);
+    if (!skipTracking) {
+      this.spanTracker[index] = span;
+    }
+    return span;
   }
+
+  /**
+   * Method to handle span change for an item. Can be overridden by subclasses.
+   * @param index Index of the item
+   */
+  protected handleSpanChange(index: number) {}
 
   /**
    * Gets the maximum index to process in a single layout pass.
@@ -277,7 +305,8 @@ export abstract class RVLayoutManager {
    */
   private getMaxRecomputeIndex(startIndex: number): number {
     return Math.min(
-      startIndex + this.maxItemsToProcess,
+      Math.max(startIndex, this.currentMaxIndexWithChangedLayout) +
+        this.maxItemsToProcess,
       this.layouts.length - 1
     );
   }
@@ -296,7 +325,7 @@ export abstract class RVLayoutManager {
    * @param layoutInfo Array of layout information for items
    * @returns Minimum index that needs recomputation
    */
-  private computeEstimatesAndMinRecomputeIndex(
+  private computeEstimatesAndMinMaxChangedLayout(
     layoutInfo: RVLayoutInfo[]
   ): number {
     let minRecomputeIndex = Number.MAX_VALUE;
@@ -307,10 +336,18 @@ export abstract class RVLayoutManager {
         !storedLayout ||
         !storedLayout.isHeightMeasured ||
         !storedLayout.isWidthMeasured ||
+        storedLayout.repositionPending ||
         areDimensionsNotEqual(storedLayout.height, dimensions.height) ||
         areDimensionsNotEqual(storedLayout.width, dimensions.width)
       ) {
         minRecomputeIndex = Math.min(minRecomputeIndex, index);
+        this.currentMaxIndexWithChangedLayout = Math.max(
+          this.currentMaxIndexWithChangedLayout,
+          index
+        );
+        if (storedLayout?.repositionPending) {
+          storedLayout.repositionPending = false;
+        }
       }
       this.heightAverageWindow.addValue(
         dimensions.height,
@@ -322,6 +359,21 @@ export abstract class RVLayoutManager {
       );
     }
     return minRecomputeIndex;
+  }
+
+  private computeMinIndexWithChangedSpan(layoutInfo: RVLayoutInfo[]): number {
+    let minIndexWithChangedSpan = Number.MAX_VALUE;
+    for (const info of layoutInfo) {
+      const { index } = info;
+      const span = this.getSpan(index, true);
+      const storedSpan = this.spanTracker[index];
+      if (span !== storedSpan) {
+        this.spanTracker[index] = span;
+        this.handleSpanChange(index);
+        minIndexWithChangedSpan = Math.min(minIndexWithChangedSpan, index);
+      }
+    }
+    return minIndexWithChangedSpan;
   }
 }
 
@@ -467,6 +519,13 @@ export interface RVLayout extends RVDimension {
    * When false, the height is determined by content
    */
   enforcedHeight?: boolean;
+
+  /**
+   * When true, the layout is pending repositioning
+   * When false, the layout is up to date
+   * ViewHolder update is not required.
+   */
+  repositionPending?: boolean;
 }
 
 /**

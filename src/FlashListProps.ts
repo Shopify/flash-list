@@ -3,7 +3,6 @@ import {
   StyleProp,
   ScrollViewProps,
   ViewabilityConfig,
-  ViewabilityConfigCallbackPairs,
   ViewStyle,
 } from "react-native";
 
@@ -52,6 +51,19 @@ export type ContentStyle = Pick<
   | "paddingVertical"
   | "paddingHorizontal"
 >;
+
+export interface ViewabilityConfigCallbackPair<TItem> {
+  viewabilityConfig: ViewabilityConfig;
+  onViewableItemsChanged:
+    | ((info: {
+        viewableItems: ViewToken<TItem>[];
+        changed: ViewToken<TItem>[];
+      }) => void)
+    | null;
+}
+
+export type ViewabilityConfigCallbackPairs<TItem> =
+  ViewabilityConfigCallbackPair<TItem>[];
 
 export interface FlashListProps<TItem>
   extends Omit<ScrollViewProps, "maintainVisibleContentPosition"> {
@@ -326,7 +338,9 @@ export interface FlashListProps<TItem>
    * List of `ViewabilityConfig`/`onViewableItemsChanged` pairs.
    * A specific `onViewableItemsChanged` will be called when its corresponding `ViewabilityConfig`'s conditions are met.
    */
-  viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs | undefined;
+  viewabilityConfigCallbackPairs?:
+    | ViewabilityConfigCallbackPairs<TItem>
+    | undefined;
 
   /**
    * FlashList attempts to measure size of horizontal lists by drawing an extra list item in advance. This can sometimes cause issues when used with `initialScrollIndex` in lists

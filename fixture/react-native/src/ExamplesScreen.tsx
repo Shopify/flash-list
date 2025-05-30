@@ -86,6 +86,11 @@ export const ExamplesScreen = () => {
       title: "Layout Options",
       destination: "LayoutOptions",
     },
+    { title: "Dynamic Column Span", destination: "DynamicColumnSpan" },
+    {
+      title: "Showcase App",
+      destination: "ShowcaseApp",
+    },
   ];
   return (
     <>

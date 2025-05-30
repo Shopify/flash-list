@@ -459,7 +459,7 @@ describe("RenderStackManager edge cases", () => {
     runSyncAndGetEntireKeyMapKeys(rsm, mock6);
     runSyncAndGetEntireKeyMapKeys(rsm, mock7, new ConsecutiveNumbers(3, 5));
     const keys = getKeysForMockItems(rsm, mock7);
-    expect(keys).toEqual(["0", "1", "2", "3", "4", "5", "6"]);
+    expect(keys).toEqual(["0", "1", "2", "3", "4", "5", "6", "7"]);
   });
 
   it("should not delete keys from pool if they are not visible on index changes when going from mock3 to mock8", () => {
@@ -467,7 +467,6 @@ describe("RenderStackManager edge cases", () => {
     runSyncAndGetEntireKeyMapKeys(rsm, mock3, new ConsecutiveNumbers(0, 10));
     runSyncAndGetEntireKeyMapKeys(rsm, mock8, new ConsecutiveNumbers(0, 13));
     const keys = getKeysForMockItems(rsm, mock8);
-    console.log("keys", keys);
     expect(keys).toEqual([
       "0",
       "1",
