@@ -17,6 +17,7 @@ import { Masonry } from "./Masonry";
 import { ComplexMasonry } from "./ComplexMasonry";
 import { SectionList } from "./SectionList";
 import { Grid } from "./Grid";
+import { DynamicColumnSpan } from "./DynamicColumnSpan";
 import HorizontalList from "./HorizontalList";
 import { Chat } from "./Chat";
 import FlashListCellRenderer from "./CellRendererExamples";
@@ -38,6 +39,11 @@ const NavigationTree = () => {
           <Stack.Screen name="Examples" component={ExamplesScreen} />
           <Stack.Screen name="List" component={List} />
           <Stack.Screen name="Grid" component={Grid} />
+          <Stack.Screen
+            name="DynamicColumnSpan"
+            component={DynamicColumnSpan}
+            options={{ title: "Dynamic Column Span" }}
+          />
           <Stack.Screen name="SectionList" component={SectionList} />
           <Stack.Screen name="PaginatedList" component={PaginatedList} />
           <Stack.Screen name="Twitter" component={Twitter} />
