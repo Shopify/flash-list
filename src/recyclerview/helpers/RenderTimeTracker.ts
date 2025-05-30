@@ -26,6 +26,10 @@ export class RenderTimeTracker {
     }
   }
 
+  getRawValue() {
+    return this.renderTimeAvgWindow.currentValue;
+  }
+
   getAverageRenderTime() {
     if (!PlatformConfig.trackAverageRenderTimeForOffsetProjection) {
       return this.defaultRenderTime;
