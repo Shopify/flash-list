@@ -277,6 +277,7 @@ const RecyclerViewComponent = <T,>(
     },
     [
       checkBounds,
+      computeFirstVisibleIndexForOffsetCorrection,
       horizontal,
       isHorizontalRTL,
       recyclerViewManager,
