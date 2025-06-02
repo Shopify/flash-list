@@ -28,11 +28,13 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   }, [data]);
 
   useEffect(() => {
+    recyclerViewManager.restoreIfNeeded();
+
     return () => {
       recyclerViewManager.dispose();
       velocityTracker.cleanUp();
     };
-    // needs to run only on unmount
+    // Used to perform cleanup on unmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
