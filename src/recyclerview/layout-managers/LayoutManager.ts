@@ -38,7 +38,7 @@ export abstract class RVLayoutManager {
   /** Window for tracking average widths by item type */
   private widthAverageWindow: MultiTypeAverageWindow;
   /** Maximum number of items to process in a single layout pass */
-  private maxItemsToProcess = 250; // TODO: make this dynamic
+  private maxItemsToProcess = 250;
   /** Information about item spans and sizes */
   private spanSizeInfo: SpanSizeInfo = {};
   /** Span tracker for each item */
@@ -46,6 +46,12 @@ export abstract class RVLayoutManager {
 
   /** Current max index with changed layout */
   private currentMaxIndexWithChangedLayout = -1;
+
+  /**
+   * Last index that was skipped during layout computation.
+   * Used to determine if a layout needs to be recomputed.
+   */
+  private lastSkippedLayoutIndex = Number.MAX_VALUE;
 
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     this.heightAverageWindow = new MultiTypeAverageWindow(5, 200);
@@ -153,7 +159,7 @@ export abstract class RVLayoutManager {
     }
     const startIndex = Math.min(...indices);
     // Recompute layouts starting from the smallest index in the original indices array
-    this.recomputeLayouts(
+    this._recomputeLayouts(
       this.getMinRecomputeIndex(startIndex),
       this.getMaxRecomputeIndex(startIndex)
     );
@@ -165,6 +171,10 @@ export abstract class RVLayoutManager {
    * @param totalItemCount Total number of items in the list
    */
   modifyLayout(layoutInfo: RVLayoutInfo[], totalItemCount: number): void {
+    this.maxItemsToProcess = Math.max(
+      this.maxItemsToProcess,
+      layoutInfo.length * 10
+    );
     let minRecomputeIndex = Number.MAX_VALUE;
 
     if (this.layouts.length > totalItemCount) {
@@ -193,6 +203,7 @@ export abstract class RVLayoutManager {
 
     minRecomputeIndex = Math.min(
       minRecomputeIndex,
+      this.lastSkippedLayoutIndex,
       this.computeMinIndexWithChangedSpan(layoutInfo),
       this.processLayoutInfo(layoutInfo, totalItemCount) ?? minRecomputeIndex,
       this.computeEstimatesAndMinMaxChangedLayout(layoutInfo)
@@ -200,13 +211,7 @@ export abstract class RVLayoutManager {
 
     if (minRecomputeIndex >= 0 && minRecomputeIndex < totalItemCount) {
       const maxRecomputeIndex = this.getMaxRecomputeIndex(minRecomputeIndex);
-      this.recomputeLayouts(
-        this.getMinRecomputeIndex(minRecomputeIndex),
-        maxRecomputeIndex
-      );
-      if (maxRecomputeIndex + 1 < totalItemCount) {
-        this.layouts[maxRecomputeIndex + 1].repositionPending = true;
-      }
+      this._recomputeLayouts(minRecomputeIndex, maxRecomputeIndex);
     }
     this.currentMaxIndexWithChangedLayout = -1;
   }
@@ -320,6 +325,30 @@ export abstract class RVLayoutManager {
     return startIndex;
   }
 
+  private _recomputeLayouts(startIndex: number, endIndex: number): void {
+    this.recomputeLayouts(startIndex, endIndex);
+    if (
+      this.lastSkippedLayoutIndex >= startIndex &&
+      this.lastSkippedLayoutIndex <= endIndex
+    ) {
+      this.lastSkippedLayoutIndex = Number.MAX_VALUE;
+    }
+
+    if (endIndex + 1 < this.layouts.length) {
+      this.lastSkippedLayoutIndex = Math.min(
+        endIndex + 1,
+        this.lastSkippedLayoutIndex
+      );
+      const lastIndex = this.layouts.length - 1;
+      // Since layout managers derive height from last indices we need to make
+      // sure they're not too much out of sync.
+      if (this.layouts[lastIndex].y < this.layouts[endIndex].y) {
+        this.recomputeLayouts(this.lastSkippedLayoutIndex, lastIndex);
+        this.lastSkippedLayoutIndex = Number.MAX_VALUE;
+      }
+    }
+  }
+
   /**
    * Computes size estimates and finds the minimum recompute index.
    * @param layoutInfo Array of layout information for items
@@ -333,10 +362,10 @@ export abstract class RVLayoutManager {
       const { index, dimensions } = info;
       const storedLayout = this.layouts[index];
       if (
+        index >= this.lastSkippedLayoutIndex ||
         !storedLayout ||
         !storedLayout.isHeightMeasured ||
         !storedLayout.isWidthMeasured ||
-        storedLayout.repositionPending ||
         areDimensionsNotEqual(storedLayout.height, dimensions.height) ||
         areDimensionsNotEqual(storedLayout.width, dimensions.width)
       ) {
@@ -345,9 +374,6 @@ export abstract class RVLayoutManager {
           this.currentMaxIndexWithChangedLayout,
           index
         );
-        if (storedLayout?.repositionPending) {
-          storedLayout.repositionPending = false;
-        }
       }
       this.heightAverageWindow.addValue(
         dimensions.height,
@@ -519,13 +545,6 @@ export interface RVLayout extends RVDimension {
    * When false, the height is determined by content
    */
   enforcedHeight?: boolean;
-
-  /**
-   * When true, the layout is pending repositioning
-   * When false, the layout is up to date
-   * ViewHolder update is not required.
-   */
-  repositionPending?: boolean;
 }
 
 /**
