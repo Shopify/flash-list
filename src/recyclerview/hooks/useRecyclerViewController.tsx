@@ -83,12 +83,32 @@ export function useRecyclerViewController<T>(
     [recyclerViewManager]
   );
 
+  const computeFirstVisibleIndexForOffsetCorrection = useCallback(() => {
+    const { data, keyExtractor } = recyclerViewManager.props;
+    if (data && keyExtractor) {
+      // Update the tracked first visible item
+      const firstVisibleIndex = Math.max(
+        0,
+        recyclerViewManager.computeVisibleIndices().startIndex
+      );
+      if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
+        firstVisibleItemKey.current = keyExtractor(
+          data![firstVisibleIndex],
+          firstVisibleIndex
+        );
+        firstVisibleItemLayout.current = {
+          ...recyclerViewManager.getLayout(firstVisibleIndex),
+        };
+      }
+    }
+  }, [recyclerViewManager]);
+
   /**
    * Maintains the visible content position when the list updates.
    * This is particularly useful for chat applications where we want to keep
    * the user's current view position when new messages are added.
    */
-  const applyContentOffset = useCallback(async () => {
+  const applyOffsetCorrection = useCallback(async () => {
     const { horizontal, data, keyExtractor } = recyclerViewManager.props;
     // Resolve all pending scroll updates from previous calls
     const resolves = pendingScrollResolves.current;
@@ -164,20 +184,7 @@ export function useRecyclerViewController<T>(
         }
       }
 
-      // Update the tracked first visible item
-      const firstVisibleIndex = Math.max(
-        0,
-        recyclerViewManager.computeVisibleIndices().startIndex
-      );
-      if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
-        firstVisibleItemKey.current = keyExtractor(
-          data![firstVisibleIndex],
-          firstVisibleIndex
-        );
-        firstVisibleItemLayout.current = {
-          ...recyclerViewManager.getLayout(firstVisibleIndex),
-        };
-      }
+      computeFirstVisibleIndexForOffsetCorrection();
     }
     lastDataLengthRef.current = data?.length ?? 0;
   }, [
@@ -186,6 +193,7 @@ export function useRecyclerViewController<T>(
     scrollViewRef,
     setTimeout,
     updateScrollOffsetAsync,
+    computeFirstVisibleIndexForOffsetCorrection,
   ]);
 
   const handlerMethods: FlashListRef<T> = useMemo(() => {
@@ -534,5 +542,10 @@ export function useRecyclerViewController<T>(
     [handlerMethods, scrollViewRef]
   );
 
-  return { applyContentOffset, applyInitialScrollIndex, handlerMethods };
+  return {
+    applyOffsetCorrection,
+    computeFirstVisibleIndexForOffsetCorrection,
+    applyInitialScrollIndex,
+    handlerMethods,
+  };
 }
