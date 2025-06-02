@@ -304,6 +304,12 @@ export class RecyclerViewManager<T> {
     return this.updateScrollOffset(this.getAbsoluteLastScrollOffset());
   }
 
+  restoreIfNeeded() {
+    if (this._isDisposed) {
+      this._isDisposed = false;
+    }
+  }
+
   dispose() {
     this._isDisposed = true;
     this.itemViewabilityManager.dispose();
