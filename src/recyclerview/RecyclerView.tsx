@@ -116,13 +116,17 @@ const RecyclerViewComponent = <T,>(
   // Initialize core RecyclerView manager and content offset management
   const { recyclerViewManager, velocityTracker } =
     useRecyclerViewManager(props);
-  const { applyContentOffset, applyInitialScrollIndex, handlerMethods } =
-    useRecyclerViewController(
-      recyclerViewManager,
-      ref,
-      scrollViewRef,
-      scrollAnchorRef
-    );
+  const {
+    applyOffsetCorrection,
+    computeFirstVisibleIndexForOffsetCorrection,
+    applyInitialScrollIndex,
+    handlerMethods,
+  } = useRecyclerViewController(
+    recyclerViewManager,
+    ref,
+    scrollViewRef,
+    scrollAnchorRef
+  );
 
   // Initialize view holder collection ref
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
@@ -211,7 +215,7 @@ const RecyclerViewComponent = <T,>(
       setRenderId((prev) => prev + 1);
     } else {
       viewHolderCollectionRef.current?.commitLayout();
-      applyContentOffset();
+      applyOffsetCorrection();
     }
   });
 
@@ -247,6 +251,7 @@ const RecyclerViewComponent = <T,>(
           }
 
           if (isMomentumEnd) {
+            computeFirstVisibleIndexForOffsetCorrection();
             if (!recyclerViewManager.isOffsetProjectionEnabled) {
               return;
             }
