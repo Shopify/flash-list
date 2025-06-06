@@ -16,6 +16,7 @@ export const useUnmountFlag = () => {
   // Use layoutEffect to set up cleanup on unmount
   // This ensures the flag is set before any other cleanup effects run
   useLayoutEffect(() => {
+    isUnmounted.current = false;
     // Cleanup function that runs when the component unmounts
     return () => {
       isUnmounted.current = true;

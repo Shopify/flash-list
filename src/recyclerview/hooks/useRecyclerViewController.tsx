@@ -386,6 +386,7 @@ export function useRecyclerViewController<T>(
             const performScrollStep = (currentStep: number) => {
               // Check if component is unmounted or we've completed all steps
               if (isUnmounted.current) {
+                resolve();
                 return;
               } else if (currentStep >= steps) {
                 // All steps completed, perform final scroll
