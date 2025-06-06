@@ -51,7 +51,7 @@ export function useRecyclerViewController<T>(
   const [_, setRenderId] = useState(0);
   const pauseOffsetCorrection = useRef(false);
   const initialScrollCompletedRef = useRef(false);
-  const lastDataLengthRef = useRef(recyclerViewManager.props.data?.length ?? 0);
+  const lastDataLengthRef = useRef(recyclerViewManager.getDataLength());
   const { setTimeout } = useUnmountAwareTimeout();
 
   // Track the first visible item for maintaining scroll position
@@ -91,7 +91,12 @@ export function useRecyclerViewController<T>(
 
   const computeFirstVisibleIndexForOffsetCorrection = useCallback(() => {
     const { data, keyExtractor } = recyclerViewManager.props;
-    if (data && keyExtractor) {
+    if (
+      recyclerViewManager.getIsFirstLayoutComplete() &&
+      keyExtractor &&
+      recyclerViewManager.getDataLength() > 0 &&
+      recyclerViewManager.shouldMaintainVisibleContentPosition()
+    ) {
       // Update the tracked first visible item
       const firstVisibleIndex = Math.max(
         0,
@@ -123,7 +128,7 @@ export function useRecyclerViewController<T>(
     pendingScrollCallbacks.current = [];
     callbacks.forEach((callback) => callback());
 
-    const currentDataLength = data?.length ?? 0;
+    const currentDataLength = recyclerViewManager.getDataLength();
 
     if (
       recyclerViewManager.getIsFirstLayoutComplete() &&
@@ -195,7 +200,7 @@ export function useRecyclerViewController<T>(
 
       computeFirstVisibleIndexForOffsetCorrection();
     }
-    lastDataLengthRef.current = data?.length ?? 0;
+    lastDataLengthRef.current = recyclerViewManager.getDataLength();
   }, [
     recyclerViewManager,
     scrollAnchorRef,
