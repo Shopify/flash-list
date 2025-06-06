@@ -457,7 +457,7 @@ const RecyclerViewComponent = <T,>(
     return null;
   }, [horizontal, shouldMaintainVisibleContentPosition]);
 
-  // console.log("render", recyclerViewManager.getRenderStack());
+  // console.log("render", r ecyclerViewManager.getRenderStack());
 
   // Render the main RecyclerView structure
   return (
