@@ -50,6 +50,8 @@ export type ContentStyle = Pick<
   | "padding"
   | "paddingVertical"
   | "paddingHorizontal"
+  | "minHeight"
+  | "minWidth"
 >;
 
 export interface ViewabilityConfigCallbackPair<TItem> {
