@@ -419,7 +419,8 @@ const RecyclerViewComponent = <T,>(
   }, [maintainVisibleContentPosition, shouldMaintainVisibleContentPosition]);
 
   const shouldRenderFromBottom =
-    maintainVisibleContentPosition?.startRenderingFromBottom ?? false;
+    recyclerViewManager.getDataLength() > 0 &&
+    (maintainVisibleContentPosition?.startRenderingFromBottom ?? false);
 
   // Calculate minimum height adjustment for bottom rendering
   const adjustmentMinHeight = recyclerViewManager.hasLayout()
