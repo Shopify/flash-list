@@ -19,6 +19,7 @@ import { SectionList } from "./SectionList";
 import { Grid } from "./Grid";
 import { DynamicColumnSpan } from "./DynamicColumnSpan";
 import HorizontalList from "./HorizontalList";
+import HorizontalListWithAddData from "./HorizontalListWithAddData";
 import { Chat } from "./Chat";
 import FlashListCellRenderer from "./CellRendererExamples";
 import { HeaderFooterExample } from "./HeaderFooterExample";
@@ -102,6 +103,11 @@ const NavigationTree = () => {
         <Stack.Screen name="Masonry" component={Masonry} />
         <Stack.Screen name="ComplexMasonry" component={ComplexMasonry} />
         <Stack.Screen name="HorizontalList" component={HorizontalList} />
+        <Stack.Screen
+          name="HorizontalListWithAddData"
+          component={HorizontalListWithAddData}
+          options={{ title: "Horizontal List - Add Data" }}
+        />
         <Stack.Screen
           name="CellRendererExamples"
           component={FlashListCellRenderer}

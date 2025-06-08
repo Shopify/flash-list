@@ -23,6 +23,7 @@ export type RootStackParamList = {
   Grid: undefined;
   DynamicColumnSpan: undefined;
   HorizontalList: undefined;
+  HorizontalListWithAddData: undefined;
   Chat: undefined;
   CellRendererExamples: undefined;
   HeaderFooterExample: undefined;
