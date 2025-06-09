@@ -285,6 +285,9 @@ const RecyclerViewComponent = <T,>(
     ]
   );
 
+  const parentRecyclerViewContext = useRecyclerViewContext();
+  const recyclerViewId = useId();
+
   // Create context for child components
   const recyclerViewContext: RecyclerViewContext<T> = useMemo(() => {
     return {
@@ -296,6 +299,12 @@ const RecyclerViewComponent = <T,>(
           return null;
         }
         return handlerMethods;
+      },
+      getParentRef: () => {
+        return parentRecyclerViewContext?.getRef() ?? null;
+      },
+      getParentScrollViewRef: () => {
+        return parentRecyclerViewContext?.getScrollViewRef() ?? null;
       },
       getScrollViewRef: () => {
         return scrollViewRef.current;
@@ -310,10 +319,13 @@ const RecyclerViewComponent = <T,>(
         }
       },
     };
-  }, [handlerMethods, pendingChildIds, recyclerViewManager, setLayoutTreeId]);
-
-  const parentRecyclerViewContext = useRecyclerViewContext();
-  const recyclerViewId = useId();
+  }, [
+    handlerMethods,
+    parentRecyclerViewContext,
+    pendingChildIds,
+    recyclerViewManager.isDisposed,
+    setLayoutTreeId,
+  ]);
 
   /**
    * Validates that item dimensions match the expected layout

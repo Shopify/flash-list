@@ -679,6 +679,10 @@ const MyComponent = ({ items }) => {
 - When building nested components that render multiple items from an array
 - To ensure consistent key generation that works well with FlashList's recycling system
 
+### useFlashListContext
+
+Exposes helpers to easily access `ref` of FlashList. It also exposes `ref` of ScrollView. Ideal for use within child components or `CellRendererComponent`.
+
 # FlashList methods
 
 ### `prepareForLayoutAnimationRender()`
