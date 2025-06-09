@@ -31,9 +31,19 @@ export class RecyclerViewManager<T> {
   private itemViewabilityManager: ViewabilityManager<T>;
   private _isDisposed = false;
   private _isLayoutManagerDirty = false;
+  private _animationOptimizationsEnabled = false;
 
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
+
+  public get animationOptimizationsEnabled() {
+    return this._animationOptimizationsEnabled;
+  }
+
+  public set animationOptimizationsEnabled(value: boolean) {
+    this._animationOptimizationsEnabled = value;
+    this.renderStackManager.disableRecycling = value;
+  }
 
   public get isOffsetProjectionEnabled() {
     return this.engagedIndicesTracker.enableOffsetProjection;
@@ -117,10 +127,6 @@ export class RecyclerViewManager<T> {
 
   getIsFirstLayoutComplete() {
     return this.isFirstLayoutComplete;
-  }
-
-  disableRecycling(disable: boolean) {
-    this.renderStackManager.disableRecycling = disable;
   }
 
   getLayout(index: number) {
