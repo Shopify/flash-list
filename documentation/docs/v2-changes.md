@@ -164,6 +164,10 @@ const NestedList = ({ items }) => {
 };
 ```
 
+### useFlashListContext
+
+Exposes helpers to easily access `ref` of FlashList. It also exposes `ref` of ScrollView. Ideal for use within child components or `CellRendererComponent`.
+
 ## Deprecated (will be removed after alpha/beta)
 
 - `estimatedItemSize`: No longer used.
