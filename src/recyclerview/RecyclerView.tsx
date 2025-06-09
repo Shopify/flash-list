@@ -533,7 +533,7 @@ const RecyclerViewComponent = <T,>(
               applyInitialScrollIndex();
               checkBounds();
               recyclerViewManager.computeItemViewability();
-              recyclerViewManager.disableRecycling(false);
+              recyclerViewManager.animationOptimizationsEnabled = false;
             }}
             CellRendererComponent={CellRendererComponent}
             ItemSeparatorComponent={ItemSeparatorComponent}

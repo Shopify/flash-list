@@ -167,7 +167,11 @@ export function useRecyclerViewController<T>(
           firstVisibleItemLayout.current = {
             ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
           };
-          if (diff !== 0 && !pauseOffsetCorrection.current) {
+          if (
+            diff !== 0 &&
+            !pauseOffsetCorrection.current &&
+            !recyclerViewManager.animationOptimizationsEnabled
+          ) {
             // console.log("diff", diff, firstVisibleItemKey.current);
             if (PlatformConfig.supportsOffsetCorrection) {
               // console.log("scrollBy", diff);
@@ -543,7 +547,7 @@ export function useRecyclerViewController<T>(
        * Disables item recycling in preparation for layout animations.
        */
       prepareForLayoutAnimationRender: () => {
-        recyclerViewManager.disableRecycling(true);
+        recyclerViewManager.animationOptimizationsEnabled = true;
       },
     };
   }, [
