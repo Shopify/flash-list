@@ -22,17 +22,21 @@ export default class ViewabilityManager<T> {
       this.viewabilityHelpers.push(
         this.createViewabilityHelper(
           flashListRef.props.viewabilityConfig,
-          flashListRef.props.onViewableItemsChanged
+          (info) => {
+            flashListRef.props.onViewableItemsChanged?.(info);
+          }
         )
       );
     }
     (flashListRef.props.viewabilityConfigCallbackPairs ?? []).forEach(
-      (pair) => {
+      (pair, index) => {
         this.viewabilityHelpers.push(
-          this.createViewabilityHelper(
-            pair.viewabilityConfig,
-            pair.onViewableItemsChanged
-          )
+          this.createViewabilityHelper(pair.viewabilityConfig, (info) => {
+            const callback =
+              flashListRef.props.viewabilityConfigCallbackPairs?.[index]
+                ?.onViewableItemsChanged;
+            callback?.(info);
+          })
         );
       }
     );
@@ -102,15 +106,18 @@ export default class ViewabilityManager<T> {
   private createViewabilityHelper = (
     viewabilityConfig: ViewabilityConfig | null | undefined,
     onViewableItemsChanged:
-      | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+      | ((info: {
+          viewableItems: ViewToken<T>[];
+          changed: ViewToken<T>[];
+        }) => void)
       | null
       | undefined
   ) => {
-    const mapViewToken: (index: number, isViewable: boolean) => ViewToken = (
+    const mapViewToken: (index: number, isViewable: boolean) => ViewToken<T> = (
       index: number,
       isViewable: boolean
     ) => {
-      const item = this.flashListRef.props.data?.[index];
+      const item = this.flashListRef.props.data![index];
       const key =
         item === undefined || this.flashListRef.props.keyExtractor === undefined
           ? index.toString()

@@ -20,14 +20,18 @@ export const ExamplesScreen = () => {
   };
 
   const data: ExampleItem[] = [
-    { title: "List", destination: "List" },
-    { title: "SectionList", destination: "SectionList" },
-    { title: "PaginatedList", destination: "PaginatedList" },
-    { title: "Reminders", destination: "Reminders" },
-    { title: "Twitter Timeline", destination: "Twitter" },
+    { title: "Horizontal List", destination: "HorizontalList" },
+    { title: "Carousel", destination: "Carousel" },
+    { title: "Grid", destination: "Grid" },
+    { title: "Masonry", destination: "Masonry" },
+    { title: "Complex Masonry", destination: "ComplexMasonry" },
     {
-      title: "Twitter FlatList Timeline",
-      destination: "TwitterFlatList",
+      title: "Chat",
+      destination: "Chat",
+    },
+    {
+      title: "RecyclerView Handler Test",
+      destination: "RecyclerViewHandlerTest",
     },
     {
       title: "Contacts",
@@ -36,6 +40,26 @@ export const ExamplesScreen = () => {
     {
       title: "Contacts SectionList",
       destination: "ContactsSectionList",
+    },
+    { title: "SectionList", destination: "SectionList" },
+    { title: "PaginatedList", destination: "PaginatedList" },
+
+    { title: "Twitter Timeline", destination: "Twitter" },
+
+    {
+      title: "Twitter FlatList Timeline",
+      destination: "TwitterFlatList",
+    },
+    {
+      title: "Twitter Benchmark",
+      destination: "TwitterBenchmark",
+    },
+    { title: "List", destination: "List" },
+
+    { title: "Reminders", destination: "Reminders" },
+    {
+      title: "Dynamic Items",
+      destination: "DynamicItems",
     },
     {
       title: "Messages",
@@ -46,14 +70,27 @@ export const ExamplesScreen = () => {
       destination: "MessagesFlatList",
     },
     {
-      title: "Twitter Benchmark",
-      destination: "TwitterBenchmark",
+      title: "CellRenderer Examples",
+      destination: "CellRendererExamples",
     },
     {
-      title: "Twitter Custom Cell Container",
-      destination: "TwitterCustomCellContainer",
+      title: "Header Footer Empty Example",
+      destination: "HeaderFooterExample",
     },
-    { title: "Masonry", destination: "Masonry" },
+
+    {
+      title: "Movie Streaming",
+      destination: "MovieList",
+    },
+    {
+      title: "Layout Options",
+      destination: "LayoutOptions",
+    },
+    { title: "Dynamic Column Span", destination: "DynamicColumnSpan" },
+    {
+      title: "Showcase App",
+      destination: "ShowcaseApp",
+    },
   ];
   return (
     <>
@@ -62,11 +99,12 @@ export const ExamplesScreen = () => {
         testID="ExamplesFlatList"
         keyExtractor={(item) => item.destination}
         data={data}
+        removeClippedSubviews={false}
         renderItem={({ item }) => (
           <Pressable
             style={styles.row}
             onPress={() => {
-              navigate(item.destination);
+              navigate(item.destination as any);
             }}
             testID={item.title}
           >

@@ -19,4 +19,17 @@ export type RootStackParamList = {
   TwitterBenchmark: undefined;
   TwitterCustomCellContainer: undefined;
   Masonry: undefined;
+  ComplexMasonry: undefined;
+  Grid: undefined;
+  DynamicColumnSpan: undefined;
+  HorizontalList: undefined;
+  Chat: undefined;
+  CellRendererExamples: undefined;
+  HeaderFooterExample: undefined;
+  DynamicItems: undefined;
+  RecyclerViewHandlerTest: undefined;
+  MovieList: undefined;
+  Carousel: undefined;
+  LayoutOptions: undefined;
+  ShowcaseApp: undefined;
 };

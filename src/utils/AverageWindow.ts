@@ -47,3 +47,36 @@ export class AverageWindow {
     return newTarget;
   }
 }
+
+export class MultiTypeAverageWindow {
+  private averageWindows: Map<string | number, AverageWindow>;
+  private windowSize: number;
+  private defaultValue?: number;
+  /**
+   * @param windowSize Size of the average window
+   * @param defaultValue Default value to return if no value is available
+   */
+  constructor(windowSize: number, defaultValue?: number) {
+    this.averageWindows = new Map<string | number, AverageWindow>();
+    this.windowSize = windowSize;
+    this.defaultValue = defaultValue;
+  }
+
+  public addValue(value: number, type: string | number): void {
+    let averageWindow = this.averageWindows.get(type);
+    if (!averageWindow) {
+      averageWindow = new AverageWindow(this.windowSize);
+      this.averageWindows.set(type, averageWindow);
+    }
+    averageWindow.addValue(value);
+  }
+
+  public getCurrentValue(type: string | number): number {
+    const averageWindow = this.averageWindows.get(type);
+    return averageWindow?.currentValue ?? this.defaultValue ?? 0;
+  }
+
+  public reset(): void {
+    this.averageWindows.clear();
+  }
+}

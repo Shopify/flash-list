@@ -1,7 +1,18 @@
 ---
-id: performant-components
-title: Writing performant components
+id: performance
+title: Performance
 ---
+
+## Profiling
+
+:::warning
+Before assessing your list's performance, make sure you are in release mode. On Android, you can disable JS dev mode inside the developer menu, whereas you need to run the release configuration on iOS.
+FlashList can appear to be slower than FlatList in dev mode. The primary reason is a much smaller and fixed [window size](https://reactnative.dev/docs/virtualizedlist#windowsize) equivalent. Click [here](https://reactnative.dev/docs/performance#running-in-development-mode-devtrue) to know more about why you shouldn't profile with dev mode on.
+:::
+
+Memoizing props passed to FlashList is more important in v2. v1 was more selective about updating items, but this was often perceived as a bug by developers. We will not follow that approach and will instead allow developers to ensure that props are memoized. We will stop re-renders of children wherever it is obvious.
+
+# Writing Performant Components
 
 While `FlashList` does its best to achieve high performance, it will still perform poorly if your item components are slow to render. In this post, let's dive deeper into how you can remedy this.
 
@@ -11,15 +22,11 @@ One important thing to understand is how `FlashList` works under the hood. When 
 
 ## Optimizations
 
-There's lots of optimizations that are applicable for _any_ React Native component and which might help render times of your item components as well. Usage of `useCallback`, `useMemo`, and `useRef` is advised - but don't use these blindly, always [measure the performance](/performance-troubleshooting) before and after making your changes.
+There's lots of optimizations that are applicable for _any_ React Native component and which might help render times of your item components as well. Usage of `useCallback`, `useMemo`, and `useRef` is advised - but don't use these blindly, always measure the performance before and after making your changes.
 
 :::note
 Always profile performance in the release mode. `FlashList`'s performance between JS dev and release mode differs greatly.
 :::
-
-### `estimatedItemSize`
-
-Ensure [`estimatedItemSize`](/usage#estimateditemsize) is as close as possible to the real average value - see [here](/estimated-item-size#how-to-calculate) how to properly calculate the value for this prop.
 
 ### Remove `key` prop
 
@@ -28,6 +35,10 @@ Using `key` prop inside your item and item's nested components will highly degra
 :::
 
 Make sure your **item components and their nested components don't have a `key` prop**. Using this prop will lead to `FlashList` not being able to recycle views, losing all the benefits of using it over `FlatList`.
+
+#### Why are keys harmful to FlashList?
+
+FlashList's core performance advantage comes from **recycling** components instead of creating and destroying them however, when you add a `key` prop that changes between different data items, React treats the component as entirely different and forces a complete re-creation of the component tree.
 
 For example, if we had a following item component:
 
@@ -46,7 +57,7 @@ const MyItem = ({ item }) => {
 };
 ```
 
-Then the `key` prop should be removed from both `MyItem` and `MyNestedComponent`:
+Then the `key` prop should be removed from both `MyItem` and `MyNestedComponent`. It isn't needed and react can alredy take care of updating the components.
 
 ```tsx
 const MyNestedComponent = ({ item }) => {
@@ -63,38 +74,38 @@ const MyItem = ({ item }) => {
 };
 ```
 
-There might be cases where React forces you to use `key` prop, such as when using `map`. In such cirumstances, ensure that the `key` is not tied to the `item` prop in any way, so the keys don't change when recycling.
-
-Let's imagine we want to display names of users:
+There might be cases where React forces you to use `key` prop, such as when using `map`. In such circumstances, **use `useMappingHelper`** to ensure optimal performance:
 
 ```tsx
-const MyItem = ({ item }: { item: any }) => {
-  return (
-    <>
-      {item.users.map((user: any) => {
-        <Text key={user.id}>{user.name}</Text>;
-      })}
-    </>
-  );
-};
-```
+import { useMappingHelper } from "@shopify/flash-list";
 
-If we wrote our item component like this, the `Text` component would need to be re-created. Instead, we can do the following:
-
-```tsx
 const MyItem = ({ item }) => {
+  const { getMappingKey } = useMappingHelper();
+
   return (
     <>
-      {item.users.map((user, index) => {
-        /* eslint-disable-next-line react/no-array-index-key */
-        <Text key={index}>{user.name}</Text>;
-      })}
+      {item.users.map((user, index) => (
+        <Text key={getMappingKey(user.id, index)}>{user.name}</Text>
+      ))}
     </>
   );
 };
 ```
 
-Although using index as a `key` in `map` is not recommended by React, in this case since the data is derived from the list's data, the items will update correctly.
+The `useMappingHelper` hook intelligently provides the right key strategy:
+
+- **When inside FlashList**: Uses stable keys that don't change during recycling
+- **When outside FlashList**: Uses the provided item key for proper React reconciliation
+
+This approach ensures that:
+
+- Components can be recycled properly within FlashList
+- React's reconciliation works correctly
+- Performance remains optimal
+
+:::info
+`useMappingHelper` should be used whenever you need to map over arrays inside FlashList item components. It automatically handles the complexity of providing recycling-friendly keys.
+:::
 
 ### Difficult calculations
 
@@ -182,8 +193,9 @@ const MyHeavyComponent = () => {
   return ...;
 };
 
+const MemoizedMyHeavyComponent = memo(MyHeavyComponent);
+
 const MyItem = ({ item }: { item: any }) => {
-  const MemoizedMyHeavyComponent = memo(MyHeavyComponent);
   return (
     <>
       <MemoizedMyHeavyComponent />

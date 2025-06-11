@@ -3,7 +3,6 @@ import {
   StyleProp,
   ScrollViewProps,
   ViewabilityConfig,
-  ViewabilityConfigCallbackPairs,
   ViewStyle,
 } from "react-native";
 
@@ -21,6 +20,12 @@ export interface ListRenderItemInfo<TItem> {
    */
   target: RenderTarget;
   extraData?: any;
+}
+
+export interface OverrideProps {
+  initialDrawBatchSize?: number;
+  // rest can be string to any
+  [key: string]: any;
 }
 
 export type RenderTarget = "Cell" | "StickyHeader" | "Measurement";
@@ -47,7 +52,21 @@ export type ContentStyle = Pick<
   | "paddingHorizontal"
 >;
 
-export interface FlashListProps<TItem> extends ScrollViewProps {
+export interface ViewabilityConfigCallbackPair<TItem> {
+  viewabilityConfig: ViewabilityConfig;
+  onViewableItemsChanged:
+    | ((info: {
+        viewableItems: ViewToken<TItem>[];
+        changed: ViewToken<TItem>[];
+      }) => void)
+    | null;
+}
+
+export type ViewabilityConfigCallbackPairs<TItem> =
+  ViewabilityConfigCallbackPair<TItem>[];
+
+export interface FlashListProps<TItem>
+  extends Omit<ScrollViewProps, "maintainVisibleContentPosition"> {
   /**
    * Takes an item from `data` and renders it into the list. Typical usage:
    * ```ts
@@ -227,7 +246,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * How far from the end (in units of visible length of the list) the bottom edge of the
    * list must be from the end of the content to trigger the `onEndReached` callback.
    * Thus a value of 0.5 will trigger `onEndReached` when the end of the content is
-   * within half the visible length of the list.
+   * within half the visible length of the list. Default value is 0.5.
    */
   onEndReachedThreshold?: number | null | undefined;
 
@@ -247,7 +266,10 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * they might be deferred until JS thread is less busy.
    */
   onViewableItemsChanged?:
-    | ((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void)
+    | ((info: {
+        viewableItems: ViewToken<TItem>[];
+        changed: ViewToken<TItem>[];
+      }) => void)
     | null
     | undefined;
 
@@ -292,7 +314,7 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
   /**
    * For debugging and exception use cases, internal props will be overriden with these values if used
    */
-  overrideProps?: object;
+  overrideProps?: OverrideProps;
 
   /**
    * Set this when offset is needed for the loading indicator to show correctly.
@@ -316,7 +338,9 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * List of `ViewabilityConfig`/`onViewableItemsChanged` pairs.
    * A specific `onViewableItemsChanged` will be called when its corresponding `ViewabilityConfig`'s conditions are met.
    */
-  viewabilityConfigCallbackPairs?: ViewabilityConfigCallbackPairs | undefined;
+  viewabilityConfigCallbackPairs?:
+    | ViewabilityConfigCallbackPairs<TItem>
+    | undefined;
 
   /**
    * FlashList attempts to measure size of horizontal lists by drawing an extra list item in advance. This can sometimes cause issues when used with `initialScrollIndex` in lists
@@ -332,4 +356,77 @@ export interface FlashListProps<TItem> extends ScrollViewProps {
    * `false` again.
    */
   disableAutoLayout?: boolean;
+
+  /**
+   * New arch only
+   * Maximum number of items in the recycle pool. These are the items that are cached in the recycle pool when they are scrolled off the screen.
+   * Unless you have a huge number of item types, you shouldn't need to set this.
+   * Setting this to 0, will disable the recycle pool and items will unmount once they are scrolled off the screen.
+   * There's no limit by default.
+   */
+  maxItemsInRecyclePool?: number;
+
+  /**
+   * New arch only
+   * Enable masonry layout.
+   */
+  masonry?: boolean;
+  /**
+   * New arch only
+   * If enabled, MasonryFlashList will try to reduce difference in column height by modifying item order.
+   */
+  optimizeItemArrangement?: boolean; // TODO: Check if this breaks on item resize or is glitchy
+
+  /**
+   * New arch only
+   * Called once when the scroll position gets within onStartReachedThreshold of the start of the content.
+   */
+  onStartReached?: FlashListProps<TItem>["onEndReached"];
+
+  /**
+   * New arch only
+   * How far from the start (in units of visible length of the list) the top edge of the
+   * list must be from the start of the content to trigger the `onStartReached` callback.
+   * Thus a value of 0.5 will trigger `onStartReached` when the start of the content is
+   * within half the visible length of the list. Default value is 0.2.
+   */
+  onStartReachedThreshold?: FlashListProps<TItem>["onEndReachedThreshold"];
+
+  /**
+   * New arch only
+   * Style for the RecyclerView's parent container.
+   * Please avoid anything which can mess size of children in this view. For example, margin is okay but padding is not.
+   */
+  style?: ViewStyle;
+
+  /**
+   * New arch only
+   * Configuration for maintaining scroll position when content changes.
+   * Useful for chat-like interfaces where new messages can be added at the top or bottom.
+   */
+  maintainVisibleContentPosition?: {
+    /**
+     * maintainVisibleContentPosition is enabled by default.
+     */
+    disabled?: boolean;
+    /**
+     * When content is added at the top, automatically scroll to maintain position if the user is within this threshold of the top
+     */
+    autoscrollToTopThreshold?: number;
+    /**
+     * When content is added at the bottom, automatically scroll to maintain position if the user is within this threshold of the bottom
+     */
+    autoscrollToBottomThreshold?: number;
+    /**
+     * If true, initial render will start from the bottom of the list, useful for chat-like interfaces when there are only few messages
+     */
+    startRenderingFromBottom?: boolean;
+  };
+
+  /**
+   * New arch only
+   * Called when the layout is committed. Can be used to measure list.
+   * Doing set state inside the callback can lead to infinite loops. Make sure FlashList's props are memoized.
+   */
+  onCommitLayoutEffect?: () => void;
 }

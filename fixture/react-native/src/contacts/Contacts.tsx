@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { FlashList } from "@shopify/flash-list";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { RecyclerView } from "@shopify/flash-list";
+import { ScrollView } from "react-native";
 
 import { DebugContext } from "../Debug";
 
@@ -32,8 +33,15 @@ const Contacts = () => {
     })
     .filter((item) => item !== null) as number[];
 
+  const renderScrollComponent = useMemo(() => {
+    // eslint-disable-next-line react/display-name
+    return (props: any) => {
+      return <ScrollView {...props} />;
+    };
+  }, []);
+
   return (
-    <FlashList
+    <RecyclerView
       testID="FlashList"
       estimatedItemSize={44}
       data={data}
@@ -51,6 +59,7 @@ const Contacts = () => {
       stickyHeaderIndices={stickyHeaderIndices}
       ListHeaderComponent={ContactHeader}
       initialScrollIndex={debugContext.initialScrollIndex}
+      renderScrollComponent={renderScrollComponent}
     />
   );
 };

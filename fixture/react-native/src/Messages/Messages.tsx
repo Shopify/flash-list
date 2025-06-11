@@ -28,6 +28,7 @@ const Messages = () => {
       keyboardVerticalOffset={100}
       style={styles.keyboardAvoidingViewStyles}
     >
+      {/* @ts-ignore - Type compatibility issue between different React versions */}
       <FlashList
         renderItem={MessageItem}
         inverted

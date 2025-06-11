@@ -51,7 +51,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Fix `ItemSeparatorComponent ` position for the `inverted` flashlist
   - https://github.com/Shopify/flash-list/pull/1046
-- Do not show render size unsuable warning in better layout changes
+- Do not show render size unusable warning in better layout changes
   - https://github.com/Shopify/flash-list/pull/1092
 
 ## [1.6.3] - 2023-11-09
@@ -137,7 +137,7 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   - https://github.com/Shopify/flash-list/pull/518
 - Added footer correction in AutoLayoutView
   - https://github.com/Shopify/flash-list/pull/519
-- Added `viewPosition` and `viewOffset` support scrollTo methods
+- Added `viewPosition` and `viewOffset` support to scrollTo methods
   - https://github.com/Shopify/flash-list/pull/521
 - Fix inverted mode while being horizontal
   - https://github.com/Shopify/flash-list/pull/520

@@ -10,7 +10,7 @@ To get started with the project, run `yarn up` in the root directory to install 
 yarn up
 ```
 
-> This project uses [`yarn`](https://classic.yarnpkg.com/) as a package manager. While it's possible to run individual commands with [`npm`](https://github.com/npm/cli), please refrain from using it, especially `npm install.` 🙅
+> This project uses [`yarn`](https://classic.yarnpkg.com/) as a package manager. While it's possible to run individual commands with [`npm`](https://github.com/npm/cli), please refrain from using it, especially `npm install`. 🙅
 
 While developing, you can run the [fixture app](/fixture/) to test your changes. To see your changes done in `flash-list` inside the example app, we recommend to open a terminal and run the following command:
 
