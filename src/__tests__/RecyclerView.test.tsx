@@ -1,8 +1,9 @@
-import React from "react";
+import React, { createRef } from "react";
 import { Text } from "react-native";
 import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
+import { FlashListRef } from "../FlashListRef";
 import { RecyclerView } from "../recyclerview/RecyclerView";
 
 // Mock measureLayout to return fixed dimensions
@@ -37,13 +38,24 @@ const renderRecyclerView = (args: {
   numColumns?: number;
   masonry?: boolean;
   horizontal?: boolean;
+  ref?: React.Ref<FlashListRef<number>>;
+  data?: number[];
 }) => {
-  const { numColumns = 1, masonry = false, horizontal = false } = args;
+  const {
+    numColumns = 1,
+    masonry = false,
+    horizontal = false,
+    ref,
+    data,
+  } = args;
   return render(
     <RecyclerView
-      data={[
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-      ]}
+      ref={ref}
+      data={
+        data ?? [
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+        ]
+      }
       masonry={masonry}
       overrideProps={{ initialDrawBatchSize: 1 }}
       drawDistance={0}
@@ -118,6 +130,15 @@ describe("RecyclerView", () => {
 
       expect(result).toContainReactComponent(Text, { children: 0 });
       expect(result).not.toContainReactComponent(Text, { children: 4 });
+    });
+  });
+
+  describe("RecyclerView ref", () => {
+    it("check if ref has updated props after re-renders", () => {
+      const ref = createRef<FlashListRef<number>>();
+      const result = renderRecyclerView({ ref, data: [0, 1, 2] });
+      result.setProps({ data: [0, 1, 2, 3] });
+      expect(ref.current?.props.data).toEqual([0, 1, 2, 3]);
     });
   });
 });
