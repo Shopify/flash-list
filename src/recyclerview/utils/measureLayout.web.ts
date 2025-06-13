@@ -12,15 +12,13 @@ function getScrollOffsets(element: Element, stopAt: Element) {
   let scrollX = 0;
   let scrollY = 0;
   let currentElement: Element | null = element;
-  let depth = 0;
 
   // Only check up to 3 parent elements
-  while (currentElement && currentElement !== stopAt && depth < 3) {
+  while (currentElement && currentElement !== stopAt) {
     const htmlElement = currentElement as HTMLElement;
     scrollX += htmlElement.scrollLeft ?? 0;
     scrollY += htmlElement.scrollTop ?? 0;
     currentElement = currentElement.parentElement;
-    depth++;
   }
 
   return { scrollX, scrollY };
