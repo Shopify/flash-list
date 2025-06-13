@@ -171,7 +171,7 @@ export const StickyHeaders = <TItem,>({
           transform: [{ translateY }],
         }}
       >
-        {currentStickyIndex !== -1 ? (
+        {currentStickyIndex !== -1 && currentStickyIndex < data.length ? (
           <ViewHolder
             index={currentStickyIndex}
             item={data[currentStickyIndex]}

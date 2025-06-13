@@ -601,9 +601,19 @@ export function useRecyclerViewController<T>(
   useImperativeHandle(
     ref,
     () => {
-      return { ...scrollViewRef.current, ...handlerMethods };
+      const imperativeApi = { ...scrollViewRef.current, ...handlerMethods };
+      // Without this the props getter from handlerMethods is evaluated during spread and
+      // future updates to props are not reflected in the ref
+      Object.defineProperty(imperativeApi, "props", {
+        get() {
+          return recyclerViewManager.props;
+        },
+        enumerable: true,
+        configurable: true,
+      });
+      return imperativeApi;
     },
-    [handlerMethods, scrollViewRef]
+    [handlerMethods, scrollViewRef, recyclerViewManager]
   );
 
   return {
