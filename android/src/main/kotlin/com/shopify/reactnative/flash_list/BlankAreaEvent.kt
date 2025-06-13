@@ -20,7 +20,7 @@ class BlankAreaEvent(
     }
 
     override fun dispatch(rctEventEmitter: RCTEventEmitter) {
-        rctEventEmitter.receiveEvent(viewTag, eventName, eventData)
+        rctEventEmitter.receiveEvent(viewTag, eventName, getEventData())
     }
 
     companion object {
