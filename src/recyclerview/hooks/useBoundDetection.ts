@@ -94,7 +94,7 @@ export function useBoundDetection<T>(
       }
 
       // Handle auto-scrolling to bottom for vertical lists
-      if (!isHorizontal) {
+      if (!isHorizontal && autoscrollToBottomThreshold >= 0) {
         const autoscrollToBottomThresholdDistance =
           autoscrollToBottomThreshold * visibleLength;
 
