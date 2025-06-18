@@ -434,16 +434,6 @@ const RecyclerViewComponent = <T,>(
     recyclerViewManager.getDataLength() > 0 &&
     (maintainVisibleContentPosition?.startRenderingFromBottom ?? false);
 
-  // Calculate minimum height adjustment for bottom rendering
-  const adjustmentMinHeight = recyclerViewManager.hasLayout()
-    ? Math.max(
-        0,
-        recyclerViewManager.getWindowSize().height -
-          recyclerViewManager.getChildContainerDimensions().height -
-          recyclerViewManager.firstItemOffset
-      )
-    : 0;
-
   // Create view for measuring bounded size
   const viewToMeasureBoundedSize = useMemo(() => {
     return (
@@ -451,12 +441,11 @@ const RecyclerViewComponent = <T,>(
         style={{
           height: horizontal ? undefined : 0,
           width: horizontal ? 0 : undefined,
-          minHeight: shouldRenderFromBottom ? adjustmentMinHeight : undefined,
         }}
         ref={firstChildViewRef}
       />
     );
-  }, [horizontal, shouldRenderFromBottom, adjustmentMinHeight]);
+  }, [horizontal]);
 
   const scrollAnchor = useMemo(() => {
     if (shouldMaintainVisibleContentPosition) {
@@ -527,6 +516,25 @@ const RecyclerViewComponent = <T,>(
             horizontal={horizontal}
             renderStack={recyclerViewManager.getRenderStack()}
             getLayout={(index) => recyclerViewManager.getLayout(index)}
+            getAdjustmentMargin={() => {
+              if (!shouldRenderFromBottom || !recyclerViewManager.hasLayout()) {
+                return 0;
+              }
+
+              const windowSize = horizontal
+                ? recyclerViewManager.getWindowSize().width
+                : recyclerViewManager.getWindowSize().height;
+              const childContainerSize = horizontal
+                ? recyclerViewManager.getChildContainerDimensions().width
+                : recyclerViewManager.getChildContainerDimensions().height;
+
+              return Math.max(
+                0,
+                windowSize -
+                  childContainerSize -
+                  recyclerViewManager.firstItemOffset
+              );
+            }}
             refHolder={refHolder}
             onSizeChanged={validateItemSize}
             renderItem={renderItem}
