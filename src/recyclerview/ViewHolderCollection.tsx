@@ -37,15 +37,19 @@ export interface ViewHolderCollectionProps<TItem> {
   /** Function to get the container's layout dimensions */
   getChildContainerLayout: () => RVDimension | undefined;
   /** Callback after layout effects are committed */
-  onCommitLayoutEffect?: () => void;
+  onCommitLayoutEffect: () => void;
   /** Callback after effects are committed */
-  onCommitEffect?: () => void;
+  onCommitEffect: () => void;
   /** Optional custom component to wrap each item */
   CellRendererComponent?: FlashListProps<TItem>["CellRendererComponent"];
   /** Optional component to render between items */
   ItemSeparatorComponent?: FlashListProps<TItem>["ItemSeparatorComponent"];
   /** Whether the list is horizontal or vertical */
   horizontal: FlashListProps<TItem>["horizontal"];
+  /** Function to get the adjustment margin for the container.
+   * For startRenderingFromBottom, we need to adjust the height of the container
+   */
+  getAdjustmentMargin: () => number;
 }
 
 /**
@@ -79,6 +83,7 @@ export const ViewHolderCollection = <TItem,>(
     ItemSeparatorComponent,
     onCommitEffect,
     horizontal,
+    getAdjustmentMargin,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -136,6 +141,8 @@ export const ViewHolderCollection = <TItem,>(
   const containerStyle = {
     width: horizontal ? containerLayout?.width : undefined,
     height: containerLayout?.height,
+    marginTop: horizontal ? undefined : getAdjustmentMargin(),
+    marginLeft: horizontal ? getAdjustmentMargin() : undefined,
     // TODO: Temp workaround, useLayoutEffect doesn't block paint in some cases
     // We need to investigate why this is happening
     opacity: renderId > 0 ? 1 : 0,
