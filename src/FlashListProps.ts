@@ -418,6 +418,11 @@ export interface FlashListProps<TItem>
      */
     autoscrollToBottomThreshold?: number;
     /**
+     * When content is added at the bottom, animate the scroll to end.
+     * Default is true.
+     */
+    animateAutoScrollToBottom?: boolean;
+    /**
      * If true, initial render will start from the bottom of the list, useful for chat-like interfaces when there are only few messages
      */
     startRenderingFromBottom?: boolean;

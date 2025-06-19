@@ -26,14 +26,35 @@ export function useBoundDetection<T>(
   const pendingStartReached = useRef(false);
   // Track whether we should auto-scroll to bottom when new content is added
   const pendingAutoscrollToBottom = useRef(false);
+
+  const lastCheckBoundsTime = useRef(Date.now());
+
   const { data } = recyclerViewManager.props;
   const { requestAnimationFrame } = useUnmountAwareAnimationFrame();
+
+  const windowHeight = recyclerViewManager.hasLayout()
+    ? recyclerViewManager.getWindowSize().height
+    : 0;
+
+  const contentHeight = recyclerViewManager.hasLayout()
+    ? recyclerViewManager.getChildContainerDimensions().height
+    : 0;
+
+  const windowWidth = recyclerViewManager.hasLayout()
+    ? recyclerViewManager.getWindowSize().width
+    : 0;
+
+  const contentWidth = recyclerViewManager.hasLayout()
+    ? recyclerViewManager.getChildContainerDimensions().width
+    : 0;
 
   /**
    * Checks if the scroll position is near the start or end of the list
    * and triggers appropriate callbacks if configured.
    */
   const checkBounds = useCallback(() => {
+    lastCheckBoundsTime.current = Date.now();
+
     const {
       onEndReached,
       onStartReached,
@@ -111,6 +132,20 @@ export function useBoundDetection<T>(
     }
   }, [recyclerViewManager]);
 
+  const runAutoScrollToBottomCheck = useCallback(() => {
+    if (pendingAutoscrollToBottom.current) {
+      pendingAutoscrollToBottom.current = false;
+      requestAnimationFrame(() => {
+        const shouldAnimate =
+          recyclerViewManager.props.maintainVisibleContentPosition
+            ?.animateAutoScrollToBottom ?? true;
+        scrollViewRef.current?.scrollToEnd({
+          animated: shouldAnimate,
+        });
+      });
+    }
+  }, [requestAnimationFrame, scrollViewRef, recyclerViewManager]);
+
   // Reset end reached state when data changes
   useMemo(() => {
     pendingEndReached.current = false;
@@ -120,13 +155,20 @@ export function useBoundDetection<T>(
 
   // Auto-scroll to bottom when new content is added and we're near the bottom
   useEffect(() => {
-    if (pendingAutoscrollToBottom.current) {
-      requestAnimationFrame(() => {
-        scrollViewRef.current?.scrollToEnd();
-        pendingAutoscrollToBottom.current = false;
-      });
+    runAutoScrollToBottomCheck();
+  }, [data, runAutoScrollToBottomCheck, windowHeight, windowWidth]);
+
+  // Since content changes frequently, we try and avoid doing the auto scroll during active scrolls
+  useEffect(() => {
+    if (Date.now() - lastCheckBoundsTime.current >= 100) {
+      runAutoScrollToBottomCheck();
     }
-  }, [data, requestAnimationFrame, scrollViewRef]);
+  }, [
+    contentHeight,
+    contentWidth,
+    recyclerViewManager.firstItemOffset,
+    runAutoScrollToBottomCheck,
+  ]);
 
   return {
     checkBounds,
