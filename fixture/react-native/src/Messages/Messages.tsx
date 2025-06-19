@@ -19,7 +19,7 @@ const Messages = () => {
       sender: userName,
       type: MessageType.Text,
     } as Message;
-    setMessages([message, ...messages]);
+    setMessages([...messages, message]);
   };
 
   return (
@@ -35,6 +35,10 @@ const Messages = () => {
         estimatedItemSize={100}
         keyExtractor={(item) => {
           return item.id;
+        }}
+        maintainVisibleContentPosition={{
+          autoscrollToBottomThreshold: 0.2,
+          startRenderingFromBottom: true,
         }}
         overrideItemLayout={(layout, item) => {
           switch (item.type) {
