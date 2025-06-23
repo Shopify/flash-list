@@ -66,7 +66,7 @@
     "@shopify/eslint-plugin": "^41.3.1",
     "@types/jest": "^29.5.10",
     "@types/react": "^18.0.24",
-    "babel-jest": "^28.1.1",
+    "babel-jest": "^30.0.2",
     "enhanced-resolve": "^5.9.3",
     "eslint": "8.57.1",
     "gh-pages": "^6.2.0",
