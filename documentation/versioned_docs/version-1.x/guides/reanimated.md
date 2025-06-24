@@ -22,16 +22,16 @@ import React, { useEffect } from "react";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { FlashList } from "@shopify/flash-list";
 
-const MyList = () => {
-  const Item = ({ item }: { item: { id: string } }) => {
-    const myValue = useSharedValue(0);
-    useEffect(() => {
-      // Reset value when id changes (view was recycled for another item)
-      myValue.value = 0;
-    }, [item.id, myValue]);
-    return <Animated.View />;
-  };
+const Item = ({ item }: { item: { id: string } }) => {
+  const myValue = useSharedValue(0);
+  useEffect(() => {
+    // Reset value when id changes (view was recycled for another item)
+    myValue.value = 0;
+  }, [item.id, myValue]);
+  return <Animated.View />;
+};
 
+const MyList = () => {
   return <FlashList renderItem={Item} estimatedItemSize={100} />;
 };
 ```
