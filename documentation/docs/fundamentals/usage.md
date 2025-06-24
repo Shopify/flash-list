@@ -246,6 +246,7 @@ Configuration for maintaining scroll position when content changes. This is enab
 - `disabled`: Set to true to disable this feature. It's enabled by default.
 - `autoscrollToTopThreshold`: Automatically scroll to maintain position when content is added at the top.
 - `autoscrollToBottomThreshold`: Automatically scroll to maintain position when content is added at the bottom.
+- `animateAutoScrollToBottom`: Scroll with animation whenever `autoScrollToBottom` is triggered. Default is `true`.
 - `startRenderingFromBottom`: If true, initial render will start from the bottom, useful for chat interfaces.
 
 Example:

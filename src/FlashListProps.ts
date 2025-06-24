@@ -418,7 +418,7 @@ export interface FlashListProps<TItem>
      */
     autoscrollToBottomThreshold?: number;
     /**
-     * When content is added at the bottom, animate the scroll to end.
+     * Scroll with animation whenever `autoscrollToBottom` is triggered. Default is `true`.
      * Default is true.
      */
     animateAutoScrollToBottom?: boolean;
