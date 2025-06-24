@@ -199,42 +199,5 @@ function computeSuggestions(
         `Data count is low. Try to increase it to a large number (e.g 200) using the 'useDataMultiplier' hook.`
       );
     }
-    const distanceFromWindow = roundToDecimalPlaces(
-      flashListRef.current.firstItemOffset,
-      0
-    );
-    if (
-      (flashListRef.current.props.estimatedFirstItemOffset || 0) !==
-      distanceFromWindow
-    ) {
-      suggestions.push(
-        `estimatedFirstItemOffset can be set to ${distanceFromWindow}`
-      );
-    }
-    const rlv = flashListRef.current.recyclerlistview_unsafe;
-    const horizontal = flashListRef.current.props.horizontal;
-    if (rlv) {
-      const sizeArray = rlv.props.dataProvider
-        .getAllData()
-        .map((_, index) =>
-          horizontal
-            ? rlv.getLayout?.(index)?.width || 0
-            : rlv.getLayout?.(index)?.height || 0
-        );
-      const averageSize = Math.round(
-        sizeArray.reduce((prev, current) => prev + current, 0) /
-          sizeArray.length
-      );
-      if (
-        Math.abs(
-          averageSize -
-            (flashListRef.current.props.estimatedItemSize ??
-              flashListRef.current.state.layoutProvider
-                .defaultEstimatedItemSize)
-        ) > 5
-      ) {
-        suggestions.push(`estimatedItemSize can be set to ${averageSize}`);
-      }
-    }
   }
 }
