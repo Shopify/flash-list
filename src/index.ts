@@ -5,7 +5,6 @@ export { FlashList } from "./FlashList";
 export { FlashListRef } from "./FlashListRef";
 export {
   FlashListProps,
-  ContentStyle,
   ListRenderItem,
   ListRenderItemInfo,
   RenderTarget,

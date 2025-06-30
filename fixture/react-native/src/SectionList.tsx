@@ -10,7 +10,11 @@ import {
   LayoutAnimation,
   StyleSheet,
 } from "react-native";
-import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
+import {
+  FlashList,
+  FlashListRef,
+  ListRenderItemInfo,
+} from "@shopify/flash-list";
 
 const generateItemsArray = (size: number) => {
   const arr = new Array(size);
@@ -48,7 +52,7 @@ export const SectionList = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [sections, setSections] = useState(generateSectionsData(10));
 
-  const list = useRef<FlashList<SectionListItem> | null>(null);
+  const list = useRef<FlashListRef<SectionListItem> | null>(null);
 
   const flattenedSections = useMemo(
     () =>
@@ -165,7 +169,6 @@ export const SectionList = () => {
             : `${item.sectionIndex}${item.index}`
         }
         renderItem={renderItem}
-        estimatedItemSize={100}
         stickyHeaderIndices={stickyHeaderIndices}
         data={flattenedSections}
       />

@@ -31,21 +31,12 @@ const Messages = () => {
       {/* @ts-ignore - Type compatibility issue between different React versions */}
       <FlashList
         renderItem={MessageItem}
-        inverted
-        estimatedItemSize={100}
         keyExtractor={(item) => {
           return item.id;
         }}
         maintainVisibleContentPosition={{
           autoscrollToBottomThreshold: 0.2,
           startRenderingFromBottom: true,
-        }}
-        overrideItemLayout={(layout, item) => {
-          switch (item.type) {
-            case MessageType.Image:
-              layout.size = 200;
-              break;
-          }
         }}
         getItemType={(item) => {
           return item.type;

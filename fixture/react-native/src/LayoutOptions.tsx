@@ -8,7 +8,7 @@ import {
   Switch,
   ScrollView,
 } from "react-native";
-import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
+import { FlashList, useRecyclingState } from "@shopify/flash-list";
 
 interface ListItem {
   id: number;
@@ -91,7 +91,7 @@ export function LayoutOptions() {
     <View style={styles.container}>
       {renderControls()}
 
-      <RecyclerView
+      <FlashList
         data={data}
         numColumns={isHorizontal ? 1 : numColumns}
         horizontal={isHorizontal}

@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   ViewabilityConfig,
 } from "react-native";
-import { BlankAreaEventHandler, FlashList } from "@shopify/flash-list";
+import { FlashList, FlashListRef } from "@shopify/flash-list";
 
 import { DebugContext } from "../Debug";
 
@@ -15,15 +15,13 @@ import { tweets as tweetsData } from "./data/tweets";
 import Tweet from "./models/Tweet";
 
 export interface TwitterProps {
-  instance?: React.RefObject<FlashList<Tweet>>;
-  blankAreaTracker?: BlankAreaEventHandler;
+  instance?: React.RefObject<FlashListRef<Tweet>>;
   CellRendererComponent?: React.ComponentType<any>;
   disableAutoLayout?: boolean;
 }
 
 const Twitter = ({
   instance,
-  blankAreaTracker,
   CellRendererComponent,
   disableAutoLayout,
 }: TwitterProps) => {
@@ -43,7 +41,6 @@ const Twitter = ({
     // @ts-ignore - Type compatibility issue between different React versions
     <FlashList
       ref={instance}
-      onBlankArea={blankAreaTracker}
       testID="FlashList"
       keyExtractor={(item) => {
         return item.id;

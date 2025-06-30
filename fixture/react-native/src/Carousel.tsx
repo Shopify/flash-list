@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
-import { FlashListRef, RecyclerView } from "@shopify/flash-list";
+import { FlashListRef, FlashList } from "@shopify/flash-list";
 
 interface CarouselItem {
   id: string;
@@ -139,7 +139,7 @@ const Carousel = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Simple Carousel</Text>
-      <RecyclerView
+      <FlashList
         testID="CarouselScreen"
         style={{ flex: 1 }}
         ref={flatListRef}

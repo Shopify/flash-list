@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 
 // Define our item type
 interface Item {
@@ -312,7 +312,7 @@ const RecyclerViewHandlerTest = () => {
         {/* List Container - Now on the right side */}
         <View style={styles.listContainer}>
           {/* Use FlatList instead of FlashList to avoid import issues */}
-          <RecyclerView
+          <FlashList
             testID="RecyclerView"
             ref={listRef}
             key={horizontal ? "horizontal" : "vertical"}
