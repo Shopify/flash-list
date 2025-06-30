@@ -2,7 +2,7 @@ import { Dimension, Layout } from "recyclerlistview";
 
 import CustomError from "../errors/CustomError";
 import ExceptionList from "../errors/ExceptionList";
-import ViewabilityHelper from "../viewability/ViewabilityHelper";
+import ViewabilityHelper from "../recyclerview/viewability/ViewabilityHelper";
 
 describe("ViewabilityHelper", () => {
   const viewableIndicesChanged = jest.fn();

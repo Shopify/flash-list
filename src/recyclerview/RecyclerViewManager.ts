@@ -1,4 +1,4 @@
-import ViewabilityManager from "../viewability/ViewabilityManager";
+import ViewabilityManager from "./viewability/ViewabilityManager";
 
 import { ConsecutiveNumbers } from "./helpers/ConsecutiveNumbers";
 import { RVGridLayoutManagerImpl } from "./layout-managers/GridLayoutManager";
