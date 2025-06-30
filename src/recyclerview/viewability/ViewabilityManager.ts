@@ -1,6 +1,6 @@
 import { ViewabilityConfig } from "react-native";
 
-import FlashList from "../FlashList";
+import { RecyclerViewManager } from "../RecyclerViewManager";
 
 import ViewabilityHelper from "./ViewabilityHelper";
 import ViewToken from "./ViewToken";
@@ -9,31 +9,31 @@ import ViewToken from "./ViewToken";
  * Manager for viewability tracking. It holds multiple viewability callback pairs and keeps them updated.
  */
 export default class ViewabilityManager<T> {
-  private flashListRef: FlashList<T>;
+  private rvManager: RecyclerViewManager<T>;
   private viewabilityHelpers: ViewabilityHelper[] = [];
   private hasInteracted = false;
 
-  constructor(flashListRef: FlashList<T>) {
-    this.flashListRef = flashListRef;
+  constructor(rvManager: RecyclerViewManager<T>) {
+    this.rvManager = rvManager;
     if (
-      flashListRef.props.onViewableItemsChanged !== null &&
-      flashListRef.props.onViewableItemsChanged !== undefined
+      rvManager.props.onViewableItemsChanged !== null &&
+      rvManager.props.onViewableItemsChanged !== undefined
     ) {
       this.viewabilityHelpers.push(
         this.createViewabilityHelper(
-          flashListRef.props.viewabilityConfig,
+          rvManager.props.viewabilityConfig,
           (info) => {
-            flashListRef.props.onViewableItemsChanged?.(info);
+            rvManager.props.onViewableItemsChanged?.(info);
           }
         )
       );
     }
-    (flashListRef.props.viewabilityConfigCallbackPairs ?? []).forEach(
+    (rvManager.props.viewabilityConfigCallbackPairs ?? []).forEach(
       (pair, index) => {
         this.viewabilityHelpers.push(
           this.createViewabilityHelper(pair.viewabilityConfig, (info) => {
             const callback =
-              flashListRef.props.viewabilityConfigCallbackPairs?.[index]
+              rvManager.props.viewabilityConfigCallbackPairs?.[index]
                 ?.onViewableItemsChanged;
             callback?.(info);
           })
@@ -71,21 +71,19 @@ export default class ViewabilityManager<T> {
   };
 
   public updateViewableItems = (newViewableIndices?: number[]) => {
-    const listSize =
-      this.flashListRef.getWindowSize() ??
-      this.flashListRef.props.estimatedListSize;
+    const listSize = this.rvManager.getWindowSize();
     if (listSize === undefined || !this.shouldListenToVisibleIndices) {
       return;
     }
     const scrollOffset =
-      (this.flashListRef.getAbsoluteLastScrollOffset() ?? 0) -
-      this.flashListRef.firstItemOffset;
+      (this.rvManager.getAbsoluteLastScrollOffset() ?? 0) -
+      this.rvManager.firstItemOffset;
     this.viewabilityHelpers.forEach((viewabilityHelper) => {
       viewabilityHelper.updateViewableItems(
-        this.flashListRef.props.horizontal ?? false,
+        this.rvManager.props.horizontal ?? false,
         scrollOffset,
         listSize,
-        (index: number) => this.flashListRef.getLayout(index),
+        (index: number) => this.rvManager.getLayout(index),
         newViewableIndices
       );
     });
@@ -117,11 +115,11 @@ export default class ViewabilityManager<T> {
       index: number,
       isViewable: boolean
     ) => {
-      const item = this.flashListRef.props.data![index];
+      const item = this.rvManager.props.data![index];
       const key =
-        item === undefined || this.flashListRef.props.keyExtractor === undefined
+        item === undefined || this.rvManager.props.keyExtractor === undefined
           ? index.toString()
-          : this.flashListRef.props.keyExtractor(item, index);
+          : this.rvManager.props.keyExtractor(item, index);
       return {
         index,
         isViewable,
