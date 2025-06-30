@@ -39,18 +39,6 @@ export type ListRenderItem<TItem> = (
   info: ListRenderItemInfo<TItem>
 ) => React.ReactElement | null;
 
-export type ContentStyle = Pick<
-  ViewStyle,
-  | "backgroundColor"
-  | "paddingTop"
-  | "paddingLeft"
-  | "paddingRight"
-  | "paddingBottom"
-  | "padding"
-  | "paddingVertical"
-  | "paddingHorizontal"
->;
-
 export interface ViewabilityConfigCallbackPair<TItem> {
   viewabilityConfig: ViewabilityConfig;
   onViewableItemsChanged:
@@ -157,12 +145,6 @@ export interface FlashListProps<TItem>
     | React.FC<ScrollViewProps>;
 
   /**
-   * You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself.
-   * For example, you can apply this padding, so that all of your items have leading and trailing space.
-   */
-  contentContainerStyle?: ContentStyle;
-
-  /**
    * Draw distance for advanced rendering (in dp/px)
    */
   drawDistance?: number;
@@ -183,11 +165,6 @@ export interface FlashListProps<TItem>
    * Instead of starting at the top with the first item, start at initialScrollIndex.
    */
   initialScrollIndex?: number | null | undefined;
-
-  /**
-   * Reverses the direction of scroll. Uses scale transforms of -1.
-   */
-  inverted?: boolean | null | undefined;
 
   /**
    * Used to extract a unique key for a given item at the specified index.
@@ -303,21 +280,6 @@ export interface FlashListProps<TItem>
   viewabilityConfigCallbackPairs?:
     | ViewabilityConfigCallbackPairs<TItem>
     | undefined;
-
-  /**
-   * FlashList attempts to measure size of horizontal lists by drawing an extra list item in advance. This can sometimes cause issues when used with `initialScrollIndex` in lists
-   * with very little content. You might see some amount of over scroll. When set to true the list's rendered size needs to be deterministic (i.e., height and width greater than 0)
-   * as FlashList will skip rendering the extra item for measurement. Default value is `false`.
-   */
-  disableHorizontalListHeightMeasurement?: boolean;
-
-  /**
-   * FlashList applies some fixes to layouts of its children which can conflict with custom `CellRendererComponent`
-   * implementations. You can disable this behavior by setting this to `true`.
-   * Recommendation: Set this to `true` while you apply special behavior to the `CellRendererComponent`. Once done set this to
-   * `false` again.
-   */
-  disableAutoLayout?: boolean;
 
   /**
    * New arch only
