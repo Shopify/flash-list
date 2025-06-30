@@ -6,8 +6,7 @@ import {
   ViewStyle,
 } from "react-native";
 
-import { BlankAreaEventHandler } from "./native/auto-layout/AutoLayoutView";
-import ViewToken from "./viewability/ViewToken";
+import ViewToken from "./recyclerview/viewability/ViewToken";
 
 export interface ListRenderItemInfo<TItem> {
   item: TItem;
@@ -90,14 +89,6 @@ export interface FlashListProps<TItem>
   data: ReadonlyArray<TItem> | null | undefined;
 
   /**
-   * Average or median size for elements in the list. Doesn't have to be very accurate but a good estimate can improve performance.
-   * A quick look at `Element Inspector` can help you determine this. If you're confused between two values, the smaller value is a better choice.
-   * For vertical lists provide average height and for horizontal average width.
-   * Read more about it here: https://shopify.github.io/flash-list/docs/estimated-item-size
-   */
-  estimatedItemSize?: number;
-
-  /**
    * Each cell is rendered using this element.
    * Can be a React Component Class, or a render function.
    * The root component should always be a `CellContainer` which is also the default component used.
@@ -177,19 +168,6 @@ export interface FlashListProps<TItem>
   drawDistance?: number;
 
   /**
-   * Specifies how far the first item is drawn from start of the list window or, offset of the first item of the list (not the header).
-   * Needed if you're using initialScrollIndex prop. Before the initial draw the list cannot figure out the size of header or, any special margin/padding that might have been applied
-   * using header styles etc.
-   * If this isn't provided initialScrollIndex might not scroll to the provided index.
-   */
-  estimatedFirstItemOffset?: number;
-
-  /**
-   * Visible height and width of the list. This is not the scroll content size.
-   */
-  estimatedListSize?: { height: number; width: number };
-
-  /**
    * A marker property for telling the list to re-render (since it implements PureComponent).
    * If any of your `renderItem`, Header, Footer, etc. functions depend on anything outside of the `data` prop,
    * stick it here and treat it immutably.
@@ -224,18 +202,6 @@ export interface FlashListProps<TItem>
    * Items should all be the same height - masonry layouts are not supported.
    */
   numColumns?: number | undefined;
-
-  /**
-   * Computes blank space that is visible to the user during scroll or list load. If list doesn't have enough items to fill the screen even then this will be raised.
-   * Values reported: {
-   *    offsetStart -> visible blank space on top of the screen (while going up). If value is greater than 0 then it's visible to user.
-   *    offsetEnd -> visible blank space at the end of the screen (while going down). If value is greater than 0 then it's visible to user.
-   *    blankArea -> max(offsetStart, offsetEnd) use this directly and look for values > 0
-   * }
-   * Please note that this event isn't synced with onScroll event but works with native onDraw/layoutSubviews. Events with values > 0 are blanks.
-   * This event is raised even when there is no visible blank with negative values for extensibility however, for most use cases check blankArea > 0 and use the value.
-   */
-  onBlankArea?: BlankAreaEventHandler;
 
   /**
    * Called once when the scroll position gets within onEndReachedThreshold of the rendered content.
@@ -292,11 +258,7 @@ export interface FlashListProps<TItem>
   ) => string | number | undefined;
 
   /**
-   * This method can be used to provide explicit size estimates or change column span of an item.
-   *
-   * Providing specific estimates is a good idea when you can calculate sizes reliably. FlashList will prefer this value over `estimatedItemSize` for that specific item.
-   * Precise estimates will also improve precision of `scrollToIndex` method and `initialScrollIndex` prop. If you have a `separator` below your items you can include its size in the estimate.
-   *
+   * This method can be used to change column span of an item.
    * Changing item span is useful when you have grid layouts (numColumns > 1) and you want few items to be bigger than the rest.
    *
    * Modify the given layout. Do not return. FlashList will fallback to default values if this is ignored.
@@ -304,7 +266,7 @@ export interface FlashListProps<TItem>
    * Performance: This method is called very frequently. Keep it fast.
    */
   overrideItemLayout?: (
-    layout: { span?: number; size?: number },
+    layout: { span?: number },
     item: TItem,
     index: number,
     maxColumns: number,

@@ -548,6 +548,11 @@ export function useRecyclerViewController<T>(
        * Disables item recycling in preparation for layout animations.
        */
       prepareForLayoutAnimationRender: () => {
+        if (!recyclerViewManager.props.keyExtractor) {
+          console.warn(
+            "keyExtractor is not defined. This might cause the animations to not work as expected."
+          );
+        }
         recyclerViewManager.animationOptimizationsEnabled = true;
       },
     };
