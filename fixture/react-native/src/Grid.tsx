@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { Text, View, StyleSheet, Platform, Pressable } from "react-native";
-import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
+import { FlashList, useRecyclingState } from "@shopify/flash-list";
 
 interface GridItem {
   id: number;
@@ -70,7 +70,7 @@ export function Grid() {
   return (
     <React.StrictMode>
       <View style={styles.container}>
-        <RecyclerView
+        <FlashList
           testID="GridScreen"
           data={data}
           numColumns={2}

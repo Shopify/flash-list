@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 
 import { tweets as tweetsData } from "./twitter/data/tweets";
 import Tweet from "./twitter/models/Tweet";
@@ -77,7 +77,7 @@ const FlashListCellRenderer = () => {
         <View style={styles.container}>
           <Text style={styles.title}>Fade-In Animation</Text>
           <View style={{ flex: 1 }}>
-            <RecyclerView
+            <FlashList
               data={tweetsData}
               renderItem={renderTweet}
               CellRendererComponent={FadeInCellRenderer}
@@ -89,7 +89,7 @@ const FlashListCellRenderer = () => {
         <View style={styles.container}>
           <Text style={styles.title}>Scale Animation</Text>
           <View style={{ flex: 1 }}>
-            <RecyclerView
+            <FlashList
               data={tweetsData}
               renderItem={renderTweet}
               CellRendererComponent={ScaleCellRenderer}

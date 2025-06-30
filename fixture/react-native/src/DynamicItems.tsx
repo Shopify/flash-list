@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 
 interface Item {
   id: string;
@@ -77,7 +77,7 @@ const DynamicItems = () => {
           <Text style={styles.buttonText}>Add 5 Items</Text>
         </Pressable>
       </View>
-      <RecyclerView
+      <FlashList
         data={items}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

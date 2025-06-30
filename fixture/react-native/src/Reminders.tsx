@@ -10,7 +10,7 @@ import {
   ViewProps,
   Pressable,
 } from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, FlashListRef } from "@shopify/flash-list";
 import Animated, { FadeOut, LinearTransition } from "react-native-reanimated";
 
 interface Reminder {
@@ -145,7 +145,7 @@ const Reminders = () => {
     [setReminders, reminders]
   );
 
-  const list = useRef<FlashList<Reminder> | null>(null);
+  const list = useRef<FlashListRef<Reminder> | null>(null);
 
   const onChangeText = useCallback(
     (item: Reminder, text: string) => {
@@ -196,7 +196,6 @@ const Reminders = () => {
             return item.id;
           }}
           ListHeaderComponent={Header}
-          estimatedItemSize={50}
           ItemSeparatorComponent={Divider}
           data={reminders}
         />
