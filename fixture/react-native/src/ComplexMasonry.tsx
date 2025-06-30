@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { FlashListRef, RecyclerView } from "@shopify/flash-list";
+import { FlashListRef, FlashList } from "@shopify/flash-list";
 import FastImage from "@d11/react-native-fast-image";
 
 // Define our data structure
@@ -181,14 +181,13 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
 
   return (
     <View style={styles.container}>
-      <RecyclerView
+      <FlashList
         ref={ref as React.RefObject<FlashListRef<MasonryItem>>}
         testID="ComplexMasonryList"
         data={items}
         masonry
         optimizeItemArrangement
         numColumns={columnCount}
-        estimatedItemSize={200}
         overrideItemLayout={(layout: any, item: MasonryItem) => {
           // Set the height based on the item's height property and expansion state
           layout.size = item.isExpanded ? item.height * 1.5 : item.height;

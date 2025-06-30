@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   StatusBar,
 } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 
 interface ChatMessage {
   id: string;
@@ -94,7 +94,7 @@ export function Chat() {
           </Pressable>
         </View>
 
-        <RecyclerView
+        <FlashList
           data={messages}
           maintainVisibleContentPosition={maintainVisibleContentPositionConfig}
           onStartReached={() => {

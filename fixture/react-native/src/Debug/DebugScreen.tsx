@@ -26,7 +26,6 @@ const DebugScreen = () => {
         return item.name;
       }}
       renderItem={renderItem}
-      estimatedItemSize={44}
       ItemSeparatorComponent={Divider}
       data={debugItems}
     />

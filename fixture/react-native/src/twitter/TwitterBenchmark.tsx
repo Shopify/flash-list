@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
-import { FlashList, useFlatListBenchmark } from "@shopify/flash-list";
+import { FlashListRef, useBenchmark } from "@shopify/flash-list";
 
 import Twitter from "./Twitter";
 import Tweet from "./models/Tweet";
 
 const TwitterBenchmark = () => {
-  const ref = useRef<FlashList<Tweet>>(null);
-  const [blankAreaTracker] = useFlatListBenchmark(
+  const ref = useRef<FlashListRef<Tweet>>(null);
+  useBenchmark(
     // @ts-ignore - Type compatibility issue with useFlatListBenchmark
     ref,
     (res) => {
@@ -15,10 +15,10 @@ const TwitterBenchmark = () => {
         alert(res.formattedString);
       }
     },
-    { targetOffset: 200 * 100, speedMultiplier: 2, repeatCount: 5 }
+    { speedMultiplier: 2, repeatCount: 5 }
   );
 
   // @ts-ignore - Type compatibility issue with ref passing
-  return <Twitter instance={ref} blankAreaTracker={blankAreaTracker} />;
+  return <Twitter instance={ref} />;
 };
 export default TwitterBenchmark;

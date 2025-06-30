@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 import { ScrollView } from "react-native";
 
 import { DebugContext } from "../Debug";
@@ -41,9 +41,8 @@ const Contacts = () => {
   }, []);
 
   return (
-    <RecyclerView
+    <FlashList
       testID="FlashList"
-      estimatedItemSize={44}
       data={data}
       renderItem={({ item }) => {
         if (typeof item === "string") {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View, StyleSheet, Platform } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 
 interface MasonryData {
   index: number;
@@ -18,15 +18,11 @@ export function Masonry() {
   return (
     <React.StrictMode>
       <View style={styles.container}>
-        <RecyclerView
+        <FlashList
           testID="MasonryList"
           data={data}
           masonry
-          overrideItemLayout={(layout, item) => {
-            layout.size = item.height;
-          }}
           numColumns={columnCount}
-          estimatedItemSize={150}
           ListHeaderComponent={
             <Component
               item={{ index: 0, height: 100 }}

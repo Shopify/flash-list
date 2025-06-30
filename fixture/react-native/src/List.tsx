@@ -4,7 +4,7 @@
  */
 import React, { useCallback, useRef, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { RecyclerView, FlashListRef } from "@shopify/flash-list";
+import { FlashList, FlashListRef } from "@shopify/flash-list";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -61,7 +61,7 @@ const List = () => {
   );
 
   return (
-    <RecyclerView
+    <FlashList
       ref={list}
       refreshing={refreshing}
       onRefresh={() => {
