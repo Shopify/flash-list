@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { Text, View, StyleSheet, Platform, Pressable } from "react-native";
-import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
+import { FlashList, useRecyclingState } from "@shopify/flash-list";
 
 interface DynamicItem {
   id: number;
@@ -208,7 +208,7 @@ export function DynamicColumnSpan() {
         </View>
 
         {/* List */}
-        <RecyclerView
+        <FlashList
           testID="DynamicColumnSpanList"
           data={data}
           numColumns={numColumns}
@@ -217,7 +217,6 @@ export function DynamicColumnSpan() {
           overrideItemLayout={overrideItemLayout}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          estimatedItemSize={isMasonry ? 100 : 80}
         />
       </View>
     </React.StrictMode>

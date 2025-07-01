@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 
 interface ListItem {
   id: string;
@@ -70,7 +70,7 @@ export const HeaderFooterExample = () => {
 
   return (
     <View style={styles.container}>
-      <RecyclerView
+      <FlashList
         data={data}
         onLoad={handleLoad}
         renderItem={renderItem}

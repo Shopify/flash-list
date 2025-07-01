@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable, StatusBar } from "react-native";
-import { RecyclerView, useRecyclingState } from "@shopify/flash-list";
+import { FlashList, useRecyclingState } from "@shopify/flash-list";
 
 interface Item {
   id: number;
@@ -83,7 +83,7 @@ const HorizontalList = () => {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <Text style={styles.header}>Horizontal List Example</Text>
-      <RecyclerView
+      <FlashList
         testID="HorizontalListScreen"
         horizontal
         data={data}

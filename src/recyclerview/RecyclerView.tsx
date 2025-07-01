@@ -20,6 +20,7 @@ import {
 } from "react-native";
 
 import { FlashListRef } from "../FlashListRef";
+import { ErrorMessages } from "../errors/ErrorMessages";
 
 import { RVDimension } from "./layout-managers/LayoutManager";
 import {
@@ -384,6 +385,9 @@ const RecyclerViewComponent = <T,>(
       stickyHeaderIndices &&
       stickyHeaderIndices.length > 0
     ) {
+      if (horizontal) {
+        throw new Error(ErrorMessages.stickyHeadersNotSupportedForHorizontal);
+      }
       return (
         <StickyHeaders
           stickyHeaderIndices={stickyHeaderIndices}
@@ -402,6 +406,7 @@ const RecyclerViewComponent = <T,>(
     stickyHeaderIndices,
     renderItem,
     scrollY,
+    horizontal,
     recyclerViewManager,
     extraData,
   ]);

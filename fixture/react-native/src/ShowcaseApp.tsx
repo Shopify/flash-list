@@ -8,7 +8,7 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 
 // Import available images
 const profileImages = [
@@ -362,7 +362,7 @@ const SectionRow = ({ section }: { section: Section }) => {
   return (
     <View style={styles.sectionContainer}>
       <Text style={styles.sectionTitle}>{section.title}</Text>
-      <RecyclerView
+      <FlashList
         horizontal
         data={section.data}
         renderItem={renderItem}
@@ -435,7 +435,7 @@ const ShowcaseApp = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <RecyclerView
+      <FlashList
         data={data}
         renderItem={renderSection}
         getItemType={(item) => item.type}

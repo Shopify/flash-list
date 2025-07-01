@@ -21,6 +21,7 @@ import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
 import { RVLayout } from "../layout-managers/LayoutManager";
 import { ScrollAnchorRef } from "../components/ScrollAnchor";
 import { PlatformConfig } from "../../native/config/PlatformHelper";
+import { WarningMessages } from "../../errors/WarningMessages";
 
 import { useUnmountFlag } from "./useUnmountFlag";
 import { useUnmountAwareTimeout } from "./useUnmountAwareCallbacks";
@@ -547,6 +548,9 @@ export function useRecyclerViewController<T>(
        * Disables item recycling in preparation for layout animations.
        */
       prepareForLayoutAnimationRender: () => {
+        if (!recyclerViewManager.props.keyExtractor) {
+          console.warn(WarningMessages.keyExtractorNotDefinedForAnimation);
+        }
         recyclerViewManager.animationOptimizationsEnabled = true;
       },
     };

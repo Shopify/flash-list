@@ -1,14 +1,10 @@
 import React, { useEffect } from "react";
 
-import FlashList from "../FlashList";
+import { FlashListRef } from "../FlashListRef";
+import { ErrorMessages } from "../errors/ErrorMessages";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor, JSFPSResult } from "./JSFPSMonitor";
-import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
-import {
-  BlankAreaTrackerResult,
-  useBlankAreaTracker,
-} from "./useBlankAreaTracker";
 
 export interface BenchmarkParams {
   startDelayInMs?: number;
@@ -34,7 +30,6 @@ export interface BenchmarkResult {
   js?: JSFPSResult;
   interrupted: boolean;
   suggestions: string[];
-  blankArea?: BlankAreaTrackerResult;
   formattedString?: string;
 }
 
@@ -45,21 +40,16 @@ export interface BenchmarkResult {
  */
 
 export function useBenchmark(
-  flashListRef: React.RefObject<FlashList<any>>,
+  flashListRef: React.RefObject<FlashListRef<any>>,
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
-  const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker(
-    flashListRef,
-    undefined,
-    { sumNegativeValues: params.sumNegativeBlankAreaValues, startDelayInMs: 0 }
-  );
   useEffect(() => {
     const cancellable = new Cancellable();
     const suggestions: string[] = [];
     if (flashListRef.current) {
       if (!(Number(flashListRef.current.props.data?.length) > 0)) {
-        throw new Error("Data is empty, cannot run benchmark");
+        throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
       }
     }
     const cancelTimeout = setTimeout(async () => {
@@ -81,7 +71,6 @@ export function useBenchmark(
       computeSuggestions(flashListRef, suggestions);
       const result: BenchmarkResult = generateResult(
         jsProfilerResponse,
-        blankAreaResult,
         suggestions,
         cancellable
       );
@@ -96,18 +85,12 @@ export function useBenchmark(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return [blankAreaTracker];
 }
 
 export function getFormattedString(res: BenchmarkResult) {
   return (
     `Results:\n\n` +
     `JS FPS: Avg: ${res.js?.averageFPS} | Min: ${res.js?.minFPS} | Max: ${res.js?.maxFPS}\n\n` +
-    `${
-      res.blankArea
-        ? `Blank Area: Max: ${res.blankArea?.maxBlankArea} Cumulative: ${res.blankArea?.cumulativeBlankArea}\n\n`
-        : ``
-    }` +
     `${
       res.suggestions.length > 0
         ? `Suggestions:\n\n${res.suggestions
@@ -120,22 +103,11 @@ export function getFormattedString(res: BenchmarkResult) {
 
 function generateResult(
   jsProfilerResponse: JSFPSResult,
-  blankAreaResult: BlankAreaTrackerResult,
   suggestions: string[],
   cancellable: Cancellable
 ) {
   return {
     js: jsProfilerResponse,
-    blankArea:
-      blankAreaResult.maxBlankArea >= 0
-        ? {
-            maxBlankArea: roundToDecimalPlaces(blankAreaResult.maxBlankArea, 0),
-            cumulativeBlankArea: roundToDecimalPlaces(
-              blankAreaResult.cumulativeBlankArea,
-              0
-            ),
-          }
-        : undefined,
     suggestions,
     interrupted: cancellable.isCancelled(),
   };
@@ -145,21 +117,21 @@ function generateResult(
  * Scrolls to the end of the list and then back to the top
  */
 async function runScrollBenchmark(
-  flashListRef: React.RefObject<FlashList<any> | null | undefined>,
+  flashListRef: React.RefObject<FlashListRef<any> | null | undefined>,
   cancellable: Cancellable,
   scrollSpeedMultiplier: number
 ): Promise<void> {
   if (flashListRef.current) {
     const horizontal = flashListRef.current.props.horizontal;
-    const rlv = flashListRef.current.recyclerlistview_unsafe;
-    if (rlv) {
-      const rlvSize = rlv.getRenderedSize();
-      const rlvContentSize = rlv.getContentDimension();
+    const rv = flashListRef.current;
+    if (rv) {
+      const rvSize = rv.getWindowSize();
+      const rvContentSize = rv.getChildContainerDimensions();
 
       const fromX = 0;
       const fromY = 0;
-      const toX = rlvContentSize.width - rlvSize.width;
-      const toY = rlvContentSize.height - rlvSize.height;
+      const toX = rvContentSize.width - rvSize.width;
+      const toY = rvContentSize.height - rvSize.height;
 
       const scrollNow = (x: number, y: number) => {
         flashListRef.current?.scrollToOffset({
@@ -190,7 +162,7 @@ async function runScrollBenchmark(
   }
 }
 function computeSuggestions(
-  flashListRef: React.RefObject<FlashList<any> | null | undefined>,
+  flashListRef: React.RefObject<FlashListRef<any> | null | undefined>,
   suggestions: string[]
 ) {
   if (flashListRef.current) {

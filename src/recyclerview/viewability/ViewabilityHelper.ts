@@ -1,8 +1,7 @@
 import { ViewabilityConfig } from "react-native";
-import { Dimension, Layout } from "recyclerlistview";
 
-import CustomError from "../errors/CustomError";
-import ExceptionList from "../errors/ExceptionList";
+import { RVDimension, RVLayout } from "../layout-managers/LayoutManager";
+import { ErrorMessages } from "../../errors/ErrorMessages";
 
 /**
  * Helper class for computing viewable items based on the passed `viewabilityConfig`.
@@ -48,8 +47,8 @@ class ViewabilityHelper {
   public updateViewableItems(
     horizontal: boolean,
     scrollOffset: number,
-    listSize: Dimension,
-    getLayout: (index: number) => Layout | undefined,
+    listSize: RVDimension,
+    getLayout: (index: number) => RVLayout | undefined,
     viewableIndices?: number[]
   ) {
     if (viewableIndices !== undefined) {
@@ -61,8 +60,8 @@ class ViewabilityHelper {
       this.viewabilityConfig?.viewAreaCoveragePercentThreshold !== null &&
       this.viewabilityConfig?.viewAreaCoveragePercentThreshold !== undefined
     ) {
-      throw new CustomError(
-        ExceptionList.multipleViewabilityThresholdTypesNotSupported
+      throw new Error(
+        ErrorMessages.multipleViewabilityThresholdTypesNotSupported
       );
     }
     if (
@@ -126,10 +125,10 @@ class ViewabilityHelper {
     index: number,
     horizontal: boolean,
     scrollOffset: number,
-    listSize: Dimension,
+    listSize: RVDimension,
     viewAreaCoveragePercentThreshold: number | null | undefined,
     itemVisiblePercentThreshold: number | null | undefined,
-    getLayout: (index: number) => Layout | undefined
+    getLayout: (index: number) => RVLayout | undefined
   ) {
     const itemLayout = getLayout(index);
     if (itemLayout === undefined) {

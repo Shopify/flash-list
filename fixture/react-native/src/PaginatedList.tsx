@@ -4,7 +4,7 @@
  */
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { RecyclerView } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 
 export interface PaginatedListState {
   // This property is used but eslint fails to find its usage.
@@ -32,7 +32,7 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
 
   render() {
     return (
-      <RecyclerView
+      <FlashList
         keyExtractor={(item: number) => {
           return item.toString();
         }}
@@ -44,7 +44,6 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
             </View>
           );
         }}
-        estimatedItemSize={100}
         onEndReached={() => {
           console.log("onEndReached");
           // Since FlatList is a pure component, data reference should change for a render

@@ -1,12 +1,12 @@
 import { Animated } from "react-native";
 
 import { FlashListProps } from "./FlashListProps";
-import { RecyclerView } from "./recyclerview/RecyclerView";
+import { FlashList } from "./FlashList";
 
 // Typecast as required
 const AnimatedFlashList =
   Animated.createAnimatedComponent<React.ComponentType<FlashListProps<any>>>(
-    RecyclerView
+    FlashList
   );
 
 export default AnimatedFlashList;

@@ -7,7 +7,7 @@ import {
   StatusBar,
   Dimensions,
 } from "react-native";
-import { useRecyclingState, RecyclerView } from "@shopify/flash-list";
+import { useRecyclingState, FlashList } from "@shopify/flash-list";
 
 // Types for our data
 interface Movie {
@@ -228,7 +228,7 @@ const CategoryRow = ({ category }: { category: Category }) => {
     <View style={styles.categoryContainer}>
       <Text style={styles.categoryTitle}>{category.title}</Text>
       <View style={styles.horizontalListContainer}>
-        <RecyclerView
+        <FlashList
           horizontal
           data={category.movies}
           renderItem={renderMoviePoster}
@@ -261,7 +261,7 @@ const MovieList = () => {
       <StatusBar barStyle="light-content" />
 
       <View style={styles.listContainer}>
-        <RecyclerView
+        <FlashList
           data={categories}
           onLoad={({ elapsedTimeInMs }) => {
             console.log("onLoad ------------>", elapsedTimeInMs);
