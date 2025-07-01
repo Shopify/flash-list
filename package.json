@@ -79,10 +79,7 @@
     "typescript": "5.8.3"
   },
   "files": [
-    "android",
-    "ios",
     "dist",
-    "RNFlashList.podspec",
     "src",
     "jestSetup.js"
   ],
