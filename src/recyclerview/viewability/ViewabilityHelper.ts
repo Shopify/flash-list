@@ -1,8 +1,7 @@
 import { ViewabilityConfig } from "react-native";
 
-import CustomError from "../../errors/CustomError";
-import ExceptionList from "../../errors/ExceptionList";
 import { RVDimension, RVLayout } from "../layout-managers/LayoutManager";
+import { ErrorMessages } from "../../errors/ErrorMessages";
 
 /**
  * Helper class for computing viewable items based on the passed `viewabilityConfig`.
@@ -61,8 +60,8 @@ class ViewabilityHelper {
       this.viewabilityConfig?.viewAreaCoveragePercentThreshold !== null &&
       this.viewabilityConfig?.viewAreaCoveragePercentThreshold !== undefined
     ) {
-      throw new CustomError(
-        ExceptionList.multipleViewabilityThresholdTypesNotSupported
+      throw new Error(
+        ErrorMessages.multipleViewabilityThresholdTypesNotSupported
       );
     }
     if (

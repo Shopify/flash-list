@@ -1,8 +1,7 @@
 import { Dimension, Layout } from "recyclerlistview";
 
-import CustomError from "../errors/CustomError";
-import ExceptionList from "../errors/ExceptionList";
 import ViewabilityHelper from "../recyclerview/viewability/ViewabilityHelper";
+import { ErrorMessages } from "../errors/ErrorMessages";
 
 describe("ViewabilityHelper", () => {
   const viewableIndicesChanged = jest.fn();
@@ -246,9 +245,7 @@ describe("ViewabilityHelper", () => {
       viewableIndicesChanged
     );
     expect(() => updateViewableItems({ viewabilityHelper })).toThrow(
-      new CustomError(
-        ExceptionList.multipleViewabilityThresholdTypesNotSupported
-      )
+      ErrorMessages.multipleViewabilityThresholdTypesNotSupported
     );
   });
 

@@ -1,5 +1,6 @@
 // Keep this unmodified for TS type checking
 import { isNewArch } from "./isNewArch";
+import { ErrorMessages } from "./errors/ErrorMessages";
 
 export { FlashList } from "./FlashList";
 export { FlashListRef } from "./FlashListRef";
@@ -30,5 +31,5 @@ export { default as ViewToken } from "./recyclerview/viewability/ViewToken";
 export { useFlashListContext } from "./recyclerview/RecyclerViewContextProvider";
 
 if (!isNewArch()) {
-  throw new Error("FlashList v2 is only supported on new architecture");
+  throw new Error(ErrorMessages.flashListV2OnlySupportsNewArchitecture);
 }

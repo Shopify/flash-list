@@ -1,3 +1,5 @@
+import { ErrorMessages } from "../errors/ErrorMessages";
+
 import { roundToDecimalPlaces } from "./roundToDecimalPlaces";
 
 /**
@@ -44,9 +46,7 @@ export class JSFPSMonitor {
 
   public startTracking() {
     if (this.startTime !== 0) {
-      throw new Error(
-        "This FPS Monitor has already been run, please create a new instance"
-      );
+      throw new Error(ErrorMessages.fpsMonitorAlreadyRunning);
     }
     this.startTime = Date.now();
     this.timeWindow.startTime = Date.now();
