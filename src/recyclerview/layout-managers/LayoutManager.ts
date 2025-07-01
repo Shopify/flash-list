@@ -7,6 +7,7 @@ import {
   findLastVisibleIndex,
 } from "../utils/findVisibleIndex";
 import { areDimensionsNotEqual } from "../utils/measureLayout";
+import { ErrorMessages } from "../../errors/ErrorMessages";
 
 /**
  * Base abstract class for layout managers in the recycler view system.
@@ -224,7 +225,7 @@ export abstract class RVLayoutManager {
    */
   getLayout(index: number): RVLayout {
     if (index >= this.layouts.length) {
-      throw new Error("index out of bounds, not enough layouts");
+      throw new Error(ErrorMessages.indexOutOfBounds);
     }
     let layout = this.layouts[index];
     if (!layout) {

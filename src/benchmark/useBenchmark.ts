@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
 import { FlashListRef } from "../FlashListRef";
+import { ErrorMessages } from "../errors/ErrorMessages";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor, JSFPSResult } from "./JSFPSMonitor";
@@ -48,7 +49,7 @@ export function useBenchmark(
     const suggestions: string[] = [];
     if (flashListRef.current) {
       if (!(Number(flashListRef.current.props.data?.length) > 0)) {
-        throw new Error("Data is empty, cannot run benchmark");
+        throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
       }
     }
     const cancelTimeout = setTimeout(async () => {
