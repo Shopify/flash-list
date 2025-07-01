@@ -21,6 +21,7 @@ import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
 import { RVLayout } from "../layout-managers/LayoutManager";
 import { ScrollAnchorRef } from "../components/ScrollAnchor";
 import { PlatformConfig } from "../../native/config/PlatformHelper";
+import { WarningMessages } from "../../errors/WarningMessages";
 
 import { useUnmountFlag } from "./useUnmountFlag";
 import { useUnmountAwareTimeout } from "./useUnmountAwareCallbacks";
@@ -549,9 +550,7 @@ export function useRecyclerViewController<T>(
        */
       prepareForLayoutAnimationRender: () => {
         if (!recyclerViewManager.props.keyExtractor) {
-          console.warn(
-            "keyExtractor is not defined. This might cause the animations to not work as expected."
-          );
+          console.warn(WarningMessages.keyExtractorNotDefinedForAnimation);
         }
         recyclerViewManager.animationOptimizationsEnabled = true;
       },

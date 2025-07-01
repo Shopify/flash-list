@@ -1,3 +1,5 @@
+import { ErrorMessages } from "../errors/ErrorMessages";
+
 import ViewabilityManager from "./viewability/ViewabilityManager";
 import { ConsecutiveNumbers } from "./helpers/ConsecutiveNumbers";
 import { RVGridLayoutManagerImpl } from "./layout-managers/GridLayoutManager";
@@ -130,9 +132,7 @@ export class RecyclerViewManager<T> {
 
   getLayout(index: number) {
     if (!this.layoutManager) {
-      throw new Error(
-        "LayoutManager is not initialized, layout info is unavailable"
-      );
+      throw new Error(ErrorMessages.layoutManagerNotInitializedLayoutInfo);
     }
     return this.layoutManager.getLayout(index);
   }
@@ -151,9 +151,7 @@ export class RecyclerViewManager<T> {
   // Doesn't include header / foot etc
   getChildContainerDimensions() {
     if (!this.layoutManager) {
-      throw new Error(
-        "LayoutManager is not initialized, child container layout is unavailable"
-      );
+      throw new Error(ErrorMessages.layoutManagerNotInitializedChildContainer);
     }
     return this.layoutManager.getLayoutSize();
   }
@@ -164,9 +162,7 @@ export class RecyclerViewManager<T> {
 
   getWindowSize() {
     if (!this.layoutManager) {
-      throw new Error(
-        "LayoutManager is not initialized, window size is unavailable"
-      );
+      throw new Error(ErrorMessages.layoutManagerNotInitializedWindowSize);
     }
     return this.layoutManager.getWindowsSize();
   }
@@ -210,9 +206,7 @@ export class RecyclerViewManager<T> {
       Boolean(this.layoutManager?.isHorizontal()) !==
         Boolean(this.propsRef.horizontal)
     ) {
-      throw new Error(
-        "Horizontal prop cannot be toggled, you can use a key on FlashList to recreate it."
-      );
+      throw new Error(ErrorMessages.horizontalPropCannotBeToggled);
     }
     if (this._isLayoutManagerDirty) {
       this.layoutManager = undefined;
@@ -244,9 +238,7 @@ export class RecyclerViewManager<T> {
 
   computeVisibleIndices() {
     if (!this.layoutManager) {
-      throw new Error(
-        "LayoutManager is not initialized, visible indices are not unavailable"
-      );
+      throw new Error(ErrorMessages.layoutManagerNotInitializedVisibleIndices);
     }
     return this.engagedIndicesTracker.computeVisibleIndices(this.layoutManager);
   }
@@ -359,10 +351,10 @@ export class RecyclerViewManager<T> {
   private getLayoutManagerClass() {
     // throw errors for incompatible props
     if (this.propsRef.masonry && this.propsRef.horizontal) {
-      throw new Error("Masonry and horizontal props are incompatible");
+      throw new Error(ErrorMessages.masonryAndHorizontalIncompatible);
     }
     if (this.numColumns > 1 && this.propsRef.horizontal) {
-      throw new Error("numColumns and horizontal props are incompatible");
+      throw new Error(ErrorMessages.numColumnsAndHorizontalIncompatible);
     }
     return this.propsRef.masonry
       ? RVMasonryLayoutManagerImpl

@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { FlatList } from "react-native";
 
+import { ErrorMessages } from "../errors/ErrorMessages";
+
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor } from "./JSFPSMonitor";
 import {
@@ -27,7 +29,7 @@ export function useFlatListBenchmark(
     const cancellable = new Cancellable();
     if (flatListRef.current && flatListRef.current.props) {
       if (!(Number(flatListRef.current.props.data?.length) > 0)) {
-        throw new Error("Data is empty, cannot run benchmark");
+        throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
       }
     }
     const cancelTimeout = setTimeout(async () => {
