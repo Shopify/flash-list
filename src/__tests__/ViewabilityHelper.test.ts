@@ -1,7 +1,9 @@
-import { Dimension, Layout } from "recyclerlistview";
-
 import ViewabilityHelper from "../recyclerview/viewability/ViewabilityHelper";
 import { ErrorMessages } from "../errors/ErrorMessages";
+import {
+  RVDimension,
+  RVLayout,
+} from "../recyclerview/layout-managers/LayoutManager";
 
 describe("ViewabilityHelper", () => {
   const viewableIndicesChanged = jest.fn();
@@ -60,7 +62,7 @@ describe("ViewabilityHelper", () => {
     );
     viewabilityHelper.possiblyViewableIndices = [0, 1, 2, 3];
     const getLayout = (index: number) => {
-      return { x: index * 100, y: 0, height: 300, width: 100 } as Layout;
+      return { x: index * 100, y: 0, height: 300, width: 100 } as RVLayout;
     };
     updateViewableItems({ viewabilityHelper, horizontal: true, getLayout });
     expect(viewableIndicesChanged).toHaveBeenCalledWith(
@@ -159,9 +161,9 @@ describe("ViewabilityHelper", () => {
   it("reports items that only satisfy viewAreaCoveragePercentThreshold", () => {
     const getLayout = (index: number) => {
       if (index === 4) {
-        return { x: 0, y: index * 100, width: 100, height: 25 } as Layout;
+        return { x: 0, y: index * 100, width: 100, height: 25 } as RVLayout;
       }
-      return { x: 0, y: index * 100, height: 100, width: 300 } as Layout;
+      return { x: 0, y: index * 100, height: 100, width: 300 } as RVLayout;
     };
     const viewabilityHelper = new ViewabilityHelper(
       { viewAreaCoveragePercentThreshold: 25 },
@@ -260,8 +262,8 @@ describe("ViewabilityHelper", () => {
     viewabilityHelper: ViewabilityHelper;
     horizontal?: boolean;
     scrollOffset?: number;
-    listSize?: Dimension;
-    getLayout?: (index: number) => Layout | undefined;
+    listSize?: RVDimension;
+    getLayout?: (index: number) => RVLayout | undefined;
     runAllTimers?: boolean;
   }) => {
     viewabilityHelper.updateViewableItems(
@@ -270,7 +272,7 @@ describe("ViewabilityHelper", () => {
       listSize ?? { height: 300, width: 300 },
       getLayout ??
         ((index) => {
-          return { x: 0, y: index * 100, height: 100, width: 300 } as Layout;
+          return { x: 0, y: index * 100, height: 100, width: 300 } as RVLayout;
         })
     );
     if (runAllTimers ?? true) {
