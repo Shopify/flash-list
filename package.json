@@ -28,7 +28,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "up": "bundle install && yarn fixture:rn:up && yarn e2e:up && yarn build",
+    "up": "yarn && yarn fixture:rn:up && yarn e2e:up && yarn build",
     "start": "cd fixture/react-native && react-native start",
     "test": "jest",
     "lint": "yarn eslint . --ext .ts,.tsx",
@@ -86,13 +86,5 @@
     "src",
     "jestSetup.js"
   ],
-  "dependencies": {
-    "recyclerlistview": "4.2.3",
-    "tslib": "2.8.1"
-  },
-  "codegenConfig": {
-    "name": "rnflashlist",
-    "type": "components",
-    "jsSrcsDir": "./src/specs"
-  }
+  "dependencies": {}
 }
