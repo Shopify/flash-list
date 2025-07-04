@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from "react";
-import { RecyclerListView, RecyclerListViewProps } from "recyclerlistview";
 
 import { BlankAreaEvent } from "../native/auto-layout/AutoLayoutView";
 import FlashList from "../FlashList";
@@ -61,18 +60,13 @@ export function useBlankAreaTracker(
         }
         return;
       }
-      const rlv = flashListRef.current?.recyclerlistview_unsafe;
-      const horizontal = Boolean(flashListRef.current?.props.horizontal);
-      if (rlv) {
-        processBlankAreaChange(
-          rlv,
-          horizontal,
-          blankAreaResult,
-          event,
-          onBlankAreaChangeRef.current,
-          config
-        );
-      }
+      processBlankAreaChange(
+        flashListRef.current,
+        blankAreaResult,
+        event,
+        onBlankAreaChangeRef.current,
+        config
+      );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [flashListRef]
@@ -81,19 +75,19 @@ export function useBlankAreaTracker(
 }
 
 function processBlankAreaChange(
-  rlv: RecyclerListView<RecyclerListViewProps, any>,
-  horizontal: boolean,
+  ref: FlashList<any> | null,
   blankAreaResult: BlankAreaTrackerResult,
   event: BlankAreaEvent,
   onBlankAreaChange?: (value: BlankAreaTrackerResult) => void,
   config?: BlankAreaTrackerConfig
 ) {
+  const horizontal = Boolean(ref?.props.horizontal);
   const listSize = horizontal
-    ? rlv.getRenderedSize().width
-    : rlv.getRenderedSize().height;
+    ? ref?.getWindowSize()?.width ?? 0
+    : ref?.getWindowSize()?.height ?? 0;
   const contentSize = horizontal
-    ? rlv.getContentDimension().width
-    : rlv.getContentDimension().height;
+    ? ref?.getChildContainerDimensions()?.width ?? 0
+    : ref?.getChildContainerDimensions()?.height ?? 0;
 
   // ignores blank events when there isn't enough content to fill the list
   if (contentSize > listSize) {
