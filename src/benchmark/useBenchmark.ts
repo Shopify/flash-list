@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 
 import FlashList from "../FlashList";
 
@@ -28,6 +28,12 @@ export interface BenchmarkParams {
    * Blank area is negative when list is able to draw faster than the scroll speed.
    */
   sumNegativeBlankAreaValues?: boolean;
+
+  /**
+   * When set to true, the benchmark will not start automatically.
+   * Use the returned startBenchmark function to trigger it manually.
+   */
+  startManually?: boolean;
 }
 
 export interface BenchmarkResult {
@@ -54,15 +60,27 @@ export function useBenchmark(
     undefined,
     { sumNegativeValues: params.sumNegativeBlankAreaValues, startDelayInMs: 0 }
   );
-  useEffect(() => {
+  const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(false);
+  const cancellableRef = useRef<Cancellable | null>(null);
+
+  const startBenchmark = useCallback(() => {
+    if (isBenchmarkRunning) {
+      return;
+    }
+
     const cancellable = new Cancellable();
+    cancellableRef.current = cancellable;
     const suggestions: string[] = [];
+
     if (flashListRef.current) {
       if (!(Number(flashListRef.current.props.data?.length) > 0)) {
         throw new Error("Data is empty, cannot run benchmark");
       }
     }
-    const cancelTimeout = setTimeout(async () => {
+
+    setIsBenchmarkRunning(true);
+
+    const runBenchmark = async () => {
       const jsFPSMonitor = new JSFPSMonitor();
       jsFPSMonitor.startTracking();
       for (let i = 0; i < (params.repeatCount || 1); i++) {
@@ -89,14 +107,38 @@ export function useBenchmark(
         result.formattedString = getFormattedString(result);
       }
       callback(result);
+      setIsBenchmarkRunning(false);
+    };
+
+    runBenchmark();
+  }, [
+    blankAreaResult,
+    callback,
+    flashListRef,
+    isBenchmarkRunning,
+    params.repeatCount,
+    params.speedMultiplier,
+  ]);
+
+  useEffect(() => {
+    if (params.startManually) {
+      return;
+    }
+
+    const cancelTimeout = setTimeout(() => {
+      startBenchmark();
     }, params.startDelayInMs || 3000);
+
     return () => {
       clearTimeout(cancelTimeout);
-      cancellable.cancel();
+      if (cancellableRef.current) {
+        cancellableRef.current.cancel();
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return [blankAreaTracker];
+
+  return [blankAreaTracker, { startBenchmark, isBenchmarkRunning }] as const;
 }
 
 export function getFormattedString(res: BenchmarkResult) {
@@ -151,15 +193,14 @@ async function runScrollBenchmark(
 ): Promise<void> {
   if (flashListRef.current) {
     const horizontal = flashListRef.current.props.horizontal;
-    const rlv = flashListRef.current.recyclerlistview_unsafe;
-    if (rlv) {
-      const rlvSize = rlv.getRenderedSize();
-      const rlvContentSize = rlv.getContentDimension();
+    const windowSize = flashListRef.current.getWindowSize();
+    const contentSize = flashListRef.current.getChildContainerDimensions();
 
+    if (windowSize && contentSize) {
       const fromX = 0;
       const fromY = 0;
-      const toX = rlvContentSize.width - rlvSize.width;
-      const toY = rlvContentSize.height - rlvSize.height;
+      const toX = contentSize.width - windowSize.width;
+      const toY = contentSize.height - windowSize.height;
 
       const scrollNow = (x: number, y: number) => {
         flashListRef.current?.scrollToOffset({
