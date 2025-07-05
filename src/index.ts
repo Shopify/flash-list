@@ -54,6 +54,10 @@ export { default as CellContainer } from "./native/cell-container/CellContainer"
 export { RecyclerView } from "./recyclerview/RecyclerView";
 export { RecyclerViewProps } from "./recyclerview/RecyclerViewProps";
 export { useFlashListContext } from "./recyclerview/RecyclerViewContextProvider";
+export {
+  LayoutCommitObserver,
+  LayoutCommitObserverProps,
+} from "./recyclerview/LayoutCommitObserver";
 
 // @ts-ignore - This is ignored by TypeScript but will be present in the compiled JS
 // In the compiled JS, this will override the previous FlashList export with a conditional one
