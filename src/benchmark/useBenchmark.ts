@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 
 import { FlashListRef } from "../FlashListRef";
 import { ErrorMessages } from "../errors/ErrorMessages";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor, JSFPSResult } from "./JSFPSMonitor";
+import { useBlankAreaTracker } from "./useBlankAreaTracker";
 
 export interface BenchmarkParams {
   startDelayInMs?: number;
@@ -24,6 +25,12 @@ export interface BenchmarkParams {
    * Blank area is negative when list is able to draw faster than the scroll speed.
    */
   sumNegativeBlankAreaValues?: boolean;
+
+  /**
+   * When set to true, the benchmark will not start automatically.
+   * Use the returned startBenchmark function to trigger it manually.
+   */
+  startManually?: boolean;
 }
 
 export interface BenchmarkResult {
@@ -44,15 +51,33 @@ export function useBenchmark(
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
-  useEffect(() => {
+  const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker(
+    flashListRef,
+    undefined,
+    { sumNegativeValues: params.sumNegativeBlankAreaValues, startDelayInMs: 0 }
+  );
+
+  const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(false);
+  const cancellableRef = useRef<Cancellable | null>(null);
+
+  const startBenchmark = useCallback(() => {
+    if (isBenchmarkRunning) {
+      return;
+    }
+
     const cancellable = new Cancellable();
+    cancellableRef.current = cancellable;
     const suggestions: string[] = [];
+
     if (flashListRef.current) {
       if (!(Number(flashListRef.current.props.data?.length) > 0)) {
         throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
       }
     }
-    const cancelTimeout = setTimeout(async () => {
+
+    setIsBenchmarkRunning(true);
+
+    const runBenchmark = async () => {
       const jsFPSMonitor = new JSFPSMonitor();
       jsFPSMonitor.startTracking();
       for (let i = 0; i < (params.repeatCount || 1); i++) {
@@ -78,13 +103,37 @@ export function useBenchmark(
         result.formattedString = getFormattedString(result);
       }
       callback(result);
+      setIsBenchmarkRunning(false);
+    };
+
+    runBenchmark();
+  }, [
+    callback,
+    flashListRef,
+    isBenchmarkRunning,
+    params.repeatCount,
+    params.speedMultiplier,
+  ]);
+
+  useEffect(() => {
+    if (params.startManually) {
+      return;
+    }
+
+    const cancelTimeout = setTimeout(() => {
+      startBenchmark();
     }, params.startDelayInMs || 3000);
+
     return () => {
       clearTimeout(cancelTimeout);
-      cancellable.cancel();
+      if (cancellableRef.current) {
+        cancellableRef.current.cancel();
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  return [blankAreaTracker, { startBenchmark, isBenchmarkRunning }] as const;
 }
 
 export function getFormattedString(res: BenchmarkResult) {
@@ -128,39 +177,42 @@ async function runScrollBenchmark(
       const rvSize = rv.getWindowSize();
       const rvContentSize = rv.getChildContainerDimensions();
 
-      const fromX = 0;
-      const fromY = 0;
-      const toX = rvContentSize.width - rvSize.width;
-      const toY = rvContentSize.height - rvSize.height;
+      if (rvSize && rvContentSize) {
+        const fromX = 0;
+        const fromY = 0;
+        const toX = rvContentSize.width - rvSize.width;
+        const toY = rvContentSize.height - rvSize.height;
 
-      const scrollNow = (x: number, y: number) => {
-        flashListRef.current?.scrollToOffset({
-          offset: horizontal ? x : y,
-          animated: false,
-        });
-      };
+        const scrollNow = (x: number, y: number) => {
+          flashListRef.current?.scrollToOffset({
+            offset: horizontal ? x : y,
+            animated: false,
+          });
+        };
 
-      await autoScroll(
-        scrollNow,
-        fromX,
-        fromY,
-        toX,
-        toY,
-        scrollSpeedMultiplier,
-        cancellable
-      );
-      await autoScroll(
-        scrollNow,
-        toX,
-        toY,
-        fromX,
-        fromY,
-        scrollSpeedMultiplier,
-        cancellable
-      );
+        await autoScroll(
+          scrollNow,
+          fromX,
+          fromY,
+          toX,
+          toY,
+          scrollSpeedMultiplier,
+          cancellable
+        );
+        await autoScroll(
+          scrollNow,
+          toX,
+          toY,
+          fromX,
+          fromY,
+          scrollSpeedMultiplier,
+          cancellable
+        );
+      }
     }
   }
 }
+
 function computeSuggestions(
   flashListRef: React.RefObject<FlashListRef<any> | null | undefined>,
   suggestions: string[]
