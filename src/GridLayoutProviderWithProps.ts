@@ -131,7 +131,7 @@ export default class GridLayoutProviderWithProps<T> extends GridLayoutProvider {
         (this.props.horizontal
           ? renderWindowSize.width
           : renderWindowSize.height) /
-          (this.props.estimatedItemSize ?? this.defaultEstimatedItemSize)
+          (this.props.estimatedItemSize || this.defaultEstimatedItemSize)
       )
     );
     this.averageWindow = new AverageWindow(
