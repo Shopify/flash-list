@@ -298,7 +298,7 @@ export class RecyclerViewManager<T> {
   processDataUpdate() {
     if (this.hasLayout()) {
       this.modifyChildrenLayout([], this.propsRef.data?.length ?? 0);
-      if (!this.recomputeEngagedIndices()) {
+      if (this.hasRenderedProgressively && !this.recomputeEngagedIndices()) {
         // recomputeEngagedIndices will update the render stack if there are any changes in the engaged indices.
         // It's important to update render stack so that elements are assgined right keys incase items were deleted.
         this.updateRenderStack(this.engagedIndicesTracker.getEngagedIndices());
