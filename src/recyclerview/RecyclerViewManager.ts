@@ -20,13 +20,14 @@ import {
 import { RenderStackManager } from "./RenderStackManager";
 // Abstracts layout manager, render stack manager and viewability manager and generates render stack (progressively on load)
 export class RecyclerViewManager<T> {
-  private initialDrawBatchSize = 1;
+  private initialDrawBatchSize = 2;
   private engagedIndicesTracker: RVEngagedIndicesTracker;
   private renderStackManager: RenderStackManager;
   private layoutManager?: RVLayoutManager;
   // Map of index to key
   private isFirstLayoutComplete = false;
   private hasRenderedProgressively = false;
+  private progressiveRenderCount = 0;
   private propsRef: RecyclerViewProps<T>;
   private itemViewabilityManager: ViewabilityManager<T>;
   private _isDisposed = false;
@@ -51,6 +52,10 @@ export class RecyclerViewManager<T> {
 
   public get isDisposed() {
     return this._isDisposed;
+  }
+
+  public get numColumns() {
+    return this.propsRef.numColumns ?? 1;
   }
 
   constructor(props: RecyclerViewProps<T>) {
@@ -87,11 +92,6 @@ export class RecyclerViewManager<T> {
     this.propsRef = props;
     this.engagedIndicesTracker.drawDistance =
       props.drawDistance ?? this.engagedIndicesTracker.drawDistance;
-    if (this.propsRef.drawDistance === 0) {
-      this.initialDrawBatchSize = 1;
-    } else {
-      this.initialDrawBatchSize = (props.numColumns ?? 1) * 2;
-    }
     this.initialDrawBatchSize =
       this.propsRef.overrideProps?.initialDrawBatchSize ??
       this.initialDrawBatchSize;
@@ -221,7 +221,7 @@ export class RecyclerViewManager<T> {
     }
     const layoutManagerParams: LayoutParams = {
       windowSize,
-      maxColumns: this.propsRef.numColumns ?? 1,
+      maxColumns: this.numColumns,
       horizontal: Boolean(this.propsRef.horizontal),
       optimizeItemArrangement: this.propsRef.optimizeItemArrangement ?? true,
       overrideItemLayout: this.overrideItemLayout,
@@ -362,12 +362,12 @@ export class RecyclerViewManager<T> {
     if (this.propsRef.masonry && this.propsRef.horizontal) {
       throw new Error("Masonry and horizontal props are incompatible");
     }
-    if ((this.propsRef.numColumns ?? 1) > 1 && this.propsRef.horizontal) {
+    if (this.numColumns > 1 && this.propsRef.horizontal) {
       throw new Error("numColumns and horizontal props are incompatible");
     }
     return this.propsRef.masonry
       ? RVMasonryLayoutManagerImpl
-      : (this.propsRef.numColumns ?? 1) > 1 && !this.propsRef.horizontal
+      : this.numColumns > 1 && !this.propsRef.horizontal
       ? RVGridLayoutManagerImpl
       : RVLinearLayoutManagerImpl;
   }
@@ -403,6 +403,7 @@ export class RecyclerViewManager<T> {
   }
 
   private renderProgressively() {
+    this.progressiveRenderCount++;
     const layoutManager = this.layoutManager;
     if (layoutManager) {
       this.applyInitialScrollAdjustment();
@@ -418,16 +419,20 @@ export class RecyclerViewManager<T> {
         this.isFirstLayoutComplete = true;
       }
 
+      const batchSize =
+        this.numColumns *
+        this.initialDrawBatchSize ** Math.ceil(this.progressiveRenderCount / 5);
+
       // If everything is measured then render stack will be in sync. The buffer items will get rendered in the next update
       // triggered by the useOnLoad hook.
       !this.hasRenderedProgressively &&
         this.updateRenderStack(
-          // pick first n indices from visible ones and n is size of renderStack
+          // pick first n indices from visible ones based on batch size
           visibleIndices.slice(
             0,
             Math.min(
               visibleIndices.length,
-              this.getRenderStack().size + this.initialDrawBatchSize
+              this.getRenderStack().size + batchSize
             )
           )
         );
@@ -446,7 +451,7 @@ export class RecyclerViewManager<T> {
       layout,
       this.propsRef.data![index],
       index,
-      this.propsRef.numColumns ?? 1,
+      this.numColumns,
       this.propsRef.extraData
     );
   }
