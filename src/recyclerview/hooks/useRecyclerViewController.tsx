@@ -90,10 +90,9 @@ export function useRecyclerViewController<T>(
   );
 
   const computeFirstVisibleIndexForOffsetCorrection = useCallback(() => {
-    const { data, keyExtractor } = recyclerViewManager.props;
     if (
       recyclerViewManager.getIsFirstLayoutComplete() &&
-      keyExtractor &&
+      recyclerViewManager.hasStableDataKeys() &&
       recyclerViewManager.getDataLength() > 0 &&
       recyclerViewManager.shouldMaintainVisibleContentPosition()
     ) {
@@ -103,10 +102,8 @@ export function useRecyclerViewController<T>(
         recyclerViewManager.computeVisibleIndices().startIndex
       );
       if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
-        firstVisibleItemKey.current = keyExtractor(
-          data![firstVisibleIndex],
-          firstVisibleIndex
-        );
+        firstVisibleItemKey.current =
+          recyclerViewManager.getDataKey(firstVisibleIndex);
         firstVisibleItemLayout.current = {
           ...recyclerViewManager.getLayout(firstVisibleIndex),
         };
@@ -120,7 +117,7 @@ export function useRecyclerViewController<T>(
    * the user's current view position when new messages are added.
    */
   const applyOffsetCorrection = useCallback(() => {
-    const { horizontal, data, keyExtractor } = recyclerViewManager.props;
+    const { horizontal, data } = recyclerViewManager.props;
 
     // Execute all pending callbacks from previous scroll offset updates
     // This ensures any scroll operations that were waiting for render are completed
@@ -132,7 +129,7 @@ export function useRecyclerViewController<T>(
 
     if (
       recyclerViewManager.getIsFirstLayoutComplete() &&
-      keyExtractor &&
+      recyclerViewManager.hasStableDataKeys() &&
       currentDataLength > 0 &&
       recyclerViewManager.shouldMaintainVisibleContentPosition()
     ) {
@@ -144,13 +141,14 @@ export function useRecyclerViewController<T>(
             .getEngagedIndices()
             .findValue(
               (index) =>
-                keyExtractor?.(data![index], index) ===
+                recyclerViewManager.getDataKey(index) ===
                 firstVisibleItemKey.current
             ) ??
           (hasDataChanged
             ? data?.findIndex(
                 (item, index) =>
-                  keyExtractor?.(item, index) === firstVisibleItemKey.current
+                  recyclerViewManager.getDataKey(index) ===
+                  firstVisibleItemKey.current
               )
             : undefined);
 

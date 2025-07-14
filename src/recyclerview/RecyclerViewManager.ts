@@ -54,7 +54,7 @@ export class RecyclerViewManager<T> {
   }
 
   constructor(props: RecyclerViewProps<T>) {
-    this.getStableId = this.getStableId.bind(this);
+    this.getDataKey = this.getDataKey.bind(this);
     this.getItemType = this.getItemType.bind(this);
     this.overrideItemLayout = this.overrideItemLayout.bind(this);
     this.propsRef = props;
@@ -68,7 +68,7 @@ export class RecyclerViewManager<T> {
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
   private updateRenderStack = (engagedIndices: ConsecutiveNumbers): void => {
     this.renderStackManager.sync(
-      this.getStableId,
+      this.getDataKey,
       this.getItemType,
       engagedIndices,
       this.getDataLength()
@@ -346,6 +346,17 @@ export class RecyclerViewManager<T> {
     return this.propsRef.data?.length ?? 0;
   }
 
+  hasStableDataKeys() {
+    return Boolean(this.propsRef.keyExtractor);
+  }
+
+  getDataKey(index: number): string {
+    return (
+      this.propsRef.keyExtractor?.(this.propsRef.data![index], index) ??
+      index.toString()
+    );
+  }
+
   private getLayoutManagerClass() {
     // throw errors for incompatible props
     if (this.propsRef.masonry && this.propsRef.horizontal) {
@@ -428,13 +439,6 @@ export class RecyclerViewManager<T> {
       this.propsRef.getItemType?.(this.propsRef.data![index], index) ??
       "default"
     ).toString();
-  }
-
-  private getStableId(index: number): string {
-    return (
-      this.propsRef.keyExtractor?.(this.propsRef.data![index], index) ??
-      index.toString()
-    );
   }
 
   private overrideItemLayout(index: number, layout: SpanSizeInfo) {
