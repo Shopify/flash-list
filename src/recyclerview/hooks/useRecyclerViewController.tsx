@@ -279,10 +279,13 @@ export function useRecyclerViewController<T>(
       scrollToEnd: async ({ animated }: ScrollToEdgeParams = {}) => {
         const { data } = recyclerViewManager.props;
         if (data && data.length > 0) {
-          await handlerMethods.scrollToIndex({
-            index: data.length - 1,
-            animated,
-          });
+          const lastIndex = data.length - 1;
+          if (!recyclerViewManager.getEngagedIndices().includes(lastIndex)) {
+            await handlerMethods.scrollToIndex({
+              index: lastIndex,
+              animated,
+            });
+          }
         }
         setTimeout(() => {
           scrollViewRef.current!.scrollToEnd({ animated });
