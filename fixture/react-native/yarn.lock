@@ -2306,8 +2306,10 @@
     color "^4.2.3"
 
 "@shopify/flash-list@link:../..":
-  version "0.0.0"
-  uid ""
+  version "2.0.0-alpha.21"
+  dependencies:
+    recyclerlistview "4.2.3"
+    tslib "2.8.1"
 
 "@sideway/address@^4.1.3":
   version "4.1.3"
@@ -2616,18 +2618,19 @@
   resolved "https://registry.yarnpkg.com/@vscode/sudo-prompt/-/sudo-prompt-9.3.1.tgz#c562334bc6647733649fd42afc96c0eea8de3b65"
   integrity sha512-9ORTwwS74VaTn38tNbQhsA5U44zkJfcb0BdTSyyG6frP4e8KMtHuTXYmwefe5dpL8XB1aGSIVTaLjD3BbWb5iA==
 
-"@wix-pilot/core@^3.2.2":
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/@wix-pilot/core/-/core-3.2.4.tgz#049033436b39acfedef54e140e6b964afd41d938"
-  integrity sha512-OOzR9QnYTYv/wJtfdni/7gAPeTGcvFDvnUquTO/ZdmrffBiRxwuHHEd31zyioG6zQH0BflR9uHt57Bfr9KB6mA==
+"@wix-pilot/core@^3.4.1":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@wix-pilot/core/-/core-3.4.1.tgz#434c8db3a9b85f03aa44d316c090fda5575afcd0"
+  integrity sha512-9WvI+FuDYQ1IJsyHRfZphehlbOXIOswlxowwJZ0FlUaebGhR78T61qY1e532HHlJfKyuIu1IwdSQ2tg5L+hUhg==
   dependencies:
+    chalk "^4.1.0"
     pngjs "^7.0.0"
     winston "^3.17.0"
 
-"@wix-pilot/detox@^1.0.11":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@wix-pilot/detox/-/detox-1.0.11.tgz#d21fc93f46980d36643413a58675cc77a276513f"
-  integrity sha512-oCeYz7EhcWOyp0KbaJ3hipMbZ+nWuZ7Pvjno3sUzP1EebrZBZoRoDp16JZMR6H+i+h8OdqkrviI0mR2mYFZzMg==
+"@wix-pilot/detox@^1.0.13":
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/@wix-pilot/detox/-/detox-1.0.13.tgz#f7f6e27394ab04d5a9e91b35cdcb087be3682db0"
+  integrity sha512-/34lM25AfmHNMLOeEIhfKVnx2YZyn5VHC/R4Bs1uXQ2B+Yg0JbxAfvfXA3xqxBsdYqrYImILPO3Ih0c5UzoNxw==
 
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
@@ -3643,13 +3646,13 @@ detect-newline@^3.0.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-3.1.0.tgz#576f5dfc63ae1a192ff192d8ad3af6308991b651"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
 
-detox@^20.36.4:
-  version "20.36.4"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-20.36.4.tgz#7ac3da7717bd688c46a7c9c61d2e1cb69f8bc909"
-  integrity sha512-2BZdxCXOJu0TzrxGKHZFRmPy7vNBQCOF9hhr0C+8BmaBBfRwWqpj5hvZD3AM1yTx89gR8iEj6j90MTDgT6EehQ==
+detox@^20.40.2:
+  version "20.40.2"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-20.40.2.tgz#4fd56ea0f3cbae25eb17d6b20b255a42b47830ed"
+  integrity sha512-gb9o8Gg5yVd2+xjVLDb5IbS4tg96r9nX/MNCgHqYMUxKcW49oOMlGcodp+f6w29x8HLEn1aKdwGYXEPl9xNZHw==
   dependencies:
-    "@wix-pilot/core" "^3.2.2"
-    "@wix-pilot/detox" "^1.0.11"
+    "@wix-pilot/core" "^3.4.1"
+    "@wix-pilot/detox" "^1.0.13"
     ajv "^8.6.3"
     bunyan "^1.8.12"
     bunyan-debug-stream "^3.1.0"
@@ -3661,7 +3664,7 @@ detox@^20.36.4:
     funpermaproxy "^1.1.0"
     glob "^8.0.3"
     ini "^1.3.4"
-    jest-environment-emit "^1.0.8"
+    jest-environment-emit "^1.2.0"
     json-cycle "^1.3.0"
     lodash "^4.17.11"
     multi-sort-stream "^1.0.3"
@@ -3678,7 +3681,7 @@ detox@^20.36.4:
     stream-json "^1.7.4"
     strip-ansi "^6.0.1"
     telnet-client "1.2.8"
-    tempfile "^2.0.0"
+    tmp "^0.2.1"
     trace-event-lib "^1.3.1"
     which "^1.3.1"
     ws "^7.0.0"
@@ -5185,10 +5188,10 @@ jest-each@^29.7.0:
     jest-util "^29.7.0"
     pretty-format "^29.7.0"
 
-jest-environment-emit@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/jest-environment-emit/-/jest-environment-emit-1.0.8.tgz#ab0dad2c1dd04d3ca092762a99080607b0eef10b"
-  integrity sha512-WNqvxBLH0yNojHJQ99Y21963aT7UTavxV3PgiBQFi8zwrlnKU6HvkB6LOvQrbk5I8mI8JEKvcoOrQOvBVMLIXQ==
+jest-environment-emit@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jest-environment-emit/-/jest-environment-emit-1.2.0.tgz#c7334b0d16ec28439cd4a0a641a68e7ae918bb15"
+  integrity sha512-dSFBrRuIiWbHK2LSUA6CutXpMcNGjjuhvxFLF+TVz5tYFAAH0eesrZgrQ3UtOptajDYNt/fIGRqtlHqGq/bLbA==
   dependencies:
     bunyamin "^1.5.2"
     bunyan "^2.0.5"
@@ -7244,12 +7247,7 @@ shebang-regex@^3.0.0:
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
-shell-quote@^1.6.1, shell-quote@^1.7.2:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.3.tgz#aa40edac170445b9a431e17bb62c0b881b9c4123"
-  integrity sha512-Vpfqwm4EnqGdlsBFNmHhxhElJYrdfcxPThu+ryKS5J8L/fhAwLazFZtq+S+TWZ9ANj2piSQLGj6NQg+lKPmxrw==
-
-shell-quote@^1.8.1:
+shell-quote@^1.6.1, shell-quote@^1.7.2, shell-quote@^1.8.1:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.8.2.tgz#d2d83e057959d53ec261311e9e9b8f51dcb2934a"
   integrity sha512-AzqKpGKjrj7EM6rKVQEPpB288oCfnrEIuyoT9cyF4nmGa7V8Zk6f7RRqYisX8X9m+Q7bd632aZW4ky7EhbQztA==
@@ -7616,19 +7614,6 @@ telnet-client@1.2.8:
   dependencies:
     bluebird "^3.5.4"
 
-temp-dir@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/temp-dir/-/temp-dir-1.0.0.tgz#0a7c0ea26d3a39afa7e0ebea9c1fc0bc4daa011d"
-  integrity sha512-xZFXEGbG7SNC3itwBzI3RYjq/cEhBkx2hJuKGIUOcEULmkQExXiHat2z/qkISYsuR+IKumhEfKKbV5qXmhICFQ==
-
-tempfile@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/tempfile/-/tempfile-2.0.0.tgz#6b0446856a9b1114d1856ffcbe509cccb0977265"
-  integrity sha512-ZOn6nJUgvgC09+doCEF3oB+r3ag7kUvlsXEGX069QRD60p+P3uP7XG9N2/at+EyIRGSN//ZY3LyEotA1YpmjuA==
-  dependencies:
-    temp-dir "^1.0.0"
-    uuid "^3.0.1"
-
 terser@^5.15.0:
   version "5.28.1"
   resolved "https://registry.yarnpkg.com/terser/-/terser-5.28.1.tgz#bf00f7537fd3a798c352c2d67d67d65c915d1b28"
@@ -7664,6 +7649,11 @@ tmp@^0.0.33:
   integrity sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==
   dependencies:
     os-tmpdir "~1.0.2"
+
+tmp@^0.2.1:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.2.3.tgz#eb783cc22bc1e8bebd0671476d46ea4eb32a79ae"
+  integrity sha512-nZD7m9iCPC5g0pYmcaxogYKggSfLsdxl8of3Q/oIbqCqLLIO9IAF0GWjX1z9NZRHPiXv8Wex4yDCaZsgEw0Y8w==
 
 tmpl@1.0.5:
   version "1.0.5"
@@ -7904,11 +7894,6 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@^3.0.1:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
-  integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
-
 v8-to-istanbul@^9.0.1:
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/v8-to-istanbul/-/v8-to-istanbul-9.2.0.tgz#2ed7644a245cddd83d4e087b9b33b3e62dfd10ad"
@@ -8105,12 +8090,7 @@ ws@^6.2.3:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^7, ws@^7.0.0:
-  version "7.5.9"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.9.tgz#54fa7db29f4c7cec68b1ddd3a89de099942bb591"
-  integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==
-
-ws@^7.5.10:
+ws@^7, ws@^7.0.0, ws@^7.5.10:
   version "7.5.10"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.10.tgz#58b5c20dc281633f6c19113f39b349bd8bd558d9"
   integrity sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==
