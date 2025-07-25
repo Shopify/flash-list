@@ -177,7 +177,7 @@ A component that observes when FlashList commits a layout. This is particularly 
 
 Read more [here.](./fundamentals/layout-commit-observer.md)
 
-## Deprecated (will be removed after alpha/beta)
+## Deprecated
 
 - `estimatedItemSize`: No longer used.
 - `estimatedListSize`: No longer used.

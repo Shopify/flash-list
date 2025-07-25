@@ -32,7 +32,7 @@ const Item = ({ item }: { item: { id: string } }) => {
 };
 
 const MyList = () => {
-  return <FlashList renderItem={Item} estimatedItemSize={100} />;
+  return <FlashList renderItem={Item} />;
 };
 ```
 

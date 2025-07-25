@@ -37,16 +37,8 @@ function MyScreen() {
   return (
     <LayoutCommitObserver onCommitLayoutEffect={handleLayoutComplete}>
       <View>
-        <FlashList
-          data={data1}
-          renderItem={renderItem1}
-          estimatedItemSize={50}
-        />
-        <FlashList
-          data={data2}
-          renderItem={renderItem2}
-          estimatedItemSize={100}
-        />
+        <FlashList data={data1} renderItem={renderItem1} />
+        <FlashList data={data2} renderItem={renderItem2} />
       </View>
     </LayoutCommitObserver>
   );
