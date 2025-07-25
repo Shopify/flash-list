@@ -25,31 +25,31 @@ FlashList v2 has been rebuilt from the ground up for RN's new architecture and d
 
 ### 🚀 Superior Performance
 
-- **No more blank cells**: FlashList uses view recycling to ensure smooth scrolling without visible blank areas.
-- **Fast initial render**: Optimized for quick first paint.
-- **Efficient memory usage**: Recycles views instead of destroying them, reducing memory overhead.
-- **Supports view types**: Great performance even if different types of components make up the list.
-- **Dynamic sizes**: Super fast and doesn't need any estimates.
+- No more blank cells: FlashList uses view recycling to ensure smooth scrolling without visible blank areas.
+- Fast initial render: Optimized for quick first paint.
+- Efficient memory usage: Recycles views instead of destroying them, reducing memory overhead.
+- Supports view types: Great performance even if different types of components make up the list.
+- Dynamic sizes: Super fast and doesn't need any estimates.
 
 ### 🎯 Developer Experience
 
-- **Drop-in replacement for FlatList**: Simply change the component name - if you know FlatList, you already know FlashList.
-- **No size estimates required in v2**: Unlike v1, FlashList v2 automatically handles item sizing.
-- **Type-safe**: Full TypeScript support with comprehensive type definitions.
+- Drop-in replacement for FlatList: Simply change the component name - if you know FlatList, you already know FlashList.
+- No size estimates required in v2: Unlike v1, FlashList v2 automatically handles item sizing.
+- Type-safe: Full TypeScript support with comprehensive type definitions.
 
 ### 📱 Advanced Features
 
-- **Masonry layout support**: Create Pinterest-style layouts with varying item heights and column spans.
-- **Maintain visible content position**: Automatically handles content shifts when adding items (enabled by default in v2).
-- **Multiple recycling pools**: Optimizes performance for lists with different item types using `getItemType`.
-- **Built for React Native's new architecture**: FlashList v2 is designed specifically for the new architecture.
+- Masonry layout support: Create Pinterest-style layouts with varying item heights and column spans.
+- Maintain visible content position: Automatically handles content shifts when adding items (enabled by default in v2).
+- Multiple recycling pools: Optimizes performance for lists with different item types using `getItemType`.
+- Built for React Native's new architecture: FlashList v2 is designed specifically for the new architecture.
 
 ### ⚡ Real-world Benefits
 
-- **Reduced frame drops**: Maintains 60 FPS even with complex item components.
-- **Lower CPU usage**: Efficient recycling reduces computational overhead.
-- **Smoother scrolling**: Predictable performance even with thousands of items.
-- **JS-only solution in v2**: No native dependencies, making it easier to maintain while delivering fast performance.
+- Reduced frame drops: Maintains 60 FPS even with complex item components.
+- Lower CPU usage: Efficient recycling reduces computational overhead.
+- Smoother scrolling: Predictable performance even with thousands of items.
+- JS-only solution in v2: No native dependencies, making it easier to maintain while delivering fast performance.
 
 ## Installation
 
@@ -83,7 +83,7 @@ const MyList = () => {
 };
 ```
 
-To avoid common pitfalls, you can also follow these [`steps`](https://shopify.github.io/flash-list/docs/usage#migration-steps). for migrating from `FlatList`.
+To avoid common pitfalls, you can also follow these [`steps`](https://shopify.github.io/flash-list/docs/usage#migration-steps) for migrating from `FlatList`.
 
 ## App / Playground
 
