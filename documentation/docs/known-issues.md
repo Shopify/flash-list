@@ -16,3 +16,7 @@ We have a limitation where we're not able to read the padding applied on the lis
 ### 2) Horizontal Lists with headers
 
 If the horizontal list has a fixed size or header, we assume that the height of the list is fixed. If your use case requires the list to match the size of the items or resize based on tallest child, just skip using the header. You can just render the header as the first item in the list and give it a separate type using `getItemType`.
+
+### 3) Data re-ordering can cause items to move
+
+This is because `maintainVisibleContentPosition` is enabled by default. If you're running into this then you can disable it by setting `maintainVisibleContentPosition={{disabled:true}}`. Having it enabled by default allows us to handle any layout changes while scrolling upwards in a better way like after an orientation change or a large scroll jump to the last item.
