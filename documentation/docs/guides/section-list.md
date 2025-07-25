@@ -98,7 +98,6 @@ const ContactsFlashList = () => {
         // To achieve better performance, specify the type based on the item
         return typeof item === "string" ? "sectionHeader" : "row";
       }}
-      estimatedItemSize={100}
     />
   );
 };
@@ -168,7 +167,6 @@ const ContactsFlashList = () => {
         // To achieve better performance, specify the type based on the item
         return typeof item === "string" ? "sectionHeader" : "row";
       }}
-      estimatedItemSize={100}
     />
   );
 };

@@ -67,7 +67,6 @@ const List = () => {
         return item.toString();
       }}
       renderItem={renderItem}
-      estimatedItemSize={100}
       data={data}
     />
   );

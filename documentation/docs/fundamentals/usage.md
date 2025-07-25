@@ -31,13 +31,22 @@ const MyList = () => {
 };
 ```
 
-To avoid common pitfalls, you can also follow these steps for migrating from `FlatList`, based on our own experiences:
+## Important things to know {#migration-steps}
 
-1. Switch from `FlatList` to `FlashList`.
-2. **Important**: Scan your [`renderItem`](#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you're doing a `.map()` use our hook called [`useMappingHelper`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper).
-3. Check your [`renderItem`](#renderitem) hierarchy for components that make use of `useState` and verify whether that state would need to be reset if a different item is passed to that component (see [Recycling](https://shopify.github.io/flash-list/docs/recycling))
-4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](#getitemtype) prop to improve performance.
-5. Do not test performance with JS dev mode on. Make sure you're in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
+To avoid common pitfalls, you can also follow these steps for migrating from `FlatList`, based on our own experience.
+
+1. Simply change from `FlatList` to `FlashList` and render the list.
+2. **Important**: Scan your [`renderItem`](https://shopify.github.io/flash-list/docs/usage/#renderitem) hierarchy for explicit `key` prop definitions and remove them. If you’re doing a `.map()` use our hook called [`useMappingHelper`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper).
+3. Check your [`renderItem`](https://shopify.github.io/flash-list/docs/usage/#renderitem) hierarchy for components that make use of `useState` and verify whether that state would need to be reset if a different item is passed to that component (see [Recycling](https://shopify.github.io/flash-list/docs/recycling))
+4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](https://shopify.github.io/flash-list/docs/usage/#getitemtype) prop to improve performance.
+5. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
+6. Memoizing props passed to FlashList is more important in v2. v1 was more selective about updating items, but this was often perceived as a bug by developers. We will not follow that approach and will instead allow developers to ensure that props are memoized. We will stop re-renders of children wherever it is obvious.
+
+- `keyExtractor` is important to prevent glitches due to item layout changes when going upwards. We highly recommend having a valid `keyExtractor` with v2.
+- Read about new hooks that simplify recycling and reacting to layout changes: [`useLayoutState`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper), [`useRecyclingState`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper)
+- If you're nesting horizontal FlashLists in vertical lists, we highly recommend the vertical list to be FlashList too. We have optimizations to wait for child layout to complete which can improve load times.
+
+# Props
 
 ### **`renderItem`**
 

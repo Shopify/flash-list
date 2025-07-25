@@ -145,7 +145,7 @@ const MessageItem = ({ item }: { item: Message }) => {
 
 // Rendering the actual messages list
 const MessageList = () => {
-  return <FlashList renderItem={MessageItem} estimatedItemSize={200} />;
+  return <FlashList renderItem={MessageItem} />;
 };
 ```
 
