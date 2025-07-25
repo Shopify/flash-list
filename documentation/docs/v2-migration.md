@@ -124,3 +124,27 @@ If you were using `inverted` prop (common in chat apps), replace it with `mainta
 ```
 
 Note: `getColumnFlex` from MasonryFlashList is not supported in v2.
+
+### Step 6: Update Ref Types
+
+The ref type for FlashList has changed from `FlashList` to `FlashListRef`:
+
+```diff
+// v1
+- import { FlashList } from "@shopify/flash-list";
+- const listRef = useRef<FlashList<ItemType>>(null);
+
+// v2
++ import { FlashList, FlashListRef } from "@shopify/flash-list";
++ const listRef = useRef<FlashListRef<ItemType>>(null);
+
+<FlashList
+  ref={listRef}
+  data={data}
+  renderItem={renderItem}
+/>
+```
+
+### Step 7: Replace CellContainer with View
+
+`CellContainer` is no longer exported in v2. Replace it with React Native's `View`. Apps forwarding custom `CellRendererComponent` might need this change.
