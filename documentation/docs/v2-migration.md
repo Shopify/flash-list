@@ -11,6 +11,7 @@ This guide will help you migrate your existing FlashList v1 implementation to v2
 
 ## Overview of Major Changes
 
+- **New architecture is required** - v2 only works on top of React Native's new architecture
 - **No more size estimates required** - FlashList v2 automatically handles all sizing
 - **Masonry layout is now a prop** - MasonryFlashList component is deprecated
 - **maintainVisibleContentPosition enabled by default** - Better scroll position handling
