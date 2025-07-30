@@ -41,10 +41,9 @@ To avoid common pitfalls, you can also follow these steps for migrating from `Fl
 4. If your list has heterogenous views, pass their types to `FlashList` using [`getItemType`](https://shopify.github.io/flash-list/docs/usage/#getitemtype) prop to improve performance.
 5. Do not test performance with JS dev mode on. Make sure you’re in release mode. `FlashList` can appear slower while in dev mode due to a small render buffer.
 6. Memoizing props passed to FlashList is more important in v2. v1 was more selective about updating items, but this was often perceived as a bug by developers. We will not follow that approach and will instead allow developers to ensure that props are memoized. We will stop re-renders of children wherever it is obvious.
-
-- `keyExtractor` is important to prevent glitches due to item layout changes when going upwards. We highly recommend having a valid `keyExtractor` with v2.
-- Read about new hooks that simplify recycling and reacting to layout changes: [`useLayoutState`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper), [`useRecyclingState`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper)
-- If you're nesting horizontal FlashLists in vertical lists, we highly recommend the vertical list to be FlashList too. We have optimizations to wait for child layout to complete which can improve load times.
+7. `keyExtractor` is important to prevent glitches due to item layout changes when going upwards. We highly recommend having a valid `keyExtractor` with v2.
+8. Read about new hooks that simplify recycling and reacting to layout changes: [`useLayoutState`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper), [`useRecyclingState`](https://shopify.github.io/flash-list/docs/usage/#usemappinghelper)
+9. If you're nesting horizontal FlashLists in vertical lists, we highly recommend the vertical list to be FlashList too. We have optimizations to wait for child layout to complete which can improve load times.
 
 # Props
 
