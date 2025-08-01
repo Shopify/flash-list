@@ -5,7 +5,7 @@ title: React Native Reanimated
 
 [React Native Reanimated](https://www.reanimated2.com/) is an alternative animation library to the [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) API provided by React Native.
 
-We support view animations and most of [layout animations](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/layout_animations/).
+We support view animations and most of [layout animations](https://docs.swmansion.com/react-native-reanimated/docs/layout-animations/layout-transitions/).
 
 ## Layout Animations
 
