@@ -3,9 +3,9 @@ id: reanimated
 title: React Native Reanimated
 ---
 
-[React Native Reanimated](https://www.reanimated2.com/) is an alternative animation library to the [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) API provided by React Native.
+[React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) is an alternative animation library to the [`LayoutAnimation`](https://reactnative.dev/docs/layoutanimation) API provided by React Native.
 
-We support view animations and most of [layout animations](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/layout_animations/).
+We support view animations and most of [layout animations](https://docs.swmansion.com/react-native-reanimated/docs/layout-animations/layout-transitions/).
 
 ## Layout Animations
 
@@ -15,7 +15,7 @@ For layout animations, similarly to the React Native API, you need to call [`pre
 
 ### Usage
 
-You can use hooks such as [`useSharedValue`](https://docs.swmansion.com/react-native-reanimated/docs/api/hooks/useSharedValue) as you would in a normal view. The difference is that since views get recycled, a value can transfer to an unrelated component. You will need to reset such values when a view is recycled - for this, you can pass a prop that uniquely identifies the cell (such as `id` of an item) and run a callback via `useEffect`. You can take inspiration from the following example:
+You can use hooks such as [`useSharedValue`](https://docs.swmansion.com/react-native-reanimated/docs/core/useSharedValue) as you would in a normal view. The difference is that since views get recycled, a value can transfer to an unrelated component. You will need to reset such values when a view is recycled - for this, you can pass a prop that uniquely identifies the cell (such as `id` of an item) and run a callback via `useEffect`. You can take inspiration from the following example:
 
 ```tsx
 import React, { useEffect } from "react";
