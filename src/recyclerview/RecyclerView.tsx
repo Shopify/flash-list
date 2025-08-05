@@ -21,6 +21,7 @@ import {
 
 import { FlashListRef } from "../FlashListRef";
 import { ErrorMessages } from "../errors/ErrorMessages";
+import { WarningMessages } from "../errors/WarningMessages";
 
 import { RVDimension } from "./layout-managers/LayoutManager";
 import {
@@ -209,8 +210,16 @@ const RecyclerViewComponent = <T,>(
       return { index, dimensions: layout };
     });
 
+    const hasExceededMaxRendersWithoutCommit =
+      renderTimeTracker.hasExceededMaxRendersWithoutCommit();
+
+    if (hasExceededMaxRendersWithoutCommit) {
+      console.warn(WarningMessages.exceededMaxRendersWithoutCommit);
+    }
+
     if (
-      recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
+      recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0) &&
+      !hasExceededMaxRendersWithoutCommit
     ) {
       // Trigger re-render if layout modifications were made
       setRenderId((prev) => prev + 1);

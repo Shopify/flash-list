@@ -6,8 +6,11 @@ export class RenderTimeTracker {
   private lastTimerStartedAt = -1;
   private maxRenderTime = 32; // TODO: Improve this even more
   private defaultRenderTime = 16;
+  private rendersWithoutCommit = 0;
+  private maxRendersWithoutCommit = 40;
 
   startTracking() {
+    this.rendersWithoutCommit++;
     if (!PlatformConfig.trackAverageRenderTimeForOffsetProjection) {
       return;
     }
@@ -17,6 +20,7 @@ export class RenderTimeTracker {
   }
 
   markRenderComplete() {
+    this.rendersWithoutCommit = 0;
     if (!PlatformConfig.trackAverageRenderTimeForOffsetProjection) {
       return;
     }
@@ -24,6 +28,10 @@ export class RenderTimeTracker {
       this.renderTimeAvgWindow.addValue(Date.now() - this.lastTimerStartedAt);
       this.lastTimerStartedAt = -1;
     }
+  }
+
+  hasExceededMaxRendersWithoutCommit() {
+    return this.rendersWithoutCommit >= this.maxRendersWithoutCommit;
   }
 
   getRawValue() {
