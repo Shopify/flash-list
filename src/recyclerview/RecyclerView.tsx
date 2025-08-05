@@ -208,8 +208,18 @@ const RecyclerViewComponent = <T,>(
       return { index, dimensions: layout };
     });
 
+    const hasExceededMaxRendersWithoutCommit =
+      renderTimeTracker.hasExceededMaxRendersWithoutCommit();
+
+    if (hasExceededMaxRendersWithoutCommit) {
+      console.warn(
+        "FlashList: Exceeded max renders without commit, check for duplicate keys or parent being a ScrollView"
+      );
+    }
+
     if (
-      recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0)
+      recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0) &&
+      !hasExceededMaxRendersWithoutCommit
     ) {
       // Trigger re-render if layout modifications were made
       setRenderId((prev) => prev + 1);
