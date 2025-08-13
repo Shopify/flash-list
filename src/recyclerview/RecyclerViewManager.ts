@@ -96,6 +96,7 @@ export class RecyclerViewManager<T> {
     this.initialDrawBatchSize =
       this.propsRef.overrideProps?.initialDrawBatchSize ??
       this.initialDrawBatchSize;
+    this.renderStackManager.disableRecycling = props.disableRecycling ?? false;
   }
 
   /**
