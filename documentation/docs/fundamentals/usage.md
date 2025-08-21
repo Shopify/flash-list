@@ -190,13 +190,6 @@ export type ContentStyle = Pick<
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
 
-### `disableRecycling`
-
-```tsx
-disableRecycling?: boolean;
-```
-
-If true, the FlashList will not recycle items, which can be useful for debugging or in specific scenarios where recycling causes issues. We don't recommend disabling recycling.
 
 ### `drawDistance`
 
