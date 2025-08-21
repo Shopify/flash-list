@@ -299,7 +299,7 @@ export interface FlashListRef<T> {
    * Disables item recycling in preparation for layout animations.
    *
    * Call this before performing layout animations to prevent visual glitches.
-   * Remember to reset maxItemsInRecyclePool after animations complete.
+   * Remember to reset disableRecycling after animations complete.
    *
    * @example
    * // Before starting layout animations

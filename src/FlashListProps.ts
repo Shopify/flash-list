@@ -290,7 +290,6 @@ export interface FlashListProps<TItem>
    */
   maxItemsInRecyclePool?: number;
 
-
   /**
    * New arch only
    * Enable masonry layout.

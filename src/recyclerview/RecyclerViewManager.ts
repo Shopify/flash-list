@@ -34,7 +34,6 @@ export class RecyclerViewManager<T> {
   private _isDisposed = false;
   private _isLayoutManagerDirty = false;
   private _animationOptimizationsEnabled = false;
-  private _originalMaxItemsInRecyclePool?: number;
 
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
@@ -45,17 +44,7 @@ export class RecyclerViewManager<T> {
 
   public set animationOptimizationsEnabled(value: boolean) {
     this._animationOptimizationsEnabled = value;
-    if (value) {
-      // Store original value before disabling recycling
-      this._originalMaxItemsInRecyclePool = this.renderStackManager.getMaxItemsInRecyclePool();
-      this.renderStackManager.setMaxItemsInRecyclePool(0);
-    } else {
-      // Restore original value
-      if (this._originalMaxItemsInRecyclePool !== undefined) {
-        this.renderStackManager.setMaxItemsInRecyclePool(this._originalMaxItemsInRecyclePool);
-        this._originalMaxItemsInRecyclePool = undefined;
-      }
-    }
+    this.renderStackManager.disableRecycling = value;
   }
 
 

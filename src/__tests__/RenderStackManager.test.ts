@@ -311,6 +311,48 @@ describe("RenderStackManager", () => {
   });
 });
 
+describe("RenderStackManager with disableRecycling = true", () => {
+  it("should assign new, non-recycled keys to new items when disableRecycling is true", () => {
+    const rsm = new RenderStackManager();
+    rsm.disableRecycling = true;
+
+    // Sync with A5 first
+    runSyncAndGetEntireKeyMapKeys(rsm, mockDataA5);
+    const keysA5 = getKeysForMockItems(rsm, mockDataA5);
+    expect(keysA5).toEqual(["0", "1", "2", "3", "4"]);
+
+    // Sync with B3
+    runSyncAndGetEntireKeyMapKeys(rsm, mockDataB3);
+    const keysB3 = getKeysForMockItems(rsm, mockDataB3);
+    expect(keysB3).toEqual(["5", "6", "7"]); // New keys for B3 items
+
+    // Ensure B3 keys don't overlap with A5 keys that might remain in keyMap
+    keysA5.forEach((keyA) => {
+      expect(keysB3).not.toContain(keyA);
+    });
+
+    // Check the final state of the entire keyMap
+    // After B3 sync, keys for A5 items at original indices 3,4 (stableIds "s4","s5")
+    // should be removed because 3 >= B3.length (3) and 4 >= B3.length (3). Keys for 0,1,2 from A5 remain.
+    const allKeysInMap = runSyncAndGetEntireKeyMapKeys(rsm, mockDataB3); // This re-syncs B3, ensuring state is for B3
+    expect(
+      allKeysInMap.sort((keyA, keyB) => Number(keyA) - Number(keyB))
+    ).toEqual(["5", "6", "7"]);
+  });
+
+  it("should generate all new keys if starting with disableRecycling = true and items are removed then added", () => {
+    const rsm = new RenderStackManager();
+    rsm.disableRecycling = true;
+
+    runSyncAndGetEntireKeyMapKeys(rsm, mockDataA5); // Assigns keys "0" through "4"
+    runSyncAndGetEntireKeyMapKeys(rsm, emptyMock); // Sync with empty
+    expect(getKeysForMockItems(rsm, emptyMock)).toEqual([]);
+
+    runSyncAndGetEntireKeyMapKeys(rsm, mockDataB3); // Sync with new data
+    const keysForNewItems = getKeysForMockItems(rsm, mockDataB3);
+    expect(keysForNewItems).toEqual(["5", "6", "7"]);
+  });
+});
 
 describe("RenderStackManager with maxItemsInRecyclePool", () => {
   it("should not recycle any keys when maxItemsInRecyclePool is 0", () => {
@@ -342,7 +384,8 @@ describe("RenderStackManager with maxItemsInRecyclePool", () => {
     expect(newKeys).toEqual(["5", "6", "7"]);
   });
   it("should not repeat index when going from mock6 to mock7", () => {
-    const rsm = new RenderStackManager(0); // maxItemsInRecyclePool = 0
+    const rsm = new RenderStackManager();
+    rsm.disableRecycling = true;
     runSyncAndGetEntireKeyMapKeys(rsm, mock6);
     runSyncAndGetEntireKeyMapKeys(rsm, mock7);
     const set = new Set<number>();
@@ -442,12 +485,13 @@ describe("RenderStackManager edge cases", () => {
     ]);
   });
 
-  it("should delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (maxItemsInRecyclePool = 0)", () => {
-    const rsm = new RenderStackManager(0); // maxItemsInRecyclePool = 0
+  it("should delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (disableRecycling = true)", () => {
+    const rsm = new RenderStackManager();
+    rsm.disableRecycling = true;
     runSyncAndGetEntireKeyMapKeys(rsm, mock6);
     runSyncAndGetEntireKeyMapKeys(rsm, mock7, new ConsecutiveNumbers(3, 5));
     const keys = getKeysForMockItems(rsm, mock7);
-    expect(keys).toEqual(["4", "5", "6"]);
+    expect(keys).toEqual(["0", "2", "3", "4", "5", "6", "8"]);
   });
 
   it("should not delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (all engaged)", () => {
@@ -458,8 +502,9 @@ describe("RenderStackManager edge cases", () => {
     expect(keys).toEqual(["0", "1", "2", "3", "4", "5", "6", "7"]);
   });
 
-  it("should delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (all engaged, maxItemsInRecyclePool = 0)", () => {
-    const rsm = new RenderStackManager(0); // maxItemsInRecyclePool = 0
+  it("should delete keys from pool if they are not visible on index changes when going from mock6 to mock7 (all engaged,disableRecycling = true)", () => {
+    const rsm = new RenderStackManager();
+    rsm.disableRecycling = true;
     runSyncAndGetEntireKeyMapKeys(rsm, mock6);
     runSyncAndGetEntireKeyMapKeys(rsm, mock7);
     const keys = getKeysForMockItems(rsm, mock7);

@@ -6,6 +6,7 @@ import { ConsecutiveNumbers } from "./helpers/ConsecutiveNumbers";
  * rendering performance by minimizing creation/destruction of components.
  */
 export class RenderStackManager {
+  public disableRecycling = false;
 
   // Maximum number of items that can be in the recycle pool
   private maxItemsInRecyclePool: number;
@@ -39,14 +40,6 @@ export class RenderStackManager {
     this.unProcessedIndices = new Set();
   }
 
-  public getMaxItemsInRecyclePool(): number {
-    return this.maxItemsInRecyclePool;
-  }
-
-  public setMaxItemsInRecyclePool(value: number): void {
-    this.maxItemsInRecyclePool = value;
-  }
-
   /**
    * Synchronizes the render stack with the current state of data.
    * This method is the core orchestrator that:
@@ -76,7 +69,9 @@ export class RenderStackManager {
         this.recycleKey(key);
         return;
       }
-      this.unProcessedIndices.add(index);
+      if (!this.disableRecycling) {
+        this.unProcessedIndices.add(index);
+      }
       if (!engagedIndices.includes(index)) {
         this.recycleKey(key);
         return;
@@ -207,7 +202,7 @@ export class RenderStackManager {
    * Places a key back into its type-specific recycle pool for future reuse
    */
   private recycleKey(key: string): void {
-    if (this.maxItemsInRecyclePool === 0) {
+    if (this.disableRecycling) {
       return;
     }
     const keyInfo = this.keyMap.get(key);
