@@ -287,8 +287,6 @@ Maximum number of items in the recycle pool. These are the items that are cached
 Setting this to 0, will disable the recycle pool and items will unmount once they are scrolled off the screen.
 There's no limit by default.
 
-**Note:** To completely disable recycling for debugging purposes, set `maxItemsInRecyclePool={0}`. This will cause items to unmount when scrolled off-screen instead of being recycled.
-
 ### `numColumns`
 
 Multiple columns can only be rendered with `horizontal={false}` and will zig-zag like a `flexWrap` layout. Items should all be the same height - masonry layouts are not supported.
