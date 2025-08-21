@@ -39,6 +39,14 @@ export class RenderStackManager {
     this.unProcessedIndices = new Set();
   }
 
+  public getMaxItemsInRecyclePool(): number {
+    return this.maxItemsInRecyclePool;
+  }
+
+  public setMaxItemsInRecyclePool(value: number): void {
+    this.maxItemsInRecyclePool = value;
+  }
+
   /**
    * Synchronizes the render stack with the current state of data.
    * This method is the core orchestrator that:
