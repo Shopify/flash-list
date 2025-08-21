@@ -1,12 +1,3 @@
-jest.mock("@shopify/flash-list", () => {
-  const RecyclerView = jest.requireActual("@shopify/flash-list").RecyclerView;
-
-  return {
-    ...jest.requireActual("@shopify/flash-list"),
-    FlashList: RecyclerView,
-  };
-});
-
 jest.mock("@shopify/flash-list/dist/recyclerview/utils/measureLayout", () => {
   const originalModule = jest.requireActual(
     "@shopify/flash-list/dist/recyclerview/utils/measureLayout"

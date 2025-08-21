@@ -1,9 +1,9 @@
 import React from "react";
 import { render } from "@quilted/react-testing";
 
-import { RecyclerView } from "../recyclerview/RecyclerView";
 import { useFlashListContext } from "../recyclerview/RecyclerViewContextProvider";
 import { LayoutCommitObserver } from "../recyclerview/LayoutCommitObserver";
+import { FlashList } from "..";
 
 describe("LayoutCommitObserver", () => {
   it("should not alter ref captured by child", () => {
@@ -20,7 +20,7 @@ describe("LayoutCommitObserver", () => {
     let commitLayoutEffectCount = 0;
 
     const content = (
-      <RecyclerView
+      <FlashList
         testID="parent"
         data={[1]}
         renderItem={() => (
@@ -29,7 +29,7 @@ describe("LayoutCommitObserver", () => {
               commitLayoutEffectCount++;
             }}
           >
-            <RecyclerView
+            <FlashList
               testID="child"
               data={[1]}
               renderItem={() => (
@@ -53,8 +53,11 @@ describe("LayoutCommitObserver", () => {
       />
     );
 
-    render(content);
+    const renderResult = render(content);
 
     expect(commitLayoutEffectCount).toBe(3);
+
+    // Force unmount to trigger cleanup of async operations
+    renderResult.unmount();
   });
 });
