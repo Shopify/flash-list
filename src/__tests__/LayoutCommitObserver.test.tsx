@@ -53,8 +53,11 @@ describe("LayoutCommitObserver", () => {
       />
     );
 
-    render(content);
+    const renderResult = render(content);
 
     expect(commitLayoutEffectCount).toBe(3);
+
+    // Force unmount to trigger cleanup of async operations
+    renderResult.unmount();
   });
 });
