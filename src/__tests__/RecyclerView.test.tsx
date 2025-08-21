@@ -4,7 +4,7 @@ import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
 import { FlashListRef } from "../FlashListRef";
-import { RecyclerView } from "../recyclerview/RecyclerView";
+import { FlashList } from "..";
 
 // Mock measureLayout to return fixed dimensions
 jest.mock("../recyclerview/utils/measureLayout", () => {
@@ -49,7 +49,7 @@ const renderRecyclerView = (args: {
     data,
   } = args;
   return render(
-    <RecyclerView
+    <FlashList
       ref={ref}
       data={
         data ?? [
