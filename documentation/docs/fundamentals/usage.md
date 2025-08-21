@@ -190,13 +190,6 @@ export type ContentStyle = Pick<
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
 
-### `disableRecycling`
-
-```tsx
-disableRecycling?: boolean;
-```
-
-If true, the FlashList will not recycle items, which can be useful for debugging or in specific scenarios where recycling causes issues. We don't recommend disabling recycling.
 
 ### `drawDistance`
 
@@ -293,6 +286,8 @@ Maximum number of items in the recycle pool. These are the items that are cached
 
 Setting this to 0, will disable the recycle pool and items will unmount once they are scrolled off the screen.
 There's no limit by default.
+
+**Note:** To completely disable recycling for debugging purposes, set `maxItemsInRecyclePool={0}`. This will cause items to unmount when scrolled off-screen instead of being recycled.
 
 ### `numColumns`
 

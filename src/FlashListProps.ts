@@ -290,12 +290,6 @@ export interface FlashListProps<TItem>
    */
   maxItemsInRecyclePool?: number;
 
-  /**
-   * New arch only
-   * If true, the FlashList will not recycle items, which can be useful for debugging or in specific scenarios where recycling causes issues. 
-   * We don't recommend disabling recycling.
-   */
-  disableRecycling?: boolean;
 
   /**
    * New arch only

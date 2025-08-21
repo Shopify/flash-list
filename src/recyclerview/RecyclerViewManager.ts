@@ -42,10 +42,6 @@ export class RecyclerViewManager<T> {
     return this._animationOptimizationsEnabled;
   }
 
-  public set animationOptimizationsEnabled(value: boolean) {
-    this._animationOptimizationsEnabled = value;
-    this.renderStackManager.disableRecycling = value;
-  }
 
   public get isOffsetProjectionEnabled() {
     return this.engagedIndicesTracker.enableOffsetProjection;
@@ -96,7 +92,6 @@ export class RecyclerViewManager<T> {
     this.initialDrawBatchSize =
       this.propsRef.overrideProps?.initialDrawBatchSize ??
       this.initialDrawBatchSize;
-    this.renderStackManager.disableRecycling = props.disableRecycling ?? false;
   }
 
   /**
