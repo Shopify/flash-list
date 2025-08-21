@@ -47,7 +47,6 @@ export class RecyclerViewManager<T> {
     this.renderStackManager.disableRecycling = value;
   }
 
-
   public get isOffsetProjectionEnabled() {
     return this.engagedIndicesTracker.enableOffsetProjection;
   }
