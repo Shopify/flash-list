@@ -77,7 +77,7 @@ overrideItemLayout={(layout, item) => {
 
 ### Step 4: Replace Inverted Lists
 
-If you were using `inverted` prop (common in chat apps), replace it with `maintainVisibleContentPosition`:
+If you were using `inverted` prop (common in chat apps), replace it with `maintainVisibleContentPosition` and reverse your data array:
 
 ```diff
 // v1 - Inverted list for chat
@@ -90,7 +90,7 @@ If you were using `inverted` prop (common in chat apps), replace it with `mainta
 
 // v2 - Use maintainVisibleContentPosition
 <FlashList
-  data={messages}
+  data={reversedMessages}
   renderItem={renderMessage}
 + maintainVisibleContentPosition={{
 +   autoscrollToBottomThreshold: 0.2,
