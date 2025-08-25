@@ -1,5 +1,6 @@
 import { RecyclerViewManager } from "../recyclerview/RecyclerViewManager";
 import { WarningMessages } from "../errors/WarningMessages";
+import { FlashListProps } from "../FlashListProps";
 
 describe("RecyclerViewManager", () => {
   let consoleWarnSpy: jest.SpyInstance;
@@ -13,29 +14,16 @@ describe("RecyclerViewManager", () => {
   });
 
   describe("keyExtractor warning with maintainVisibleContentPosition", () => {
-    const createMockProps = (overrides = {}) => ({
-      data: [{ id: 1 }, { id: 2 }, { id: 3 }],
-      renderItem: jest.fn(),
-      stickyHeaderIndices: [],
-      getItemType: jest.fn(() => "default"),
-      viewabilityConfig: null,
-      viewabilityConfigCallbackPairs: [],
-      onVisibleItemsChanged: undefined,
-      onViewableItemsChanged: undefined,
-      horizontal: false,
-      inverted: false,
-      keyExtractor: undefined,
-      extraData: undefined,
-      onStartReached: undefined,
-      onStartReachedThreshold: undefined,
-      onMomentumScrollBegin: undefined,
-      onMomentumScrollEnd: undefined,
-      onScrollBeginDrag: undefined,
-      onScrollEndDrag: undefined,
-      onScroll: undefined,
-      maxItemsInRecyclePool: undefined,
-      ...overrides,
-    });
+    const createMockProps = (overrides = {}) =>
+      ({
+        data: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        renderItem: jest.fn(),
+        ...overrides,
+      } as FlashListProps<unknown>);
+
+    const createManager = (props: FlashListProps<unknown>) => {
+      return new RecyclerViewManager(props);
+    };
 
     it("should warn when onStartReached is defined but keyExtractor is not", () => {
       const props = createMockProps({
@@ -43,7 +31,7 @@ describe("RecyclerViewManager", () => {
         keyExtractor: undefined,
       });
 
-      new RecyclerViewManager(props as any);
+      createManager(props);
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         WarningMessages.keyExtractorNotDefinedForMVCP
@@ -56,7 +44,7 @@ describe("RecyclerViewManager", () => {
         keyExtractor: (item: any) => item.id.toString(),
       });
 
-      new RecyclerViewManager(props as any);
+      createManager(props);
 
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
@@ -67,7 +55,7 @@ describe("RecyclerViewManager", () => {
         keyExtractor: undefined,
       });
 
-      new RecyclerViewManager(props as any);
+      createManager(props);
 
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
@@ -78,7 +66,7 @@ describe("RecyclerViewManager", () => {
         keyExtractor: (item: any) => item.id.toString(),
       });
 
-      new RecyclerViewManager(props as any);
+      createManager(props);
 
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });

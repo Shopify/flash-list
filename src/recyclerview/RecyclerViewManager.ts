@@ -1,4 +1,5 @@
 import { ErrorMessages } from "../errors/ErrorMessages";
+import { WarningMessages } from "../errors/WarningMessages";
 
 import ViewabilityManager from "./viewability/ViewabilityManager";
 import { ConsecutiveNumbers } from "./helpers/ConsecutiveNumbers";
@@ -19,7 +20,6 @@ import {
   Velocity,
 } from "./helpers/EngagedIndicesTracker";
 import { RenderStackManager } from "./RenderStackManager";
-import { WarningMessages } from "../errors/WarningMessages";
 // Abstracts layout manager, render stack manager and viewability manager and generates render stack (progressively on load)
 export class RecyclerViewManager<T> {
   private initialDrawBatchSize = 2;
