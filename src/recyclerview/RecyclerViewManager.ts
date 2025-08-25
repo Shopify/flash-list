@@ -19,6 +19,7 @@ import {
   Velocity,
 } from "./helpers/EngagedIndicesTracker";
 import { RenderStackManager } from "./RenderStackManager";
+import { WarningMessages } from "../errors/WarningMessages";
 // Abstracts layout manager, render stack manager and viewability manager and generates render stack (progressively on load)
 export class RecyclerViewManager<T> {
   private initialDrawBatchSize = 2;
@@ -69,6 +70,7 @@ export class RecyclerViewManager<T> {
       props.maxItemsInRecyclePool
     );
     this.itemViewabilityManager = new ViewabilityManager<T>(this as any);
+    this.checkPropsAndWarn();
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
@@ -445,5 +447,11 @@ export class RecyclerViewManager<T> {
       this.numColumns,
       this.propsRef.extraData
     );
+  }
+
+  private checkPropsAndWarn() {
+    if (this.propsRef.onStartReached && !this.propsRef.keyExtractor) {
+      console.warn(WarningMessages.keyExtractorNotDefinedForMVCP);
+    }
   }
 }
