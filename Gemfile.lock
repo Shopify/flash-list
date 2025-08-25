@@ -5,7 +5,7 @@ GEM
       base64
       nkf
       rexml
-    activesupport (7.2.2.1)
+    activesupport (7.2.2.2)
       base64
       benchmark (>= 0.3)
       bigdecimal
@@ -72,6 +72,8 @@ GEM
     ethon (0.16.0)
       ffi (>= 1.15.0)
     ffi (1.17.2-arm64-darwin)
+    ffi (1.17.2-x86_64-darwin)
+    ffi (1.17.2-x86_64-linux-gnu)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
     gh_inspector (1.1.3)
