@@ -1,4 +1,5 @@
 import { ErrorMessages } from "../errors/ErrorMessages";
+import { WarningMessages } from "../errors/WarningMessages";
 
 import ViewabilityManager from "./viewability/ViewabilityManager";
 import { ConsecutiveNumbers } from "./helpers/ConsecutiveNumbers";
@@ -69,6 +70,7 @@ export class RecyclerViewManager<T> {
       props.maxItemsInRecyclePool
     );
     this.itemViewabilityManager = new ViewabilityManager<T>(this as any);
+    this.checkPropsAndWarn();
   }
 
   // updates render stack based on the engaged indices which are sorted. Recycles unused keys.
@@ -445,5 +447,11 @@ export class RecyclerViewManager<T> {
       this.numColumns,
       this.propsRef.extraData
     );
+  }
+
+  private checkPropsAndWarn() {
+    if (this.propsRef.onStartReached && !this.propsRef.keyExtractor) {
+      console.warn(WarningMessages.keyExtractorNotDefinedForMVCP);
+    }
   }
 }
