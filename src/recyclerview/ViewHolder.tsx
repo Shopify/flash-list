@@ -4,18 +4,17 @@
  * The component is memoized to prevent unnecessary re-renders and includes layout comparison logic.
  */
 
-import { LayoutChangeEvent } from "react-native";
+import type { LayoutChangeEvent, ViewStyle } from "react-native";
 import React, {
-  RefObject,
+  type RefObject,
   useCallback,
   useLayoutEffect,
   useMemo,
   useRef,
 } from "react";
 
-import { FlashListProps, RenderTarget } from "../FlashListProps";
-
-import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
+import type { FlashListProps, RenderTarget } from "../FlashListProps";
+import type { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { CompatView } from "./components/CompatView";
 
 /**
@@ -50,11 +49,42 @@ export interface ViewHolderProps<TItem> {
 }
 
 /**
+ * Creates the main container style for the ViewHolder
+ */
+const createContainerStyle = (
+  layout: RVLayout,
+  horizontal: boolean = false,
+  target: RenderTarget
+): ViewStyle => ({
+  flexDirection: horizontal ? "row" : "column",
+  position: target === "StickyHeader" ? "relative" : "absolute",
+  width: layout.enforcedWidth ? layout.width : undefined,
+  height: layout.enforcedHeight ? layout.height : undefined,
+  minHeight: layout.minHeight,
+  minWidth: layout.minWidth,
+  maxHeight: layout.maxHeight,
+  maxWidth: layout.maxWidth,
+  left: layout.x,
+  top: layout.y,
+});
+
+/**
+ * Creates the separator positioning style
+ */
+const createSeparatorStyle = (
+  layout: RVLayout,
+  horizontal: boolean = false
+): ViewStyle => ({
+  position: "absolute",
+  left: horizontal ? layout.x + layout.width : layout.x,
+  top: horizontal ? layout.y : layout.y + layout.height,
+});
+
+/**
  * Internal ViewHolder component that handles the actual rendering of list items
  * @template TItem - The type of item being rendered in the list
  */
 const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
-  // create ref for View
   const viewRef = useRef<CompatView>(null);
   const {
     index,
@@ -68,9 +98,10 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     CellRendererComponent,
     ItemSeparatorComponent,
     trailingItem,
-    horizontal,
+    horizontal = false,
   } = props;
 
+  // Manage ref lifecycle
   useLayoutEffect(() => {
     refHolder.set(index, viewRef);
     return () => {
@@ -80,55 +111,54 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     };
   }, [index, refHolder]);
 
-  const onLayout = useCallback(
+  // Handle layout changes
+  const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
       onSizeChanged?.(index, event.nativeEvent.layout);
     },
     [index, onSizeChanged]
   );
 
-  const separator = useMemo(() => {
-    return ItemSeparatorComponent && trailingItem !== undefined ? (
+  // Render separator component if needed
+  const separatorElement = useMemo(() => {
+    if (!ItemSeparatorComponent || trailingItem === undefined) {
+      return null;
+    }
+    return (
       <ItemSeparatorComponent leadingItem={item} trailingItem={trailingItem} />
-    ) : null;
+    );
   }, [ItemSeparatorComponent, item, trailingItem]);
 
-  // console.log("ViewHolder re-render", index);
-
-  const children = useMemo(() => {
+  // Render main item content
+  const itemContent = useMemo(() => {
     return renderItem?.({ item, index, extraData, target }) ?? null;
-    // TODO: Test more thoroughly
-    // We don't really  to re-render the children when the index changes
+    // Note: We intentionally exclude index from dependencies to avoid unnecessary re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, extraData, target, renderItem]);
 
-  const style = {
-    flexDirection: horizontal ? "row" : "column",
-    position: target === "StickyHeader" ? "relative" : "absolute",
-    width: layout.enforcedWidth ? layout.width : undefined,
-    height: layout.enforcedHeight ? layout.height : undefined,
-    minHeight: layout.minHeight,
-    minWidth: layout.minWidth,
-    maxHeight: layout.maxHeight,
-    maxWidth: layout.maxWidth,
-    left: layout.x,
-    top: layout.y,
-  } as const;
+  // Determine container component
+  const ContainerComponent = (CellRendererComponent ?? CompatView) as React.ComponentType<any>;
 
-  // TODO: Fix this type issue
-  const CompatContainer = (CellRendererComponent ??
-    CompatView) as unknown as any;
+  // Create styles
+  const containerStyle = createContainerStyle(layout, horizontal ?? false, target);
+  const separatorStyle = separatorElement ? createSeparatorStyle(layout, horizontal ?? false) : undefined;
 
   return (
-    <CompatContainer
-      ref={viewRef}
-      onLayout={onLayout}
-      style={style}
-      index={index}
-    >
-      {children}
-      {separator}
-    </CompatContainer>
+    <>
+      <ContainerComponent
+        ref={viewRef}
+        onLayout={handleLayout}
+        style={containerStyle}
+        index={index}
+      >
+        {itemContent}
+      </ContainerComponent>
+      {separatorElement && (
+        <CompatView style={separatorStyle}>
+          {separatorElement}
+        </CompatView>
+      )}
+    </>
   );
 };
 
