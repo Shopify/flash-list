@@ -190,7 +190,6 @@ export type ContentStyle = Pick<
 
 You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
 
-
 ### `drawDistance`
 
 ```tsx
@@ -221,6 +220,14 @@ Instead of starting at the top with the first item, start at `initialScrollIndex
 
 ```tsx
 initialScrollIndex?: number;
+```
+
+### `initialScrollOffset`
+
+An offset that's applied to the initial scroll position as defined by initialScrollIndex. Ignored if initialScrollIndex is not set.
+
+```tsx
+initialScrollOffset?: { x: number; y: number };
 ```
 
 ### `keyExtractor`
