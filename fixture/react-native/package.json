@@ -15,7 +15,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@d11/react-native-fast-image": "^8.9.2",
+    "@d11/react-native-fast-image": "^8.12.0",
     "@react-navigation/native": "^7.0.15",
     "@react-navigation/stack": "^7.1.2",
     "@shopify/flash-list": "link:../../",
