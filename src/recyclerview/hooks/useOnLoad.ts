@@ -48,6 +48,7 @@ export const useOnListLoad = <T>(
     // console.log("----------> dataCollector", dataCollectorString);
     // console.log("----------> FlashList v2 load in", `${elapsedTimeInMs} ms`);
     requestAnimationFrame(() => {
+      recyclerViewManager.isFirstPaintOnUiComplete = true;
       onLoad?.({ elapsedTimeInMs });
       setIsLoaded(true);
     });
