@@ -91,6 +91,10 @@ export const ExamplesScreen = () => {
       title: "Showcase App",
       destination: "ShowcaseApp",
     },
+    {
+      title: "Lot of Items",
+      destination: "LotOfItems",
+    },
   ];
   return (
     <>

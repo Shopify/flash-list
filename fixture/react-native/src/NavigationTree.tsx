@@ -28,6 +28,7 @@ import MovieList from "./MovieList";
 import Carousel from "./Carousel";
 import { LayoutOptions } from "./LayoutOptions";
 import ShowcaseApp from "./ShowcaseApp";
+import LotOfItems from "./lot-of-items/LotOfItems";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -97,6 +98,11 @@ const NavigationTree = () => {
             name="ShowcaseApp"
             component={ShowcaseApp}
             options={{ title: "Showcase App" }}
+          />
+          <Stack.Screen
+            name="LotOfItems"
+            component={LotOfItems}
+            options={{ title: "Lot of Items" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
