@@ -81,7 +81,8 @@
   "files": [
     "dist",
     "src",
-    "jestSetup.js"
+    "jestSetup.js",
+    "!__tests__"
   ],
   "dependencies": {
     "tslib": "2.8.1"
