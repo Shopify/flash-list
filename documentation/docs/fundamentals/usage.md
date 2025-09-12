@@ -222,12 +222,13 @@ Instead of starting at the top with the first item, start at `initialScrollIndex
 initialScrollIndex?: number;
 ```
 
-### `initialScrollOffset`
+### `initialScrollIndexParams`
 
-An offset that's applied to the initial scroll position as defined by initialScrollIndex. Ignored if initialScrollIndex is not set.
+Additional configuration for initialScrollIndex. Use viewOffset to apply an offset to the initial scroll position as defined by initialScrollIndex.
+Ignored if initialScrollIndex is not set.
 
 ```tsx
-initialScrollOffset?: { x: number; y: number };
+initialScrollIndexParams?: { viewOffset?: { x: number; y: number } };
 ```
 
 ### `keyExtractor`

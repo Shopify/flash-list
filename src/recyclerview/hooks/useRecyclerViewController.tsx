@@ -564,7 +564,8 @@ export function useRecyclerViewController<T>(
   ]);
 
   const applyInitialScrollIndex = useCallback(() => {
-    const { horizontal, data, initialScrollOffset } = recyclerViewManager.props;
+    const { horizontal, data, initialScrollIndexParams } =
+      recyclerViewManager.props;
 
     const initialScrollIndex =
       recyclerViewManager.getInitialScrollIndex() ?? -1;
@@ -583,8 +584,8 @@ export function useRecyclerViewController<T>(
 
       pauseOffsetCorrection.current = true;
 
-      const additionalOffsetX = initialScrollOffset?.x ?? 0;
-      const additionalOffsetY = initialScrollOffset?.y ?? 0;
+      const additionalOffsetX = initialScrollIndexParams?.viewOffset?.x ?? 0;
+      const additionalOffsetY = initialScrollIndexParams?.viewOffset?.y ?? 0;
       const offset = horizontal
         ? recyclerViewManager.getLayout(initialScrollIndex).x +
           additionalOffsetX
