@@ -33,4 +33,6 @@ export type RootStackParamList = {
   LayoutOptions: undefined;
   ShowcaseApp: undefined;
   LotOfItems: undefined;
+  ManualBenchmarkExample: undefined;
+  ManualFlatListBenchmarkExample: undefined;
 };

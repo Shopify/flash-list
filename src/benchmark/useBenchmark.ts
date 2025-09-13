@@ -5,7 +5,6 @@ import { ErrorMessages } from "../errors/ErrorMessages";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor, JSFPSResult } from "./JSFPSMonitor";
-import { useBlankAreaTracker } from "./useBlankAreaTracker";
 
 export interface BenchmarkParams {
   startDelayInMs?: number;
@@ -51,12 +50,6 @@ export function useBenchmark(
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
-  const [blankAreaResult, blankAreaTracker] = useBlankAreaTracker(
-    flashListRef,
-    undefined,
-    { sumNegativeValues: params.sumNegativeBlankAreaValues, startDelayInMs: 0 }
-  );
-
   const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(false);
   const cancellableRef = useRef<Cancellable | null>(null);
 
@@ -133,7 +126,7 @@ export function useBenchmark(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return [blankAreaTracker, { startBenchmark, isBenchmarkRunning }] as const;
+  return { startBenchmark, isBenchmarkRunning } as const;
 }
 
 export function getFormattedString(res: BenchmarkResult) {
@@ -177,38 +170,36 @@ async function runScrollBenchmark(
       const rvSize = rv.getWindowSize();
       const rvContentSize = rv.getChildContainerDimensions();
 
-      if (rvSize && rvContentSize) {
-        const fromX = 0;
-        const fromY = 0;
-        const toX = rvContentSize.width - rvSize.width;
-        const toY = rvContentSize.height - rvSize.height;
+      const fromX = 0;
+      const fromY = 0;
+      const toX = rvContentSize.width - rvSize.width;
+      const toY = rvContentSize.height - rvSize.height;
 
-        const scrollNow = (x: number, y: number) => {
-          flashListRef.current?.scrollToOffset({
-            offset: horizontal ? x : y,
-            animated: false,
-          });
-        };
+      const scrollNow = (x: number, y: number) => {
+        flashListRef.current?.scrollToOffset({
+          offset: horizontal ? x : y,
+          animated: false,
+        });
+      };
 
-        await autoScroll(
-          scrollNow,
-          fromX,
-          fromY,
-          toX,
-          toY,
-          scrollSpeedMultiplier,
-          cancellable
-        );
-        await autoScroll(
-          scrollNow,
-          toX,
-          toY,
-          fromX,
-          fromY,
-          scrollSpeedMultiplier,
-          cancellable
-        );
-      }
+      await autoScroll(
+        scrollNow,
+        fromX,
+        fromY,
+        toX,
+        toY,
+        scrollSpeedMultiplier,
+        cancellable
+      );
+      await autoScroll(
+        scrollNow,
+        toX,
+        toY,
+        fromX,
+        fromY,
+        scrollSpeedMultiplier,
+        cancellable
+      );
     }
   }
 }

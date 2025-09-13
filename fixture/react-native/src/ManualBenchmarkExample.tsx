@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { View, Text, Button, StyleSheet, Alert } from "react-native";
-import { FlashList, useBenchmark } from "@shopify/flash-list";
+import { FlashList, FlashListRef, useBenchmark } from "@shopify/flash-list";
 
 interface DataItem {
   id: string;
@@ -17,25 +17,24 @@ const generateData = (count: number): DataItem[] => {
 };
 
 const ManualBenchmarkExample = () => {
-  const flashListRef = useRef<FlashList<DataItem>>(null);
+  const flashListRef = useRef<FlashListRef<DataItem>>(null);
   const [data] = useState(() => generateData(1000));
   const [benchmarkResult, setBenchmarkResult] = useState<string>("");
 
-  const [blankAreaTracker, { startBenchmark, isBenchmarkRunning }] =
-    useBenchmark(
-      flashListRef,
-      (result) => {
-        if (!result.interrupted) {
-          setBenchmarkResult(result.formattedString || "No results");
-          Alert.alert("Benchmark Complete", result.formattedString);
-        }
-      },
-      {
-        startManually: true,
-        repeatCount: 3,
-        speedMultiplier: 1.5,
+  const { startBenchmark, isBenchmarkRunning } = useBenchmark(
+    flashListRef,
+    (result) => {
+      if (!result.interrupted) {
+        setBenchmarkResult(result.formattedString || "No results");
+        Alert.alert("Benchmark Complete", result.formattedString);
       }
-    );
+    },
+    {
+      startManually: true,
+      repeatCount: 3,
+      speedMultiplier: 1.5,
+    }
+  );
 
   const renderItem = ({ item }: { item: DataItem }) => (
     <View style={styles.item}>
@@ -59,9 +58,7 @@ const ManualBenchmarkExample = () => {
         ref={flashListRef}
         data={data}
         renderItem={renderItem}
-        estimatedItemSize={80}
         keyExtractor={(item) => item.id}
-        onBlankArea={blankAreaTracker}
       />
 
       {benchmarkResult ? (

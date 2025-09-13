@@ -22,7 +22,7 @@ const ManualFlatListBenchmarkExample = () => {
   const [benchmarkResult, setBenchmarkResult] = useState<string>("");
 
   const { startBenchmark, isBenchmarkRunning } = useFlatListBenchmark(
-    flatListRef,
+    flatListRef as any,
     (result) => {
       if (!result.interrupted) {
         setBenchmarkResult(result.formattedString || "No results");
@@ -31,7 +31,7 @@ const ManualFlatListBenchmarkExample = () => {
     },
     {
       startManually: true,
-      targetOffset: 10000, // Scroll to 10000 pixels
+      targetOffset: 100000,
       repeatCount: 2,
       speedMultiplier: 2,
     }
