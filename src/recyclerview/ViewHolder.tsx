@@ -69,18 +69,6 @@ const createContainerStyle = (
 });
 
 /**
- * Creates the separator positioning style
- */
-const createSeparatorStyle = (
-  layout: RVLayout,
-  horizontal: boolean = false
-): ViewStyle => ({
-  position: "absolute",
-  left: horizontal ? layout.x + layout.width : layout.x,
-  top: horizontal ? layout.y : layout.y + layout.height,
-});
-
-/**
  * Internal ViewHolder component that handles the actual rendering of list items
  * @template TItem - The type of item being rendered in the list
  */
@@ -121,13 +109,13 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
 
   // Render separator component if needed
   const separatorElement = useMemo(() => {
-    if (!ItemSeparatorComponent || trailingItem === undefined) {
+    if (!ItemSeparatorComponent || trailingItem === undefined || layout.skipSeparator) {
       return null;
     }
     return (
       <ItemSeparatorComponent leadingItem={item} trailingItem={trailingItem} />
     );
-  }, [ItemSeparatorComponent, item, trailingItem]);
+  }, [ItemSeparatorComponent, item, trailingItem, layout.skipSeparator]);
 
   // Render main item content
   const itemContent = useMemo(() => {
@@ -141,24 +129,17 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
 
   // Create styles
   const containerStyle = createContainerStyle(layout, horizontal ?? false, target);
-  const separatorStyle = separatorElement ? createSeparatorStyle(layout, horizontal ?? false) : undefined;
 
   return (
-    <>
-      <ContainerComponent
-        ref={viewRef}
-        onLayout={handleLayout}
-        style={containerStyle}
-        index={index}
-      >
-        {itemContent}
-      </ContainerComponent>
-      {separatorElement && (
-        <CompatView style={separatorStyle}>
-          {separatorElement}
-        </CompatView>
-      )}
-    </>
+    <ContainerComponent
+      ref={viewRef}
+      onLayout={handleLayout}
+      style={containerStyle}
+      index={index}
+    >
+      {itemContent}
+      {separatorElement}
+    </ContainerComponent>
   );
 };
 
@@ -205,6 +186,7 @@ function areLayoutsEqual(prevLayout: RVLayout, nextLayout: RVLayout): boolean {
     prevLayout.minWidth === nextLayout.minWidth &&
     prevLayout.minHeight === nextLayout.minHeight &&
     prevLayout.maxWidth === nextLayout.maxWidth &&
-    prevLayout.maxHeight === nextLayout.maxHeight
+    prevLayout.maxHeight === nextLayout.maxHeight &&
+    prevLayout.skipSeparator === nextLayout.skipSeparator
   );
 }

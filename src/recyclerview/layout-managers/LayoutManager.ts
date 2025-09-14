@@ -546,6 +546,12 @@ export interface RVLayout extends RVDimension {
    * When false, the height is determined by content
    */
   enforcedHeight?: boolean;
+
+  /**
+   * When true, the ItemSeparatorComponent should not be rendered for this item
+   * Used by layout managers to control separator visibility (e.g., skip separators on last row in grid)
+   */
+  skipSeparator?: boolean;
 }
 
 /**

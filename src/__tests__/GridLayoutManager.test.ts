@@ -74,6 +74,99 @@ describe("GridLayoutManager", () => {
     });
   });
 
+  describe("Separator behavior", () => {
+    it("should mark last row items to skip separators in 2x2 grid", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        4,
+        defaultParams
+      );
+      const layouts = getAllLayouts(manager);
+
+      // First row items should not skip separators
+      expect(layouts[0].skipSeparator).toBeFalsy();
+      expect(layouts[1].skipSeparator).toBeFalsy();
+      
+      // Last row items should skip separators
+      expect(layouts[2].skipSeparator).toBe(true);
+      expect(layouts[3].skipSeparator).toBe(true);
+    });
+
+    it("should mark last row items to skip separators in 3x3 grid", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        6,
+        { ...defaultParams, maxColumns: 3 }
+      );
+      const layouts = getAllLayouts(manager);
+
+      // First row items should not skip separators
+      expect(layouts[0].skipSeparator).toBeFalsy();
+      expect(layouts[1].skipSeparator).toBeFalsy();
+      expect(layouts[2].skipSeparator).toBeFalsy();
+      
+      // Last row items should skip separators
+      expect(layouts[3].skipSeparator).toBe(true);
+      expect(layouts[4].skipSeparator).toBe(true);
+      expect(layouts[5].skipSeparator).toBe(true);
+    });
+
+    it("should mark last row items to skip separators with uneven rows", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        5,
+        defaultParams
+      );
+      const layouts = getAllLayouts(manager);
+
+      // First two rows should not skip separators
+      expect(layouts[0].skipSeparator).toBeFalsy();
+      expect(layouts[1].skipSeparator).toBeFalsy();
+      expect(layouts[2].skipSeparator).toBeFalsy();
+      expect(layouts[3].skipSeparator).toBeFalsy();
+      
+      // Last row (single item) should skip separator
+      expect(layouts[4].skipSeparator).toBe(true);
+    });
+
+    it("should handle single item grid", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        1,
+        defaultParams
+      );
+      const layouts = getAllLayouts(manager);
+
+      // Single item should skip separator
+      expect(layouts[0].skipSeparator).toBe(true);
+    });
+
+    it("should update skipSeparator when items are added dynamically", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        2,
+        defaultParams
+      );
+      let layouts = getAllLayouts(manager);
+
+      // Initially, both items are in last row
+      expect(layouts[0].skipSeparator).toBe(true);
+      expect(layouts[1].skipSeparator).toBe(true);
+
+      // Add two more items to complete the grid
+      manager.modifyLayout([], 4);
+      layouts = getAllLayouts(manager);
+
+      // First row should not skip separators anymore
+      expect(layouts[0].skipSeparator).toBeFalsy();
+      expect(layouts[1].skipSeparator).toBeFalsy();
+      
+      // New last row should skip separators
+      expect(layouts[2].skipSeparator).toBe(true);
+      expect(layouts[3].skipSeparator).toBe(true);
+    });
+  });
+
   describe("Layout recalculations", () => {
     it("should adjust layout when window size changes", () => {
       const manager = createPopulatedLayoutManager(
