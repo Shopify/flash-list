@@ -38,6 +38,7 @@ export class RecyclerViewManager<T> {
 
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
+  public isFirstPaintOnUiComplete = false;
 
   public get animationOptimizationsEnabled() {
     return this._animationOptimizationsEnabled;
@@ -263,6 +264,9 @@ export class RecyclerViewManager<T> {
       return true;
     }
     if (this.hasRenderedProgressively) {
+      if (!this.isFirstPaintOnUiComplete) {
+        return false;
+      }
       return this.recomputeEngagedIndices() !== undefined;
     } else {
       this.renderProgressively();
