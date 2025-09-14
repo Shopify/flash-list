@@ -86,25 +86,24 @@ describe("GridLayoutManager", () => {
       // First row items should not skip separators
       expect(layouts[0].skipSeparator).toBeFalsy();
       expect(layouts[1].skipSeparator).toBeFalsy();
-      
+
       // Last row items should skip separators
       expect(layouts[2].skipSeparator).toBe(true);
       expect(layouts[3].skipSeparator).toBe(true);
     });
 
     it("should mark last row items to skip separators in 3x3 grid", () => {
-      const manager = createPopulatedLayoutManager(
-        LayoutManagerType.GRID,
-        6,
-        { ...defaultParams, maxColumns: 3 }
-      );
+      const manager = createPopulatedLayoutManager(LayoutManagerType.GRID, 6, {
+        ...defaultParams,
+        maxColumns: 3,
+      });
       const layouts = getAllLayouts(manager);
 
       // First row items should not skip separators
       expect(layouts[0].skipSeparator).toBeFalsy();
       expect(layouts[1].skipSeparator).toBeFalsy();
       expect(layouts[2].skipSeparator).toBeFalsy();
-      
+
       // Last row items should skip separators
       expect(layouts[3].skipSeparator).toBe(true);
       expect(layouts[4].skipSeparator).toBe(true);
@@ -124,7 +123,7 @@ describe("GridLayoutManager", () => {
       expect(layouts[1].skipSeparator).toBeFalsy();
       expect(layouts[2].skipSeparator).toBeFalsy();
       expect(layouts[3].skipSeparator).toBeFalsy();
-      
+
       // Last row (single item) should skip separator
       expect(layouts[4].skipSeparator).toBe(true);
     });
@@ -160,7 +159,7 @@ describe("GridLayoutManager", () => {
       // First row should not skip separators anymore
       expect(layouts[0].skipSeparator).toBeFalsy();
       expect(layouts[1].skipSeparator).toBeFalsy();
-      
+
       // New last row should skip separators
       expect(layouts[2].skipSeparator).toBe(true);
       expect(layouts[3].skipSeparator).toBe(true);

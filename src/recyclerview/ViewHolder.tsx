@@ -14,6 +14,7 @@ import React, {
 } from "react";
 
 import type { FlashListProps, RenderTarget } from "../FlashListProps";
+
 import type { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { CompatView } from "./components/CompatView";
 
@@ -53,7 +54,7 @@ export interface ViewHolderProps<TItem> {
  */
 const createContainerStyle = (
   layout: RVLayout,
-  horizontal: boolean = false,
+  horizontal = false,
   target: RenderTarget
 ): ViewStyle => ({
   flexDirection: horizontal ? "row" : "column",
@@ -109,7 +110,11 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
 
   // Render separator component if needed
   const separatorElement = useMemo(() => {
-    if (!ItemSeparatorComponent || trailingItem === undefined || layout.skipSeparator) {
+    if (
+      !ItemSeparatorComponent ||
+      trailingItem === undefined ||
+      layout.skipSeparator
+    ) {
       return null;
     }
     return (
@@ -125,10 +130,15 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
   }, [item, extraData, target, renderItem]);
 
   // Determine container component
-  const ContainerComponent = (CellRendererComponent ?? CompatView) as React.ComponentType<any>;
+  const ContainerComponent = (CellRendererComponent ??
+    CompatView) as React.ComponentType<any>;
 
   // Create styles
-  const containerStyle = createContainerStyle(layout, horizontal ?? false, target);
+  const containerStyle = createContainerStyle(
+    layout,
+    horizontal ?? false,
+    target
+  );
 
   return (
     <ContainerComponent

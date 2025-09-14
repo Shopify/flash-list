@@ -128,10 +128,11 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     }
     if (endIndex === this.layouts.length - 1) {
       this.processAndReturnTallestItemInRow(endIndex);
-      // Reset all skipSeparator flags and re-mark the last row
-      for (let i = 0; i < this.layouts.length; i++) {
-        this.layouts[i].skipSeparator = false;
+
+      for (const layout of this.layouts) {
+        layout.skipSeparator = false;
       }
+
       this.markLastRowItemsToSkipSeparators(endIndex);
     }
   }
@@ -231,7 +232,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       this.layouts[i].width = this.getWidth(i);
       this.layouts[i].skipSeparator = false;
     }
-    
+
     // Mark last row items to skip separators
     if (this.layouts.length > 0) {
       this.markLastRowItemsToSkipSeparators(this.layouts.length - 1);
