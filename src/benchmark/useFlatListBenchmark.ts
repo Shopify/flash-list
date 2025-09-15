@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList } from "react-native";
 
 import { ErrorMessages } from "../errors/ErrorMessages";
@@ -25,14 +25,24 @@ export function useFlatListBenchmark(
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: FlatListBenchmarkParams
 ) {
-  useEffect(() => {
+  const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(false);
+  const cancellableRef = useRef<Cancellable | null>(null);
+
+  const startBenchmark = useCallback(() => {
+    if (isBenchmarkRunning) {
+      return;
+    }
     const cancellable = new Cancellable();
+    cancellableRef.current = cancellable;
     if (flatListRef.current && flatListRef.current.props) {
       if (!(Number(flatListRef.current.props.data?.length) > 0)) {
         throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
       }
     }
-    const cancelTimeout = setTimeout(async () => {
+
+    setIsBenchmarkRunning(true);
+
+    const runBenchmark = async () => {
       const jsFPSMonitor = new JSFPSMonitor();
       jsFPSMonitor.startTracking();
       for (let i = 0; i < (params.repeatCount || 1); i++) {
@@ -53,14 +63,37 @@ export function useFlatListBenchmark(
         result.formattedString = getFormattedString(result);
       }
       callback(result);
+      setIsBenchmarkRunning(false);
+    };
+
+    runBenchmark();
+  }, [
+    callback,
+    flatListRef,
+    isBenchmarkRunning,
+    params.repeatCount,
+    params.speedMultiplier,
+    params.targetOffset,
+  ]);
+
+  useEffect(() => {
+    if (params.startManually) {
+      return;
+    }
+
+    const cancelTimeout = setTimeout(() => {
+      startBenchmark();
     }, params.startDelayInMs || 3000);
+
     return () => {
       clearTimeout(cancelTimeout);
-      cancellable.cancel();
+      if (cancellableRef.current) {
+        cancellableRef.current.cancel();
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return [];
+  return { startBenchmark, isBenchmarkRunning };
 }
 
 /**

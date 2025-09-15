@@ -29,6 +29,8 @@ import Carousel from "./Carousel";
 import { LayoutOptions } from "./LayoutOptions";
 import ShowcaseApp from "./ShowcaseApp";
 import LotOfItems from "./lot-of-items/LotOfItems";
+import ManualBenchmarkExample from "./ManualBenchmarkExample";
+import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -112,6 +114,16 @@ const NavigationTree = () => {
           name="CellRendererExamples"
           component={FlashListCellRenderer}
           options={{ title: "CellRenderer Examples" }}
+        />
+        <Stack.Screen
+          name="ManualBenchmarkExample"
+          component={ManualBenchmarkExample}
+          options={{ title: "Manual Flash List Benchmark Example" }}
+        />
+        <Stack.Screen
+          name="ManualFlatListBenchmarkExample"
+          component={ManualFlatListBenchmarkExample}
+          options={{ title: "Manual Flat List Benchmark Example" }}
         />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />

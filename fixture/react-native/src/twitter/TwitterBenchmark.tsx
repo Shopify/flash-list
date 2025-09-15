@@ -7,7 +7,6 @@ import Tweet from "./models/Tweet";
 const TwitterBenchmark = () => {
   const ref = useRef<FlashListRef<Tweet>>(null);
   useBenchmark(
-    // @ts-ignore - Type compatibility issue with useFlatListBenchmark
     ref,
     (res) => {
       if (!res.interrupted) {
