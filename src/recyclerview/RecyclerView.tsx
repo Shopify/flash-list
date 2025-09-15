@@ -227,6 +227,17 @@ const RecyclerViewComponent = <T,>(
       viewHolderCollectionRef.current?.commitLayout();
       applyOffsetCorrection();
     }
+
+    if (
+      horizontal &&
+      recyclerViewManager.hasLayout() &&
+      recyclerViewManager.getWindowSize().height > 0
+    ) {
+      // We want the parent FlashList to continue rendering the next batch of items as soon as height is available.
+      // Waiting for each horizontal list to finish might cause too many setState calls.
+      // This will help avoid "Maximum update depth exceeded" error.
+      parentRecyclerViewContext?.unmarkChildLayoutAsPending(recyclerViewId);
+    }
   });
 
   /**

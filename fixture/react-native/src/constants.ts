@@ -32,4 +32,7 @@ export type RootStackParamList = {
   Carousel: undefined;
   LayoutOptions: undefined;
   ShowcaseApp: undefined;
+  LotOfItems: undefined;
+  ManualBenchmarkExample: undefined;
+  ManualFlatListBenchmarkExample: undefined;
 };
