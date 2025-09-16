@@ -6,8 +6,8 @@
     "declarationMap": true,
     "pretty": true,
     "moduleResolution": "node",
-    "target": "es5",
-    "downlevelIteration": true,
+    "target": "es2018",
+    "module": "ES2015",
     "esModuleInterop": true,
     "jsx": "react",
     "strictNullChecks": true,
@@ -16,17 +16,8 @@
     "noEmitOnError": false,
     "experimentalDecorators": true,
     "noUnusedLocals": true,
-    "importHelpers": true,
     "skipLibCheck": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es2015",
-      "es2016",
-      "es2017",
-      "es2018",
-      "esnext.asynciterable"
-    ],
+    "lib": ["dom", "es2018", "esnext.asynciterable"],
     "typeRoots": ["../node_modules/@types"]
   }
 }
