@@ -202,4 +202,114 @@ describe("GridLayoutManager", () => {
       expect(updatedLayouts[3].y).toBe(initialLayouts[0].height);
     });
   });
+
+  describe("Performance calculations", () => {
+    it("should avoid scanning all items during width updates", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        1000, // Large number of items
+        defaultParams
+      );
+
+      // Measure time for layout parameter updates
+      const startTime = performance.now();
+      manager.updateLayoutParams(
+        createLayoutParams({
+          ...defaultParams,
+          windowSize: { width: 600, height: 900 },
+        })
+      );
+      const endTime = performance.now();
+      const updateTime = endTime - startTime;
+
+      // Should complete quickly even with 1000 items
+      expect(updateTime).toBeLessThan(50); // 50ms threshold
+    });
+
+    it("should use lazy width calculation for better performance", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        500,
+        defaultParams
+      );
+
+      // Force width recalculation by changing window size
+      manager.updateLayoutParams(
+        createLayoutParams({
+          ...defaultParams,
+          windowSize: { width: 800, height: 900 },
+        })
+      );
+
+      // Measure time for layout computation of a subset
+      const startTime = performance.now();
+      manager.recomputeLayouts(0, 50); // Only compute first 50 items
+      const endTime = performance.now();
+      const computeTime = endTime - startTime;
+
+      // Should be fast since we're only computing 50 items, not all 500
+      expect(computeTime).toBeLessThan(20); // 20ms threshold
+    });
+
+    it("should efficiently handle separator status updates", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        1000,
+        { ...defaultParams, maxColumns: 4 }
+      );
+
+      // Measure time for adding items (which triggers separator updates)
+      const startTime = performance.now();
+      manager.modifyLayout([], 1004); // Add 4 more items
+      const endTime = performance.now();
+      const modifyTime = endTime - startTime;
+
+      // Should complete quickly due to optimized separator handling
+      expect(modifyTime).toBeLessThan(30); // 30ms threshold
+
+      // Verify separator status is correct
+      const layouts = getAllLayouts(manager);
+      const lastRowStart = layouts.length - (layouts.length % 4 || 4);
+
+      // Last row items should skip separators
+      for (let i = lastRowStart; i < layouts.length; i++) {
+        expect(layouts[i].skipSeparator).toBe(true);
+      }
+
+      // Previous row items should not skip separators
+      if (lastRowStart > 0) {
+        expect(layouts[lastRowStart - 1].skipSeparator).toBeFalsy();
+      }
+    });
+
+    it("should maintain O(k) complexity for partial layout updates", () => {
+       const manager = createPopulatedLayoutManager(
+         LayoutManagerType.GRID,
+         2000,
+         defaultParams
+       );
+
+       // Measure time for partial recomputation
+       const startTime = performance.now();
+       manager.recomputeLayouts(100, 200); // Recompute 100 items
+       const endTime = performance.now();
+       const partialTime = endTime - startTime;
+
+       // Now measure time for larger partial recomputation
+       const startTime2 = performance.now();
+       manager.recomputeLayouts(100, 400); // Recompute 300 items
+       const endTime2 = performance.now();
+       const largerPartialTime = endTime2 - startTime2;
+
+       // Time should scale roughly linearly with the number of items processed
+       // Handle cases where operations are too fast to measure accurately
+       if (partialTime > 0) {
+         const ratio = largerPartialTime / partialTime;
+         expect(ratio).toBeLessThan(10); // Allow more variance for fast operations
+       }
+
+       // Absolute threshold - operations should complete quickly
+       expect(largerPartialTime).toBeLessThan(100); // Increased threshold for reliability
+     });
+  });
 });

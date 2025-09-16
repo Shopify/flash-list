@@ -4,11 +4,12 @@
  * The component is memoized to prevent unnecessary re-renders and includes layout comparison logic.
  */
 
-import type { LayoutChangeEvent, ViewStyle } from "react-native";
+import type { LayoutChangeEvent } from "react-native";
 import React, {
   type RefObject,
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
 } from "react";
 
@@ -48,25 +49,7 @@ export interface ViewHolderProps<TItem> {
   onSizeChanged?: (index: number, size: RVDimension) => void;
 }
 
-/**
- * Creates the main container style for the ViewHolder
- */
-const createContainerStyle = (
-  layout: RVLayout,
-  horizontal = false,
-  target: RenderTarget
-): ViewStyle => ({
-  flexDirection: horizontal ? "row" : "column",
-  position: target === "StickyHeader" ? "relative" : "absolute",
-  width: layout.enforcedWidth ? layout.width : undefined,
-  height: layout.enforcedHeight ? layout.height : undefined,
-  minHeight: layout.minHeight,
-  minWidth: layout.minWidth,
-  maxHeight: layout.maxHeight,
-  maxWidth: layout.maxWidth,
-  left: layout.x,
-  top: layout.y,
-});
+
 
 /**
  * Internal ViewHolder component that handles the actual rendering of list items
@@ -107,25 +90,48 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     [index, onSizeChanged]
   );
 
-  const ContainerComponent = (CellRendererComponent ??
-    CompatView) as React.ComponentType<any>;
+  // Memoized separator component
+  const separatorElement = useMemo(() => {
+    if (
+      !ItemSeparatorComponent ||
+      trailingItem === undefined ||
+      layout.skipSeparator
+    ) {
+      return null;
+    }
+    return (
+      <ItemSeparatorComponent leadingItem={item} trailingItem={trailingItem} />
+    );
+  }, [ItemSeparatorComponent, item, trailingItem, layout.skipSeparator]);
+
+  // Memoized item content (index excluded from deps to prevent unnecessary re-renders)
+  const itemContent = useMemo(() => {
+    return renderItem?.({ item, index, extraData, target }) ?? null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item, extraData, target, renderItem]);
+
+  const ContainerComponent = (CellRendererComponent ?? CompatView) as React.ComponentType<any>;
 
   return (
     <ContainerComponent
       ref={viewRef}
       onLayout={handleLayout}
-      style={createContainerStyle(layout, horizontal ?? false, target)}
+      style={{
+        flexDirection: (horizontal ?? false) ? "row" : "column",
+        position: target === "StickyHeader" ? "relative" : "absolute",
+        width: layout.enforcedWidth ? layout.width : undefined,
+        height: layout.enforcedHeight ? layout.height : undefined,
+        minHeight: layout.minHeight,
+        minWidth: layout.minWidth,
+        maxHeight: layout.maxHeight,
+        maxWidth: layout.maxWidth,
+        left: layout.x,
+        top: layout.y,
+      }}
       index={index}
     >
-      {renderItem?.({ item, index, extraData, target }) ?? null}
-      {ItemSeparatorComponent &&
-        trailingItem !== undefined &&
-        !layout.skipSeparator && (
-          <ItemSeparatorComponent
-            leadingItem={item}
-            trailingItem={trailingItem}
-          />
-        )}
+      {itemContent}
+      {separatorElement}
     </ContainerComponent>
   );
 };

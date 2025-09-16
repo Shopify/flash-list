@@ -17,9 +17,16 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
   /** If there's a span change for grid layout, we need to recompute all the widths */
   private fullRelayoutRequired = false;
 
+  /** Cache of the last row start index to optimize separator updates */
+  private lastRowStartIndex = -1;
+
+  /** Cached column width to avoid repeated division operations */
+  private cachedColumnWidth = 0;
+
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
     this.boundedSize = params.windowSize.width;
+    this.cachedColumnWidth = this.boundedSize / this.maxColumns;
   }
 
   /**
@@ -34,6 +41,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       prevNumColumns !== params.maxColumns
     ) {
       this.boundedSize = params.windowSize.width;
+      this.cachedColumnWidth = this.boundedSize / this.maxColumns;
       if (this.layouts.length > 0) {
         // update all widths
         this.updateAllWidths();
@@ -72,11 +80,15 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
    */
   estimateLayout(index: number) {
     const layout = this.layouts[index];
-    layout.width = this.getWidth(index);
-    layout.height = this.getEstimatedHeight(index);
 
-    layout.isWidthMeasured = true;
-    layout.enforcedWidth = true;
+    // Only calculate width if not already measured or if forced recalculation is needed
+    if (!layout.isWidthMeasured || !layout.enforcedWidth) {
+      layout.width = this.getWidth(index);
+      layout.isWidthMeasured = true;
+      layout.enforcedWidth = true;
+    }
+
+    layout.height = this.getEstimatedHeight(index);
   }
 
   /**
@@ -116,6 +128,14 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
 
     for (let i = newStartIndex; i <= endIndex; i++) {
       const layout = this.getLayout(i);
+
+      // Ensure width is calculated for this specific item if needed
+      if (!layout.isWidthMeasured || !layout.enforcedWidth) {
+        layout.width = this.getWidth(i);
+        layout.isWidthMeasured = true;
+        layout.enforcedWidth = true;
+      }
+
       if (!this.checkBounds(startX, layout.width)) {
         const tallestItem = this.processAndReturnTallestItemInRow(i - 1);
         startY = tallestItem.y + tallestItem.height;
@@ -128,11 +148,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     }
     if (endIndex === this.layouts.length - 1) {
       this.processAndReturnTallestItemInRow(endIndex);
-
-      for (const layout of this.layouts) {
-        layout.skipSeparator = false;
-      }
-
       this.markLastRowItemsToSkipSeparators(endIndex);
     }
   }
@@ -143,7 +158,7 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
    * @returns Width of the item
    */
   private getWidth(index: number): number {
-    return (this.boundedSize / this.maxColumns) * this.getSpan(index);
+    return this.cachedColumnWidth * this.getSpan(index);
   }
 
   /**
@@ -159,7 +174,9 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     let maxHeight = 0;
     let i = startIndex;
     let isMeasured = false;
-    while (i <= endIndex) {
+    const layoutsLength = this.layouts.length; // Cache length
+
+    while (i <= endIndex && i < layoutsLength) {
       const layout = this.layouts[i];
       isMeasured = isMeasured || Boolean(layout.isHeightMeasured);
       maxHeight = Math.max(maxHeight, layout.height);
@@ -171,9 +188,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       }
 
       i++;
-      if (i >= this.layouts.length) {
-        break;
-      }
     }
     if (!tallestItem && maxHeight > 0) {
       maxHeight = Number.MAX_SAFE_INTEGER;
@@ -191,15 +205,13 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
         this.requiresRepaint = true;
       }
       i = startIndex;
-      while (i <= endIndex) {
+      const layoutsLength = this.layouts.length; // Cache length
+      while (i <= endIndex && i < layoutsLength) {
         this.layouts[i].minHeight = targetHeight;
         if (targetHeight > 0) {
           this.layouts[i].height = targetHeight;
         }
         i++;
-        if (i >= this.layouts.length) {
-          break;
-        }
       }
       tallestItem.minHeight = 0;
     }
@@ -216,26 +228,35 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     const y = this.layouts[startIndex].y;
     let maxHeight = 0;
     let i = startIndex;
-    while (i <= endIndex) {
+    const layoutsLength = this.layouts.length; // Cache length
+
+    while (i <= endIndex && i < layoutsLength) {
       maxHeight = Math.max(maxHeight, this.layouts[i].height);
       i++;
-      if (i >= this.layouts.length) {
-        break;
-      }
     }
     return y + maxHeight;
   }
 
   private updateAllWidths() {
-    // Reset all skipSeparator flags first
-    for (let i = 0; i < this.layouts.length; i++) {
-      this.layouts[i].width = this.getWidth(i);
-      this.layouts[i].skipSeparator = false;
+    const layoutsLength = this.layouts.length; // Cache length
+
+    // Only reset skipSeparator for previously marked last row items
+    if (this.lastRowStartIndex >= 0) {
+      for (let i = this.lastRowStartIndex; i < layoutsLength; i++) {
+        this.layouts[i].skipSeparator = false;
+      }
     }
 
-    // Mark last row items to skip separators
-    if (this.layouts.length > 0) {
-      this.markLastRowItemsToSkipSeparators(this.layouts.length - 1);
+    // Mark all layouts as needing width recalculation instead of updating immediately
+    // This defers the expensive width calculation until actually needed
+    for (const layout of this.layouts) {
+      layout.isWidthMeasured = false;
+      layout.enforcedWidth = false;
+    }
+
+    // Mark new last row items to skip separators
+    if (layoutsLength > 0) {
+      this.markLastRowItemsToSkipSeparators(layoutsLength - 1);
     }
   }
 
@@ -269,14 +290,32 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
 
   /**
    * Marks items in the last row to skip separators to prevent height stretching.
+   * Only updates the previous and current last row items.
    * @param endIndex Index of the last item in the layout
    */
   private markLastRowItemsToSkipSeparators(endIndex: number): void {
-    const startIndex = this.locateFirstIndexInRow(endIndex);
-    for (let i = startIndex; i <= endIndex; i++) {
-      if (i < this.layouts.length) {
-        this.layouts[i].skipSeparator = true;
+    const newLastRowStartIndex = this.locateFirstIndexInRow(endIndex);
+
+    const layoutsLength = this.layouts.length; // Cache length
+
+    // Clear skipSeparator from previous last row if it changed
+    if (
+      this.lastRowStartIndex >= 0 &&
+      this.lastRowStartIndex !== newLastRowStartIndex
+    ) {
+      const clearEnd = Math.min(layoutsLength, newLastRowStartIndex);
+      for (let i = this.lastRowStartIndex; i < clearEnd; i++) {
+        this.layouts[i].skipSeparator = false;
       }
     }
+
+    // Mark new last row items to skip separators
+    const markEnd = Math.min(endIndex + 1, layoutsLength);
+    for (let i = newLastRowStartIndex; i < markEnd; i++) {
+      this.layouts[i].skipSeparator = true;
+    }
+
+    // Update cached last row start index
+    this.lastRowStartIndex = newLastRowStartIndex;
   }
 }
