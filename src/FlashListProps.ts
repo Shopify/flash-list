@@ -321,7 +321,7 @@ export interface FlashListProps<TItem>
    * Style for the RecyclerView's parent container.
    * Please avoid anything which can mess size of children in this view. For example, margin is okay but padding is not.
    */
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 
   /**
    * New arch only
