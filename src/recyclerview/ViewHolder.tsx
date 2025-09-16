@@ -9,7 +9,6 @@ import React, {
   type RefObject,
   useCallback,
   useLayoutEffect,
-  useMemo,
   useRef,
 } from "react";
 
@@ -108,47 +107,25 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     [index, onSizeChanged]
   );
 
-  // Render separator component if needed
-  const separatorElement = useMemo(() => {
-    if (
-      !ItemSeparatorComponent ||
-      trailingItem === undefined ||
-      layout.skipSeparator
-    ) {
-      return null;
-    }
-    return (
-      <ItemSeparatorComponent leadingItem={item} trailingItem={trailingItem} />
-    );
-  }, [ItemSeparatorComponent, item, trailingItem, layout.skipSeparator]);
-
-  // Render main item content
-  const itemContent = useMemo(() => {
-    return renderItem?.({ item, index, extraData, target }) ?? null;
-    // Note: We intentionally exclude index from dependencies to avoid unnecessary re-renders
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item, extraData, target, renderItem]);
-
-  // Determine container component
   const ContainerComponent = (CellRendererComponent ??
     CompatView) as React.ComponentType<any>;
-
-  // Create styles
-  const containerStyle = createContainerStyle(
-    layout,
-    horizontal ?? false,
-    target
-  );
 
   return (
     <ContainerComponent
       ref={viewRef}
       onLayout={handleLayout}
-      style={containerStyle}
+      style={createContainerStyle(layout, horizontal ?? false, target)}
       index={index}
     >
-      {itemContent}
-      {separatorElement}
+      {renderItem?.({ item, index, extraData, target }) ?? null}
+      {ItemSeparatorComponent &&
+        trailingItem !== undefined &&
+        !layout.skipSeparator && (
+          <ItemSeparatorComponent
+            leadingItem={item}
+            trailingItem={trailingItem}
+          />
+        )}
     </ContainerComponent>
   );
 };
