@@ -283,33 +283,33 @@ describe("GridLayoutManager", () => {
     });
 
     it("should maintain O(k) complexity for partial layout updates", () => {
-       const manager = createPopulatedLayoutManager(
-         LayoutManagerType.GRID,
-         2000,
-         defaultParams
-       );
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        2000,
+        defaultParams
+      );
 
-       // Measure time for partial recomputation
-       const startTime = performance.now();
-       manager.recomputeLayouts(100, 200); // Recompute 100 items
-       const endTime = performance.now();
-       const partialTime = endTime - startTime;
+      // Measure time for partial recomputation
+      const startTime = performance.now();
+      manager.recomputeLayouts(100, 200); // Recompute 100 items
+      const endTime = performance.now();
+      const partialTime = endTime - startTime;
 
-       // Now measure time for larger partial recomputation
-       const startTime2 = performance.now();
-       manager.recomputeLayouts(100, 400); // Recompute 300 items
-       const endTime2 = performance.now();
-       const largerPartialTime = endTime2 - startTime2;
+      // Now measure time for larger partial recomputation
+      const startTime2 = performance.now();
+      manager.recomputeLayouts(100, 400); // Recompute 300 items
+      const endTime2 = performance.now();
+      const largerPartialTime = endTime2 - startTime2;
 
-       // Time should scale roughly linearly with the number of items processed
-       // Handle cases where operations are too fast to measure accurately
-       if (partialTime > 0) {
-         const ratio = largerPartialTime / partialTime;
-         expect(ratio).toBeLessThan(10); // Allow more variance for fast operations
-       }
+      // Time should scale roughly linearly with the number of items processed
+      // Handle cases where operations are too fast to measure accurately
+      if (partialTime > 0) {
+        const ratio = largerPartialTime / partialTime;
+        expect(ratio).toBeLessThan(10); // Allow more variance for fast operations
+      }
 
-       // Absolute threshold - operations should complete quickly
-       expect(largerPartialTime).toBeLessThan(100); // Increased threshold for reliability
-     });
+      // Absolute threshold - operations should complete quickly
+      expect(largerPartialTime).toBeLessThan(100); // Increased threshold for reliability
+    });
   });
 });

@@ -49,8 +49,6 @@ export interface ViewHolderProps<TItem> {
   onSizeChanged?: (index: number, size: RVDimension) => void;
 }
 
-
-
 /**
  * Internal ViewHolder component that handles the actual rendering of list items
  * @template TItem - The type of item being rendered in the list
@@ -110,14 +108,15 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, extraData, target, renderItem]);
 
-  const ContainerComponent = (CellRendererComponent ?? CompatView) as React.ComponentType<any>;
+  const ContainerComponent = (CellRendererComponent ??
+    CompatView) as React.ComponentType<any>;
 
   return (
     <ContainerComponent
       ref={viewRef}
       onLayout={handleLayout}
       style={{
-        flexDirection: (horizontal ?? false) ? "row" : "column",
+        flexDirection: horizontal ?? false ? "row" : "column",
         position: target === "StickyHeader" ? "relative" : "absolute",
         width: layout.enforcedWidth ? layout.width : undefined,
         height: layout.enforcedHeight ? layout.height : undefined,

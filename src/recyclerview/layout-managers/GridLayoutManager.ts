@@ -205,7 +205,6 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
         this.requiresRepaint = true;
       }
       i = startIndex;
-      const layoutsLength = this.layouts.length; // Cache length
       while (i <= endIndex && i < layoutsLength) {
         this.layouts[i].minHeight = targetHeight;
         if (targetHeight > 0) {
