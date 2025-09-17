@@ -228,7 +228,7 @@ Additional configuration for initialScrollIndex. Use viewOffset to apply an offs
 Ignored if initialScrollIndex is not set.
 
 ```tsx
-initialScrollIndexParams?: { viewOffset?: { x: number; y: number } };
+initialScrollIndexParams?: { viewOffset?: number };
 ```
 
 ### `keyExtractor`

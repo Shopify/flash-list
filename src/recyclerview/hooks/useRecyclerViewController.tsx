@@ -584,13 +584,11 @@ export function useRecyclerViewController<T>(
 
       pauseOffsetCorrection.current = true;
 
-      const additionalOffsetX = initialScrollIndexParams?.viewOffset?.x ?? 0;
-      const additionalOffsetY = initialScrollIndexParams?.viewOffset?.y ?? 0;
+      const additionalOffset = initialScrollIndexParams?.viewOffset ?? 0;
       const offset = horizontal
-        ? recyclerViewManager.getLayout(initialScrollIndex).x +
-          additionalOffsetX
+        ? recyclerViewManager.getLayout(initialScrollIndex).x + additionalOffset
         : recyclerViewManager.getLayout(initialScrollIndex).y +
-          additionalOffsetY;
+          additionalOffset;
       handlerMethods.scrollToOffset({
         offset,
         animated: false,

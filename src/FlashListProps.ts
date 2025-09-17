@@ -171,10 +171,7 @@ export interface FlashListProps<TItem>
    * Use viewOffset to apply an offset to the initial scroll position as defined by initialScrollIndex.
    * Ignored if initialScrollIndex is not set.
    */
-  initialScrollIndexParams?:
-    | { viewOffset?: { x: number; y: number } }
-    | null
-    | undefined;
+  initialScrollIndexParams?: { viewOffset?: number } | null | undefined;
 
   /**
    * Used to extract a unique key for a given item at the specified index.
