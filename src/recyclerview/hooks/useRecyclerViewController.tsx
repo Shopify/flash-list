@@ -289,7 +289,7 @@ export function useRecyclerViewController<T>(
           }
         }
         setTimeout(() => {
-          scrollViewRef.current!.scrollToEnd({ animated });
+          scrollViewRef.current?.scrollToEnd({ animated });
         }, 0);
       },
 
