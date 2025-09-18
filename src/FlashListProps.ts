@@ -167,6 +167,13 @@ export interface FlashListProps<TItem>
   initialScrollIndex?: number | null | undefined;
 
   /**
+   * Additional configuration for initialScrollIndex.
+   * Use viewOffset to apply an offset to the initial scroll position as defined by initialScrollIndex.
+   * Ignored if initialScrollIndex is not set.
+   */
+  initialScrollIndexParams?: { viewOffset?: number } | null | undefined;
+
+  /**
    * Used to extract a unique key for a given item at the specified index.
    * Key is used for optimizing performance. Defining `keyExtractor` is also necessary
    * when doing [layout animations](https://shopify.github.io/flash-list/docs/guides/layout-animation)
