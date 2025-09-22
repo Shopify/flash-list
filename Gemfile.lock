@@ -5,7 +5,7 @@ GEM
       base64
       nkf
       rexml
-    activesupport (7.2.2.1)
+    activesupport (7.2.2.2)
       base64
       benchmark (>= 0.3)
       bigdecimal
@@ -66,12 +66,14 @@ GEM
     cocoapods-try (1.2.0)
     colored2 (3.1.2)
     concurrent-ruby (1.3.3)
-    connection_pool (2.5.3)
+    connection_pool (2.5.4)
     drb (2.2.3)
     escape (0.0.4)
     ethon (0.16.0)
       ffi (>= 1.15.0)
     ffi (1.17.2-arm64-darwin)
+    ffi (1.17.2-x86_64-darwin)
+    ffi (1.17.2-x86_64-linux-gnu)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
     gh_inspector (1.1.3)
