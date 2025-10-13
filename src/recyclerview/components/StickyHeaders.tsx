@@ -92,7 +92,7 @@ export const StickyHeaders = <TItem,>({
     const currentIndexInArray = findCurrentStickyIndex(
       sortedIndices,
       adjustedScrollOffset,
-      (index) => recyclerViewManager.getLayout(index).y
+      (index) => recyclerViewManager.getLayout(index).y - recyclerViewManager.firstItemOffset
     );
 
     const newStickyIndex = sortedIndices[currentIndexInArray] ?? -1;
@@ -106,7 +106,7 @@ export const StickyHeaders = <TItem,>({
     const newNextStickyY =
       newNextStickyIndex === -1
         ? Number.MAX_SAFE_INTEGER
-        : (recyclerViewManager.tryGetLayout(newNextStickyIndex)?.y ?? 0) +
+        : (recyclerViewManager.tryGetLayout(newNextStickyIndex)?.y ?? 0) -
           recyclerViewManager.firstItemOffset;
     const newCurrentStickyHeight =
       recyclerViewManager.tryGetLayout(newStickyIndex)?.height ?? 0;
