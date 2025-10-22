@@ -35,4 +35,5 @@ export type RootStackParamList = {
   LotOfItems: undefined;
   ManualBenchmarkExample: undefined;
   ManualFlatListBenchmarkExample: undefined;
+  StickyHeaderExample: undefined;
 };

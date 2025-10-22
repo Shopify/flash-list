@@ -20,6 +20,7 @@ import { CompatAnimatedScroller } from "../components/CompatScroller";
  *   - renderHeader: The header component renderer
  *   - renderFooter: The footer component renderer
  *   - renderEmpty: The empty state component renderer
+ *   - renderStickyHeaderBackdrop: The sticky header backdrop component renderer
  *   - CompatScrollView: The animated scroll component
  */
 export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
@@ -35,6 +36,7 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     onRefresh,
     data,
     refreshControl: customRefreshControl,
+    stickyHeaderConfig,
   } = props;
 
   /**
@@ -95,6 +97,26 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
   }, [ListEmptyComponent, data]);
 
   /**
+   * Creates the sticky header backdrop component.
+   */
+  const renderStickyHeaderBackdrop = useMemo(() => {
+    if (!stickyHeaderConfig?.backdropComponent) {
+      return null;
+    }
+    return (
+      <CompatView
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+        }}
+      >
+        {getValidComponent(stickyHeaderConfig?.backdropComponent)}
+      </CompatView>
+    );
+  }, [stickyHeaderConfig?.backdropComponent]);
+
+  /**
    * Creates an animated scroll component based on the provided renderScrollComponent.
    * If no custom component is provided, uses the default CompatAnimatedScroller.
    */
@@ -120,5 +142,6 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     renderFooter,
     renderEmpty,
     CompatScrollView,
+    renderStickyHeaderBackdrop,
   };
 }
