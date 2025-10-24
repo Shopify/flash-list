@@ -8,7 +8,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
 
   var reactNativeDelegate: ReactNativeDelegate?
-  var reactNativeFactory: RCTReactNativeFactory?
+  @objc var reactNativeFactory: RCTReactNativeFactory?
 
   func application(
     _ application: UIApplication,
