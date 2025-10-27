@@ -31,6 +31,7 @@ import ShowcaseApp from "./ShowcaseApp";
 import LotOfItems from "./lot-of-items/LotOfItems";
 import ManualBenchmarkExample from "./ManualBenchmarkExample";
 import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
+import { StickyHeaderExample } from "./StickyHeaderExample";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -105,6 +106,11 @@ const NavigationTree = () => {
             name="LotOfItems"
             component={LotOfItems}
             options={{ title: "Lot of Items" }}
+          />
+          <Stack.Screen
+            name="StickyHeaderExample"
+            component={StickyHeaderExample}
+            options={{ title: "Sticky Headers" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />

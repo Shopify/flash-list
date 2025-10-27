@@ -9,6 +9,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Introduce optional view offset param for initial scroll position
   - https://github.com/Shopify/flash-list/pull/1870
+- Add sticky header offset and sticky header backgrounds
+  - https://github.com/Shopify/flash-list/pull/1953
 
 ## [1.7.6] - 2025-03-19
 

@@ -301,6 +301,97 @@ Multiple columns can only be rendered with `horizontal={false}` and will zig-zag
 
 `numColumns?: number;`
 
+### `stickyHeaderConfig`
+
+Configuration object for sticky header behavior and appearance. All properties are optional.
+
+```tsx
+stickyHeaderConfig?: {
+  useNativeDriver?: boolean;
+  offset?: number;
+  backdropComponent?: React.ComponentType<any> | React.ReactElement | null;
+  hideRelatedCell?: boolean;
+};
+```
+
+#### `useNativeDriver`
+
+If true, the sticky headers will use native driver for animations. Default is `true`.
+
+```tsx
+useNativeDriver?: boolean;
+```
+
+#### `offset`
+
+Offset from the top of the list where sticky headers should stick.
+This is useful when you have a fixed header or navigation bar at the top of your screen
+and want sticky headers to appear below it instead of at the very top.
+Default is `0`.
+
+```tsx
+offset?: number;
+```
+
+#### `backdropComponent`
+
+Component to render behind sticky headers (e.g., a backdrop or blur effect).
+Renders in front of the scroll view content but behind the sticky header itself.
+Useful for creating visual separation or effects like backgrounds with blur.
+
+```tsx
+backdropComponent?: React.ComponentType<any> | React.ReactElement | null;
+```
+
+#### `hideRelatedCell`
+
+When a sticky header is displayed, the cell associated with it is hidden.
+Default is `false`.
+
+```tsx
+hideRelatedCell?: boolean;
+```
+
+**Example:**
+
+```jsx
+<FlashList
+  data={sectionData}
+  stickyHeaderIndices={[0, 10, 20]}
+  stickyHeaderConfig={{
+    useNativeDriver: true,
+    offset: 50, // Headers stick 50px from top
+    backdropComponent: <BlurView style={StyleSheet.absoluteFill} />,
+    hideRelatedCell: true,
+  }}
+  renderItem={({ item }) => <ListItem item={item} />}
+/>
+```
+
+### `onChangeStickyIndex`
+
+Callback invoked when the currently displayed sticky header changes as you scroll.
+Receives the current sticky header index and the previous sticky header index.
+This is useful for tracking which header is currently stuck at the top while scrolling.
+The index refers to the position of the item in your data array that's being used as a sticky header.
+
+```tsx
+onChangeStickyIndex?: (current: number, previous: number) => void;
+```
+
+Example:
+
+```jsx
+<FlashList
+  data={sectionData}
+  stickyHeaderIndices={[0, 10, 20]}
+  onChangeStickyIndex={(current, previous) => {
+    console.log(`Sticky header changed from ${previous} to ${current}`);
+  }}
+  renderItem={({ item }) => <ListItem item={item} />}
+/>
+```
+
 ### `onBlankArea`
 
 ```tsx

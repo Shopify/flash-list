@@ -47,6 +47,8 @@ export interface ViewHolderProps<TItem> {
   horizontal?: FlashListProps<TItem>["horizontal"];
   /** Callback when the item's size changes */
   onSizeChanged?: (index: number, size: RVDimension) => void;
+  /** Whether this item should be hidden (likely because it is associated with the active sticky header) */
+  hidden: boolean;
 }
 
 /**
@@ -67,7 +69,8 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     CellRendererComponent,
     ItemSeparatorComponent,
     trailingItem,
-    horizontal = false,
+    horizontal,
+    hidden,
   } = props;
 
   // Manage ref lifecycle
@@ -110,6 +113,23 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
 
   const ContainerComponent = (CellRendererComponent ??
     CompatView) as React.ComponentType<any>;
+  const style = {
+    flexDirection: horizontal ? "row" : "column",
+    position: target === "StickyHeader" ? "relative" : "absolute",
+    width: layout.enforcedWidth ? layout.width : undefined,
+    height: layout.enforcedHeight ? layout.height : undefined,
+    minHeight: layout.minHeight,
+    minWidth: layout.minWidth,
+    maxHeight: layout.maxHeight,
+    maxWidth: layout.maxWidth,
+    left: layout.x,
+    top: layout.y,
+    opacity: hidden ? 0 : 1,
+  } as const;
+
+  // TODO: Fix this type issue
+  const CompatContainer = (CellRendererComponent ??
+    CompatView) as unknown as any;
 
   return (
     <ContainerComponent
@@ -155,7 +175,8 @@ export const ViewHolder = React.memo(
       prevProps.CellRendererComponent === nextProps.CellRendererComponent &&
       prevProps.ItemSeparatorComponent === nextProps.ItemSeparatorComponent &&
       prevProps.trailingItem === nextProps.trailingItem &&
-      prevProps.horizontal === nextProps.horizontal
+      prevProps.horizontal === nextProps.horizontal &&
+      prevProps.hidden === nextProps.hidden
     );
   }
 );
