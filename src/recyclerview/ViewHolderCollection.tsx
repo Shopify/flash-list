@@ -50,6 +50,10 @@ export interface ViewHolderCollectionProps<TItem> {
    * For startRenderingFromBottom, we need to adjust the height of the container
    */
   getAdjustmentMargin: () => number;
+  /** Current sticky index */
+  currentStickyIndex: number;
+  /** Whether the cell associated with an active sticky header is hidden */
+  hideStickyHeaderRelatedCell: boolean;
 }
 
 /**
@@ -84,6 +88,8 @@ export const ViewHolderCollection = <TItem,>(
     onCommitEffect,
     horizontal,
     getAdjustmentMargin,
+    currentStickyIndex,
+    hideStickyHeaderRelatedCell,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -168,6 +174,7 @@ export const ViewHolderCollection = <TItem,>(
           const trailingItem = ItemSeparatorComponent
             ? data[index + 1]
             : undefined;
+
           return (
             <ViewHolder
               key={reactKey}
@@ -185,6 +192,9 @@ export const ViewHolderCollection = <TItem,>(
               CellRendererComponent={CellRendererComponent}
               ItemSeparatorComponent={ItemSeparatorComponent}
               horizontal={horizontal}
+              hidden={
+                hideStickyHeaderRelatedCell && currentStickyIndex === index
+              }
             />
           );
         })}

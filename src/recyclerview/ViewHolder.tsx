@@ -47,6 +47,8 @@ export interface ViewHolderProps<TItem> {
   horizontal?: FlashListProps<TItem>["horizontal"];
   /** Callback when the item's size changes */
   onSizeChanged?: (index: number, size: RVDimension) => void;
+  /** Whether this item should be hidden (likely because it is associated with the active sticky header) */
+  hidden: boolean;
 }
 
 /**
@@ -69,6 +71,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     ItemSeparatorComponent,
     trailingItem,
     horizontal,
+    hidden,
   } = props;
 
   useLayoutEffect(() => {
@@ -113,6 +116,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     maxWidth: layout.maxWidth,
     left: layout.x,
     top: layout.y,
+    opacity: hidden ? 0 : 1,
   } as const;
 
   // TODO: Fix this type issue
@@ -152,7 +156,8 @@ export const ViewHolder = React.memo(
       prevProps.CellRendererComponent === nextProps.CellRendererComponent &&
       prevProps.ItemSeparatorComponent === nextProps.ItemSeparatorComponent &&
       prevProps.trailingItem === nextProps.trailingItem &&
-      prevProps.horizontal === nextProps.horizontal
+      prevProps.horizontal === nextProps.horizontal &&
+      prevProps.hidden === nextProps.hidden
     );
   }
 );

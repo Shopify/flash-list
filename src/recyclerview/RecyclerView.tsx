@@ -84,12 +84,21 @@ const RecyclerViewComponent = <T,>(
     stickyHeaderIndices,
     maintainVisibleContentPosition,
     onCommitLayoutEffect,
+    onChangeStickyIndex,
+    stickyHeaderConfig,
     ...rest
   } = props;
 
   const [renderTimeTracker] = useState(() => new RenderTimeTracker());
 
   renderTimeTracker.startTracking();
+
+  // Sticky header config
+  const stickyHeaderOffset = stickyHeaderConfig?.offset ?? 0;
+  const stickyHeaderUseNativeDriver =
+    stickyHeaderConfig?.useNativeDriver ?? true;
+  const stickyHeaderHideRelatedCell =
+    stickyHeaderConfig?.hideRelatedCell ?? false;
 
   // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -108,6 +117,7 @@ const RecyclerViewComponent = <T,>(
   // State for managing layout and render updates
   const [_, setLayoutTreeId] = useLayoutState(0);
   const [__, setRenderId] = useState(0);
+  const [currentStickyIndex, setCurrentStickyIndex] = useState(-1);
 
   // Map to store refs for each item in the list
   const refHolder = useMemo(
@@ -388,6 +398,7 @@ const RecyclerViewComponent = <T,>(
     renderFooter,
     renderEmpty,
     CompatScrollView,
+    renderStickyHeaderBackdrop,
   } = useSecondaryProps(props);
 
   if (
@@ -408,15 +419,23 @@ const RecyclerViewComponent = <T,>(
       if (horizontal) {
         throw new Error(ErrorMessages.stickyHeadersNotSupportedForHorizontal);
       }
+
       return (
         <StickyHeaders
           stickyHeaderIndices={stickyHeaderIndices}
+          stickyHeaderOffset={stickyHeaderOffset}
           data={data}
           renderItem={renderItem}
           scrollY={scrollY}
           stickyHeaderRef={stickyHeaderRef}
           recyclerViewManager={recyclerViewManager}
           extraData={extraData}
+          onChangeStickyIndex={(newStickyHeaderIndex) => {
+            if (stickyHeaderHideRelatedCell) {
+              setCurrentStickyIndex(newStickyHeaderIndex);
+            }
+            onChangeStickyIndex?.(newStickyHeaderIndex, currentStickyIndex);
+          }}
         />
       );
     }
@@ -424,11 +443,15 @@ const RecyclerViewComponent = <T,>(
   }, [
     data,
     stickyHeaderIndices,
+    stickyHeaderOffset,
     renderItem,
     scrollY,
     horizontal,
     recyclerViewManager,
     extraData,
+    currentStickyIndex,
+    onChangeStickyIndex,
+    stickyHeaderHideRelatedCell,
   ]);
 
   // Set up scroll event handling with animation support for sticky headers
@@ -436,11 +459,14 @@ const RecyclerViewComponent = <T,>(
     if (stickyHeaders) {
       return Animated.event(
         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-        { useNativeDriver: true, listener: onScrollHandler }
+        {
+          useNativeDriver: stickyHeaderUseNativeDriver,
+          listener: onScrollHandler,
+        }
       );
     }
     return onScrollHandler;
-  }, [onScrollHandler, scrollY, stickyHeaders]);
+  }, [onScrollHandler, scrollY, stickyHeaders, stickyHeaderUseNativeDriver]);
 
   const shouldMaintainVisibleContentPosition =
     recyclerViewManager.shouldMaintainVisibleContentPosition();
@@ -464,13 +490,14 @@ const RecyclerViewComponent = <T,>(
     return (
       <CompatView
         style={{
+          marginTop: horizontal ? undefined : stickyHeaderOffset,
           height: horizontal ? undefined : 0,
           width: horizontal ? 0 : undefined,
         }}
         ref={firstChildViewRef}
       />
     );
-  }, [horizontal]);
+  }, [horizontal, stickyHeaderOffset]);
 
   const scrollAnchor = useMemo(() => {
     if (shouldMaintainVisibleContentPosition) {
@@ -590,10 +617,15 @@ const RecyclerViewComponent = <T,>(
                 ? recyclerViewManager.getChildContainerDimensions()
                 : undefined
             }
+            currentStickyIndex={currentStickyIndex}
+            hideStickyHeaderRelatedCell={stickyHeaderHideRelatedCell}
           />
           {renderEmpty}
           {renderFooter}
         </CompatScrollView>
+        {stickyHeaderIndices && stickyHeaderIndices.length > 0
+          ? renderStickyHeaderBackdrop
+          : null}
         {stickyHeaders}
       </CompatView>
     </RecyclerViewContextProvider>

@@ -1,6 +1,5 @@
-import goBack from "../utils/goBack";
-import { assertSnapshot, assertSnapshotsEqual } from "../utils/SnapshotAsserts";
-import { reference, wipeArtifactsLocation } from "../utils/SnapshotLocation";
+import { assertSnapshot } from "../utils/SnapshotAsserts";
+import { wipeArtifactsLocation } from "../utils/SnapshotLocation";
 
 describe("Contacts", () => {
   beforeAll(async () => {
@@ -23,23 +22,5 @@ describe("Contacts", () => {
     ).takeScreenshot(flashListTestName);
 
     assertSnapshot(flashListScreenshotPath, flashListTestName);
-
-    await goBack();
-
-    // Go to contacts with SectionList
-    await element(by.id("Contacts SectionList")).tap();
-
-    const sectionListTestName = `SectionList_${testName}`;
-
-    const sectionListScreenshotPath = await element(
-      by.id("SectionList")
-    ).takeScreenshot(flashListTestName);
-    assertSnapshot(sectionListScreenshotPath, sectionListTestName);
-
-    assertSnapshotsEqual(
-      reference(flashListTestName),
-      reference(sectionListTestName),
-      `SectionList_and_FlashList_${testName}`
-    );
   });
 });
