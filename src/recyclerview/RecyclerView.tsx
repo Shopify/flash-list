@@ -297,7 +297,7 @@ const RecyclerViewComponent = <T,>(
 
       // Update sticky headers and check bounds
       stickyHeaderRef.current?.reportScrollEvent(event.nativeEvent);
-      checkBounds();
+      checkBounds(true); // Pass true to indicate this is user-initiated scrolling
 
       // Record interaction and compute item visibility
       recyclerViewManager.recordInteraction();
@@ -606,7 +606,7 @@ const RecyclerViewComponent = <T,>(
                 renderTimeTracker.getAverageRenderTime()
               );
               applyInitialScrollIndex();
-              checkBounds();
+              checkBounds(false); // Pass false to indicate this is not user-initiated
               recyclerViewManager.computeItemViewability();
               recyclerViewManager.animationOptimizationsEnabled = false;
             }}
