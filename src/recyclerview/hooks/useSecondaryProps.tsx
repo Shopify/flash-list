@@ -12,7 +12,8 @@ import { CompatAnimatedScroller } from "../components/CompatScroller";
  * 1. Pull-to-refresh functionality
  * 2. Header and footer components
  * 3. Empty state component
- * 4. Custom scroll component with animation support
+ * 4. Loading state component
+ * 5. Custom scroll component with animation support
  *
  * @param props - The RecyclerViewProps containing all configuration options
  * @returns An object containing:
@@ -20,6 +21,7 @@ import { CompatAnimatedScroller } from "../components/CompatScroller";
  *   - renderHeader: The header component renderer
  *   - renderFooter: The footer component renderer
  *   - renderEmpty: The empty state component renderer
+ *   - renderLoading: The loading state component renderer
  *   - renderStickyHeaderBackdrop: The sticky header backdrop component renderer
  *   - CompatScrollView: The animated scroll component
  */
@@ -30,6 +32,8 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     ListFooterComponent,
     ListFooterComponentStyle,
     ListEmptyComponent,
+    LoadingComponent,
+    isLoading,
     renderScrollComponent,
     refreshing,
     progressViewOffset,
@@ -86,15 +90,31 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
   }, [ListFooterComponent, ListFooterComponentStyle]);
 
   /**
+   * Creates the loading state component when data is being fetched.
+   * Only rendered when LoadingComponent is provided and isLoading is true.
+   * Takes precedence over the empty state component.
+   */
+  const renderLoading = useMemo(() => {
+    if (!LoadingComponent || !isLoading) {
+      return null;
+    }
+    return getValidComponent(LoadingComponent);
+  }, [LoadingComponent, isLoading]);
+
+  /**
    * Creates the empty state component when there's no data.
-   * Only rendered when ListEmptyComponent is provided and data is empty.
+   * Only rendered when ListEmptyComponent is provided, data is empty, and not loading.
    */
   const renderEmpty = useMemo(() => {
+    // Don't show empty component if we're loading
+    if (isLoading) {
+      return null;
+    }
     if (!ListEmptyComponent || (data && data.length > 0)) {
       return null;
     }
     return getValidComponent(ListEmptyComponent);
-  }, [ListEmptyComponent, data]);
+  }, [ListEmptyComponent, data, isLoading]);
 
   /**
    * Creates the sticky header backdrop component.
@@ -141,6 +161,7 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     renderHeader,
     renderFooter,
     renderEmpty,
+    renderLoading,
     CompatScrollView,
     renderStickyHeaderBackdrop,
   };
