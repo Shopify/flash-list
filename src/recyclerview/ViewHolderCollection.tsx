@@ -54,6 +54,8 @@ export interface ViewHolderCollectionProps<TItem> {
   currentStickyIndex: number;
   /** Whether the cell associated with an active sticky header is hidden */
   hideStickyHeaderRelatedCell: boolean;
+  /** Number of columns for grid layout */
+  numColumns: number;
 }
 
 /**
@@ -90,6 +92,7 @@ export const ViewHolderCollection = <TItem,>(
     getAdjustmentMargin,
     currentStickyIndex,
     hideStickyHeaderRelatedCell,
+    numColumns,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -171,7 +174,13 @@ export const ViewHolderCollection = <TItem,>(
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
           const item = data[index];
-          const trailingItem = ItemSeparatorComponent
+          // For grid layouts (numColumns > 1), only show separator if next item is in a different row
+          // Calculate current and next item's row indices
+          const currentRow = Math.floor(index / numColumns);
+          const nextRow = Math.floor((index + 1) / numColumns);
+          const isNextItemInDifferentRow = currentRow !== nextRow;
+          
+          const trailingItem = ItemSeparatorComponent && data[index + 1] !== undefined && isNextItemInDifferentRow
             ? data[index + 1]
             : undefined;
 
