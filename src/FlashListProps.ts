@@ -110,6 +110,28 @@ export interface FlashListProps<TItem>
     | undefined;
 
   /**
+   * Rendered when the list is in a loading state. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
+   * This component is displayed instead of the list items when `isLoading` is true.
+   * It takes precedence over `ListEmptyComponent` and is useful for showing skeleton screens or loading indicators
+   * while data is being fetched, without the visual glitches that come from conditionally rendering the entire FlashList.
+   * 
+   * @example
+   * ```tsx
+   * <FlashList
+   *   data={data}
+   *   isLoading={isFetchingData}
+   *   LoadingComponent={<LoadingSkeleton />}
+   *   renderItem={({ item }) => <ItemComponent item={item} />}
+   * />
+   * ```
+   */
+  LoadingComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
+  /**
    * Rendered at the bottom of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
    */
   ListFooterComponent?:
@@ -272,6 +294,25 @@ export interface FlashListProps<TItem>
    * Set this true while waiting for new data from a refresh.
    */
   refreshing?: boolean | null | undefined;
+
+  /**
+   * Boolean flag to control when the `LoadingComponent` is displayed.
+   * When set to true, the `LoadingComponent` will be rendered instead of the list items.
+   * This is useful for showing loading states while fetching data without unmounting the FlashList component.
+   * 
+   * @example
+   * ```tsx
+   * const [isLoading, setIsLoading] = useState(true);
+   * 
+   * <FlashList
+   *   data={data}
+   *   isLoading={isLoading}
+   *   LoadingComponent={<LoadingSkeleton />}
+   *   renderItem={({ item }) => <ItemComponent item={item} />}
+   * />
+   * ```
+   */
+  isLoading?: boolean | null | undefined;
 
   /**
    * `viewabilityConfig` is a default configuration for determining whether items are viewable.
