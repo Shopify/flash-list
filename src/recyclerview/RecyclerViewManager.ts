@@ -35,6 +35,9 @@ export class RecyclerViewManager<T> {
   private _isDisposed = false;
   private _isLayoutManagerDirty = false;
   private _animationOptimizationsEnabled = false;
+  // WeakMap to track unique IDs for data items when keyExtractor is not provided
+  private dataItemIdMap: WeakMap<any, number> = new WeakMap();
+  private dataItemIdCounter: number = 0;
 
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
@@ -348,10 +351,28 @@ export class RecyclerViewManager<T> {
   }
 
   getDataKey(index: number): string {
-    return (
-      this.propsRef.keyExtractor?.(this.propsRef.data![index], index) ??
-      index.toString()
-    );
+    // If keyExtractor is provided, use it
+    if (this.propsRef.keyExtractor) {
+      return this.propsRef.keyExtractor(this.propsRef.data![index], index);
+    }
+
+    // Fallback: Generate a unique stable ID for each data item
+    const item = this.propsRef.data![index];
+    
+    // For objects, use WeakMap to assign and retrieve a unique ID
+    // This ensures the same object always gets the same ID across renders
+    if (item !== null && typeof item === "object") {
+      let itemId = this.dataItemIdMap.get(item);
+      if (itemId === undefined) {
+        itemId = this.dataItemIdCounter++;
+        this.dataItemIdMap.set(item, itemId);
+      }
+      return `__auto_${itemId}`;
+    }
+    
+    // For primitives, combine the value with index to create a unique key
+    // This prevents key collision when the same primitive appears at different indices
+    return `__auto_${String(item)}_${index}`;
   }
 
   private getLayoutManagerClass() {
