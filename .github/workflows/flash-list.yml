@@ -89,7 +89,7 @@ jobs:
           mkdir -p /tmp/artifacts
           yarn react-native bundle --entry-file index.js --platform ios --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
       - name: Archive iOS bundle artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ios-bundle-artifacts
           path: /tmp/artifacts
@@ -113,7 +113,7 @@ jobs:
           mkdir -p /tmp/artifacts
           yarn react-native bundle --entry-file index.js --platform android --bundle-output /tmp/artifacts/bundle.js --sourcemap-output /tmp/artifacts/output.map
       - name: Archive Android bundle artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: android-bundle-artifacts
           path: /tmp/artifacts
@@ -210,7 +210,7 @@ jobs:
           yarn e2e:test:ios
       - name: Archive iOS e2e artifacts
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ios-e2e-artifacts
           path: fixture/react-native/e2e/artifacts/ios/diff/*.png
