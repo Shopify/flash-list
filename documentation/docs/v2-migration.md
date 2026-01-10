@@ -43,8 +43,6 @@ The following props have been deprecated and should be removed from your FlashLi
 />
 ```
 
-##### 
-
 #### Other Deprecated Props
 
 ```diff
