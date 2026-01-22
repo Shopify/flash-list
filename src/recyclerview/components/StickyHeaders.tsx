@@ -228,6 +228,10 @@ export const StickyHeaders = <TItem,>({
     stickyHeaderOffset,
   ]);
 
+  if (currentStickyIndex === -1) {
+    return null;
+  }
+
   return headerContent;
 };
 
