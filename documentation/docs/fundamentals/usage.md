@@ -862,12 +862,12 @@ Param `offset` expects the offset to scroll to. In case of `horizontal` is true,
 
 Param `animated` (`false` by default) defines whether the list should do an animation while scrolling.
 
-### `getVisibleIndices()`
+### `computeVisibleIndices()`
 
 Returns an array of indices that are currently visible in the list.
 
 ```tsx
-getVisibleIndices(): number[];
+computeVisibleIndices(): number[];
 ```
 
 ### `getLayout()`
