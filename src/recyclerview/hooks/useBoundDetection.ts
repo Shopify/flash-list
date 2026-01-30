@@ -26,6 +26,8 @@ export function useBoundDetection<T>(
   const pendingStartReached = useRef(false);
   // Track whether we should auto-scroll to bottom when new content is added
   const pendingAutoscrollToBottom = useRef(false);
+  // Track whether the user has scrolled at least once to prevent automatic triggering on mount
+  const hasUserScrolled = useRef(false);
 
   const lastCheckBoundsTime = useRef(Date.now());
 
@@ -51,9 +53,16 @@ export function useBoundDetection<T>(
   /**
    * Checks if the scroll position is near the start or end of the list
    * and triggers appropriate callbacks if configured.
+   * 
+   * @param isUserInitiated - Whether this check was triggered by user scrolling (true) or programmatically (false)
    */
-  const checkBounds = useCallback(() => {
+  const checkBounds = useCallback((isUserInitiated = false) => {
     lastCheckBoundsTime.current = Date.now();
+
+    // Mark that user has scrolled if this is a user-initiated check
+    if (isUserInitiated) {
+      hasUserScrolled.current = true;
+    }
 
     const {
       onEndReached,
@@ -85,7 +94,8 @@ export function useBoundDetection<T>(
         recyclerViewManager.firstItemOffset;
 
       // Check if we're near the end of the list
-      if (onEndReached) {
+      // Only trigger onEndReached if the user has scrolled at least once
+      if (onEndReached && hasUserScrolled.current) {
         const onEndReachedThreshold = onEndReachedThresholdProp ?? 0.5;
         const endThresholdDistance = onEndReachedThreshold * visibleLength;
 
@@ -101,7 +111,8 @@ export function useBoundDetection<T>(
       }
 
       // Check if we're near the start of the list
-      if (onStartReached) {
+      // Only trigger onStartReached if the user has scrolled at least once
+      if (onStartReached && hasUserScrolled.current) {
         const onStartReachedThreshold = onStartReachedThresholdProp ?? 0.2;
         const startThresholdDistance = onStartReachedThreshold * visibleLength;
 
@@ -147,6 +158,8 @@ export function useBoundDetection<T>(
   }, [requestAnimationFrame, scrollViewRef, recyclerViewManager]);
 
   // Reset end reached state when data changes
+  // Note: We intentionally do NOT reset hasUserScrolled here, as the user's scroll
+  // interaction should persist across data updates
   useMemo(() => {
     pendingEndReached.current = false;
     // needs to run only when data changes
