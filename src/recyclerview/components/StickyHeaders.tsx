@@ -15,6 +15,7 @@ import React, {
 import { Animated, NativeScrollEvent } from "react-native";
 
 import { FlashListProps } from "../..";
+import { PlatformConfig } from "../../native/config/PlatformHelper";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { ViewHolder } from "../ViewHolder";
 
@@ -228,7 +229,7 @@ export const StickyHeaders = <TItem,>({
     stickyHeaderOffset,
   ]);
 
-  if (currentStickyIndex === -1) {
+  if (PlatformConfig.isRN083OrAbove && currentStickyIndex === -1) {
     return null;
   }
 
