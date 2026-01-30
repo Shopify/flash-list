@@ -12,7 +12,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-  NODE_VERSION: 20.4.0
+  NODE_VERSION: 20.18.0
 
 jobs:
   release:
@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Update npm for OIDC support
+        run: npm install -g npm@11.5.1  # Minimum version required for OIDC
+
       - name: Determine NPM tag
         id: determine-tag
         run: |
@@ -62,5 +65,4 @@ jobs:
       - name: Publish to NPM
         run: npm publish --provenance --tag ${{ env.NPM_TAG }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ''  # Empty string forces OIDC
