@@ -56,6 +56,21 @@ The following props have been deprecated and should be removed from your FlashLi
 />
 ```
 
+#### Regex to remove deprecated props
+
+Use this regex to remove all deprecated props **except `inverted`**.
+
+**Find (Regex enabled):**
+```regex
+^\s*(estimatedItemSize|estimatedListSize|estimatedFirstItemOffset|onBlankArea|disableHorizontalListHeightMeasurement|disableAutoLayout)=\{[^}]*\}.*\n?
+```
+
+**Replace:**
+```regex
+
+```
+
+
 ### Step 3: Update Changed Props
 
 #### overrideItemLayout
