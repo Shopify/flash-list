@@ -4,18 +4,18 @@
  * The component is memoized to prevent unnecessary re-renders and includes layout comparison logic.
  */
 
-import { LayoutChangeEvent } from "react-native";
+import type { LayoutChangeEvent } from "react-native";
 import React, {
-  RefObject,
+  type RefObject,
   useCallback,
   useLayoutEffect,
   useMemo,
   useRef,
 } from "react";
 
-import { FlashListProps, RenderTarget } from "../FlashListProps";
+import type { FlashListProps, RenderTarget } from "../FlashListProps";
 
-import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
+import type { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { CompatView } from "./components/CompatView";
 
 /**
@@ -56,7 +56,6 @@ export interface ViewHolderProps<TItem> {
  * @template TItem - The type of item being rendered in the list
  */
 const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
-  // create ref for View
   const viewRef = useRef<CompatView>(null);
   const {
     index,
@@ -74,6 +73,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     hidden,
   } = props;
 
+  // Manage ref lifecycle
   useLayoutEffect(() => {
     refHolder.set(index, viewRef);
     return () => {
@@ -83,28 +83,36 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     };
   }, [index, refHolder]);
 
-  const onLayout = useCallback(
+  // Handle layout changes
+  const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
       onSizeChanged?.(index, event.nativeEvent.layout);
     },
     [index, onSizeChanged]
   );
 
-  const separator = useMemo(() => {
-    return ItemSeparatorComponent && trailingItem !== undefined ? (
+  // Memoized separator component
+  const separatorElement = useMemo(() => {
+    if (
+      !ItemSeparatorComponent ||
+      trailingItem === undefined ||
+      layout.skipSeparator
+    ) {
+      return null;
+    }
+    return (
       <ItemSeparatorComponent leadingItem={item} trailingItem={trailingItem} />
-    ) : null;
-  }, [ItemSeparatorComponent, item, trailingItem]);
+    );
+  }, [ItemSeparatorComponent, item, trailingItem, layout.skipSeparator]);
 
-  // console.log("ViewHolder re-render", index);
-
-  const children = useMemo(() => {
+  // Memoized item content (index excluded from deps to prevent unnecessary re-renders)
+  const itemContent = useMemo(() => {
     return renderItem?.({ item, index, extraData, target }) ?? null;
-    // TODO: Test more thoroughly
-    // We don't really  to re-render the children when the index changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, extraData, target, renderItem]);
 
+  const ContainerComponent = (CellRendererComponent ??
+    CompatView) as React.ComponentType<any>;
   const style = {
     flexDirection: horizontal ? "row" : "column",
     position: target === "StickyHeader" ? "relative" : "absolute",
@@ -124,15 +132,26 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     CompatView) as unknown as any;
 
   return (
-    <CompatContainer
+    <ContainerComponent
       ref={viewRef}
-      onLayout={onLayout}
-      style={style}
+      onLayout={handleLayout}
+      style={{
+        flexDirection: horizontal ?? false ? "row" : "column",
+        position: target === "StickyHeader" ? "relative" : "absolute",
+        width: layout.enforcedWidth ? layout.width : undefined,
+        height: layout.enforcedHeight ? layout.height : undefined,
+        minHeight: layout.minHeight,
+        minWidth: layout.minWidth,
+        maxHeight: layout.maxHeight,
+        maxWidth: layout.maxWidth,
+        left: layout.x,
+        top: layout.y,
+      }}
       index={index}
     >
-      {children}
-      {separator}
-    </CompatContainer>
+      {itemContent}
+      {separatorElement}
+    </ContainerComponent>
   );
 };
 
@@ -180,6 +199,7 @@ function areLayoutsEqual(prevLayout: RVLayout, nextLayout: RVLayout): boolean {
     prevLayout.minWidth === nextLayout.minWidth &&
     prevLayout.minHeight === nextLayout.minHeight &&
     prevLayout.maxWidth === nextLayout.maxWidth &&
-    prevLayout.maxHeight === nextLayout.maxHeight
+    prevLayout.maxHeight === nextLayout.maxHeight &&
+    prevLayout.skipSeparator === nextLayout.skipSeparator
   );
 }
