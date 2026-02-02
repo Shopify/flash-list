@@ -130,7 +130,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
       - name: Ruby setup
-        uses: ruby/setup-ruby@e34163cd15f4bb403dcd72d98e295997e6a55798 # v1.238.0
+        uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
         with:
           bundler-cache: true
       - name: Install dependencies
@@ -164,7 +164,7 @@ jobs:
           distribution: "temurin"
           java-version: "17"
       - name: Ruby setup
-        uses: ruby/setup-ruby@e34163cd15f4bb403dcd72d98e295997e6a55798 # v1.238.0
+        uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
@@ -189,7 +189,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
       - name: ruby setup
-        uses: ruby/setup-ruby@e34163cd15f4bb403dcd72d98e295997e6a55798 # v1.238.0
+        uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
