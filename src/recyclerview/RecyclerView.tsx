@@ -74,6 +74,8 @@ const RecyclerViewComponent = <T,>(
     onRefresh,
     progressViewOffset,
     ListEmptyComponent,
+    LoadingComponent,
+    isLoading,
     ListHeaderComponent,
     ListHeaderComponentStyle,
     ListFooterComponent,
@@ -397,6 +399,7 @@ const RecyclerViewComponent = <T,>(
     renderHeader,
     renderFooter,
     renderEmpty,
+    renderLoading,
     CompatScrollView,
     renderStickyHeaderBackdrop,
   } = useSecondaryProps(props);
@@ -563,64 +566,73 @@ const RecyclerViewComponent = <T,>(
           {isHorizontalRTL && viewToMeasureBoundedSize}
           {renderHeader}
           {!isHorizontalRTL && viewToMeasureBoundedSize}
-          {/* Main list content */}
-          <ViewHolderCollection
-            viewHolderCollectionRef={viewHolderCollectionRef}
-            data={data}
-            horizontal={horizontal}
-            renderStack={recyclerViewManager.getRenderStack()}
-            getLayout={(index) => recyclerViewManager.getLayout(index)}
-            getAdjustmentMargin={() => {
-              if (!shouldRenderFromBottom || !recyclerViewManager.hasLayout()) {
-                return 0;
-              }
+          {/* Main list content or loading component */}
+          {isLoading ? (
+            renderLoading
+          ) : (
+            <>
+              <ViewHolderCollection
+                viewHolderCollectionRef={viewHolderCollectionRef}
+                data={data}
+                horizontal={horizontal}
+                renderStack={recyclerViewManager.getRenderStack()}
+                getLayout={(index) => recyclerViewManager.getLayout(index)}
+                getAdjustmentMargin={() => {
+                  if (
+                    !shouldRenderFromBottom ||
+                    !recyclerViewManager.hasLayout()
+                  ) {
+                    return 0;
+                  }
 
-              const windowSize = horizontal
-                ? recyclerViewManager.getWindowSize().width
-                : recyclerViewManager.getWindowSize().height;
-              const childContainerSize = horizontal
-                ? recyclerViewManager.getChildContainerDimensions().width
-                : recyclerViewManager.getChildContainerDimensions().height;
+                  const windowSize = horizontal
+                    ? recyclerViewManager.getWindowSize().width
+                    : recyclerViewManager.getWindowSize().height;
+                  const childContainerSize = horizontal
+                    ? recyclerViewManager.getChildContainerDimensions().width
+                    : recyclerViewManager.getChildContainerDimensions().height;
 
-              return Math.max(
-                0,
-                windowSize -
-                  childContainerSize -
-                  recyclerViewManager.firstItemOffset
-              );
-            }}
-            refHolder={refHolder}
-            onSizeChanged={validateItemSize}
-            renderItem={renderItem}
-            extraData={extraData}
-            onCommitLayoutEffect={() => {
-              applyInitialScrollIndex();
-              parentRecyclerViewContext?.unmarkChildLayoutAsPending(
-                recyclerViewId
-              );
-              onCommitLayoutEffect?.();
-            }}
-            onCommitEffect={() => {
-              renderTimeTracker.markRenderComplete();
-              recyclerViewManager.updateAverageRenderTime(
-                renderTimeTracker.getAverageRenderTime()
-              );
-              applyInitialScrollIndex();
-              checkBounds();
-              recyclerViewManager.computeItemViewability();
-              recyclerViewManager.animationOptimizationsEnabled = false;
-            }}
-            CellRendererComponent={CellRendererComponent}
-            ItemSeparatorComponent={ItemSeparatorComponent}
-            getChildContainerLayout={() =>
-              recyclerViewManager.hasLayout()
-                ? recyclerViewManager.getChildContainerDimensions()
-                : undefined
-            }
-            currentStickyIndex={currentStickyIndex}
-            hideStickyHeaderRelatedCell={stickyHeaderHideRelatedCell}
-          />
-          {renderEmpty}
+                  return Math.max(
+                    0,
+                    windowSize -
+                      childContainerSize -
+                      recyclerViewManager.firstItemOffset
+                  );
+                }}
+                refHolder={refHolder}
+                onSizeChanged={validateItemSize}
+                renderItem={renderItem}
+                extraData={extraData}
+                onCommitLayoutEffect={() => {
+                  applyInitialScrollIndex();
+                  parentRecyclerViewContext?.unmarkChildLayoutAsPending(
+                    recyclerViewId
+                  );
+                  onCommitLayoutEffect?.();
+                }}
+                onCommitEffect={() => {
+                  renderTimeTracker.markRenderComplete();
+                  recyclerViewManager.updateAverageRenderTime(
+                    renderTimeTracker.getAverageRenderTime()
+                  );
+                  applyInitialScrollIndex();
+                  checkBounds();
+                  recyclerViewManager.computeItemViewability();
+                  recyclerViewManager.animationOptimizationsEnabled = false;
+                }}
+                CellRendererComponent={CellRendererComponent}
+                ItemSeparatorComponent={ItemSeparatorComponent}
+                getChildContainerLayout={() =>
+                  recyclerViewManager.hasLayout()
+                    ? recyclerViewManager.getChildContainerDimensions()
+                    : undefined
+                }
+                currentStickyIndex={currentStickyIndex}
+                hideStickyHeaderRelatedCell={stickyHeaderHideRelatedCell}
+              />
+              {renderEmpty}
+            </>
+          )}
           {renderFooter}
         </CompatScrollView>
         {stickyHeaderIndices && stickyHeaderIndices.length > 0
