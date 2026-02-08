@@ -182,6 +182,10 @@ export abstract class RVLayoutManager {
       this.layouts.length = totalItemCount;
       this.spanTracker.length = totalItemCount;
       minRecomputeIndex = totalItemCount - 1; // <0 gets skipped so it's safe to set to totalItemCount - 1
+      // layoutInfo may contain stale indices from ViewHolders that were rendered
+      // before the data shrunk. Filter out any indices that are now out of bounds.
+      // eslint-disable-next-line no-param-reassign
+      layoutInfo = layoutInfo.filter((info) => info.index < totalItemCount);
     }
     // update average windows
     minRecomputeIndex = Math.min(

@@ -446,13 +446,9 @@ describe("StickyHeaders - Compute Function", () => {
       );
 
       // At scroll 100, we're before item 5 (y=250)
-      // Binary search returns -1, but component handles this gracefully
-      // The component should still render but not display any sticky header
-      expect(result).toContainReactComponent(Animated.View);
-
-      // When there's no valid sticky header, the callback might not be invoked
-      // or might be invoked with -1 depending on implementation
-      // Let's just verify the component doesn't crash
+      // Binary search returns -1, so no sticky header should be displayed
+      // The component returns null when there's no valid sticky header
+      expect(result).not.toContainReactComponent(Animated.View);
     });
 
     it("should handle when next sticky header is beyond engaged indices", () => {
