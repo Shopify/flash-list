@@ -619,6 +619,7 @@ const RecyclerViewComponent = <T,>(
             }
             currentStickyIndex={currentStickyIndex}
             hideStickyHeaderRelatedCell={stickyHeaderHideRelatedCell}
+            numColumns={recyclerViewManager.numColumns}
           />
           {renderEmpty}
           {renderFooter}
