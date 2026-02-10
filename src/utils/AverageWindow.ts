@@ -33,9 +33,11 @@ export class AverageWindow {
 
     this.inputValues[target] = value;
 
-    this.currentAverage =
+    this.currentAverage = Math.max(
+      0,
       this.currentAverage * (this.currentCount / newCount) +
-      (value - (oldValue ?? 0)) / newCount;
+        (value - (oldValue ?? 0)) / newCount
+    );
 
     this.currentCount = newCount;
   }
