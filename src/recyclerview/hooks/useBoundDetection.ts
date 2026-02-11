@@ -140,7 +140,7 @@ export function useBoundDetection<T>(
           recyclerViewManager.props.maintainVisibleContentPosition
             ?.animateAutoScrollToBottom ?? true;
         scrollViewRef.current?.scrollToEnd({
-          animated: shouldAnimate,
+          animated: shouldAnimate && !recyclerViewManager.ignoreScrollEvents,
         });
       });
     }
