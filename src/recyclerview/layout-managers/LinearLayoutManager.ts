@@ -135,8 +135,16 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
         layout.minHeight = targetMinHeight;
       }
       newTallestItem.minHeight = 0;
-      this.tallestItem = newTallestItem;
-      this.tallestItemHeight = newTallestItem.height;
+      // When items shrink (targetMinHeight = 0), reset tracking so the
+      // next cycle re-detects the tallest item after repaint and properly
+      // re-applies minHeight for all layouts.
+      if (targetMinHeight === 0) {
+        this.tallestItem = undefined;
+        this.tallestItemHeight = 0;
+      } else {
+        this.tallestItem = newTallestItem;
+        this.tallestItemHeight = newTallestItem.height;
+      }
     }
   }
 
