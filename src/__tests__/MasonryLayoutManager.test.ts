@@ -199,4 +199,56 @@ describe("MasonryLayoutManager", () => {
       expect(getAllLayouts(manager).length).toBe(0);
     });
   });
+
+  describe("Visibility with uneven column heights (optimizeItemArrangement: false)", () => {
+    const unevenParams = {
+      windowSize,
+      maxColumns: 2,
+      optimizeItemArrangement: false,
+    };
+
+    // Creates a masonry layout with different column heights.
+    const createUnevenMasonryLayout = () => {
+      const manager = createLayoutManager(
+        LayoutManagerType.MASONRY,
+        unevenParams
+      );
+      const layoutInfos = [
+        createMockLayoutInfo(0, 200, 100),
+        createMockLayoutInfo(1, 200, 50),
+        createMockLayoutInfo(2, 200, 100),
+        createMockLayoutInfo(3, 200, 50),
+        createMockLayoutInfo(4, 200, 100),
+        createMockLayoutInfo(5, 200, 50),
+        createMockLayoutInfo(6, 200, 100),
+        createMockLayoutInfo(7, 200, 50),
+      ];
+      manager.modifyLayout(layoutInfos, 8);
+      return manager;
+    };
+
+    it("should find items visible at the top of the layout", () => {
+      const manager = createUnevenMasonryLayout();
+
+      const visible = manager.getVisibleLayouts(0, 100);
+
+      expect(visible.includes(0)).toBe(true);
+      expect(visible.includes(1)).toBe(true);
+      expect(visible.includes(3)).toBe(true);
+      expect(visible.includes(6)).toBe(false);
+    });
+
+    it("should find visible items when viewport is in the middle (column heights diverge)", () => {
+      const manager = createUnevenMasonryLayout();
+
+      const visible = manager.getVisibleLayouts(100, 200);
+
+      expect(visible.includes(2)).toBe(true);
+      expect(visible.includes(5)).toBe(true);
+      expect(visible.includes(7)).toBe(true);
+      expect(visible.includes(0)).toBe(false);
+      expect(visible.includes(1)).toBe(false);
+
+    });
+  });
 });
