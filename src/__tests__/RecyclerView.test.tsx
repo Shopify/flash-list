@@ -139,4 +139,97 @@ describe("RecyclerView", () => {
       expect(ref.current?.props.data).toEqual([0, 1, 2, 3]);
     });
   });
+
+  describe("Sticky headers with content above FlashList", () => {
+    // Each item is 100px tall (from measureItemLayout mock).
+    // stickyHeaderIndices=[0, 5, 10, 15] → headers at y=0, y=500, y=1000, y=1500.
+    //
+    // On Fabric, measureParentSize returns the view's position in its parent
+    // instead of (0,0). The old code subtracted this from firstItemOffset,
+    // making sticky headers activate prematurely.
+    const measureLayoutMock = jest.requireMock(
+      "../recyclerview/utils/measureLayout"
+    );
+
+    afterEach(() => {
+      measureLayoutMock.measureParentSize.mockImplementation(() => ({
+        width: 399,
+        height: 899,
+      }));
+    });
+
+    const renderWithStickyHeaders = (measureParentSizeY: number) => {
+      const onChangeStickyIndex = jest.fn();
+      const ref = createRef<FlashListRef<number>>();
+
+      measureLayoutMock.measureParentSize.mockImplementation(() => ({
+        x: 0,
+        y: measureParentSizeY,
+        width: 399,
+        height: 899,
+      }));
+
+      const result = render(
+        <FlashList
+          ref={ref}
+          data={[
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19,
+          ]}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          stickyHeaderIndices={[0, 5, 10, 15]}
+          onChangeStickyIndex={onChangeStickyIndex}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+        />
+      );
+
+      return { result, onChangeStickyIndex, ref };
+    };
+
+    const simulateScroll = (result: ReturnType<typeof render>, y: number) => {
+      const scrollNode = result.findWhere(
+        (node) =>
+          typeof (node.props as Record<string, unknown>).onScroll === "function"
+      );
+      if (!scrollNode) throw new Error("Could not find scroll component");
+
+      const onScroll = scrollNode.prop("onScroll" as never) as (
+        event: unknown
+      ) => void;
+      result.act(() => {
+        onScroll({
+          nativeEvent: {
+            contentOffset: { x: 0, y },
+            contentSize: { width: 399, height: 2000 },
+            layoutMeasurement: { width: 399, height: 899 },
+          },
+        });
+      });
+    };
+
+    it("no content above - header stays at index 0 when scrolled before item 5", () => {
+      const { result, onChangeStickyIndex } = renderWithStickyHeaders(0);
+      simulateScroll(result, 450);
+
+      // Item 5 is at y=500, scroll at 450 hasn't reached it
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(0, -1);
+    });
+
+    it("50px content above - header should not activate early at scroll 450", () => {
+      const { result, onChangeStickyIndex } = renderWithStickyHeaders(50);
+      simulateScroll(result, 450);
+
+      // Scroll is at 450, item 5 at y=500 — should still be index 0
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(0, -1);
+    });
+
+    it("100px content above - header should not activate early at scroll 400", () => {
+      const { result, onChangeStickyIndex } = renderWithStickyHeaders(100);
+      simulateScroll(result, 400);
+
+      // Scroll is at 400, item 5 at y=500 — should still be index 0
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(0, -1);
+    });
+  });
 });
