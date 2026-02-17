@@ -142,7 +142,6 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
    * @param endIndex Ending index of items to recompute
    */
   recomputeLayouts(startIndex: number, endIndex: number): void {
-    console.log("jb: recomputing layouts");
     // Reset column heights if starting from the beginning
     if (startIndex === 0) {
       this.columnHeights = Array(this.maxColumns).fill(0);
