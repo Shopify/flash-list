@@ -5,6 +5,11 @@ interface Layout {
   height: number;
 }
 
+interface Size {
+  width: number;
+  height: number;
+}
+
 /**
  * Gets scroll offsets from up to 3 parent elements
  */
@@ -43,12 +48,10 @@ export function roundOffPixel(value: number): number {
 }
 
 /**
- * Measures the layout of parent of RecyclerView
+ * Measures the size of the RecyclerView's outer container.
  */
-export function measureParentSize(view: Element): Layout {
+export function measureParentSize(view: Element): Size {
   return {
-    x: 0,
-    y: 0,
     width: view.clientWidth,
     height: view.clientHeight,
   };
