@@ -1,5 +1,6 @@
 import { RVLayoutManager } from "../recyclerview/layout-managers/LayoutManager";
 import { RVMasonryLayoutManagerImpl } from "../recyclerview/layout-managers/MasonryLayoutManager";
+import { ConsecutiveNumbers } from "../recyclerview/helpers/ConsecutiveNumbers";
 
 import {
   getAllLayouts,
@@ -185,6 +186,49 @@ describe("MasonryLayoutManager", () => {
       expect(getColumnHeights(manager)).toEqual([100, 150, 120]);
     });
   });
+
+  describe("Item Column Locking", () => {
+    it("should keep locked items in their assigned columns when height changes", () => {
+      const manager = createLayoutManager(LayoutManagerType.MASONRY, defaultParams);
+      manager.modifyLayout([
+        createMockLayoutInfo(0, 200, 100),
+        createMockLayoutInfo(1, 200, 150),
+        createMockLayoutInfo(2, 200, 120), // Col 0
+      ], 3);
+
+      manager.onVisibleIndicesChanged(new ConsecutiveNumbers(0, 2));
+      manager.modifyLayout([
+        createMockLayoutInfo(0, 200, 100),
+        createMockLayoutInfo(1, 200, 150),
+        createMockLayoutInfo(2, 200, 300), // much taller, still stays in Col 0
+      ], 3);
+      expect(getAllLayouts(manager)[2].x).toBe(0);
+    });
+
+    it("should allow unlocked items to reposition into optimal columns", () => {
+      const manager = createLayoutManager(LayoutManagerType.MASONRY, defaultParams);
+      manager.modifyLayout([
+        createMockLayoutInfo(0, 200, 100),
+        createMockLayoutInfo(1, 200, 150),
+        createMockLayoutInfo(2, 200, 120),
+        createMockLayoutInfo(3, 200, 80),
+      ], 4);
+
+      // Only lock items 0-1, items 2-3 remain free to move
+      manager.onVisibleIndicesChanged(new ConsecutiveNumbers(0, 1));
+      manager.modifyLayout([
+        createMockLayoutInfo(0, 200, 100),
+        createMockLayoutInfo(1, 200, 150),
+        createMockLayoutInfo(2, 200, 120),
+        createMockLayoutInfo(3, 200, 80),
+      ], 4);
+
+      const layouts = getAllLayouts(manager);
+      expect(layouts[0].x).toBe(0);
+      expect(layouts[1].x).toBe(200);
+      expect(layouts[2].x).toBe(0);   // shortest column
+      expect(layouts[3].x).toBe(200);
+    });
 
   describe("Empty Layout", () => {
     it("should return zero size for empty layout", () => {
