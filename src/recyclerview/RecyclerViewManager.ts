@@ -275,13 +275,16 @@ export class RecyclerViewManager<T> {
   }
 
   computeItemViewability() {
-    // Using higher buffer for masonry to avoid missing items
-    this.itemViewabilityManager.shouldListenToVisibleIndices &&
-      this.itemViewabilityManager.updateViewableItems(
-        this.propsRef.masonry
-          ? this.engagedIndicesTracker.getEngagedIndices().toArray()
-          : this.computeVisibleIndices().toArray()
-      );
+    if (this.itemViewabilityManager.shouldListenToVisibleIndices || this.propsRef.masonry) {
+      // Using higher buffer for masonry to avoid missing items
+      const indices =  this.propsRef.masonry
+          ? this.engagedIndicesTracker.getEngagedIndices()
+          : this.computeVisibleIndices()
+
+      this.itemViewabilityManager.shouldListenToVisibleIndices && this.itemViewabilityManager.updateViewableItems(indices.toArray());
+
+      this.layoutManager?.onVisibleIndicesChanged(indices);
+    }
   }
 
   recordInteraction() {

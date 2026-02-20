@@ -1,3 +1,4 @@
+import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
 import {
   LayoutParams,
   RVDimension,
@@ -22,6 +23,9 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   /** If there's a span change for masonry layout, we need to recompute all the widths */
   private fullRelayoutRequired = false;
 
+  /** Last engaged end index — items at or before this keep their column assignment */
+  private lastLockedItemIndex = -1;
+
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
     this.boundedSize = params.windowSize.width;
@@ -45,6 +49,9 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
       this.boundedSize = params.windowSize.width;
       if (this.layouts.length > 0) {
         // console.log("-----> recomputeLayouts");
+
+        // Full relayout — unlock all items so they can reflow across columns
+        this.lastLockedItemIndex = -1;
 
         // update all widths
         this.updateAllWidths();
@@ -72,6 +79,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
     // TODO: Can be optimized
     if (this.fullRelayoutRequired) {
+      this.lastLockedItemIndex = -1;
       this.updateAllWidths();
       this.fullRelayoutRequired = false;
       return 0;
@@ -100,6 +108,16 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
    */
   handleSpanChange(index: number) {
     this.fullRelayoutRequired = true;
+  }
+
+  /**
+   * Updates the locked item boundary from visible indices.
+   * Items at or before the last engaged index keep their column assignment.
+   */
+  onVisibleIndicesChanged(indices: ConsecutiveNumbers): void {
+    if (this.optimizeItemArrangement) {
+      this.lastLockedItemIndex = indices.endIndex;
+    }
   }
 
   /**
@@ -143,11 +161,13 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
       const span = this.getSpan(i, true);
 
       if (this.optimizeItemArrangement) {
-        if (span === 1) {
-          // For single column items, place in the shortest column
+        const isItemLocked = i <= this.lastLockedItemIndex;
+
+        if (isItemLocked && layout.isHeightMeasured) {
+          this.placeInAssignedColumn(layout, span);
+        } else if (span === 1) {
           this.placeSingleColumnItem(layout);
         } else {
-          // For multi-column items, find the best position
           this.placeOptimizedMultiColumnItem(layout, span);
         }
       } else {
@@ -237,6 +257,32 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
     // Update the column height
     this.columnHeights[shortestColumnIndex] += layout.height;
+  }
+
+  /**
+   * Places an item in its previously assigned column(s).
+   * @param layout Layout information for the item
+   * @param span Number of columns the item spans
+   */
+  private placeInAssignedColumn(layout: RVLayout, span: number): void {
+    const columnWidth = this.boundedSize / this.maxColumns;
+    const startColumn = Math.min(
+      this.maxColumns - span,
+      Math.max(0, Math.round(layout.x / columnWidth))
+    );
+
+    let maxHeight = this.columnHeights[startColumn];
+    // Find the highest column (when span > 1)
+    for (let col = startColumn + 1; col < startColumn + span; col++) {
+      maxHeight = Math.max(maxHeight, this.columnHeights[col]);
+    }
+
+    layout.x = columnWidth * startColumn;
+    layout.y = maxHeight;
+
+    for (let col = startColumn; col < startColumn + span; col++) {
+      this.columnHeights[col] = maxHeight + layout.height;
+    }
   }
 
   /**
