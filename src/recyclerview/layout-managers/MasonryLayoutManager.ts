@@ -166,8 +166,10 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         if (isItemLocked && layout.isHeightMeasured) {
           this.placeInAssignedColumn(layout, span);
         } else if (span === 1) {
+          // For single column items, place in the shortest column
           this.placeSingleColumnItem(layout);
         } else {
+          // For multi-column items, find the best position
           this.placeOptimizedMultiColumnItem(layout, span);
         }
       } else {
