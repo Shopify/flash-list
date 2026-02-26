@@ -5,6 +5,8 @@ import {
   RVLayoutInfo,
   RVLayoutManager,
 } from "./LayoutManager";
+import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
+import { findFirstVisibleIndex, findLastVisibleIndex } from "../utils/findVisibleIndex";
 
 /**
  * MasonryLayoutManager implementation that arranges items in a masonry/pinterest-style layout.
@@ -21,6 +23,16 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
   /** If there's a span change for masonry layout, we need to recompute all the widths */
   private fullRelayoutRequired = false;
+
+  /**
+   * Sorted copy of layout indices, ordered by Y position.
+   * Only used when optimizeItemArrangement is false, where sequential placement can cause
+   * significant column height differences.
+   */
+  private sortedLayoutIndices: number[] = [];
+
+  /** Layouts array sorted by y position, matching sortedLayoutIndices order. */
+  private sortedLayouts: RVLayout[] = [];
 
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
@@ -75,6 +87,11 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
       this.updateAllWidths();
       this.fullRelayoutRequired = false;
       return 0;
+    }
+
+    // Rebuild sorted indices since dimensions changed
+    if (!this.optimizeItemArrangement) {
+      this.updateSortedLayoutIndices();
     }
   }
 
@@ -154,6 +171,11 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         // No optimization - place items sequentially
         this.placeItemSequentially(layout, span);
       }
+    }
+
+    // Rebuild sorted indices since positions changed
+    if (!this.optimizeItemArrangement) {
+      this.updateSortedLayoutIndices();
     }
   }
 
@@ -319,5 +341,73 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         this.currentColumn = (startColumn + span) % this.maxColumns;
       }
     }
+  }
+
+  /**
+   * Builds the sorted layout indices array.
+   * Sorts indices by position to enable correct binary search for masonry layouts
+   * where item index order doesn't match position order. Called after layout changes.
+   */
+  private updateSortedLayoutIndices(): void {
+    this.sortedLayoutIndices = Array.from(
+      { length: this.layouts.length },
+      (_, i) => i
+    );
+
+    // Sort indices by Y position
+    const dimension = this.horizontal ? "x" : "y";
+    this.sortedLayoutIndices.sort((a, b) => {
+      return this.layouts[a][dimension] - this.layouts[b][dimension];
+    });
+
+    // Build sorted layouts array matching the sorted indices order
+    this.sortedLayouts = this.sortedLayoutIndices.map(
+      (i) => this.layouts[i]
+    );
+  }
+
+  /**
+   * Overrides getVisibleLayouts to use sorted layouts for correct binary search.
+   * Only applies when optimizeItemArrangement is false.
+   */
+  getVisibleLayouts(
+    unboundDimensionStart: number,
+    unboundDimensionEnd: number
+  ): ConsecutiveNumbers {
+    // When optimization is enabled, column heights stay balanced,
+    // so the base class binary search is sufficient.
+    if (this.optimizeItemArrangement) {
+      return super.getVisibleLayouts(unboundDimensionStart, unboundDimensionEnd);
+    }
+
+    if (this.layouts.length === 0) {
+      return ConsecutiveNumbers.EMPTY;
+    }
+
+    const firstSortedIndex = findFirstVisibleIndex(
+      this.sortedLayouts,
+      unboundDimensionStart,
+      this.horizontal
+    );
+    const lastSortedIndex = findLastVisibleIndex(
+      this.sortedLayouts,
+      unboundDimensionEnd,
+      this.horizontal
+    );
+
+    if (firstSortedIndex === -1 || lastSortedIndex === -1) {
+      return ConsecutiveNumbers.EMPTY;
+    }
+
+    // Map sorted range back to original indices and find min/max
+    let minIndex = this.sortedLayoutIndices[firstSortedIndex];
+    let maxIndex = minIndex;
+    for (let i = firstSortedIndex + 1; i <= lastSortedIndex; i++) {
+      const idx = this.sortedLayoutIndices[i];
+      if (idx < minIndex) minIndex = idx;
+      if (idx > maxIndex) maxIndex = idx;
+    }
+
+    return new ConsecutiveNumbers(minIndex, maxIndex);
   }
 }
