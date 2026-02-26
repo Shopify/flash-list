@@ -194,11 +194,13 @@ yarn fixture:rn:ios
 
 Then with agent-device:
 ```bash
-agent-device open "FlashList" --platform ios
-agent-device snapshot -i
-agent-device find "Issue #<number>" click
-agent-device snapshot -i
+agent-device open "FlatListPro" --platform ios
+agent-device screenshot /tmp/examples.png
+# Visually locate the repro screen entry, calculate logical coordinates, and press
+agent-device press <x> <y>
 ```
+
+**Note**: Use `agent-device screenshot` + `agent-device press` (coordinate-based). The `find`/`snapshot` commands can be unreliable with ambiguous matches in the Examples list. See the `agent-device` skill for coordinate mapping.
 
 Capture the buggy state:
 ```bash
@@ -235,8 +237,8 @@ agent-device screenshot repro-android-before.png
 | Area | Location |
 |------|----------|
 | Core component | `src/recyclerview/RecyclerView.tsx` |
-| Layout logic | `src/recyclerview/layout-managers/` |
-| Item recycling | `src/recyclerview/ViewHolder.tsx`, `ViewHolderCollection.tsx` |
+| Layout logic | `src/recyclerview/layout-managers/` (`LayoutManager.ts` base, `GridLayoutManager.ts`, `MasonryLayoutManager.ts`, `LinearLayoutManager.ts`) |
+| Item recycling & separators | `src/recyclerview/ViewHolder.tsx`, `ViewHolderCollection.tsx` |
 | Scroll behavior | `src/recyclerview/useSecondaryProps.ts` |
 | Visibility/viewability | `src/recyclerview/viewability/` |
 | Sticky headers | `src/recyclerview/StickyHeaders.tsx` |
@@ -337,6 +339,7 @@ Only raise the PR when explicitly asked by the user.
 - **Android and iOS behave differently** — always test both; Android uses a native RecyclerView bridge
 - **Stale layout cache** — if sizes look wrong after a fix, call `ref.current?.clearLayoutCacheOnUpdate()`
 - **Prop not forwarded** — check `FlashListProps.ts` and `RecyclerView.tsx` to confirm the prop reaches the layout manager
+- **Grid row detection with spans** — never use `Math.floor(index / numColumns)` to determine which row an item is in when `overrideItemLayout` spans are possible. Instead, compare `layout.y` values from the layout manager — items in the same row always share the same `y`.
 - **Metro port conflict** — default port 8081 may be used by another project. Kill the other Metro, then restart on 8081 from `fixture/react-native/`. See the Metro section above.
 - **React Native version mismatch** — the native build (0.79.x) must connect to the fixture's own Metro, not another project's bundler running a different RN version.
 
@@ -360,3 +363,4 @@ After each fix session, update this file AND the `review-and-test` skill:
 | Issue | Summary | Key files changed |
 |-------|---------|-------------------|
 | [#2017](https://github.com/Shopify/flash-list/issues/2017) | Fabric `measureParentSize` returns non-zero y when content is above FlashList, corrupting `firstItemOffset` and activating sticky overlay too early | `measureLayout.ts`, `measureLayout.web.ts`, `RecyclerView.tsx` |
+| [#1868](https://github.com/Shopify/flash-list/issues/1868) | Last item in grid row stretched when `numColumns > 1` + `ItemSeparatorComponent` — separator rendered inside ViewHolder causes height mismatch; fix: added `isInLastRow(index)` to LayoutManager (overridden in GridLayoutManager with y-coordinate check), ViewHolderCollection suppresses separators for last-row items | `LayoutManager.ts`, `GridLayoutManager.ts`, `MasonryLayoutManager.ts`, `RecyclerViewManager.ts`, `ViewHolderCollection.tsx`, `RecyclerView.tsx` |
