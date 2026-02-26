@@ -320,4 +320,8 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
       }
     }
   }
+
+  // TODO: For masonry, the "last row" is the last item in each column.
+  // Override isInLastRow if ItemSeparatorComponent support is needed
+  // for masonry layouts.
 }

@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
@@ -137,6 +137,75 @@ describe("RecyclerView", () => {
       const result = renderRecyclerView({ ref, data: [0, 1, 2] });
       result.setProps({ data: [0, 1, 2, 3] });
       expect(ref.current?.props.data).toEqual([0, 1, 2, 3]);
+    });
+  });
+
+  describe("Item separators in grid mode", () => {
+    const Separator = () => <View style={{ height: 10 }} />;
+
+    it("should not render separators for items in the last row with numColumns > 1", () => {
+      const result = render(
+        <FlashList
+          data={[0, 1, 2, 3]}
+          numColumns={2}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          ItemSeparatorComponent={Separator}
+        />
+      );
+      // Row 1: items 0, 1 → separators (not last row)
+      // Row 2: items 2, 3 → no separators (last row)
+      const separators = result.findAll(Separator);
+      expect(separators.length).toBe(2);
+    });
+
+    it("should render separators normally with numColumns=1", () => {
+      const result = render(
+        <FlashList
+          data={[0, 1, 2, 3]}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          ItemSeparatorComponent={Separator}
+        />
+      );
+      // Items 0, 1, 2 → separators; item 3 → no separator (last item)
+      const separators = result.findAll(Separator);
+      expect(separators.length).toBe(3);
+    });
+
+    it("should handle incomplete last row with numColumns > 1", () => {
+      const result = render(
+        <FlashList
+          data={[0, 1, 2, 3, 4]}
+          numColumns={3}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          ItemSeparatorComponent={Separator}
+        />
+      );
+      // Row 1: items 0, 1, 2 → separators (not last row)
+      // Row 2: items 3, 4 → no separators (last row, incomplete)
+      const separators = result.findAll(Separator);
+      expect(separators.length).toBe(3);
+    });
+
+    it("should not render separators when all items fit in a single row", () => {
+      const result = render(
+        <FlashList
+          data={[0, 1]}
+          numColumns={2}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          ItemSeparatorComponent={Separator}
+        />
+      );
+      // Single row: items 0, 1 → no separators (only row = last row)
+      const separators = result.findAll(Separator);
+      expect(separators.length).toBe(0);
     });
   });
 

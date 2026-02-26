@@ -54,6 +54,8 @@ export interface ViewHolderCollectionProps<TItem> {
   currentStickyIndex: number;
   /** Whether the cell associated with an active sticky header is hidden */
   hideStickyHeaderRelatedCell: boolean;
+  /** Returns whether the item at the given index is in the last row of the layout */
+  isInLastRow: (index: number) => boolean;
 }
 
 /**
@@ -90,6 +92,7 @@ export const ViewHolderCollection = <TItem,>(
     getAdjustmentMargin,
     currentStickyIndex,
     hideStickyHeaderRelatedCell,
+    isInLastRow,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -171,9 +174,13 @@ export const ViewHolderCollection = <TItem,>(
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
           const item = data[index];
-          const trailingItem = ItemSeparatorComponent
-            ? data[index + 1]
-            : undefined;
+          // Suppress separators for items in the last row to prevent
+          // height mismatch. The last data item has no separator (no
+          // trailingItem), so all items sharing its row must match.
+          const trailingItem =
+            ItemSeparatorComponent && !isInLastRow(index)
+              ? data[index + 1]
+              : undefined;
 
           return (
             <ViewHolder
