@@ -157,29 +157,32 @@ const RecyclerViewComponent = <T,>(
    */
   useLayoutEffect(() => {
     if (internalViewRef.current && firstChildViewRef.current) {
-      // Measure the outer and inner container layouts
-      const outerViewLayout = measureParentSize(internalViewRef.current);
+      // Measure the outer container size and inner container layout
+      const outerViewSize = measureParentSize(internalViewRef.current);
       const firstChildViewLayout = measureFirstChildLayout(
         firstChildViewRef.current,
         internalViewRef.current
       );
 
-      containerViewSizeRef.current = outerViewLayout;
+      containerViewSizeRef.current = outerViewSize;
 
-      // Calculate offset of first item
+      // firstChildViewLayout is already relative to the outer container,
+      // so its x/y directly gives the first item offset.
+      // We do NOT subtract outerViewSize.x/y here: measureParentSize uses
+      // view.measureLayout(view) which on Fabric incorrectly returns the view's
+      // position in its parent rather than (0,0), which would corrupt firstItemOffset
+      // when content is placed above FlashList (see issue #2017).
       const firstItemOffset = horizontal
-        ? firstChildViewLayout.x - outerViewLayout.x
-        : firstChildViewLayout.y - outerViewLayout.y;
+        ? firstChildViewLayout.x
+        : firstChildViewLayout.y;
 
       // Update the RecyclerView manager with window dimensions
       recyclerViewManager.updateLayoutParams(
         {
-          width: horizontal
-            ? outerViewLayout.width
-            : firstChildViewLayout.width,
+          width: horizontal ? outerViewSize.width : firstChildViewLayout.width,
           height: horizontal
             ? firstChildViewLayout.height
-            : outerViewLayout.height,
+            : outerViewSize.height,
         },
         isHorizontalRTL && recyclerViewManager.hasLayout()
           ? firstItemOffset -

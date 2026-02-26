@@ -14,8 +14,6 @@ jest.mock("../recyclerview/utils/measureLayout", () => {
   return {
     ...originalModule,
     measureParentSize: jest.fn().mockImplementation(() => ({
-      x: 0,
-      y: 0,
       width: 399,
       height: 899,
     })),
@@ -139,6 +137,91 @@ describe("RecyclerView", () => {
       const result = renderRecyclerView({ ref, data: [0, 1, 2] });
       result.setProps({ data: [0, 1, 2, 3] });
       expect(ref.current?.props.data).toEqual([0, 1, 2, 3]);
+    });
+  });
+
+  describe("Sticky headers with content above FlashList (issue #2017)", () => {
+    // Each item is 100px tall (from measureItemLayout mock).
+    // With stickyHeaderIndices=[0, 5, 10, 15], header 5 sits at y=500.
+    //
+    // On Fabric, measureParentSize (view.measureLayout(view)) incorrectly returns
+    // the view's position in its parent instead of (0,0). The old code subtracted
+    // this from firstItemOffset, causing sticky headers to activate prematurely
+    // when content is placed above FlashList.
+    //
+    // These tests simulate Fabric by mocking measureParentSize to return non-zero y,
+    // scroll just before header 5, and assert it hasn't activated yet.
+    const { measureParentSize } = jest.requireMock(
+      "../recyclerview/utils/measureLayout"
+    ) as { measureParentSize: jest.Mock };
+
+    afterEach(() => {
+      measureParentSize.mockImplementation(() => ({
+        width: 399,
+        height: 899,
+      }));
+    });
+
+    const renderWithStickyHeaders = (parentViewY: number) => {
+      measureParentSize.mockImplementation(() => ({
+        width: 399,
+        height: 899,
+        // Simulate Fabric returning non-zero y (view's position in its parent).
+        // These fields are now ignored by the fixed code, so they must not affect
+        // firstItemOffset.
+        x: 0,
+        y: parentViewY,
+      }));
+
+      const onChangeStickyIndex = jest.fn();
+      const result = render(
+        <FlashList
+          data={[
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19,
+          ]}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          stickyHeaderIndices={[0, 5, 10, 15]}
+          onChangeStickyIndex={onChangeStickyIndex}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+        />
+      );
+      return { result, onChangeStickyIndex };
+    };
+
+    const scrollTo = (root: ReturnType<typeof render>, y: number) => {
+      const scrollable = root.findWhere((node: any) => node.props.onScroll);
+      if (!scrollable) throw new Error("Could not find scrollable component");
+
+      const onScroll: any = scrollable.prop("onScroll" as never);
+      root.act(() => {
+        onScroll({
+          nativeEvent: {
+            contentOffset: { x: 0, y },
+            contentSize: { width: 399, height: 2000 },
+            layoutMeasurement: { width: 399, height: 899 },
+          },
+        });
+      });
+    };
+
+    it("no content above - header 5 should not activate before y=500", () => {
+      const { result, onChangeStickyIndex } = renderWithStickyHeaders(0);
+      scrollTo(result, 450);
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(0, -1);
+    });
+
+    it("50px content above - header 5 should not activate before y=500", () => {
+      const { result, onChangeStickyIndex } = renderWithStickyHeaders(50);
+      scrollTo(result, 450);
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(0, -1);
+    });
+
+    it("100px content above - header 5 should not activate before y=500", () => {
+      const { result, onChangeStickyIndex } = renderWithStickyHeaders(100);
+      scrollTo(result, 400);
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(0, -1);
     });
   });
 });

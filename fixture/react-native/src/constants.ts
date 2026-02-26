@@ -36,4 +36,5 @@ export type RootStackParamList = {
   ManualBenchmarkExample: undefined;
   ManualFlatListBenchmarkExample: undefined;
   StickyHeaderExample: undefined;
+  IssueRepro2017: undefined;
 };

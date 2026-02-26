@@ -7,6 +7,11 @@ interface Layout {
   height: number;
 }
 
+interface Size {
+  width: number;
+  height: number;
+}
+
 /**
  * Measures the layout of a view relative to itselft.
  * Using measure wasn't returing accurate values but this workaround does.
@@ -90,13 +95,17 @@ export function roundOffPixel(value: number): number {
 
 /**
  * Specific method for easier mocking
- * Measures the layout of parent of RecyclerView
- * Returns the x, y coordinates and dimensions of the view.
+ * Measures the size of the RecyclerView's outer container.
+ * Uses a self-relative measureLayout call to get width/height synchronously.
+ * x/y are intentionally discarded: on Fabric, view.measureLayout(view) incorrectly
+ * returns the view's position in its parent instead of (0,0), which would corrupt
+ * firstItemOffset when content is placed above FlashList.
  * @param view - The React Native View component to measure
- * @returns An object containing x, y, width, and height measurements
+ * @returns An object containing width and height
  */
-export function measureParentSize(view: View): Layout {
-  return measureLayout(view, undefined);
+export function measureParentSize(view: View): Size {
+  const layout = measureLayout(view, undefined);
+  return { width: layout.width, height: layout.height };
 }
 
 /**

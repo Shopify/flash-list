@@ -28,6 +28,10 @@ export const ExamplesScreen = () => {
 
   const data: ExampleItem[] = [
     { title: "Sticky Header Example", destination: "StickyHeaderExample" },
+    {
+      title: "Issue #2017: Duplicate Sticky Headers",
+      destination: "IssueRepro2017",
+    },
     { title: "Horizontal List", destination: "HorizontalList" },
     { title: "Carousel", destination: "Carousel" },
     { title: "Grid", destination: "Grid" },
