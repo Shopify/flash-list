@@ -174,8 +174,8 @@ describe("RecyclerView", () => {
       const result = render(
         <FlashList
           data={[
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-            18, 19,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19,
           ]}
           renderItem={({ item }) => <Text>{item}</Text>}
           stickyHeaderIndices={[0, 5, 10, 15]}
@@ -189,10 +189,9 @@ describe("RecyclerView", () => {
     };
 
     const scrollTo = (root: ReturnType<typeof render>, y: number) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const scrollable = root.findWhere((node: any) => node.props.onScroll);
       if (!scrollable) throw new Error("Could not find scrollable component");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const onScroll: any = scrollable.prop("onScroll" as never);
       root.act(() => {
         onScroll({
