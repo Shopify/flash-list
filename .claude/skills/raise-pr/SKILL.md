@@ -7,9 +7,10 @@ description: Create a GitHub PR for FlashList. Ensures no AI/Claude attribution 
 
 ## Rules
 
-1. **NEVER mention Claude, AI, or any AI tool** in commit messages, PR title, PR body, or comments. No `Co-Authored-By` AI lines. The PR must read as if written entirely by a human.
-2. **Only raise a PR when explicitly asked** by the user.
-3. **All checks must pass first**: `yarn test`, `yarn type-check`, `yarn lint`.
+1. **NEVER push directly to `main`** — always create a branch and open a PR.
+2. **NEVER mention Claude, AI, or any AI tool** in commit messages, PR title, PR body, or comments. No `Co-Authored-By` AI lines. The PR must read as if written entirely by a human.
+3. **Only raise a PR when explicitly asked** by the user.
+4. **All checks must pass first**: `yarn test`, `yarn type-check`, `yarn lint`.
 
 ---
 

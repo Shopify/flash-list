@@ -340,7 +340,10 @@ Only raise the PR when explicitly asked by the user.
 - **Metro port conflict** — default port 8081 may be used by another project. Kill the other Metro, then restart on 8081 from `fixture/react-native/`. See the Metro section above.
 - **React Native version mismatch** — the native build (0.79.x) must connect to the fixture's own Metro, not another project's bundler running a different RN version.
 
-For testing/debugging pitfalls (build before test, console.log, RTL setup, agent-device swipe), see the **`review-and-test` skill**.
+- **`dist/` is NOT rebuilt on branch switch** — you MUST `yarn build` after every `git checkout`. Verify with `grep` in `dist/` that the expected code change is present. Without this, you test stale code and get false results.
+- **Always reproduce the bug on `main` BEFORE testing the fix** — without confirming the bug exists on the base branch, you can't prove the fix works. See `review-and-test` skill → "Review Methodology".
+
+For more testing/debugging pitfalls (console.log, RTL setup, agent-device swipe, observable callbacks), see the **`review-and-test` skill**.
 
 ---
 

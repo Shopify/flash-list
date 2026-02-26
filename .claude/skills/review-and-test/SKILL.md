@@ -260,6 +260,7 @@ Run through relevant entries after any fix or review. This is the single source 
 ## Common Issues
 
 - **Tests pass but device shows bug** — did you `yarn build` and relaunch? The dist/ folder may be stale
+- **Switched branches but behavior didn't change** — `dist/` is NOT rebuilt on branch switch. You MUST run `yarn build` after every `git checkout`. Verify with `grep` in `dist/` that the expected code is present before testing.
 - **RTL looks wrong but LTR is fine** — did you set `forceRTL(true)` in `index.js` and do a full kill+relaunch?
 - **`agent-device swipe` gives "drag" error** — delete `~/.agent-device/ios-runner/derived/` and re-run `agent-device open` to rebuild the iOS runner
 - **No console output in Metro** — use the HTTP server approach (see Step 6)
@@ -267,6 +268,38 @@ Run through relevant entries after any fix or review. This is the single source 
 - **RTL horizontal scroll direction is reversed** — to scroll toward the logical START (header/Item 0), swipe right-to-left: `agent-device swipe 350 256 50 256`. To scroll toward higher items, swipe left-to-right.
 - **Fixture app bundle ID** — `org.reactjs.native.example.FlatListPro`. Use with `xcrun simctl launch`.
 - **`estimatedItemSize` does not exist** — this FlashList does NOT have this prop. Do not use it.
+
+---
+
+## Review Methodology
+
+### Always reproduce BEFORE verifying the fix
+
+1. **Checkout `main`**, build (`yarn build`), relaunch, and reproduce the bug
+2. **Checkout the PR branch**, build (`yarn build`), relaunch, and verify the fix
+3. **Verify dist after each branch switch**: `grep "expected_code" dist/path/to/file.js` — if the old code is still there, the build didn't run or didn't pick up the change
+
+Without step 1, you can't confirm the fix actually changed anything. Without verifying dist, you might test stale code on both branches and conclude "no difference" incorrectly.
+
+### Making behavior observable
+
+When testing callback-based behavior (e.g., `onStartReached`, `onEndReached`, `onViewableItemsChanged`), add a visible counter to the fixture screen:
+
+```tsx
+const [count, setCount] = useState(0);
+// In the callback:
+onStartReached={() => setCount(c => c + 1)}
+// In the UI:
+<View style={{ backgroundColor: count > 0 ? '#ff4444' : '#cccccc', ... }}>
+  <Text>Start: {count}</Text>
+</View>
+```
+
+This gives immediate visual feedback in screenshots without needing console.log or debug servers.
+
+### Masonry PRs — watch for sorting
+
+Any masonry layout PR that adds `Array.sort()` or sorted copies is a red flag for performance. `getVisibleLayouts` runs on every scroll frame (60fps). O(N log N) sorting per layout change is expensive. Items within each column are naturally sorted — per-column binary search is O(log N) without sorting.
 
 ---
 
