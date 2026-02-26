@@ -111,10 +111,10 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   }
 
   /**
-   * Updates the locked item boundary from visible indices.
+   * Updates the locked item boundary from engaged indices.
    * Items at or before the last engaged index keep their column assignment.
    */
-  onVisibleIndicesChanged(indices: ConsecutiveNumbers): void {
+  onEngagedIndicesChanged(indices: ConsecutiveNumbers): void {
     if (this.optimizeItemArrangement) {
       this.lastLockedItemIndex = indices.endIndex;
     }

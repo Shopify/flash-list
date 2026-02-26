@@ -265,11 +265,11 @@ export abstract class RVLayoutManager {
   }
 
   /**
-   * Called when visible indices change. Subclasses can override
-   * to update internal state that depends on visible items.
-   * @param indices The current visible or engaged indices
+   * Called when engaged indices change. Subclasses can override
+   * to update internal state that depends on engaged items.
+   * @param indices The current engaged indices
    */
-  onVisibleIndicesChanged(_indices: ConsecutiveNumbers): void {}
+  onEngagedIndicesChanged(_indices: ConsecutiveNumbers): void {}
 
   /**
    * Abstract method to recompute layouts for items in the given range.
