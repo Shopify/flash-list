@@ -119,6 +119,7 @@ export class RecyclerViewManager<T> {
 
       if (engagedIndices) {
         this.updateRenderStack(engagedIndices);
+        this.layoutManager.onEngagedIndicesChanged(engagedIndices);
         return engagedIndices;
       }
     }
