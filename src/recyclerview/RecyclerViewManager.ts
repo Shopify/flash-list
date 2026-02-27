@@ -151,6 +151,10 @@ export class RecyclerViewManager<T> {
     return undefined;
   }
 
+  isInLastRow(index: number): boolean {
+    return this.layoutManager?.isInLastRow(index) ?? false;
+  }
+
   // Doesn't include header / foot etc
   getChildContainerDimensions() {
     if (!this.layoutManager) {

@@ -93,6 +93,7 @@ Use the `agent-device` skill to navigate and take screenshots. Screens are liste
 | Masonry | Variable heights, columns balanced |
 | Chat | Bottom-rendering, prepend behavior |
 | Contacts | Section headers, fast scrolling |
+| Grid with Separator | Last row items same height, separators between rows only |
 
 ### Smoke test
 
@@ -231,6 +232,8 @@ Run through relevant entries after any fix or review. This is the single source 
 - [ ] Horizontal FlashList (x-axis equivalent of any vertical measurement bug)
 - [ ] Horizontal list with wide ListHeaderComponent — header must be reachable by scrolling
 - [ ] `measureParentSize` x/y values — on RN 0.79 Fabric these are (0,0), but on other RN versions they may be non-zero
+- [ ] `numColumns > 1` with `ItemSeparatorComponent` — last row items must have same height (no separator height mismatch)
+- [ ] `numColumns > 1` with `ItemSeparatorComponent` and `overrideItemLayout` (variable spans) — separator suppression must use layout y-coordinates, not index arithmetic
 
 ### RTL (Right-to-Left)
 - [ ] `HorizontalList` in RTL — items right-to-left, header reachable by swiping right-to-left
@@ -268,6 +271,7 @@ Run through relevant entries after any fix or review. This is the single source 
 - **RTL horizontal scroll direction is reversed** — to scroll toward the logical START (header/Item 0), swipe right-to-left: `agent-device swipe 350 256 50 256`. To scroll toward higher items, swipe left-to-right.
 - **Fixture app bundle ID** — `org.reactjs.native.example.FlatListPro`. Use with `xcrun simctl launch`.
 - **`estimatedItemSize` does not exist** — this FlashList does NOT have this prop. Do not use it.
+- **agent-device navigation** — use ONLY `screenshot` + `press` (percentage method). `snapshot`, `find`, and `click` commands are prohibited. Downsample screenshots with `sips --resampleHeight 852` before reading. See the `agent-device` skill for the full coordinate mapping reference.
 
 ---
 
