@@ -2,7 +2,7 @@ import { Animated, RefreshControl } from "react-native";
 import React, { useMemo } from "react";
 
 import { RecyclerViewProps } from "../RecyclerViewProps";
-import { getValidComponent } from "../utils/componentUtils";
+import { getValidComponent, isComponentClass } from "../utils/componentUtils";
 import { CompatView } from "../components/CompatView";
 import { CompatAnimatedScroller } from "../components/CompatScroller";
 
@@ -121,16 +121,22 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
    * If no custom component is provided, uses the default CompatAnimatedScroller.
    */
   const CompatScrollView = useMemo(() => {
-    let scrollComponent = CompatAnimatedScroller;
-    if (typeof renderScrollComponent === "function") {
+    let scrollComponent: React.ComponentType<any> = CompatAnimatedScroller;
+    if (
+      typeof renderScrollComponent === "function" &&
+      !isComponentClass(renderScrollComponent)
+    ) {
       // Create a forwarded ref wrapper for the custom scroll component
       const ForwardedScrollComponent = React.forwardRef((_props, ref) =>
-        (renderScrollComponent as any)({ ..._props, ref } as any)
+        (renderScrollComponent as (...args: unknown[]) => React.ReactNode)({
+          ..._props,
+          ref,
+        })
       );
       ForwardedScrollComponent.displayName = "CustomScrollView";
-      scrollComponent = ForwardedScrollComponent as any;
+      scrollComponent = ForwardedScrollComponent as React.ComponentType<any>;
     } else if (renderScrollComponent) {
-      scrollComponent = renderScrollComponent;
+      scrollComponent = renderScrollComponent as React.ComponentType<any>;
     }
     // Wrap the scroll component with Animated.createAnimatedComponent
     return Animated.createAnimatedComponent(scrollComponent);
