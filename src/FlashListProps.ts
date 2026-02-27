@@ -93,18 +93,26 @@ export interface FlashListProps<TItem>
    *
    * Note: Changing layout of the cell can conflict with the native layout operations. You may need to set `disableAutoLayout` to `true` to prevent this.
    */
-  CellRendererComponent?: React.ComponentType<any> | undefined;
+  CellRendererComponent?:
+    | React.ComponentType<any>
+    | React.ExoticComponent<any>
+    | undefined;
 
   /**
    * Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
    */
-  ItemSeparatorComponent?: React.ComponentType<any> | null | undefined;
+  ItemSeparatorComponent?:
+    | React.ComponentType<any>
+    | React.ExoticComponent<any>
+    | null
+    | undefined;
 
   /**
    * Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
    */
   ListEmptyComponent?:
     | React.ComponentType<any>
+    | React.ExoticComponent<any>
     | React.ReactElement
     | null
     | undefined;
@@ -114,6 +122,7 @@ export interface FlashListProps<TItem>
    */
   ListFooterComponent?:
     | React.ComponentType<any>
+    | React.ExoticComponent<any>
     | React.ReactElement
     | null
     | undefined;
@@ -128,6 +137,7 @@ export interface FlashListProps<TItem>
    */
   ListHeaderComponent?:
     | React.ComponentType<any>
+    | React.ExoticComponent<any>
     | React.ReactElement
     | null
     | undefined;
@@ -142,6 +152,7 @@ export interface FlashListProps<TItem>
    */
   renderScrollComponent?:
     | React.ComponentType<ScrollViewProps>
+    | React.ExoticComponent<ScrollViewProps>
     | React.FC<ScrollViewProps>;
 
   /**
@@ -397,6 +408,7 @@ export interface FlashListProps<TItem>
          */
         backdropComponent?:
           | React.ComponentType<any>
+          | React.ExoticComponent<any>
           | React.ReactElement
           | null
           | undefined;

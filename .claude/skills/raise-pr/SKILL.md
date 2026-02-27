@@ -65,6 +65,20 @@ git push -u origin fix/issue-<number>-<short-slug>
 
 ---
 
+## Step 2b — Self-Review Before Creating PR
+
+**Always review your own diff before creating the PR.** Run `git diff HEAD~1` (or `git diff main...HEAD`) and check for:
+
+- **Orphaned or misplaced JSDoc comments** — moving code can separate a JSDoc from its function
+- **Unnecessary `as any` casts** — use specific types wherever possible (e.g., `as React.ComponentType<any>` instead of `as any`)
+- **Leftover debug code** — `console.log`, `fetch("http://localhost:...")`, temporary comments
+- **Unrelated changes** — files or hunks that aren't part of the fix
+- **Formatting issues** — the diff should be clean and minimal
+
+Fix any issues found, then amend the commit before proceeding to Step 3.
+
+---
+
 ## Step 3 — Create the PR
 
 ### PR title
