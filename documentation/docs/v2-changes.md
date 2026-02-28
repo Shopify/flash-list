@@ -80,7 +80,7 @@ sidebar_position: 4
 - FlashList does not ask for any estimates, which makes it much easier to use.
 - Horizontal Lists are much improved, and items can also resize within the lists. We no longer render an extra item to measure list height.
 - In Grid layout, if side-by-side items have different heights, then the shorter item will match the height of the tallest item. This wasn't possible in v1.
-- The ref of FlashList has many more useful methods like `getVisibleIndices` and `getLayout`.
+- The ref of FlashList has many more useful methods like `computeVisibleIndices` and `getLayout`.
 - `contentContainerStyle` prop is fully supported now.
 
 ## New hooks
