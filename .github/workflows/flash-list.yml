@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  NODE_VERSION: 20.4.0
+  NODE_VERSION: 22.18.0
 
 jobs:
   build-ts:
