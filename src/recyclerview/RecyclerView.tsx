@@ -93,6 +93,10 @@ const RecyclerViewComponent = <T,>(
 
   renderTimeTracker.startTracking();
 
+  const layoutRetryCountRef = useRef(0);
+  const MAX_LAYOUT_RETRIES = 5;
+
+
   // Sticky header config
   const stickyHeaderOffset = stickyHeaderConfig?.offset ?? 0;
   const stickyHeaderUseNativeDriver =
@@ -182,7 +186,7 @@ const RecyclerViewComponent = <T,>(
         },
         isHorizontalRTL && recyclerViewManager.hasLayout()
           ? firstItemOffset -
-              recyclerViewManager.getChildContainerDimensions().width
+          recyclerViewManager.getChildContainerDimensions().width
           : firstItemOffset
       );
     }
@@ -226,16 +230,33 @@ const RecyclerViewComponent = <T,>(
       console.warn(WarningMessages.exceededMaxRendersWithoutCommit);
     }
 
-    if (
-      recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0) &&
-      !hasExceededMaxRendersWithoutCommit
-    ) {
-      // Trigger re-render if layout modifications were made
-      setRenderId((prev) => prev + 1);
-    } else {
+    const layoutChanged = recyclerViewManager.modifyChildrenLayout(
+      layoutInfo,
+      data?.length ?? 0
+    );
+
+    const shouldRetryLayout =
+      layoutChanged && !hasExceededMaxRendersWithoutCommit;
+
+    const commitLayoutAndCorrectOffset = () => {
+      layoutRetryCountRef.current = 0;
       viewHolderCollectionRef.current?.commitLayout();
       applyOffsetCorrection();
+    };
+
+
+    if (shouldRetryLayout) {
+      layoutRetryCountRef.current += 1;
+
+      if (layoutRetryCountRef.current <= MAX_LAYOUT_RETRIES) {
+        // Retry render to stabilize layout
+        setRenderId((prev) => prev + 1);
+        return;
+      }
     }
+    // Commit path: layout is stable OR retries exhausted
+    commitLayoutAndCorrectOffset();
+
 
     if (
       horizontal &&
@@ -584,8 +605,8 @@ const RecyclerViewComponent = <T,>(
               return Math.max(
                 0,
                 windowSize -
-                  childContainerSize -
-                  recyclerViewManager.firstItemOffset
+                childContainerSize -
+                recyclerViewManager.firstItemOffset
               );
             }}
             refHolder={refHolder}
