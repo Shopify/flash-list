@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-import pixelmatch from "pixelmatch";
+import blazediff from "@blazediff/core";
 import { PNG } from "pngjs";
 
 export const pixelDifference = (
@@ -12,7 +12,7 @@ export const pixelDifference = (
   const { width, height } = reference;
   const diff = new PNG({ width, height });
 
-  const numDiffPixels = pixelmatch(
+  const numDiffPixels = blazediff(
     reference.data,
     toMatch.data,
     diff.data,
