@@ -104,8 +104,9 @@ export function useBoundDetection<T>(
       if (onStartReached) {
         const onStartReachedThreshold = onStartReachedThresholdProp ?? 0.2;
         const startThresholdDistance = onStartReachedThreshold * visibleLength;
+        const startBaseline = Math.max(0, recyclerViewManager.firstItemOffset);
 
-        const isNearStart = lastScrollOffset <= startThresholdDistance;
+        const isNearStart = lastScrollOffset <= startBaseline + startThresholdDistance;
 
         if (isNearStart && !pendingStartReached.current) {
           pendingStartReached.current = true;
@@ -146,9 +147,10 @@ export function useBoundDetection<T>(
     }
   }, [requestAnimationFrame, scrollViewRef, recyclerViewManager]);
 
-  // Reset end reached state when data changes
+  // Reset start/end reached state when data changes
   useMemo(() => {
     pendingEndReached.current = false;
+    pendingStartReached.current = false;
     // needs to run only when data changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
