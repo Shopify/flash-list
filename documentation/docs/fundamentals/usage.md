@@ -569,7 +569,20 @@ This method is called very frequently. Keep it fast.
 overrideProps?: object;
 ```
 
-We do not recommend using this prop for anything else than debugging. Internal props of the list will be overriden with the provided values.
+Allows overriding internal ScrollView props. Props provided here are spread onto the internal ScrollView after all other props, so they take highest priority.
+
+This can be useful for cases where you need to set a style on the ScrollView itself rather than the outer container. For example, to enable visible overflow:
+
+```tsx
+<FlashList
+  style={{ overflow: "visible" }}
+  overrideProps={{ style: { overflow: "visible" } }}
+/>
+```
+
+:::caution
+Use with caution — overriding internal props may interfere with FlashList's layout and recycling behavior.
+:::
 
 ### `progressViewOffset`
 
