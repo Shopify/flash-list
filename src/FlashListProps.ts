@@ -269,7 +269,23 @@ export interface FlashListProps<TItem>
   ) => void;
 
   /**
-   * For debugging and exception use cases, internal props will be overriden with these values if used
+   * Allows overriding internal ScrollView props. Props provided here are
+   * spread onto the internal ScrollView after all other props, so they take
+   * highest priority.
+   *
+   * This can be useful for cases where you need to set a style on the
+   * ScrollView itself rather than the outer container. For example, to enable
+   * visible overflow you can combine this with the `style` prop:
+   *
+   * ```tsx
+   * <FlashList
+   *   style={{ overflow: "visible" }}
+   *   overrideProps={{ style: { overflow: "visible" } }}
+   * />
+   * ```
+   *
+   * Use with caution — overriding internal props may interfere with
+   * FlashList's layout and recycling behavior.
    */
   overrideProps?: OverrideProps;
 
@@ -338,6 +354,15 @@ export interface FlashListProps<TItem>
    * New arch only
    * Style for the RecyclerView's parent container.
    * Please avoid anything which can mess size of children in this view. For example, margin is okay but padding is not.
+   *
+   * Note: To enable `overflow: "visible"`, you must also set it on the
+   * internal ScrollView via `overrideProps`:
+   * ```tsx
+   * <FlashList
+   *   style={{ overflow: "visible" }}
+   *   overrideProps={{ style: { overflow: "visible" } }}
+   * />
+   * ```
    */
   style?: StyleProp<ViewStyle>;
 
