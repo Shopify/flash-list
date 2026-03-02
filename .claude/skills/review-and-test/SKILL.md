@@ -161,7 +161,7 @@ I18nManager.forceRTL(false);
 
 If the PR touches `measureLayout`, `measureParentSize`, `firstItemOffset`, or `RecyclerView.tsx` layout logic, verify the actual runtime values match expected values.
 
-### Expected values (verified on RN 0.79 Fabric)
+### Expected values (verified on RN 0.84 Fabric)
 
 | Scenario | `firstItemOffset` (adjusted) |
 |----------|------------------------------|
@@ -204,7 +204,7 @@ Then rebuild (`yarn build`), relaunch, navigate, and read `/tmp/rv-debug.log`.
 
 ### `measureParentSize` x/y behavior
 
-On RN 0.79 Fabric, `view.measureLayout(view)` returns `x=0, y=0` (the Fabric self-measurement bug from #2017 does NOT reproduce on this version). The defensive fix that strips x/y is a no-op here but protects other RN versions.
+On RN 0.84 Fabric, `view.measureLayout(view)` returns `x=0, y=0` (the Fabric self-measurement bug from #2017 does NOT reproduce on this version). The defensive fix that strips x/y is a no-op here but protects other RN versions.
 
 ---
 
@@ -231,7 +231,7 @@ Run through relevant entries after any fix or review. This is the single source 
 - [ ] `stickyHeaderOffset` > 0 combined with content above FlashList
 - [ ] Horizontal FlashList (x-axis equivalent of any vertical measurement bug)
 - [ ] Horizontal list with wide ListHeaderComponent — header must be reachable by scrolling
-- [ ] `measureParentSize` x/y values — on RN 0.79 Fabric these are (0,0), but on other RN versions they may be non-zero
+- [ ] `measureParentSize` x/y values — on RN 0.84 Fabric these are (0,0), but on other RN versions they may be non-zero
 - [ ] `numColumns > 1` with `ItemSeparatorComponent` — last row items must have same height (no separator height mismatch)
 - [ ] `numColumns > 1` with `ItemSeparatorComponent` and `overrideItemLayout` (variable spans) — separator suppression must use layout y-coordinates, not index arithmetic
 
@@ -253,7 +253,7 @@ Run through relevant entries after any fix or review. This is the single source 
 ### New Architecture (Fabric)
 - [ ] Any `measureLayout`/`measureParentSize` call — verify behaviour matches Paper
 - [ ] `firstItemOffset` after fix — confirm it equals `ListHeaderComponent` height/width
-- [ ] `measureParentSize(view)` returns `x=0, y=0` on RN 0.79 Fabric — the #2017 bug may only manifest on other RN versions
+- [ ] `measureParentSize(view)` returns `x=0, y=0` on RN 0.84 Fabric — the #2017 bug may only manifest on other RN versions
 
 ### Performance
 - [ ] Benchmark screen shows no FPS regression (use `ManualBenchmarkExample`)
