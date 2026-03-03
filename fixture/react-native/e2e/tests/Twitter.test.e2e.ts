@@ -29,6 +29,7 @@ describe("Twitter", () => {
   it("with FlatList looks the same as with FlashList", async () => {
     const testName = "Twitter_with_FlatList_looks_the_same_as_with_FlashList";
 
+    await element(by.id("ExamplesFlatList")).swipe("up", "slow", 0.3);
     await element(by.id("Twitter FlatList Timeline")).tap();
 
     const testRunScreenshotPath = await element(
