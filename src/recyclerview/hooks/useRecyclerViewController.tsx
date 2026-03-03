@@ -51,7 +51,6 @@ export function useRecyclerViewController<T>(
   const isUnmounted = useUnmountFlag();
   const [_, setRenderId] = useState(0);
   const pauseOffsetCorrection = useRef(false);
-  const initialScrollCompletedRef = useRef(false);
   const lastDataLengthRef = useRef(recyclerViewManager.getDataLength());
   const { setTimeout } = useUnmountAwareTimeout();
 
@@ -573,12 +572,12 @@ export function useRecyclerViewController<T>(
     if (
       initialScrollIndex >= 0 &&
       initialScrollIndex < dataLength &&
-      !initialScrollCompletedRef.current &&
+      !recyclerViewManager.isInitialScrollComplete &&
       recyclerViewManager.getIsFirstLayoutComplete()
     ) {
       // Use setTimeout to ensure that we keep trying to scroll on first few renders
       setTimeout(() => {
-        initialScrollCompletedRef.current = true;
+        recyclerViewManager.isInitialScrollComplete = true;
         pauseOffsetCorrection.current = false;
       }, 100);
 

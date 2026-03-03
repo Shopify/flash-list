@@ -39,6 +39,7 @@ export class RecyclerViewManager<T> {
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
   public isFirstPaintOnUiComplete = false;
+  public isInitialScrollComplete = false;
 
   public get animationOptimizationsEnabled() {
     return this._animationOptimizationsEnabled;
@@ -71,6 +72,7 @@ export class RecyclerViewManager<T> {
       props.maxItemsInRecyclePool
     );
     this.itemViewabilityManager = new ViewabilityManager<T>(this as any);
+    this.isInitialScrollComplete = this.getInitialScrollIndex() === undefined;
     this.checkPropsAndWarn();
   }
 

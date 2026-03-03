@@ -209,6 +209,87 @@ describe("RecyclerView", () => {
     });
   });
 
+  describe("Viewability with initialScrollIndex", () => {
+    const scrollTo = (root: ReturnType<typeof render>, y: number) => {
+      const scrollable = root.findWhere((node: any) => node.props.onScroll);
+      if (!scrollable) throw new Error("Could not find scrollable component");
+
+      const onScroll: any = scrollable.prop("onScroll" as never);
+      root.act(() => {
+        onScroll({
+          nativeEvent: {
+            contentOffset: { x: 0, y },
+            contentSize: { width: 399, height: 2000 },
+            layoutMeasurement: { width: 399, height: 899 },
+          },
+        });
+      });
+    };
+
+    it("should not fire onViewableItemsChanged on mount when waitForInteraction is true and initialScrollIndex is set", () => {
+      const onViewableItemsChanged = jest.fn();
+      const result = render(
+        <FlashList
+          data={[
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19,
+          ]}
+          initialScrollIndex={5}
+          viewabilityConfig={{ waitForInteraction: true }}
+          onViewableItemsChanged={onViewableItemsChanged}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+
+      // Simulate scroll event from initialScrollIndex programmatic scroll
+      scrollTo(result, 500);
+      jest.runAllTimers();
+
+      // Should NOT have fired despite items being visible
+      expect(onViewableItemsChanged).not.toHaveBeenCalled();
+    });
+
+    it("should fire onViewableItemsChanged after real user interaction even with initialScrollIndex", () => {
+      const onViewableItemsChanged = jest.fn();
+      const ref = createRef<FlashListRef<number>>();
+      const result = render(
+        <FlashList
+          ref={ref}
+          data={[
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19,
+          ]}
+          initialScrollIndex={5}
+          viewabilityConfig={{ waitForInteraction: true }}
+          onViewableItemsChanged={onViewableItemsChanged}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+
+      // Initial scroll - no callback
+      scrollTo(result, 500);
+      jest.runAllTimers();
+      expect(onViewableItemsChanged).not.toHaveBeenCalled();
+
+      // Clear the initial scroll flag (simulating the 100ms timeout completing)
+      jest.advanceTimersByTime(200);
+
+      // Real user interaction via ref
+      ref.current?.recordInteraction();
+
+      // User scroll simulation
+      scrollTo(result, 600);
+      jest.runAllTimers();
+
+      // NOW callback should fire
+      expect(onViewableItemsChanged).toHaveBeenCalled();
+    });
+  });
+
   describe("Sticky headers with content above FlashList", () => {
     // Each item is 100px tall (from measureItemLayout mock).
     // With stickyHeaderIndices=[0, 5, 10, 15], header 5 sits at y=500.

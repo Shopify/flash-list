@@ -299,7 +299,11 @@ const RecyclerViewComponent = <T,>(
       checkBounds();
 
       // Record interaction and compute item visibility
-      recyclerViewManager.recordInteraction();
+      // Skip recording interaction during programmatic initial scroll
+      // to respect waitForInteraction in viewability config
+      if (recyclerViewManager.isInitialScrollComplete) {
+        recyclerViewManager.recordInteraction();
+      }
       recyclerViewManager.computeItemViewability();
 
       // Call user-provided onScroll handler
