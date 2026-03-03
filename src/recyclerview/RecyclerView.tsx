@@ -157,29 +157,28 @@ const RecyclerViewComponent = <T,>(
    */
   useLayoutEffect(() => {
     if (internalViewRef.current && firstChildViewRef.current) {
-      // Measure the outer and inner container layouts
-      const outerViewLayout = measureParentSize(internalViewRef.current);
+      // Measure the outer container size and inner container layout
+      const outerViewSize = measureParentSize(internalViewRef.current);
       const firstChildViewLayout = measureFirstChildLayout(
         firstChildViewRef.current,
         internalViewRef.current
       );
 
-      containerViewSizeRef.current = outerViewLayout;
+      containerViewSizeRef.current = outerViewSize;
 
-      // Calculate offset of first item
+      // firstChildViewLayout is already relative to the outer container,
+      // so its x/y directly gives the first item offset.
       const firstItemOffset = horizontal
-        ? firstChildViewLayout.x - outerViewLayout.x
-        : firstChildViewLayout.y - outerViewLayout.y;
+        ? firstChildViewLayout.x
+        : firstChildViewLayout.y;
 
       // Update the RecyclerView manager with window dimensions
       recyclerViewManager.updateLayoutParams(
         {
-          width: horizontal
-            ? outerViewLayout.width
-            : firstChildViewLayout.width,
+          width: horizontal ? outerViewSize.width : firstChildViewLayout.width,
           height: horizontal
             ? firstChildViewLayout.height
-            : outerViewLayout.height,
+            : outerViewSize.height,
         },
         isHorizontalRTL && recyclerViewManager.hasLayout()
           ? firstItemOffset -
@@ -300,7 +299,11 @@ const RecyclerViewComponent = <T,>(
       checkBounds();
 
       // Record interaction and compute item visibility
-      recyclerViewManager.recordInteraction();
+      // Skip recording interaction during programmatic initial scroll
+      // to respect waitForInteraction in viewability config
+      if (recyclerViewManager.isInitialScrollComplete) {
+        recyclerViewManager.recordInteraction();
+      }
       recyclerViewManager.computeItemViewability();
 
       // Call user-provided onScroll handler
@@ -612,6 +615,7 @@ const RecyclerViewComponent = <T,>(
             }}
             CellRendererComponent={CellRendererComponent}
             ItemSeparatorComponent={ItemSeparatorComponent}
+            isInLastRow={(index) => recyclerViewManager.isInLastRow(index)}
             getChildContainerLayout={() =>
               recyclerViewManager.hasLayout()
                 ? recyclerViewManager.getChildContainerDimensions()

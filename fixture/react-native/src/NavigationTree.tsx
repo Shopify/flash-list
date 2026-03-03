@@ -32,6 +32,7 @@ import LotOfItems from "./lot-of-items/LotOfItems";
 import ManualBenchmarkExample from "./ManualBenchmarkExample";
 import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 import { StickyHeaderExample } from "./StickyHeaderExample";
+import { GridWithSeparator } from "./GridWithSeparator";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -111,6 +112,11 @@ const NavigationTree = () => {
             name="StickyHeaderExample"
             component={StickyHeaderExample}
             options={{ title: "Sticky Headers" }}
+          />
+          <Stack.Screen
+            name="GridWithSeparator"
+            component={GridWithSeparator}
+            options={{ title: "Grid with Separator" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />

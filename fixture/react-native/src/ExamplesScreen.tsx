@@ -111,6 +111,10 @@ export const ExamplesScreen = () => {
       title: "Manual FlatList Benchmark Example",
       destination: "ManualFlatListBenchmarkExample",
     },
+    {
+      title: "Grid with Separator",
+      destination: "GridWithSeparator",
+    },
   ];
   return (
     <>

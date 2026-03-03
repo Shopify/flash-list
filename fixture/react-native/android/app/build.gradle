@@ -1,8 +1,5 @@
 apply plugin: "com.android.application"
-apply plugin: 'kotlin-android'
-
-import com.android.build.OutputFile
-
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 /**

@@ -182,6 +182,10 @@ export abstract class RVLayoutManager {
       this.layouts.length = totalItemCount;
       this.spanTracker.length = totalItemCount;
       minRecomputeIndex = totalItemCount - 1; // <0 gets skipped so it's safe to set to totalItemCount - 1
+      // layoutInfo may contain stale indices from ViewHolders that were rendered
+      // before the data shrunk. Filter out any indices that are now out of bounds.
+      // eslint-disable-next-line no-param-reassign
+      layoutInfo = layoutInfo.filter((info) => info.index < totalItemCount);
     }
     // update average windows
     minRecomputeIndex = Math.min(
@@ -258,6 +262,20 @@ export abstract class RVLayoutManager {
 
   getLayoutCount(): number {
     return this.layouts.length;
+  }
+
+  /**
+   * Returns whether the item at the given index is in the last row of the layout.
+   * Used to suppress separators for all items in the last row, preventing
+   * height mismatch when the last data item has no separator.
+   *
+   * Base implementation returns false — only layouts that normalize heights
+   * across multiple items (e.g., grid) need to override this.
+   * @param index Index of the item
+   * @returns True if the item is in the last row
+   */
+  isInLastRow(index: number): boolean {
+    return false;
   }
 
   /**
