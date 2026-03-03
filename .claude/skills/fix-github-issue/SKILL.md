@@ -26,63 +26,38 @@ These are hard rules. Violating any of them is a failure.
 
 ## Running Metro
 
-Default Metro port for this project is **8081**. Start Metro explicitly on this port.
-
-### Find what's using port 8081
+Metro port is **8087**. Start from `fixture/react-native/`:
 
 ```bash
-lsof -ti :8081
+cd fixture/react-native && yarn start --port 8087
 ```
 
-If it returns a PID, either kill it or pick a different port:
+Verify: `curl -s http://localhost:8087/status`
+
+## Building & Installing the Fixture App
+
+**Only build the native app if it's not already installed.** Check first:
 
 ```bash
-# Kill whatever is on 8081
-kill -9 $(lsof -ti :8081)
+xcrun simctl get_app_container booted org.reactjs.native.example.FlatListPro 2>/dev/null
 ```
 
-### Start Metro on port 8081
-
-From `fixture/react-native/`:
+- If it **succeeds**: app is installed. Just `yarn build` (TS) and relaunch.
+- If it **fails**: app is not installed. Build and install:
 
 ```bash
-yarn react-native start --port 8081
+cd fixture/react-native && yarn react-native run-ios
 ```
 
-Or from the repo root:
+## E2E Tests
+
+**If you add or modify any e2e tests (files matching `*.e2e.*`)**, you MUST run them and verify they pass before raising a PR:
 
 ```bash
-cd fixture/react-native && yarn start --port 8081
+yarn e2e:ios
 ```
 
-### Tell the simulator to use port 8081
-
-**iOS** — pass the port when building/running:
-
-```bash
-cd fixture/react-native && yarn react-native run-ios --port 8081
-```
-
-**Android** — reverse the port via ADB so the emulator can reach Metro on your machine:
-
-```bash
-adb reverse tcp:8081 tcp:8081
-cd fixture/react-native && yarn react-native run-android --port 8081
-```
-
-### In-app Dev Menu (already running app)
-
-If the app is already installed and running, reload it against the new port without rebuilding:
-
-- **iOS simulator**: `Cmd+D` → "Configure Bundler" → set host `localhost` and port `8081`
-- **Android emulator**: shake or `Cmd+M` → "Configure Bundler" → set host `10.0.2.2` and port `8081`
-
-### Verify Metro is reachable
-
-```bash
-curl -s http://localhost:8081/status
-# Should return: {"status":"packager-status:running"}
-```
+This runs `detox build -c ios.sim.release` followed by `detox test -c ios.sim.release`. E2e test files live in `fixture/react-native/e2e/tests/`.
 
 ## Common Pitfalls
 
@@ -92,7 +67,8 @@ curl -s http://localhost:8081/status
 - **Stale layout cache** — if sizes look wrong after a fix, call `ref.current?.clearLayoutCacheOnUpdate()`
 - **Prop not forwarded** — check `FlashListProps.ts` and `RecyclerView.tsx` to confirm the prop reaches the layout manager
 - **Grid row detection with spans** — never use `Math.floor(index / numColumns)` to determine which row an item is in when `overrideItemLayout` spans are possible. Instead, compare `layout.y` values from the layout manager — items in the same row always share the same `y`.
-- **Metro port conflict** — this project uses port 8081. Kill anything on that port, then restart Metro from `fixture/react-native/`. See the Metro section above.
+- **Metro port conflict** — this project uses port 8087. Kill anything on that port, then restart Metro from `fixture/react-native/`. See the Metro section above.
+- **App can't connect to Metro** — if the app shows a red/yellow error about connecting to the bundler, configure the port: iOS simulator `Cmd+D` → "Configure Bundler" → set host `localhost` and port `8087`. Then reload.
 - **React Native version mismatch** — the native build (0.84.x) must connect to the fixture's own Metro, not another project's bundler running a different RN version.
 
 - **`dist/` is NOT rebuilt on branch switch** — you MUST `yarn build` after every `git checkout`. Verify with `grep` in `dist/` that the expected code change is present. Without this, you test stale code and get false results.
