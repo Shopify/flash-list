@@ -114,10 +114,11 @@ function generateInitialMessages(count: number): ChatMessage[] {
 }
 
 function generateRandomMessage(): ChatMessage {
+  const id = nextId++;
   return {
-    id: `msg-${nextId++}`,
-    text: messageTexts[Math.floor(Math.random() * messageTexts.length)],
-    sender: Math.random() > 0.5 ? "user" : "other",
+    id: `msg-${id}`,
+    text: messageTexts[id % messageTexts.length],
+    sender: id % 2 === 0 ? "user" : "other",
     timestamp: new Date(),
   };
 }
@@ -139,12 +140,6 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
         ]}
       >
         <Text style={styles.messageText}>{message.text}</Text>
-        <Text style={styles.timestamp}>
-          {message.timestamp.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </Text>
       </View>
     </View>
   );
@@ -220,11 +215,5 @@ const styles = StyleSheet.create({
   messageText: {
     fontSize: 16,
     color: "#000000",
-  },
-  timestamp: {
-    fontSize: 11,
-    color: "#999",
-    marginTop: 4,
-    alignSelf: "flex-end",
   },
 });
