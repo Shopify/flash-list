@@ -173,6 +173,14 @@ export interface FlashListProps<TItem>
   horizontal?: boolean | null | undefined;
 
   /**
+   * Reverses the direction of scroll. Uses scale transforms of -1.
+   *
+   * Note: On Android, a rotate transform is used instead of scale for performance reasons.
+   * This causes the scrollbar to appear on the left side of the list.
+   */
+  inverted?: boolean | null | undefined;
+
+  /**
    * Instead of starting at the top with the first item, start at initialScrollIndex.
    */
   initialScrollIndex?: number | null | undefined;

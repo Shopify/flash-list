@@ -5,6 +5,7 @@ import { RecyclerViewProps } from "../RecyclerViewProps";
 import { getValidComponent, isComponentClass } from "../utils/componentUtils";
 import { CompatView } from "../components/CompatView";
 import { CompatAnimatedScroller } from "../components/CompatScroller";
+import { PlatformConfig } from "../../native/config/PlatformHelper";
 
 /**
  * Hook that manages secondary props and components for the RecyclerView.
@@ -37,7 +38,15 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     data,
     refreshControl: customRefreshControl,
     stickyHeaderConfig,
+    inverted,
+    horizontal,
   } = props;
+
+  const invertedTransformStyle = inverted
+    ? horizontal
+      ? PlatformConfig.invertedTransformStyleHorizontal
+      : PlatformConfig.invertedTransformStyle
+    : undefined;
 
   /**
    * Creates the refresh control component if onRefresh is provided.
@@ -65,11 +74,11 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
       return null;
     }
     return (
-      <CompatView style={ListHeaderComponentStyle}>
+      <CompatView style={[ListHeaderComponentStyle, invertedTransformStyle]}>
         {getValidComponent(ListHeaderComponent)}
       </CompatView>
     );
-  }, [ListHeaderComponent, ListHeaderComponentStyle]);
+  }, [ListHeaderComponent, ListHeaderComponentStyle, invertedTransformStyle]);
 
   /**
    * Creates the footer component with optional styling.
@@ -79,11 +88,11 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
       return null;
     }
     return (
-      <CompatView style={ListFooterComponentStyle}>
+      <CompatView style={[ListFooterComponentStyle, invertedTransformStyle]}>
         {getValidComponent(ListFooterComponent)}
       </CompatView>
     );
-  }, [ListFooterComponent, ListFooterComponentStyle]);
+  }, [ListFooterComponent, ListFooterComponentStyle, invertedTransformStyle]);
 
   /**
    * Creates the empty state component when there's no data.

@@ -5,6 +5,8 @@ const PlatformConfig = {
   supportsOffsetCorrection: true,
   trackAverageRenderTimeForOffsetProjection: false,
   isRN083OrAbove: isRN083OrAbove(),
+  invertedTransformStyle: { transform: [{ scaleY: -1 }] } as const,
+  invertedTransformStyleHorizontal: { transform: [{ scaleX: -1 }] } as const,
 };
 
 export { PlatformConfig };

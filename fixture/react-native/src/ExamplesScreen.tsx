@@ -38,6 +38,10 @@ export const ExamplesScreen = () => {
       destination: "Chat",
     },
     {
+      title: "Chat (Inverted)",
+      destination: "ChatInverted",
+    },
+    {
       title: "RecyclerView Handler Test",
       destination: "RecyclerViewHandlerTest",
     },

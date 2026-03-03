@@ -56,6 +56,8 @@ export interface ViewHolderCollectionProps<TItem> {
   hideStickyHeaderRelatedCell: boolean;
   /** Returns whether the item at the given index is in the last row of the layout */
   isInLastRow: (index: number) => boolean;
+  /** Whether the list is inverted */
+  inverted: FlashListProps<TItem>["inverted"];
 }
 
 /**
@@ -93,6 +95,7 @@ export const ViewHolderCollection = <TItem,>(
     currentStickyIndex,
     hideStickyHeaderRelatedCell,
     isInLastRow,
+    inverted,
   } = props;
 
   const [renderId, setRenderId] = React.useState(0);
@@ -202,6 +205,7 @@ export const ViewHolderCollection = <TItem,>(
               hidden={
                 hideStickyHeaderRelatedCell && currentStickyIndex === index
               }
+              inverted={inverted}
             />
           );
         })}

@@ -14,6 +14,7 @@ import React, {
 } from "react";
 
 import { FlashListProps, RenderTarget } from "../FlashListProps";
+import { PlatformConfig } from "../native/config/PlatformHelper";
 
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { CompatView } from "./components/CompatView";
@@ -49,6 +50,8 @@ export interface ViewHolderProps<TItem> {
   onSizeChanged?: (index: number, size: RVDimension) => void;
   /** Whether this item should be hidden (likely because it is associated with the active sticky header) */
   hidden: boolean;
+  /** Whether the list is inverted */
+  inverted?: FlashListProps<TItem>["inverted"];
 }
 
 /**
@@ -72,6 +75,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     trailingItem,
     horizontal,
     hidden,
+    inverted,
   } = props;
 
   useLayoutEffect(() => {
@@ -105,6 +109,12 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, extraData, target, renderItem]);
 
+  const invertedTransformStyle = inverted
+    ? horizontal
+      ? PlatformConfig.invertedTransformStyleHorizontal
+      : PlatformConfig.invertedTransformStyle
+    : undefined;
+
   const style = {
     flexDirection: horizontal ? "row" : "column",
     position: target === "StickyHeader" ? "relative" : "absolute",
@@ -117,6 +127,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     left: layout.x,
     top: layout.y,
     opacity: hidden ? 0 : 1,
+    ...invertedTransformStyle,
   } as const;
 
   // TODO: Fix this type issue
@@ -157,7 +168,8 @@ export const ViewHolder = React.memo(
       prevProps.ItemSeparatorComponent === nextProps.ItemSeparatorComponent &&
       prevProps.trailingItem === nextProps.trailingItem &&
       prevProps.horizontal === nextProps.horizontal &&
-      prevProps.hidden === nextProps.hidden
+      prevProps.hidden === nextProps.hidden &&
+      prevProps.inverted === nextProps.inverted
     );
   }
 );

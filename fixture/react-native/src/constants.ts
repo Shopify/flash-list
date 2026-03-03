@@ -24,6 +24,7 @@ export type RootStackParamList = {
   DynamicColumnSpan: undefined;
   HorizontalList: undefined;
   Chat: undefined;
+  ChatInverted: undefined;
   CellRendererExamples: undefined;
   HeaderFooterExample: undefined;
   DynamicItems: undefined;

@@ -22,6 +22,7 @@ import {
 import { FlashListRef } from "../FlashListRef";
 import { ErrorMessages } from "../errors/ErrorMessages";
 import { WarningMessages } from "../errors/WarningMessages";
+import { PlatformConfig } from "../native/config/PlatformHelper";
 
 import { RVDimension } from "./layout-managers/LayoutManager";
 import {
@@ -86,6 +87,7 @@ const RecyclerViewComponent = <T,>(
     onCommitLayoutEffect,
     onChangeStickyIndex,
     stickyHeaderConfig,
+    inverted,
     ...rest
   } = props;
 
@@ -99,6 +101,13 @@ const RecyclerViewComponent = <T,>(
     stickyHeaderConfig?.useNativeDriver ?? true;
   const stickyHeaderHideRelatedCell =
     stickyHeaderConfig?.hideRelatedCell ?? false;
+
+  // Compute the inverted transform style based on platform and orientation
+  const invertedTransformStyle = inverted
+    ? horizontal
+      ? PlatformConfig.invertedTransformStyleHorizontal
+      : PlatformConfig.invertedTransformStyle
+    : undefined;
 
   // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -526,6 +535,7 @@ const RecyclerViewComponent = <T,>(
             overflow: "hidden",
           },
           style,
+          invertedTransformStyle,
         ]}
         ref={internalViewRef}
         collapsable={false}
@@ -623,6 +633,7 @@ const RecyclerViewComponent = <T,>(
             }
             currentStickyIndex={currentStickyIndex}
             hideStickyHeaderRelatedCell={stickyHeaderHideRelatedCell}
+            inverted={inverted}
           />
           {renderEmpty}
           {renderFooter}
