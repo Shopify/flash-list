@@ -102,8 +102,12 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     if (!ListEmptyComponent || (data && data.length > 0)) {
       return null;
     }
-    return getValidComponent(ListEmptyComponent);
-  }, [ListEmptyComponent, data]);
+    return (
+      <CompatView style={invertedTransformStyle}>
+        {getValidComponent(ListEmptyComponent)}
+      </CompatView>
+    );
+  }, [ListEmptyComponent, data, invertedTransformStyle]);
 
   /**
    * Creates the sticky header backdrop component.
@@ -114,16 +118,19 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     }
     return (
       <CompatView
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-        }}
+        style={[
+          {
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+          },
+          invertedTransformStyle,
+        ]}
       >
         {getValidComponent(stickyHeaderConfig?.backdropComponent)}
       </CompatView>
     );
-  }, [stickyHeaderConfig?.backdropComponent]);
+  }, [stickyHeaderConfig?.backdropComponent, invertedTransformStyle]);
 
   /**
    * Creates an animated scroll component based on the provided renderScrollComponent.

@@ -442,6 +442,7 @@ const RecyclerViewComponent = <T,>(
           stickyHeaderRef={stickyHeaderRef}
           recyclerViewManager={recyclerViewManager}
           extraData={extraData}
+          inverted={inverted}
           onChangeStickyIndex={(newStickyHeaderIndex) => {
             if (stickyHeaderHideRelatedCell) {
               setCurrentStickyIndex(newStickyHeaderIndex);
@@ -464,6 +465,7 @@ const RecyclerViewComponent = <T,>(
     currentStickyIndex,
     onChangeStickyIndex,
     stickyHeaderHideRelatedCell,
+    inverted,
   ]);
 
   // Set up scroll event handling with animation support for sticky headers
