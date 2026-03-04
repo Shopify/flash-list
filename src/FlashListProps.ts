@@ -118,6 +118,11 @@ export interface FlashListProps<TItem>
     | undefined;
 
   /**
+   * Styling for internal View for `ListEmptyComponent`.
+   */
+  ListEmptyComponentStyle?: StyleProp<ViewStyle> | undefined;
+
+  /**
    * Rendered at the bottom of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
    */
   ListFooterComponent?:
@@ -171,6 +176,14 @@ export interface FlashListProps<TItem>
    * If true, renders items next to each other horizontally instead of stacked vertically.
    */
   horizontal?: boolean | null | undefined;
+
+  /**
+   * Reverses the direction of scroll. Uses scale transforms of -1.
+   *
+   * Note: On Android, a rotate transform is used instead of scale for performance reasons.
+   * This causes the scrollbar to appear on the left side of the list.
+   */
+  inverted?: boolean | null | undefined;
 
   /**
    * Instead of starting at the top with the first item, start at initialScrollIndex.

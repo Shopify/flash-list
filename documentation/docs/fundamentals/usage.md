@@ -138,6 +138,14 @@ Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`)
 ListEmptyComponent?: React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 ```
 
+### `ListEmptyComponentStyle`
+
+Styling for internal View for `ListEmptyComponent`.
+
+```tsx
+ListEmptyComponentStyle?: StyleProp<ViewStyle>;
+```
+
 ### `ListFooterComponent`
 
 Rendered at the bottom of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
@@ -212,6 +220,20 @@ If `true`, renders items next to each other horizontally instead of stacked vert
 
 ```tsx
 horizontal?: boolean;
+```
+
+### `inverted`
+
+Reverses the direction of the list. Uses CSS transforms (`scaleY(-1)` on iOS/web, `rotate(180deg)` on Android) to flip the list and its contents.
+
+Useful for chat-like interfaces where the newest content appears at the bottom.
+
+:::note
+On Android, a rotate transform is used instead of scale for performance reasons. This causes the scrollbar to appear on the left side of the list.
+:::
+
+```tsx
+inverted?: boolean;
 ```
 
 ### `initialScrollIndex`

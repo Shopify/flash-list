@@ -48,6 +48,7 @@ import { CompatScroller } from "./components/CompatScroller";
 import { useBoundDetection } from "./hooks/useBoundDetection";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 import { useSecondaryProps } from "./hooks/useSecondaryProps";
+import { getInvertedTransformStyle } from "./utils/getInvertedTransformStyle";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
 import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
 import { useRecyclerViewController } from "./hooks/useRecyclerViewController";
@@ -86,6 +87,7 @@ const RecyclerViewComponent = <T,>(
     onCommitLayoutEffect,
     onChangeStickyIndex,
     stickyHeaderConfig,
+    inverted,
     ...rest
   } = props;
 
@@ -99,6 +101,11 @@ const RecyclerViewComponent = <T,>(
     stickyHeaderConfig?.useNativeDriver ?? true;
   const stickyHeaderHideRelatedCell =
     stickyHeaderConfig?.hideRelatedCell ?? false;
+
+  // Compute the inverted transform style based on platform and orientation
+  const invertedTransformStyle = inverted
+    ? getInvertedTransformStyle(horizontal)
+    : undefined;
 
   // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);
@@ -433,6 +440,7 @@ const RecyclerViewComponent = <T,>(
           stickyHeaderRef={stickyHeaderRef}
           recyclerViewManager={recyclerViewManager}
           extraData={extraData}
+          inverted={inverted}
           onChangeStickyIndex={(newStickyHeaderIndex) => {
             if (stickyHeaderHideRelatedCell) {
               setCurrentStickyIndex(newStickyHeaderIndex);
@@ -455,6 +463,7 @@ const RecyclerViewComponent = <T,>(
     currentStickyIndex,
     onChangeStickyIndex,
     stickyHeaderHideRelatedCell,
+    inverted,
   ]);
 
   // Set up scroll event handling with animation support for sticky headers
@@ -526,6 +535,7 @@ const RecyclerViewComponent = <T,>(
             overflow: "hidden",
           },
           style,
+          invertedTransformStyle,
         ]}
         ref={internalViewRef}
         collapsable={false}
@@ -623,6 +633,7 @@ const RecyclerViewComponent = <T,>(
             }
             currentStickyIndex={currentStickyIndex}
             hideStickyHeaderRelatedCell={stickyHeaderHideRelatedCell}
+            inverted={inverted}
           />
           {renderEmpty}
           {renderFooter}

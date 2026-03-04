@@ -5,6 +5,7 @@ import { RecyclerViewProps } from "../RecyclerViewProps";
 import { getValidComponent, isComponentClass } from "../utils/componentUtils";
 import { CompatView } from "../components/CompatView";
 import { CompatAnimatedScroller } from "../components/CompatScroller";
+import { getInvertedTransformStyle } from "../utils/getInvertedTransformStyle";
 
 /**
  * Hook that manages secondary props and components for the RecyclerView.
@@ -30,6 +31,7 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     ListFooterComponent,
     ListFooterComponentStyle,
     ListEmptyComponent,
+    ListEmptyComponentStyle,
     renderScrollComponent,
     refreshing,
     progressViewOffset,
@@ -37,7 +39,13 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     data,
     refreshControl: customRefreshControl,
     stickyHeaderConfig,
+    inverted,
+    horizontal,
   } = props;
+
+  const invertedTransformStyle = inverted
+    ? getInvertedTransformStyle(horizontal)
+    : undefined;
 
   /**
    * Creates the refresh control component if onRefresh is provided.
@@ -65,11 +73,11 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
       return null;
     }
     return (
-      <CompatView style={ListHeaderComponentStyle}>
+      <CompatView style={[ListHeaderComponentStyle, invertedTransformStyle]}>
         {getValidComponent(ListHeaderComponent)}
       </CompatView>
     );
-  }, [ListHeaderComponent, ListHeaderComponentStyle]);
+  }, [ListHeaderComponent, ListHeaderComponentStyle, invertedTransformStyle]);
 
   /**
    * Creates the footer component with optional styling.
@@ -79,11 +87,11 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
       return null;
     }
     return (
-      <CompatView style={ListFooterComponentStyle}>
+      <CompatView style={[ListFooterComponentStyle, invertedTransformStyle]}>
         {getValidComponent(ListFooterComponent)}
       </CompatView>
     );
-  }, [ListFooterComponent, ListFooterComponentStyle]);
+  }, [ListFooterComponent, ListFooterComponentStyle, invertedTransformStyle]);
 
   /**
    * Creates the empty state component when there's no data.
@@ -93,8 +101,21 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     if (!ListEmptyComponent || (data && data.length > 0)) {
       return null;
     }
-    return getValidComponent(ListEmptyComponent);
-  }, [ListEmptyComponent, data]);
+    const emptyContent = getValidComponent(ListEmptyComponent);
+    if (!invertedTransformStyle && !ListEmptyComponentStyle) {
+      return emptyContent;
+    }
+    return (
+      <CompatView style={[ListEmptyComponentStyle, invertedTransformStyle]}>
+        {emptyContent}
+      </CompatView>
+    );
+  }, [
+    ListEmptyComponent,
+    data,
+    invertedTransformStyle,
+    ListEmptyComponentStyle,
+  ]);
 
   /**
    * Creates the sticky header backdrop component.
@@ -105,16 +126,19 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     }
     return (
       <CompatView
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-        }}
+        style={[
+          {
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+          },
+          invertedTransformStyle,
+        ]}
       >
         {getValidComponent(stickyHeaderConfig?.backdropComponent)}
       </CompatView>
     );
-  }, [stickyHeaderConfig?.backdropComponent]);
+  }, [stickyHeaderConfig?.backdropComponent, invertedTransformStyle]);
 
   /**
    * Creates an animated scroll component based on the provided renderScrollComponent.
