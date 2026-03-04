@@ -14,10 +14,10 @@ import React, {
 } from "react";
 
 import { FlashListProps, RenderTarget } from "../FlashListProps";
-import { PlatformConfig } from "../native/config/PlatformHelper";
 
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { CompatView } from "./components/CompatView";
+import { getInvertedTransformStyle } from "./utils/getInvertedTransformStyle";
 
 /**
  * Props interface for the ViewHolder component
@@ -109,11 +109,10 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, extraData, target, renderItem]);
 
-  const invertedTransformStyle = inverted
-    ? horizontal
-      ? PlatformConfig.invertedTransformStyleHorizontal
-      : PlatformConfig.invertedTransformStyle
-    : undefined;
+  const invertedTransformStyle = getInvertedTransformStyle(
+    inverted,
+    horizontal
+  );
 
   const style = {
     flexDirection: horizontal ? "row" : "column",

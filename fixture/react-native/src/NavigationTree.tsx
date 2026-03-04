@@ -21,6 +21,7 @@ import { DynamicColumnSpan } from "./DynamicColumnSpan";
 import HorizontalList from "./HorizontalList";
 import { Chat } from "./Chat";
 import { ChatInverted } from "./ChatInverted";
+import { InvertedTest } from "./InvertedTest";
 import FlashListCellRenderer from "./CellRendererExamples";
 import { HeaderFooterExample } from "./HeaderFooterExample";
 import DynamicItems from "./DynamicItems";
@@ -78,6 +79,11 @@ const NavigationTree = () => {
             name="ChatInverted"
             component={ChatInverted}
             options={{ title: "Chat (Inverted)" }}
+          />
+          <Stack.Screen
+            name="InvertedTest"
+            component={InvertedTest}
+            options={{ title: "Inverted Test" }}
           />
           <Stack.Screen
             name="HeaderFooterExample"

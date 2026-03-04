@@ -22,7 +22,6 @@ import {
 import { FlashListRef } from "../FlashListRef";
 import { ErrorMessages } from "../errors/ErrorMessages";
 import { WarningMessages } from "../errors/WarningMessages";
-import { PlatformConfig } from "../native/config/PlatformHelper";
 
 import { RVDimension } from "./layout-managers/LayoutManager";
 import {
@@ -49,6 +48,7 @@ import { CompatScroller } from "./components/CompatScroller";
 import { useBoundDetection } from "./hooks/useBoundDetection";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 import { useSecondaryProps } from "./hooks/useSecondaryProps";
+import { getInvertedTransformStyle } from "./utils/getInvertedTransformStyle";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
 import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
 import { useRecyclerViewController } from "./hooks/useRecyclerViewController";
@@ -103,11 +103,10 @@ const RecyclerViewComponent = <T,>(
     stickyHeaderConfig?.hideRelatedCell ?? false;
 
   // Compute the inverted transform style based on platform and orientation
-  const invertedTransformStyle = inverted
-    ? horizontal
-      ? PlatformConfig.invertedTransformStyleHorizontal
-      : PlatformConfig.invertedTransformStyle
-    : undefined;
+  const invertedTransformStyle = getInvertedTransformStyle(
+    inverted,
+    horizontal
+  );
 
   // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);

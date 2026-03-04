@@ -138,6 +138,14 @@ Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`)
 ListEmptyComponent?: React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 ```
 
+### `ListEmptyComponentStyle`
+
+Styling for internal View for `ListEmptyComponent`.
+
+```tsx
+ListEmptyComponentStyle?: StyleProp<ViewStyle>;
+```
+
 ### `ListFooterComponent`
 
 Rendered at the bottom of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).

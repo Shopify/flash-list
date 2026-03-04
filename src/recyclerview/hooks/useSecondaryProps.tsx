@@ -5,7 +5,7 @@ import { RecyclerViewProps } from "../RecyclerViewProps";
 import { getValidComponent, isComponentClass } from "../utils/componentUtils";
 import { CompatView } from "../components/CompatView";
 import { CompatAnimatedScroller } from "../components/CompatScroller";
-import { PlatformConfig } from "../../native/config/PlatformHelper";
+import { getInvertedTransformStyle } from "../utils/getInvertedTransformStyle";
 
 /**
  * Hook that manages secondary props and components for the RecyclerView.
@@ -31,6 +31,7 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     ListFooterComponent,
     ListFooterComponentStyle,
     ListEmptyComponent,
+    ListEmptyComponentStyle,
     renderScrollComponent,
     refreshing,
     progressViewOffset,
@@ -42,11 +43,10 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     horizontal,
   } = props;
 
-  const invertedTransformStyle = inverted
-    ? horizontal
-      ? PlatformConfig.invertedTransformStyleHorizontal
-      : PlatformConfig.invertedTransformStyle
-    : undefined;
+  const invertedTransformStyle = getInvertedTransformStyle(
+    inverted,
+    horizontal
+  );
 
   /**
    * Creates the refresh control component if onRefresh is provided.
@@ -102,12 +102,21 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     if (!ListEmptyComponent || (data && data.length > 0)) {
       return null;
     }
+    const emptyContent = getValidComponent(ListEmptyComponent);
+    if (!invertedTransformStyle && !ListEmptyComponentStyle) {
+      return emptyContent;
+    }
     return (
-      <CompatView style={invertedTransformStyle}>
-        {getValidComponent(ListEmptyComponent)}
+      <CompatView style={[ListEmptyComponentStyle, invertedTransformStyle]}>
+        {emptyContent}
       </CompatView>
     );
-  }, [ListEmptyComponent, data, invertedTransformStyle]);
+  }, [
+    ListEmptyComponent,
+    data,
+    invertedTransformStyle,
+    ListEmptyComponentStyle,
+  ]);
 
   /**
    * Creates the sticky header backdrop component.
