@@ -11,9 +11,9 @@ description: Review a FlashList PR or branch, run unit tests, test on iOS simula
 which agent-device && which gh && yarn test --version
 ```
 
-Ensure Metro is running on port 8081 from `fixture/react-native/`:
+Ensure Metro is running on port 8087 from `fixture/react-native/`:
 ```bash
-curl -s http://localhost:8081/status
+curl -s http://localhost:8087/status
 ```
 
 ---
@@ -52,6 +52,20 @@ yarn type-check
 yarn lint
 ```
 
+### E2E Tests
+
+**If any e2e tests were added or modified in the PR/branch**, you MUST run them and verify they pass:
+
+```bash
+# Check if e2e tests were changed
+git diff main...HEAD --name-only | grep '\.e2e\.'
+
+# If yes, run e2e tests on iOS
+yarn e2e:ios
+```
+
+E2e tests use Detox. They require the fixture app to be built in release mode (`detox build -c ios.sim.release`) and then run (`detox test -c ios.sim.release`). The `yarn e2e:ios` script handles both steps.
+
 If tests fail, investigate before proceeding to device testing.
 
 ---
@@ -64,7 +78,25 @@ If tests fail, investigate before proceeding to device testing.
 yarn build   # runs tsc -b
 ```
 
-After building, **relaunch the app** (kill + reopen) so Metro serves the new bundle:
+### Install the fixture app only if needed
+
+Before building the native app, check if it's already installed on the simulator. **Only build if it's not installed:**
+
+```bash
+# Check if app is already installed
+xcrun simctl get_app_container booted org.reactjs.native.example.FlatListPro 2>/dev/null
+```
+
+- If the command **succeeds** (returns a path): the app is installed. Skip `run-ios` — just relaunch it.
+- If the command **fails**: the app is not installed. Build and install it:
+
+```bash
+cd fixture/react-native && yarn react-native run-ios
+```
+
+### Relaunch the app
+
+After `yarn build`, **relaunch the app** (kill + reopen) so Metro serves the new bundle:
 
 ```bash
 agent-device close --platform ios
@@ -267,10 +299,11 @@ Run through relevant entries after any fix or review. This is the single source 
 - **RTL looks wrong but LTR is fine** — did you set `forceRTL(true)` in `index.js` and do a full kill+relaunch?
 - **`agent-device swipe` gives "drag" error** — delete `~/.agent-device/ios-runner/derived/` and re-run `agent-device open` to rebuild the iOS runner
 - **No console output in Metro** — use the HTTP server approach (see Step 6)
-- **Metro log location** — `lsof -p $(lsof -ti :8081) | grep "1w"` to find where Metro stdout goes (often `/private/tmp/metro_fixture.log`)
+- **Metro log location** — `lsof -p $(lsof -ti :8087) | grep "1w"` to find where Metro stdout goes (often `/private/tmp/metro_fixture.log`)
 - **RTL horizontal scroll direction is reversed** — to scroll toward the logical START (header/Item 0), swipe right-to-left: `agent-device swipe 350 256 50 256`. To scroll toward higher items, swipe left-to-right.
 - **Fixture app bundle ID** — `org.reactjs.native.example.FlatListPro`. Use with `xcrun simctl launch`.
 - **`estimatedItemSize` does not exist** — this FlashList does NOT have this prop. Do not use it.
+- **App can't connect to Metro** — if the app shows a red/yellow error about connecting to the bundler, configure the port: iOS simulator `Cmd+D` → "Configure Bundler" → set host `localhost` and port `8087`. Then reload.
 - **agent-device navigation** — use ONLY `screenshot` + `press` (percentage method). `snapshot`, `find`, and `click` commands are prohibited. Downsample screenshots with `sips --resampleHeight 852` before reading. See the `agent-device` skill for the full coordinate mapping reference.
 
 ---
