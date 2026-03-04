@@ -382,27 +382,26 @@ export class RecyclerViewManager<T> {
     }
 
     const initialScrollIndex = this.getInitialScrollIndex();
-    const initialItemLayout = this.layoutManager?.getLayout(
-      initialScrollIndex ?? 0
-    );
-    const initialItemOffset = this.propsRef.horizontal
-      ? initialItemLayout?.x
-      : initialItemLayout?.y;
 
     if (initialScrollIndex !== undefined) {
-      // console.log(
-      //   "initialItemOffset",
-      //   initialScrollIndex,
-      //   initialItemOffset,
-      //   this.firstItemOffset
-      // );
+      // Recompute layouts first, then read the offset. The recompute may
+      // re-estimate unmeasured items with an updated average height, changing
+      // the target item's position. Reading before recompute would capture a
+      // stale offset, causing the wrong items to be rendered.
       this.layoutManager.recomputeLayouts(0, initialScrollIndex);
-      this.engagedIndicesTracker.scrollOffset =
-        initialItemOffset ?? 0 + this.firstItemOffset;
+      const initialItemLayout =
+        this.layoutManager.getLayout(initialScrollIndex);
+      const initialItemOffset = this.propsRef.horizontal
+        ? initialItemLayout.x
+        : initialItemLayout.y;
+      this.engagedIndicesTracker.scrollOffset = initialItemOffset;
     } else {
-      // console.log("initialItemOffset", initialItemOffset, this.firstItemOffset);
+      const initialItemLayout = this.layoutManager.getLayout(0);
+      const initialItemOffset = this.propsRef.horizontal
+        ? initialItemLayout.x
+        : initialItemLayout.y;
       this.engagedIndicesTracker.scrollOffset =
-        (initialItemOffset ?? 0) - this.firstItemOffset;
+        initialItemOffset - this.firstItemOffset;
     }
   }
 
