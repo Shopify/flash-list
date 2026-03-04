@@ -103,10 +103,9 @@ const RecyclerViewComponent = <T,>(
     stickyHeaderConfig?.hideRelatedCell ?? false;
 
   // Compute the inverted transform style based on platform and orientation
-  const invertedTransformStyle = getInvertedTransformStyle(
-    inverted,
-    horizontal
-  );
+  const invertedTransformStyle = inverted
+    ? getInvertedTransformStyle(horizontal)
+    : undefined;
 
   // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);

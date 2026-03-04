@@ -43,10 +43,9 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     horizontal,
   } = props;
 
-  const invertedTransformStyle = getInvertedTransformStyle(
-    inverted,
-    horizontal
-  );
+  const invertedTransformStyle = inverted
+    ? getInvertedTransformStyle(horizontal)
+    : undefined;
 
   /**
    * Creates the refresh control component if onRefresh is provided.

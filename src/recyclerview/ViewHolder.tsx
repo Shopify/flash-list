@@ -109,10 +109,9 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, extraData, target, renderItem]);
 
-  const invertedTransformStyle = getInvertedTransformStyle(
-    inverted,
-    horizontal
-  );
+  const invertedTransformStyle = inverted
+    ? getInvertedTransformStyle(horizontal)
+    : undefined;
 
   const style = {
     flexDirection: horizontal ? "row" : "column",
