@@ -17,6 +17,7 @@ describe("Twitter", () => {
   });
 
   it("with FlashList looks the same", async () => {
+    await element(by.id("ExamplesFlatList")).swipe("up", "slow", 0.3);
     await element(by.id("Twitter Timeline")).tap();
 
     const testRunScreenshotPath = await element(
@@ -51,6 +52,7 @@ describe("Twitter", () => {
     const testName = "Twitter_looks_the_same_after_orientation_change";
 
     // Go to Twitter with FlashList screen
+    await element(by.id("ExamplesFlatList")).swipe("up", "slow", 0.3);
     await element(by.id("Twitter Timeline")).tap();
     // Scroll 500px down and change orientation to lansdsape
     await scrollAndRotate("FlashList");
@@ -65,6 +67,7 @@ describe("Twitter", () => {
 
   it("is updated after refreshed", async () => {
     const testName = "Twitter_is_updated_after_refreshed";
+    await element(by.id("ExamplesFlatList")).swipe("up", "slow", 0.3);
     await element(by.id("Twitter Timeline")).tap();
 
     const flashList = element(by.id("FlashList"));
@@ -82,6 +85,7 @@ describe("Twitter", () => {
     const testName =
       "Twitter_loads_a_new_page_when_gets_to_the_bottom_of_the_list";
     await enableDebugOption(DebugOption.PagingEnabled);
+    await element(by.id("ExamplesFlatList")).swipe("up", "slow", 0.3);
     await element(by.id("Twitter Timeline")).tap();
 
     const flashList = element(by.id("FlashList"));
