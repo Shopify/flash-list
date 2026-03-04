@@ -115,10 +115,6 @@ export const ExamplesScreen = () => {
       title: "Grid with Separator",
       destination: "GridWithSeparator",
     },
-    {
-      title: "Overlap Repro (#1797)",
-      destination: "OverlapRepro",
-    },
   ];
   return (
     <>

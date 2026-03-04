@@ -37,5 +37,4 @@ export type RootStackParamList = {
   ManualFlatListBenchmarkExample: undefined;
   StickyHeaderExample: undefined;
   GridWithSeparator: undefined;
-  OverlapRepro: undefined;
 };
