@@ -15,7 +15,6 @@ This guide will help you migrate your existing FlashList v1 implementation to v2
 - **No more size estimates required** - FlashList v2 automatically handles all sizing
 - **Masonry layout is now a prop** - MasonryFlashList component is deprecated
 - **maintainVisibleContentPosition enabled by default** - Better scroll position handling
-- **Inverted prop deprecated** - Use maintainVisibleContentPosition instead
 
 ## Step-by-Step Migration
 
@@ -49,7 +48,6 @@ The following props have been deprecated and should be removed from your FlashLi
 <FlashList
   data={data}
   renderItem={renderItem}
-- inverted={true}  // Use maintainVisibleContentPosition instead
 - onBlankArea={handleBlankArea}  // No longer supported
 - disableHorizontalListHeightMeasurement={true}  // No longer needed
 - disableAutoLayout={true}  // No auto layout in v2
@@ -75,32 +73,7 @@ overrideItemLayout={(layout, item) => {
 }}
 ```
 
-### Step 4: Replace Inverted Lists
-
-If you were using `inverted` prop (common in chat apps), replace it with `maintainVisibleContentPosition` and reverse your data array:
-
-```diff
-// v1 - Inverted list for chat
-<FlashList
-  data={messages}
-  renderItem={renderMessage}
-- inverted={true}
-- onEndReached={handler}
-/>
-
-// v2 - Use maintainVisibleContentPosition
-<FlashList
-  data={reversedMessages}
-  renderItem={renderMessage}
-+ maintainVisibleContentPosition={{
-+   autoscrollToBottomThreshold: 0.2,
-+   startRenderingFromBottom: true,
-+ }}
-+ onStartReached={handler}
-/>
-```
-
-### Step 5: Migrate MasonryFlashList to FlashList with masonry prop
+### Step 4: Migrate MasonryFlashList to FlashList with masonry prop
 
 ```diff
 // v1
@@ -126,7 +99,7 @@ If you were using `inverted` prop (common in chat apps), replace it with `mainta
 
 Note: `getColumnFlex` from MasonryFlashList is not supported in v2.
 
-### Step 6: Update Ref Types
+### Step 5: Update Ref Types
 
 The ref type for FlashList has changed from `FlashList` to `FlashListRef`:
 
@@ -146,6 +119,6 @@ The ref type for FlashList has changed from `FlashList` to `FlashListRef`:
 />
 ```
 
-### Step 7: Replace CellContainer with View
+### Step 6: Replace CellContainer with View
 
 `CellContainer` is no longer exported in v2. Replace it with React Native's `View`. Apps forwarding custom `CellRendererComponent` might need this change.
