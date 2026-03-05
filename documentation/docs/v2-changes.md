@@ -119,7 +119,7 @@ const GridItem = ({ item }) => {
     [item.id],
     () => {
       // runs on reset. Can be used to reset scroll positions of nested horizontal lists
-    }
+    },
   );
   const height = isExpanded ? 100 : 50;
 
@@ -182,7 +182,6 @@ Read more [here.](./fundamentals/layout-commit-observer.md)
 - `estimatedItemSize`: No longer used.
 - `estimatedListSize`: No longer used.
 - `estimatedFirstItemOffset`: No longer used.
-- `inverted`: We have added `maintainVisibleContentPosition` support, so we don't want to maintain inverted mode.
 - `onBlankArea`: We don't have plans to add or continue supporting this prop.
 - `disableHorizontalListHeightMeasurement`: No longer needed.
 - `disableAutoLayout`: There's no auto layout in v2.
