@@ -35,6 +35,7 @@ import ManualBenchmarkExample from "./ManualBenchmarkExample";
 import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 import { StickyHeaderExample } from "./StickyHeaderExample";
 import { GridWithSeparator } from "./GridWithSeparator";
+import PrependScrollTest from "./PrependScrollTest";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -148,6 +149,11 @@ const NavigationTree = () => {
           name="ManualFlatListBenchmarkExample"
           component={ManualFlatListBenchmarkExample}
           options={{ title: "Manual Flat List Benchmark Example" }}
+        />
+        <Stack.Screen
+          name="PrependScrollTest"
+          component={PrependScrollTest}
+          options={{ title: "Prepend Scroll Test" }}
         />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />

@@ -58,6 +58,12 @@ export function useRecyclerViewController<T>(
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
   const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
 
+  // Set to true when an offset correction is applied based on estimated
+  // (unmeasured) item layouts. Subsequent render passes will refine the
+  // correction as items get measured, and need to update the internal
+  // scroll offset to keep engaged indices in sync.
+  const isRefiningCorrection = useRef(false);
+
   // Queue to store callbacks that should be executed after scroll offset updates
   const pendingScrollCallbacks = useRef<(() => void)[]>([]);
 
@@ -134,6 +140,12 @@ export function useRecyclerViewController<T>(
       recyclerViewManager.shouldMaintainVisibleContentPosition()
     ) {
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
+      // Snapshot and reset so the ref only stays true when THIS pass actively
+      // applies a correction. If diff is 0 this pass, it resets to false and
+      // tracking updates normally.
+      const wasRefining = isRefiningCorrection.current;
+      isRefiningCorrection.current = false;
+
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
         const currentIndexOfFirstVisibleItem =
@@ -144,9 +156,9 @@ export function useRecyclerViewController<T>(
                 recyclerViewManager.getDataKey(index) ===
                 firstVisibleItemKey.current
             ) ??
-          (hasDataChanged
+          (hasDataChanged || wasRefining
             ? data?.findIndex(
-                (item, index) =>
+                (_item, index) =>
                   recyclerViewManager.getDataKey(index) ===
                   firstVisibleItemKey.current
               )
@@ -170,9 +182,7 @@ export function useRecyclerViewController<T>(
             !pauseOffsetCorrection.current &&
             !recyclerViewManager.animationOptimizationsEnabled
           ) {
-            // console.log("diff", diff, firstVisibleItemKey.current);
             if (PlatformConfig.supportsOffsetCorrection) {
-              // console.log("scrollBy", diff);
               scrollAnchorRef.current?.scrollBy(diff);
             } else {
               const scrollToParams = horizontal
@@ -186,7 +196,11 @@ export function useRecyclerViewController<T>(
                   };
               scrollViewRef.current?.scrollTo(scrollToParams);
             }
-            if (hasDataChanged) {
+            // Update internal scroll offset when data changed or during any
+            // phase of a multi-pass refinement, so the engaged indices stay
+            // in sync with the corrected scroll position as items get measured.
+            if (hasDataChanged || wasRefining) {
+              isRefiningCorrection.current = true;
               updateScrollOffsetWithCallback(
                 recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
                 () => {}
@@ -200,7 +214,12 @@ export function useRecyclerViewController<T>(
         }
       }
 
-      computeFirstVisibleIndexForOffsetCorrection();
+      // Keep tracking the same item while refinement is active so subsequent
+      // passes can apply further corrections as items get measured.
+      // Refinement ends naturally when diff converges to 0 and the ref resets.
+      if (!isRefiningCorrection.current) {
+        computeFirstVisibleIndexForOffsetCorrection();
+      }
     }
     lastDataLengthRef.current = recyclerViewManager.getDataLength();
   }, [
