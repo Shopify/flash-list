@@ -46,7 +46,7 @@ export function useRecyclerViewController<T>(
   recyclerViewManager: RecyclerViewManager<T>,
   ref: React.Ref<FlashListRef<T>>,
   scrollViewRef: RefObject<CompatScroller>,
-  scrollAnchorRef: React.RefObject<ScrollAnchorRef>
+  scrollAnchorRef: React.RefObject<ScrollAnchorRef>,
 ) {
   const isUnmounted = useUnmountFlag();
   const [_, setRenderId] = useState(0);
@@ -57,6 +57,12 @@ export function useRecyclerViewController<T>(
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
   const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
+
+  // Tracks whether a previous correction pass applied a non-zero diff and
+  // subsequent passes may still need to refine the scroll position as
+  // unmeasured item heights converge. When true, the anchor item lookup
+  // falls back to a full data search even if the data length hasn't changed.
+  const isRefiningCorrection = useRef(false);
 
   // Queue to store callbacks that should be executed after scroll offset updates
   const pendingScrollCallbacks = useRef<(() => void)[]>([]);
@@ -86,7 +92,7 @@ export function useRecyclerViewController<T>(
         callback();
       }
     },
-    [recyclerViewManager]
+    [recyclerViewManager],
   );
 
   const computeFirstVisibleIndexForOffsetCorrection = useCallback(() => {
@@ -99,7 +105,7 @@ export function useRecyclerViewController<T>(
       // Update the tracked first visible item
       const firstVisibleIndex = Math.max(
         0,
-        recyclerViewManager.computeVisibleIndices().startIndex
+        recyclerViewManager.computeVisibleIndices().startIndex,
       );
       if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
         firstVisibleItemKey.current =
@@ -134,21 +140,26 @@ export function useRecyclerViewController<T>(
       recyclerViewManager.shouldMaintainVisibleContentPosition()
     ) {
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
+      const wasRefining = isRefiningCorrection.current;
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
+        // Try engaged indices first (fast), then fall back to full data
+        // search when data changed OR when refining a previous correction
+        // (the anchor item may have moved outside the engaged window as
+        // unmeasured item heights converge).
         const currentIndexOfFirstVisibleItem =
           recyclerViewManager
             .getEngagedIndices()
             .findValue(
               (index) =>
                 recyclerViewManager.getDataKey(index) ===
-                firstVisibleItemKey.current
+                firstVisibleItemKey.current,
             ) ??
-          (hasDataChanged
+          (hasDataChanged || wasRefining
             ? data?.findIndex(
                 (item, index) =>
                   recyclerViewManager.getDataKey(index) ===
-                  firstVisibleItemKey.current
+                  firstVisibleItemKey.current,
               )
             : undefined);
 
@@ -186,14 +197,16 @@ export function useRecyclerViewController<T>(
                   };
               scrollViewRef.current?.scrollTo(scrollToParams);
             }
-            if (hasDataChanged) {
+            if (hasDataChanged || wasRefining) {
               updateScrollOffsetWithCallback(
                 recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
-                () => {}
+                () => {},
               );
               recyclerViewManager.ignoreScrollEvents = true;
+              isRefiningCorrection.current = true;
               setTimeout(() => {
                 recyclerViewManager.ignoreScrollEvents = false;
+                isRefiningCorrection.current = false;
               }, 100);
             }
           }
@@ -235,7 +248,7 @@ export function useRecyclerViewController<T>(
               adjustOffsetForRTL(
                 offset,
                 recyclerViewManager.getChildContainerDimensions().width,
-                recyclerViewManager.getWindowSize().width
+                recyclerViewManager.getWindowSize().width,
               ) +
               (skipFirstItemOffset
                 ? recyclerViewManager.firstItemOffset
@@ -363,13 +376,13 @@ export function useRecyclerViewController<T>(
               if (finalOffset > lastScrollOffset) {
                 lastScrollOffset = Math.max(
                   finalOffset - bufferForCompute,
-                  lastScrollOffset
+                  lastScrollOffset,
                 );
                 recyclerViewManager.setScrollDirection("forward");
               } else {
                 lastScrollOffset = Math.min(
                   finalOffset + bufferForCompute,
-                  lastScrollOffset
+                  lastScrollOffset,
                 );
                 recyclerViewManager.setScrollDirection("backward");
               }
@@ -478,7 +491,7 @@ export function useRecyclerViewController<T>(
                   recyclerViewManager.setOffsetProjectionEnabled(true);
                   resolve(); // Resolve the promise after re-enabling corrections
                 },
-                animated ? 300 : 200
+                animated ? 300 : 200,
               );
             };
 
@@ -620,7 +633,7 @@ export function useRecyclerViewController<T>(
       });
       return imperativeApi;
     },
-    [handlerMethods, scrollViewRef, recyclerViewManager]
+    [handlerMethods, scrollViewRef, recyclerViewManager],
   );
 
   return {
