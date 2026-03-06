@@ -46,7 +46,7 @@ export function useRecyclerViewController<T>(
   recyclerViewManager: RecyclerViewManager<T>,
   ref: React.Ref<FlashListRef<T>>,
   scrollViewRef: RefObject<CompatScroller>,
-  scrollAnchorRef: React.RefObject<ScrollAnchorRef>
+  scrollAnchorRef: React.RefObject<ScrollAnchorRef>,
 ) {
   const isUnmounted = useUnmountFlag();
   const [_, setRenderId] = useState(0);
@@ -86,7 +86,7 @@ export function useRecyclerViewController<T>(
         callback();
       }
     },
-    [recyclerViewManager]
+    [recyclerViewManager],
   );
 
   const computeFirstVisibleIndexForOffsetCorrection = useCallback(() => {
@@ -99,7 +99,7 @@ export function useRecyclerViewController<T>(
       // Update the tracked first visible item
       const firstVisibleIndex = Math.max(
         0,
-        recyclerViewManager.computeVisibleIndices().startIndex
+        recyclerViewManager.computeVisibleIndices().startIndex,
       );
       if (firstVisibleIndex !== undefined && firstVisibleIndex >= 0) {
         firstVisibleItemKey.current =
@@ -134,30 +134,31 @@ export function useRecyclerViewController<T>(
       recyclerViewManager.shouldMaintainVisibleContentPosition()
     ) {
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
-      // ignoreScrollEvents is also true while a previous correction is
-      // still refining (unmeasured heights converging). Reuse it to allow
-      // the full data search on subsequent passes.
-      const needsFullSearch =
-        hasDataChanged || recyclerViewManager.ignoreScrollEvents;
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
-        // Try engaged indices first (fast), then fall back to full data
-        // search when data changed OR when refining a previous correction
-        // (the anchor item may have moved outside the engaged window as
-        // unmeasured item heights converge).
+        // Try engaged indices first (fast O(n) over rendered items), then
+        // fall back to a full data search. The fallback is needed when:
+        // 1. Data just changed (hasDataChanged) — prepended items shift
+        //    the anchor to a new index not yet in the engaged window.
+        // 2. A previous correction is still settling (ignoreScrollEvents
+        //    is true) — after the first correction pass, unmeasured item
+        //    heights may converge and push the anchor item outside the
+        //    engaged window. ignoreScrollEvents stays true for 100ms
+        //    after each correction, giving subsequent layout passes a
+        //    chance to refine the scroll position.
         const currentIndexOfFirstVisibleItem =
           recyclerViewManager
             .getEngagedIndices()
             .findValue(
               (index) =>
                 recyclerViewManager.getDataKey(index) ===
-                firstVisibleItemKey.current
+                firstVisibleItemKey.current,
             ) ??
-          (needsFullSearch
+          (hasDataChanged || recyclerViewManager.ignoreScrollEvents
             ? data?.findIndex(
                 (item, index) =>
                   recyclerViewManager.getDataKey(index) ===
-                  firstVisibleItemKey.current
+                  firstVisibleItemKey.current,
               )
             : undefined);
 
@@ -195,10 +196,10 @@ export function useRecyclerViewController<T>(
                   };
               scrollViewRef.current?.scrollTo(scrollToParams);
             }
-            if (needsFullSearch) {
+            if (hasDataChanged) {
               updateScrollOffsetWithCallback(
                 recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
-                () => {}
+                () => {},
               );
               recyclerViewManager.ignoreScrollEvents = true;
               setTimeout(() => {
@@ -244,7 +245,7 @@ export function useRecyclerViewController<T>(
               adjustOffsetForRTL(
                 offset,
                 recyclerViewManager.getChildContainerDimensions().width,
-                recyclerViewManager.getWindowSize().width
+                recyclerViewManager.getWindowSize().width,
               ) +
               (skipFirstItemOffset
                 ? recyclerViewManager.firstItemOffset
@@ -372,13 +373,13 @@ export function useRecyclerViewController<T>(
               if (finalOffset > lastScrollOffset) {
                 lastScrollOffset = Math.max(
                   finalOffset - bufferForCompute,
-                  lastScrollOffset
+                  lastScrollOffset,
                 );
                 recyclerViewManager.setScrollDirection("forward");
               } else {
                 lastScrollOffset = Math.min(
                   finalOffset + bufferForCompute,
-                  lastScrollOffset
+                  lastScrollOffset,
                 );
                 recyclerViewManager.setScrollDirection("backward");
               }
@@ -487,7 +488,7 @@ export function useRecyclerViewController<T>(
                   recyclerViewManager.setOffsetProjectionEnabled(true);
                   resolve(); // Resolve the promise after re-enabling corrections
                 },
-                animated ? 300 : 200
+                animated ? 300 : 200,
               );
             };
 
@@ -629,7 +630,7 @@ export function useRecyclerViewController<T>(
       });
       return imperativeApi;
     },
-    [handlerMethods, scrollViewRef, recyclerViewManager]
+    [handlerMethods, scrollViewRef, recyclerViewManager],
   );
 
   return {
