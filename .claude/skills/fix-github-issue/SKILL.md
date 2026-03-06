@@ -17,7 +17,7 @@ These are hard rules. Violating any of them is a failure.
 
 ## Steps
 
-1. Understand the issue and reproduce the problem using **agent-device skill** before exploring the code because the bug might not be there now. It will be good to intially add sample to the top of examples screen to avoid scrolling.
+1. Understand the issue and reproduce the problem using `agent-device` skill before exploring the code because the bug might not be there now.
 2. Diagnose root cause
 3. Implement the fix
 4. Review your code for any obvious problems
