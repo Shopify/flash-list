@@ -35,7 +35,6 @@ import ManualBenchmarkExample from "./ManualBenchmarkExample";
 import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 import { StickyHeaderExample } from "./StickyHeaderExample";
 import { GridWithSeparator } from "./GridWithSeparator";
-import PrependMaintainScroll from "./PrependMaintainScroll";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -130,11 +129,6 @@ const NavigationTree = () => {
             name="GridWithSeparator"
             component={GridWithSeparator}
             options={{ title: "Grid with Separator" }}
-          />
-          <Stack.Screen
-            name="PrependMaintainScroll"
-            component={PrependMaintainScroll}
-            options={{ title: "Prepend Maintain Scroll" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
