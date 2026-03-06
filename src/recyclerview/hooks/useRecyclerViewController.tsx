@@ -58,12 +58,6 @@ export function useRecyclerViewController<T>(
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
   const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
 
-  // Tracks whether a previous correction pass applied a non-zero diff and
-  // subsequent passes may still need to refine the scroll position as
-  // unmeasured item heights converge. When true, the anchor item lookup
-  // falls back to a full data search even if the data length hasn't changed.
-  const isRefiningCorrection = useRef(false);
-
   // Queue to store callbacks that should be executed after scroll offset updates
   const pendingScrollCallbacks = useRef<(() => void)[]>([]);
 
@@ -140,7 +134,11 @@ export function useRecyclerViewController<T>(
       recyclerViewManager.shouldMaintainVisibleContentPosition()
     ) {
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
-      const wasRefining = isRefiningCorrection.current;
+      // ignoreScrollEvents is also true while a previous correction is
+      // still refining (unmeasured heights converging). Reuse it to allow
+      // the full data search on subsequent passes.
+      const needsFullSearch =
+        hasDataChanged || recyclerViewManager.ignoreScrollEvents;
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
         // Try engaged indices first (fast), then fall back to full data
@@ -155,7 +153,7 @@ export function useRecyclerViewController<T>(
                 recyclerViewManager.getDataKey(index) ===
                 firstVisibleItemKey.current
             ) ??
-          (hasDataChanged || wasRefining
+          (needsFullSearch
             ? data?.findIndex(
                 (item, index) =>
                   recyclerViewManager.getDataKey(index) ===
@@ -197,16 +195,14 @@ export function useRecyclerViewController<T>(
                   };
               scrollViewRef.current?.scrollTo(scrollToParams);
             }
-            if (hasDataChanged || wasRefining) {
+            if (needsFullSearch) {
               updateScrollOffsetWithCallback(
                 recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
                 () => {}
               );
               recyclerViewManager.ignoreScrollEvents = true;
-              isRefiningCorrection.current = true;
               setTimeout(() => {
                 recyclerViewManager.ignoreScrollEvents = false;
-                isRefiningCorrection.current = false;
               }, 100);
             }
           }
