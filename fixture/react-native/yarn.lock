@@ -1805,10 +1805,10 @@
     invariant "^2.2.4"
     nullthrows "^1.1.1"
 
-"@react-navigation/core@^7.15.1":
-  version "7.15.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.15.1.tgz#c40ddec61e5b1194db3100f871ba45a8f1480c27"
-  integrity sha512-Fqr6qxfZJIC4ewho7LtTa9zz6hcOzohX7D1lcDfrkGaYkS5xBwEZViGNxCJK/czUc74ua8NThyrObQFjB6Q/RQ==
+"@react-navigation/core@^7.16.1":
+  version "7.16.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.16.1.tgz#a8f6799a7b18f6d5c45616cbf792ec8f08d1aadc"
+  integrity sha512-xhquoyhKdqDfiL7LuupbwYnmauUGfVFGDEJO34m26k8zSN1eDjQ2stBZcHN8ILOI1PrG9885nf8ZmfaQxPS0ww==
   dependencies:
     "@react-navigation/routers" "^7.5.3"
     escape-string-regexp "^4.0.0"
@@ -1828,12 +1828,12 @@
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
 
-"@react-navigation/native@^7.1.31":
-  version "7.1.31"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-7.1.31.tgz#0a659f235df6494c94792e1f6f865929597fbd79"
-  integrity sha512-+YCUwtfDgsux59Q0LDHc3Zid9ih93ecUCFWZOH6/+eNoUGnWx77wjS6ZfvBO/7E+EiIup11IVShDzCHR4of8hw==
+"@react-navigation/native@^7.1.33":
+  version "7.1.33"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-7.1.33.tgz#a9910b51b42373e8977cf8d76ac960077ad4a2fc"
+  integrity sha512-DpFdWGcgLajKZ1TuIvDNQsblN2QaUFWpTQaB8v7WRP9Mix8H/6TFoIrZd93pbymI2hybd6UYrD+lI408eWVcfw==
   dependencies:
-    "@react-navigation/core" "^7.15.1"
+    "@react-navigation/core" "^7.16.1"
     escape-string-regexp "^4.0.0"
     fast-deep-equal "^3.1.3"
     nanoid "^3.3.11"
@@ -1856,8 +1856,7 @@
     use-latest-callback "^0.2.4"
 
 "@shopify/flash-list@link:../..":
-  version "0.0.0"
-  uid ""
+  version "2.3.0"
 
 "@sideway/address@^4.1.5":
   version "4.1.5"
