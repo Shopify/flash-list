@@ -136,6 +136,16 @@ export function useRecyclerViewController<T>(
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
+        // Try engaged indices first (fast O(n) over rendered items), then
+        // fall back to a full data search. The fallback is needed when:
+        // 1. Data just changed (hasDataChanged) — prepended items shift
+        //    the anchor to a new index not yet in the engaged window.
+        // 2. A previous correction is still settling (ignoreScrollEvents
+        //    is true) — after the first correction pass, unmeasured item
+        //    heights may converge and push the anchor item outside the
+        //    engaged window. ignoreScrollEvents stays true for 100ms
+        //    after each correction, giving subsequent layout passes a
+        //    chance to refine the scroll position.
         const currentIndexOfFirstVisibleItem =
           recyclerViewManager
             .getEngagedIndices()
@@ -144,7 +154,7 @@ export function useRecyclerViewController<T>(
                 recyclerViewManager.getDataKey(index) ===
                 firstVisibleItemKey.current
             ) ??
-          (hasDataChanged
+          (hasDataChanged || recyclerViewManager.ignoreScrollEvents
             ? data?.findIndex(
                 (item, index) =>
                   recyclerViewManager.getDataKey(index) ===
