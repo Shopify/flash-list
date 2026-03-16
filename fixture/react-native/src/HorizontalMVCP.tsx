@@ -70,7 +70,8 @@ export function HorizontalMVCP() {
       <View style={styles.container}>
         <View style={styles.description}>
           <Text style={styles.descriptionText}>
-            Horizontal list with maintainVisibleContentPosition. Tap "Prepend"
+            Horizontal list with maintainVisibleContentPosition. Tap
+            {" &quot;Prepend&quot; "}
             to add items at the start — scroll position should be maintained.
           </Text>
         </View>
