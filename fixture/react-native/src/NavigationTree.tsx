@@ -35,6 +35,7 @@ import ManualBenchmarkExample from "./ManualBenchmarkExample";
 import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 import { StickyHeaderExample } from "./StickyHeaderExample";
 import { GridWithSeparator } from "./GridWithSeparator";
+import { HorizontalMVCP } from "./HorizontalMVCP";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -148,6 +149,11 @@ const NavigationTree = () => {
           name="ManualFlatListBenchmarkExample"
           component={ManualFlatListBenchmarkExample}
           options={{ title: "Manual Flat List Benchmark Example" }}
+        />
+        <Stack.Screen
+          name="HorizontalMVCP"
+          component={HorizontalMVCP}
+          options={{ title: "Horizontal MVCP" }}
         />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />
