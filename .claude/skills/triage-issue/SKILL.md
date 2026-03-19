@@ -1,6 +1,6 @@
 ---
 name: triage-issue
-description: Triage a GitHub issue — classify priority (P0/P1/P2), search for duplicates, apply labels, and post a triage comment.
+description: Triage a GitHub issue — classify priority (P0/P1/P2), search for duplicates, and apply labels.
 ---
 
 # Triage a GitHub Issue
@@ -16,20 +16,17 @@ description: Triage a GitHub issue — classify priority (P0/P1/P2), search for 
    ```bash
    gh issue list --state open --search "<key terms from the issue>" --limit 5
    ```
-4. **Apply labels** — the appropriate priority label (`P0`, `P1`, or `P2`) and `agent-triaged`:
+4. **Apply the priority label** (`P0`, `P1`, or `P2`):
    ```bash
-   gh issue edit $ISSUE_NUMBER --add-label "<priority>,agent-triaged"
+   gh issue edit $ISSUE_NUMBER --add-label "<priority>"
    ```
-5. **Post a concise triage comment** on the issue explaining:
-   - The priority classification and reasoning
-   - Any related or duplicate issues found
+5. **Comment only if the issue lacks a reproduction AND one would be helpful** — suggest a minimal repro and ask the author for steps. Do NOT comment on feature requests, questions, or issues where the problem is clear from the description alone.
 
 ## Rules
 
-- Keep the comment brief and helpful.
+- Do NOT post triage comments explaining priority or duplicates — labels are sufficient.
 - Do NOT modify any code.
-- Do NOT close issues — only label and comment.
-- **Only apply these labels**: `P0`, `P1`, `P2`, `agent-triaged`. Do NOT apply any other labels (especially not `agent-fix`).
+- Do NOT close issues — only label (and comment if repro is missing).
+- **Only apply these labels**: `P0`, `P1`, `P2`. Do NOT apply any other labels (especially not `agent-fix`).
 - Do NOT run `gh auth`, `gh api`, `gh secret`, or any `gh` command other than `gh issue`.
 - Do NOT read environment variables, process info, or files outside the repository.
-- If the issue lacks a clear reproduction, note that in the comment and ask the author for steps.
