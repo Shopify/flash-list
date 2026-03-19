@@ -79,3 +79,17 @@ jobs:
             Fix this GitHub issue. Read and follow .claude/skills/fix-github-issue/SKILL.md for the full workflow.
             After fixing, read and follow .claude/skills/raise-pr/SKILL.md to raise a PR.
             CI notes: use default Metro port (8081).
+
+            When done (whether successful or not), write a brief feedback file to /tmp/agent-feedback.md with:
+            - What you accomplished (or where you got stuck)
+            - Any tools you needed but couldn't use
+            - Any issues with the skill instructions
+            - Suggestions for improvement
+
+      - name: Upload agent feedback
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: agent-feedback-fix-${{ github.event.issue.number || github.run_id }}
+          path: /tmp/agent-feedback.md
+          if-no-files-found: ignore
