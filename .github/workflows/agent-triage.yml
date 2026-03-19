@@ -28,7 +28,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           claude_args: >-
             --model claude-sonnet-4-6
-            --allowedTools "Read,Write,Glob,Grep,Bash(gh:issue list:*),Bash(gh:issue edit:*),Bash(gh:issue comment:*),Bash(gh:issue view:*)"
             --disallowedTools "Edit,MultiEdit"
           prompt: |
             You are running on CI (GitHub Actions).
