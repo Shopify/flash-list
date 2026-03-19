@@ -34,3 +34,17 @@ jobs:
           prompt: |
             You are running on CI (GitHub Actions).
             Read the skill file at .claude/skills/triage-issue/SKILL.md and follow its instructions to triage this issue.
+
+            When done, write a brief feedback file to /tmp/agent-feedback.md with:
+            - What you accomplished
+            - Any tools you needed but couldn't use
+            - Any issues with the skill instructions
+            - Suggestions for improvement
+
+      - name: Upload agent feedback
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: agent-feedback-triage-${{ github.event.issue.number }}
+          path: /tmp/agent-feedback.md
+          if-no-files-found: ignore
