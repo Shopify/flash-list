@@ -22,20 +22,20 @@ permissions:
 env:
   ALLOWED_TOOLS: >-
     Read,Edit,Write,Glob,Grep,
-    Bash(yarn:install:*),Bash(yarn:build:*),Bash(yarn:test:*),Bash(yarn:type-check:*),Bash(yarn:lint:*),Bash(yarn:start:*),Bash(yarn:e2e:*),Bash(yarn:react-native:*),
-    Bash(git:log:*),Bash(git:diff:*),Bash(git:status:*),Bash(git:show:*),
-    Bash(git:checkout:*),Bash(git:add:*),Bash(git:commit:*),Bash(git:push -u:*),
-    Bash(git:branch:*),Bash(git:rev-parse:*),Bash(git:fetch:*),
-    Bash(gh:issue:*),Bash(gh:pr:*),Bash(gh:label:*),
-    Bash(agent-device:*),
-    Bash(adb:devices:*),Bash(adb:wait-for-device:*),Bash(adb:install:*),Bash(adb:reverse:*),
-    Bash(adb:shell getprop:*),Bash(adb:shell am:*),Bash(adb:shell pm:*),Bash(adb:shell screenrecord:*),
-    Bash(adb:pull:*),Bash(adb:shell kill:*),Bash(adb:shell pidof:*),
-    Bash(curl:-s http://localhost:*),
-    Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(mkdir:*),Bash(rm:*),
-    Bash(kill:*),Bash(lsof:*),Bash(nohup:*),Bash(sleep:*),
-    Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(sort:*),Bash(uniq:*),
-    Bash(md5sum:*),Bash(ffmpeg:*)
+    Bash(yarn install),Bash(yarn install *),Bash(yarn build),Bash(yarn build *),Bash(yarn test),Bash(yarn test *),Bash(yarn type-check),Bash(yarn lint),Bash(yarn start),Bash(yarn start *),Bash(yarn e2e:*),Bash(yarn react-native *),
+    Bash(git log),Bash(git log *),Bash(git diff),Bash(git diff *),Bash(git status),Bash(git show *),
+    Bash(git checkout *),Bash(git add *),Bash(git commit *),Bash(git push -u *),
+    Bash(git branch),Bash(git branch *),Bash(git rev-parse *),Bash(git fetch),Bash(git fetch *),
+    Bash(gh issue *),Bash(gh pr *),Bash(gh label *),
+    Bash(agent-device *),
+    Bash(adb devices),Bash(adb wait-for-device),Bash(adb install *),Bash(adb reverse *),
+    Bash(adb shell getprop *),Bash(adb shell am *),Bash(adb shell pm *),Bash(adb shell screenrecord *),
+    Bash(adb pull *),Bash(adb shell kill *),Bash(adb shell pidof *),
+    Bash(curl -s http://localhost:*),
+    Bash(grep *),Bash(find *),Bash(ls),Bash(ls *),Bash(mkdir *),Bash(rm *),
+    Bash(kill *),Bash(lsof),Bash(lsof *),Bash(nohup *),Bash(sleep *),
+    Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),
+    Bash(md5sum *),Bash(ffmpeg *)
 
 jobs:
   bot:
