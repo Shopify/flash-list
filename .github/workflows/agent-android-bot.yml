@@ -22,7 +22,7 @@ permissions:
 env:
   ALLOWED_TOOLS: >-
     Read,Edit,Write,Glob,Grep,
-    Bash(yarn:*),
+    Bash(yarn:install:*),Bash(yarn:build:*),Bash(yarn:test:*),Bash(yarn:type-check:*),Bash(yarn:lint:*),Bash(yarn:start:*),Bash(yarn:e2e:*),Bash(yarn:react-native:*),
     Bash(git:log:*),Bash(git:diff:*),Bash(git:status:*),Bash(git:show:*),
     Bash(git:checkout:*),Bash(git:add:*),Bash(git:commit:*),Bash(git:push -u:*),
     Bash(git:branch:*),Bash(git:rev-parse:*),Bash(git:fetch:*),
@@ -32,8 +32,8 @@ env:
     Bash(adb:shell getprop:*),Bash(adb:shell am:*),Bash(adb:shell pm:*),Bash(adb:shell screenrecord:*),
     Bash(adb:pull:*),Bash(adb:shell kill:*),Bash(adb:shell pidof:*),
     Bash(curl:-s http://localhost:*),
-    Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(rm:*),
-    Bash(kill:*),Bash(ps:*),Bash(lsof:*),Bash(nohup:*),Bash(sleep:*),
+    Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(mkdir:*),Bash(rm:*),
+    Bash(kill:*),Bash(lsof:*),Bash(nohup:*),Bash(sleep:*),
     Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(sort:*),Bash(uniq:*),
     Bash(md5sum:*),Bash(ffmpeg:*)
 
@@ -139,24 +139,20 @@ jobs:
             -no-snapshot-save 2>&1 &
 
           adb wait-for-device
-          timeout 120 bash -c 'while [[ "$(adb shell getprop sys.boot_completed 2>/dev/null)" != "1" ]]; do sleep 2; done'
+          timeout 300 bash -c 'while [[ "$(adb shell getprop sys.boot_completed 2>/dev/null)" != "1" ]]; do sleep 2; done'
           adb devices
           echo "Android emulator is ready"
 
       - name: Run agent
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@bf4f0de6fccd1eea7044a5f903fc928aff363134 # v1
         env:
           ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
         with:
-          model: claude-opus-4-6
           trigger_phrase: "@android-agent"
           anthropic_api_key: ${{ secrets.AI_PROXY_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          allowed_tools: ${{ env.ALLOWED_TOOLS }}
-          direct_prompt: ${{ github.event.inputs.prompt || '' }}
-          custom_instructions: |
-            You are running on CI (GitHub Actions).
-            Environment: Ubuntu runner with Android emulator running (device "Android35"). No iOS simulator.
-            Use agent-device with --platform android --session droid.
-            Read and use skills from .claude/skills/ when relevant.
-            CI notes: use default Metro port (8081), native builds are cached.
+          claude_args: >-
+            --model claude-opus-4-6
+            --allowedTools "${{ env.ALLOWED_TOOLS }}"
+            --append-system-prompt "You are running on CI (GitHub Actions). Environment: Ubuntu runner with Android emulator running (device Android35). No iOS simulator. Use agent-device with --platform android --session droid. Read and use skills from .claude/skills/ when relevant. CI notes: use default Metro port (8081)."
+          prompt: ${{ github.event.inputs.prompt || '' }}

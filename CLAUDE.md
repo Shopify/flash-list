@@ -47,3 +47,24 @@ Skills are reusable workflows in `.claude/skills/`. Use them when relevant:
 | `triage-issue` | Classifying an issue (P0/P1/P2), finding duplicates, applying labels |
 | `agent-device` | Interacting with iOS simulator or Android emulator (snapshot-based coordinates) |
 | `upgrade-react-native` | Upgrading the fixture app's React Native version |
+
+## Self-Learning
+
+When you discover something important during a session — a pitfall, a non-obvious behavior, a debugging technique, or a pattern that would save time in the future — update the relevant skill file or this file so the knowledge persists.
+
+**What to capture:**
+- New pitfalls or edge cases discovered while fixing bugs
+- Debugging techniques that worked (or didn't)
+- Corrections to existing instructions that turned out to be wrong
+- Non-obvious behaviors of FlashList, React Native, or the build system
+
+**Where to put it:**
+- Bug/fix patterns → `fix-github-issue` skill (Common Pitfalls section)
+- Testing edge cases → `review-and-test` skill (Edge Cases section)
+- Device interaction quirks → `agent-device` skill
+- Project-wide facts → this file (`CLAUDE.md`)
+
+**How:**
+- Include the update in the same PR as the fix (not a separate PR)
+- Keep entries concise — one line per pitfall, with enough context to be useful
+- On CI, only add critical learnings (things that would cause repeated failures). Minor improvements should wait for interactive sessions.

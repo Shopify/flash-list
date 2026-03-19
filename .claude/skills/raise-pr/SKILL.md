@@ -5,26 +5,17 @@ description: Create a GitHub PR for FlashList. Ensures no AI/Claude attribution 
 
 # Raise a FlashList PR
 
+**Prerequisite:** Run the `review-and-test` skill first. All checks must pass and device testing must be done before raising a PR.
+
 ## Rules
 
 1. **NEVER push directly to `main`** — always create a branch and open a PR.
 2. **NEVER mention Claude, AI, or any AI tool** in commit messages, PR title, PR body, or comments. No `Co-Authored-By` AI lines. The PR must read as if written entirely by a human.
-3. **Only raise a PR when explicitly asked** by the user.
-4. **All checks must pass first**: `yarn test`, `yarn type-check`, `yarn lint`.
+3. **Only raise a PR when explicitly asked** by the user (exception: on CI, raise directly as part of the fix workflow).
 
 ---
 
-## Step 1 — Verify Checks Pass
-
-```bash
-yarn test && yarn type-check && yarn lint
-```
-
-If any fail, fix them before proceeding.
-
----
-
-## Step 2 — Create Branch and Commit
+## Step 1 — Create Branch and Commit
 
 ### Branch naming
 
@@ -65,17 +56,21 @@ git push -u origin fix/issue-<number>-<short-slug>
 
 ---
 
-## Step 2b — Self-Review Before Creating PR
+## Step 2 — Self-Review
 
-**Always review your own diff before creating the PR.** Run `git diff HEAD~1` (or `git diff main...HEAD`) and check for:
+Run `git diff HEAD~1` and check for:
 
-- **Orphaned or misplaced JSDoc comments** — moving code can separate a JSDoc from its function
-- **Unnecessary `as any` casts** — use specific types wherever possible (e.g., `as React.ComponentType<any>` instead of `as any`)
 - **Leftover debug code** — `console.log`, `fetch("http://localhost:...")`, temporary comments
 - **Unrelated changes** — files or hunks that aren't part of the fix
-- **Formatting issues** — the diff should be clean and minimal
+- **`Co-Authored-By` lines** — check with `git log -1 --format=full`
+- **Fixture `index.js` left with `forceRTL(true)`** — always revert before committing
 
-Fix any issues found, then amend the commit before proceeding to Step 3.
+Quick check:
+```bash
+grep -r "console\.\(log\|warn\)\|localhost:9876\|forceRTL(true)" src/ fixture/react-native/index.js --include="*.ts" --include="*.tsx" --include="*.js"
+```
+
+Fix any issues found, then amend the commit before proceeding.
 
 ---
 
@@ -90,7 +85,6 @@ Fix any issues found, then amend the commit before proceeding to Step 3.
 
 ```bash
 gh pr create \
-  --repo Shopify/flash-list \
   --title "fix(<scope>): <description>" \
   --body "$(cat <<'EOF'
 ## Description
@@ -117,11 +111,8 @@ EOF
 )"
 ```
 
-### Review the PR body before submitting
-
 Before running `gh pr create`, double-check:
 - [ ] No mention of Claude, AI, Anthropic, or any AI tool anywhere
-- [ ] No `Co-Authored-By` lines in any commit (`git log --format=full` to check)
 - [ ] Description explains the "what" and "why" clearly
 - [ ] Test plan is specific to the change
 
@@ -131,22 +122,11 @@ Before running `gh pr create`, double-check:
 
 Return the PR URL to the user.
 
-If the user asks to update the PR:
+If the user asks to update the PR (interactive only — not available on CI):
 ```bash
-# Amend and force-push (only if user explicitly asks)
 git add <files>
 git commit --amend --no-edit
 git push --force-with-lease
 ```
 
----
-
-## Common Mistakes
-
-- **Leftover `Co-Authored-By` from default git hooks** — check with `git log -1 --format=full` before pushing
-- **Debug `console.log` or `fetch("http://localhost:9876")` left in source** — search before committing:
-  ```bash
-  grep -r "console\.\(log\|warn\)\|localhost:9876" src/ --include="*.ts" --include="*.tsx"
-  ```
-- **Including unrelated files** — use `git add <specific files>`, never `git add .` or `git add -A`
-- **Fixture `index.js` left with `forceRTL(true)`** — always check and revert before committing
+On CI, create a new commit instead of amending — force-push is not permitted.

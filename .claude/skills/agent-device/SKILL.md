@@ -9,9 +9,9 @@ description: Interact with iOS simulator or Android emulator/device using snapsh
 
 **Banned tools/commands** (never use these for device interaction, even if they seem easier):
 
-- `adb` / `adb shell` — no `input tap`, `input swipe`, `input text`, `screencap`, `am start`, etc. (exception: `adb shell screenrecord` + `adb pull` for Android recording — see "Android Recording Workaround")
+- `adb` for UI interaction — no `input tap`, `input swipe`, `input text`, `screencap`, etc. Allowed exceptions: `adb devices`, `adb wait-for-device`, `adb install`, `adb reverse`, `adb shell getprop`, `adb shell am`, `adb shell pm`, `adb shell screenrecord` + `adb pull` (see "Android Recording Workaround"), `adb shell kill`/`adb shell pidof` (for stopping screenrecord)
 - Mobile MCP tools — no `mobile_click_on_screen_at_coordinates`, `mobile_take_screenshot`, `mobile_list_elements_on_screen`, `mobile_swipe_on_screen`, `mobile_type_keys`, `mobile_press_button`, `mobile_long_press_on_screen_at_coordinates`, or any other `mobile_*` tool
-- `xcrun simctl` — no `simctl io screenshot`, `simctl launch`, `simctl openurl`, etc. (exception: `simctl list devices` to check boot state is OK)
+- `xcrun simctl` — no `simctl io screenshot`, `simctl openurl`, etc. Allowed exceptions: `simctl list devices`, `simctl get_app_container`, `simctl install`, `simctl launch`
 - `osascript` / AppleScript for simulator control
 - Appium or any other automation framework
 

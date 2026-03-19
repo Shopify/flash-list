@@ -14,15 +14,15 @@ permissions:
 env:
   ALLOWED_TOOLS: >-
     Read,Edit,Write,Glob,Grep,
-    Bash(yarn:*),Bash(bundle:exec:*),
+    Bash(yarn:install:*),Bash(yarn:build:*),Bash(yarn:test:*),Bash(yarn:type-check:*),Bash(yarn:lint:*),Bash(yarn:start:*),Bash(yarn:e2e:*),Bash(yarn:react-native:*),Bash(bundle:exec:*),
     Bash(git:log:*),Bash(git:diff:*),Bash(git:status:*),Bash(git:show:*),
     Bash(git:checkout:*),Bash(git:add:*),Bash(git:commit:*),Bash(git:push -u:*),
     Bash(git:branch:*),Bash(git:rev-parse:*),Bash(git:fetch:*),
     Bash(gh:issue:*),Bash(gh:pr:*),Bash(gh:label:*),
-    Bash(agent-device:*),Bash(xcrun:simctl:*),Bash(sips:*),
+    Bash(agent-device:*),Bash(xcrun:simctl list:*),Bash(xcrun:simctl get_app_container:*),Bash(xcrun:simctl install:*),Bash(xcrun:simctl launch:*),Bash(xcrun:simctl boot:*),Bash(sips:*),
     Bash(curl:-s http://localhost:*),
-    Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(rm:*),
-    Bash(kill:*),Bash(ps:*),Bash(lsof:*),Bash(nohup:*),Bash(sleep:*),
+    Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(mkdir:*),Bash(rm:*),
+    Bash(kill:*),Bash(lsof:*),Bash(nohup:*),Bash(sleep:*),
     Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(sort:*),Bash(uniq:*),
     Bash(md5sum:*),Bash(ffmpeg:*)
 
@@ -32,7 +32,8 @@ jobs:
     if: >-
       (
         github.event.action == 'labeled' &&
-        github.event.label.name == 'agent-fix'
+        github.event.label.name == 'agent-fix' &&
+        github.event.sender.type != 'Bot'
       ) || (
         github.event.action == 'created' &&
         contains(github.event.comment.body, '/fix') &&
@@ -63,16 +64,16 @@ jobs:
         run: npm install -g agent-device
 
       - name: Fix issue
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@bf4f0de6fccd1eea7044a5f903fc928aff363134 # v1
         env:
           ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
         with:
-          mode: "agent"
-          model: claude-opus-4-6
           anthropic_api_key: ${{ secrets.AI_PROXY_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          allowed_tools: ${{ env.ALLOWED_TOOLS }}
-          direct_prompt: |
+          claude_args: >-
+            --model claude-opus-4-6
+            --allowedTools "${{ env.ALLOWED_TOOLS }}"
+          prompt: |
             You are running on CI (GitHub Actions). There is no human to confirm with — act autonomously.
             Environment: macOS runner with Xcode and iOS simulator. No Android emulator.
             Fix this GitHub issue. Read and follow .claude/skills/fix-github-issue/SKILL.md for the full workflow.
