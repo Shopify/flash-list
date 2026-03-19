@@ -1,0 +1,162 @@
+name: Agent Android Bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "What should the agent do?"
+        required: true
+        type: string
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  ALLOWED_TOOLS: >-
+    Read,Edit,Write,Glob,Grep,
+    Bash(yarn:*),
+    Bash(git:log:*),Bash(git:diff:*),Bash(git:status:*),Bash(git:show:*),
+    Bash(git:checkout:*),Bash(git:add:*),Bash(git:commit:*),Bash(git:push -u:*),
+    Bash(git:branch:*),Bash(git:rev-parse:*),Bash(git:fetch:*),
+    Bash(gh:issue:*),Bash(gh:pr:*),Bash(gh:label:*),
+    Bash(agent-device:*),
+    Bash(adb:devices:*),Bash(adb:wait-for-device:*),Bash(adb:install:*),Bash(adb:reverse:*),
+    Bash(adb:shell getprop:*),Bash(adb:shell am:*),Bash(adb:shell pm:*),Bash(adb:shell screenrecord:*),
+    Bash(adb:pull:*),Bash(adb:shell kill:*),Bash(adb:shell pidof:*),
+    Bash(curl:-s http://localhost:*),
+    Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(rm:*),
+    Bash(kill:*),Bash(ps:*),Bash(lsof:*),Bash(nohup:*),Bash(sleep:*),
+    Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(sort:*),Bash(uniq:*),
+    Bash(md5sum:*),Bash(ffmpeg:*)
+
+jobs:
+  bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        contains(github.event.comment.body || github.event.review.body, '@android-agent') &&
+        !contains(github.event.comment.body || github.event.review.body, '/fix') &&
+        (
+          (github.event.comment.author_association || github.event.review.author_association) == 'OWNER' ||
+          (github.event.comment.author_association || github.event.review.author_association) == 'MEMBER' ||
+          (github.event.comment.author_association || github.event.review.author_association) == 'COLLABORATOR'
+        )
+      )
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.18.0"
+          cache: "yarn"
+
+      - name: Setup Java
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Restore Android SDK cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        id: sdk-cache
+        with:
+          path: |
+            ${{ env.ANDROID_HOME }}/system-images
+            ${{ env.ANDROID_HOME }}/platforms
+          key: android-sdk-35
+
+      - name: Restore AVD cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd
+            ~/.android/adb*
+          key: avd-api-35-pixel6
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install agent-device
+        run: npm install -g agent-device
+
+      - name: Setup Android SDK
+        if: steps.sdk-cache.outputs.cache-hit != 'true'
+        run: |
+          echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
+          echo "$ANDROID_HOME/emulator" >> $GITHUB_PATH
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install \
+            "system-images;android-35;google_apis;x86_64" \
+            "platform-tools" \
+            "platforms;android-35" \
+            "emulator"
+
+      - name: Add SDK tools to PATH
+        if: steps.sdk-cache.outputs.cache-hit == 'true'
+        run: |
+          echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
+          echo "$ANDROID_HOME/emulator" >> $GITHUB_PATH
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+
+      - name: Create AVD
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        run: |
+          export ANDROID_AVD_HOME="$HOME/.android/avd"
+          mkdir -p "$ANDROID_AVD_HOME"
+
+          echo "no" | avdmanager create avd \
+            -n "Android35" \
+            -k "system-images;android-35;google_apis;x86_64" \
+            --device "pixel_6" \
+            --force
+
+      - name: Start emulator
+        run: |
+          nohup emulator -avd Android35 \
+            -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim \
+            -no-snapshot-save 2>&1 &
+
+          adb wait-for-device
+          timeout 120 bash -c 'while [[ "$(adb shell getprop sys.boot_completed 2>/dev/null)" != "1" ]]; do sleep 2; done'
+          adb devices
+          echo "Android emulator is ready"
+
+      - name: Run agent
+        uses: anthropics/claude-code-action@beta
+        env:
+          ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
+        with:
+          model: claude-opus-4-6
+          trigger_phrase: "@android-agent"
+          anthropic_api_key: ${{ secrets.AI_PROXY_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          allowed_tools: ${{ env.ALLOWED_TOOLS }}
+          direct_prompt: ${{ github.event.inputs.prompt || '' }}
+          custom_instructions: |
+            You are running on CI (GitHub Actions).
+            Environment: Ubuntu runner with Android emulator running (device "Android35"). No iOS simulator.
+            Use agent-device with --platform android --session droid.
+            Read and use skills from .claude/skills/ when relevant.
+            CI notes: use default Metro port (8081), native builds are cached.

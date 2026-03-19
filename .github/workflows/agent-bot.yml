@@ -1,0 +1,85 @@
+name: Agent Bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "What should the agent do?"
+        required: true
+        type: string
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  ALLOWED_TOOLS: >-
+    Read,Edit,Write,Glob,Grep,
+    Bash(yarn:*),Bash(bundle:exec:*),
+    Bash(git:log:*),Bash(git:diff:*),Bash(git:status:*),Bash(git:show:*),
+    Bash(git:checkout:*),Bash(git:add:*),Bash(git:commit:*),Bash(git:push -u:*),
+    Bash(git:branch:*),Bash(git:rev-parse:*),Bash(git:fetch:*),
+    Bash(gh:issue:*),Bash(gh:pr:*),Bash(gh:label:*),
+    Bash(agent-device:*),Bash(xcrun:simctl:*),Bash(sips:*),
+    Bash(curl:-s http://localhost:*),
+    Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(rm:*),
+    Bash(kill:*),Bash(ps:*),Bash(lsof:*),Bash(nohup:*),Bash(sleep:*),
+    Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(sort:*),Bash(uniq:*),
+    Bash(md5sum:*),Bash(ffmpeg:*)
+
+jobs:
+  bot:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        contains(github.event.comment.body || github.event.review.body, '@agent') &&
+        !contains(github.event.comment.body || github.event.review.body, '/fix') &&
+        (
+          (github.event.comment.author_association || github.event.review.author_association) == 'OWNER' ||
+          (github.event.comment.author_association || github.event.review.author_association) == 'MEMBER' ||
+          (github.event.comment.author_association || github.event.review.author_association) == 'COLLABORATOR'
+        )
+      )
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.18.0"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install agent-device
+        run: npm install -g agent-device
+
+      - name: Run agent
+        uses: anthropics/claude-code-action@beta
+        env:
+          ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
+        with:
+          model: claude-opus-4-6
+          trigger_phrase: "@agent"
+          anthropic_api_key: ${{ secrets.AI_PROXY_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          allowed_tools: ${{ env.ALLOWED_TOOLS }}
+          direct_prompt: ${{ github.event.inputs.prompt || '' }}
+          custom_instructions: |
+            You are running on CI (GitHub Actions).
+            Environment: macOS runner with Xcode and iOS simulator. No Android emulator.
+            Read and use skills from .claude/skills/ when relevant.
+            CI notes: use default Metro port (8081).

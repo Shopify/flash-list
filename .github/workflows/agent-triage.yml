@@ -1,0 +1,36 @@
+name: Agent Triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >-
+      !contains(github.event.issue.labels.*.name, 'agent-triaged') &&
+      github.event.issue.user.type != 'Bot'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Triage issue
+        uses: anthropics/claude-code-action@beta
+        env:
+          ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
+        with:
+          mode: "agent"
+          model: claude-sonnet-4-6
+          max_turns: 6
+          anthropic_api_key: ${{ secrets.AI_PROXY_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          allowed_tools: "Read,Glob,Grep,Bash(gh:*),Bash(cat:*),Bash(ls:*),Bash(find:*)"
+          disallowed_tools: "Edit,Write,MultiEdit"
+          direct_prompt: |
+            You are running on CI (GitHub Actions).
+            Read the skill file at .claude/skills/triage-issue/SKILL.md and follow its instructions to triage this issue.
