@@ -32,7 +32,10 @@ jobs:
             --disallowedTools "Edit,MultiEdit"
           prompt: |
             You are running on CI (GitHub Actions).
-            Read the skill file at .claude/skills/triage-issue/SKILL.md and follow its instructions to triage this issue.
+            Triage issue #${{ github.event.issue.number }}.
+            Title: ${{ github.event.issue.title }}
+
+            Read the skill file at .claude/skills/triage-issue/SKILL.md and follow its instructions.
             Do NOT edit any repository files. Only use Write for /tmp/agent-feedback.md.
 
             When done, write /tmp/agent-feedback.md with:
