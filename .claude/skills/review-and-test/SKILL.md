@@ -11,9 +11,9 @@ description: Review a FlashList PR or branch, run unit tests, test on iOS simula
 which agent-device && which gh && yarn test --version
 ```
 
-Ensure Metro is running on port 8087 from `fixture/react-native/`:
+Ensure Metro is running from `fixture/react-native/`:
 ```bash
-curl -s http://localhost:8087/status
+curl -s http://localhost:8081/status
 ```
 
 ---
@@ -54,17 +54,26 @@ yarn lint
 
 ### E2E Tests
 
-**If any e2e tests were added or modified in the PR/branch**, you MUST run them and verify they pass:
+**Run E2E tests if any of these changed in the PR/branch:**
+- E2E test files (`*.e2e.*`)
+- Example/sample screens in `fixture/react-native/src/`
+- New example screens added
 
 ```bash
-# Check if e2e tests were changed
-git diff main...HEAD --name-only | grep '\.e2e\.'
+# Check if e2e-relevant files were changed
+git diff main...HEAD --name-only | grep -E '\.e2e\.|fixture/react-native/src/'
 
 # If yes, run e2e tests on iOS
 yarn e2e:ios
 ```
 
-E2e tests use Detox. They require the fixture app to be built in release mode (`detox build -c ios.sim.release`) and then run (`detox test -c ios.sim.release`). The `yarn e2e:ios` script handles both steps.
+E2E tests use Detox. The `yarn e2e:ios` script handles both build and test.
+
+**Warning:** E2E builds a **release** app that replaces the debug app on the simulator. After running E2E, rebuild debug to continue interactive testing:
+
+```bash
+cd fixture/react-native && yarn react-native run-ios
+```
 
 If tests fail, investigate before proceeding to device testing.
 
@@ -83,7 +92,6 @@ yarn build   # runs tsc -b
 Before building the native app, check if it's already installed on the simulator. **Only build if it's not installed:**
 
 ```bash
-# Check if app is already installed
 xcrun simctl get_app_container booted org.reactjs.native.example.FlatListPro 2>/dev/null
 ```
 
@@ -130,6 +138,36 @@ Use the `agent-device` skill to navigate and take screenshots. Screens are liste
 ### Smoke test
 
 Navigate to each affected screen, scroll through content, verify no visual regressions.
+
+---
+
+## Step 4b — Test on Android (if available)
+
+If an Android emulator is available (e.g., on the android-agent CI runner), test there too. Android uses a native RecyclerView bridge so behavior can differ from iOS.
+
+### Build and install
+
+```bash
+yarn build
+cd fixture/react-native && yarn react-native run-android
+```
+
+### Navigate and verify
+
+Use `agent-device` with `--platform android --session droid`:
+
+```bash
+agent-device snapshot -i -c --json --session droid
+agent-device press <x> <y> --session droid
+agent-device screenshot /tmp/android-screen.png --session droid
+```
+
+### Android-specific things to check
+
+- RecyclerView scroll behavior matches iOS
+- Items render correctly (no blank/recycled artifacts)
+- Sticky headers work with native scroll
+- `onEndReached` / `onStartReached` fire at the same thresholds as iOS
 
 ---
 
@@ -299,12 +337,12 @@ Run through relevant entries after any fix or review. This is the single source 
 - **RTL looks wrong but LTR is fine** — did you set `forceRTL(true)` in `index.js` and do a full kill+relaunch?
 - **`agent-device swipe` gives "drag" error** — delete `~/.agent-device/ios-runner/derived/` and re-run `agent-device open` to rebuild the iOS runner
 - **No console output in Metro** — use the HTTP server approach (see Step 6)
-- **Metro log location** — `lsof -p $(lsof -ti :8087) | grep "1w"` to find where Metro stdout goes (often `/private/tmp/metro_fixture.log`)
+- **Metro log location** — `lsof -p $(lsof -ti :8081) | grep "1w"` to find where Metro stdout goes (often `/private/tmp/metro_fixture.log`)
 - **RTL horizontal scroll direction is reversed** — to scroll toward the logical START (header/Item 0), swipe right-to-left: `agent-device swipe 350 256 50 256`. To scroll toward higher items, swipe left-to-right.
 - **Fixture app bundle ID** — `org.reactjs.native.example.FlatListPro`. Use with `xcrun simctl launch`.
 - **`estimatedItemSize` does not exist** — this FlashList does NOT have this prop. Do not use it.
-- **App can't connect to Metro** — if the app shows a red/yellow error about connecting to the bundler, configure the port: iOS simulator `Cmd+D` → "Configure Bundler" → set host `localhost` and port `8087`. Then reload.
-- **agent-device navigation** — use ONLY `screenshot` + `press` (percentage method). `snapshot`, `find`, and `click` commands are prohibited. Downsample screenshots with `sips --resampleHeight 852` before reading. See the `agent-device` skill for the full coordinate mapping reference.
+- **App can't connect to Metro** — if the app shows a red/yellow error about connecting to the bundler, configure the port: iOS simulator `Cmd+D` → "Configure Bundler" → set host `localhost` and the correct port. Then reload.
+- **agent-device navigation** — use `snapshot -i -c --json` as the primary method for finding elements (returns exact coordinates). Fall back to `screenshot` + percentage-based press when elements aren't in the accessibility tree. See the `agent-device` skill for details.
 
 ---
 
