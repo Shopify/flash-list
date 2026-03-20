@@ -83,10 +83,11 @@ Fix any issues found, then amend the commit before proceeding.
 
 ### PR body template
 
-**Always use `--body-file`** — inline `--body` with markdown `#` headers triggers Claude Code permission checks and wastes turns.
+**Always use `--body-file`** — inline `--body` with markdown `#` headers triggers Claude Code permission checks and wastes turns. Use the `Write` tool to create the file (not `cat` or `echo`, which may not be in allowed tools on CI).
 
-```bash
-cat > /tmp/pr-body.md <<'EOF'
+Write the following to `/tmp/pr-body.md` using the Write tool:
+
+```markdown
 ## Description
 
 <1-3 sentences: what the bug was and how the fix works>

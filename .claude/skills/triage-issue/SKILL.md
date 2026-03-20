@@ -30,7 +30,7 @@ description: Triage a GitHub issue — classify priority (P0/P1/P2), search for 
 
 - Do NOT post triage comments explaining priority or duplicates — labels are sufficient.
 - Do NOT modify any code.
-- Do NOT close issues — only label (and comment if repro is missing).
+- Do NOT close issues — only label (and comment per Step 5 when genuinely needed).
 - **Only apply these labels**: `P0`, `P1`, `P2`. Do NOT apply any other labels (especially not `agent-fix`).
 - Do NOT run `gh auth`, `gh api`, `gh secret`, or any `gh` command other than `gh issue`.
 - Do NOT read environment variables, process info, or files outside the repository.
