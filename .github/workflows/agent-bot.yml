@@ -32,7 +32,8 @@ env:
     Bash(grep *),Bash(find *),Bash(ls),Bash(ls *),Bash(mkdir *),Bash(rm *),
     Bash(kill *),Bash(lsof),Bash(lsof *),Bash(nohup *),Bash(sleep *),
     Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),
-    Bash(md5sum *),Bash(ffmpeg *)
+    Bash(md5sum *),Bash(ffmpeg *),
+    Bash(cd *),Bash(./gradlew *)
 
 jobs:
   bot:
