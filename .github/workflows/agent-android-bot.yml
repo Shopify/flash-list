@@ -22,7 +22,7 @@ permissions:
 env:
   ALLOWED_TOOLS: >-
     Read,Edit,Write,Glob,Grep,
-    Bash(yarn install),Bash(yarn install *),Bash(yarn build),Bash(yarn build *),Bash(yarn test),Bash(yarn test *),Bash(yarn type-check),Bash(yarn lint),Bash(yarn start),Bash(yarn start *),Bash(yarn e2e:*),Bash(yarn react-native *),
+    Bash(yarn install),Bash(yarn install *),Bash(yarn build),Bash(yarn build *),Bash(yarn test),Bash(yarn test *),Bash(yarn type-check),Bash(yarn lint),Bash(yarn start),Bash(yarn start *),Bash(yarn e2e:*),Bash(yarn react-native *),Bash(bundle exec *),Bash(pod install),Bash(pod install *),
     Bash(git log),Bash(git log *),Bash(git diff),Bash(git diff *),Bash(git status),Bash(git show *),
     Bash(git checkout *),Bash(git add *),Bash(git commit *),Bash(git push -u *),
     Bash(git branch),Bash(git branch *),Bash(git rev-parse *),Bash(git fetch),Bash(git fetch *),
@@ -99,6 +99,9 @@ jobs:
 
       - name: Install agent-device
         run: npm install -g agent-device
+
+      - name: Fetch main branch for diffing
+        run: git fetch origin main
 
       - name: Setup Android SDK
         if: steps.sdk-cache.outputs.cache-hit != 'true'
