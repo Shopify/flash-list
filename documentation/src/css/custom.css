@@ -1,39 +1,49 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
 
 :root {
   --ifm-color-primary: #1a84b2;
-  --ifm-color-primary-dark: #d69722;
-  --ifm-color-primary-darker: #996a13;
-  --ifm-color-primary-darkest: #67470b;
-  --ifm-color-primary-light: #90cde8;
-  --ifm-color-primary-lighter: #b9dae9;
-  --ifm-color-primary-lightest: #cbe2ed;
+  --ifm-color-primary-dark: #1776a0;
+  --ifm-color-primary-darker: #166f97;
+  --ifm-color-primary-darkest: #125b7c;
+  --ifm-color-primary-light: #1d92c4;
+  --ifm-color-primary-lighter: #1e99cd;
+  --ifm-color-primary-lightest: #2db0e8;
   --ifm-code-font-size: 95%;
   --ifm-font-size-base: 16px;
+  --ifm-font-family-base: "Poppins", system-ui, -apple-system, sans-serif;
+  --ifm-heading-font-weight: 600;
+  --ifm-font-weight-bold: 600;
+  --ifm-global-shadow-md: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --ifm-global-radius: 8px;
+  --ifm-code-border-radius: 6px;
+  --ifm-link-hover-decoration: none;
 }
 
 html[data-theme="dark"] {
-  --ifm-navbar-background-color: #000;
+  --ifm-navbar-background-color: #0a0a0d;
   --ifm-color-primary: #d69722;
-  --ifm-background-color: #1e2125;
-  --ifm-background-surface-color: #121212;
-}
-.navbar--dark {
-  --ifm-navbar-background-color: #000000;
+  --ifm-color-primary-dark: #c18519;
+  --ifm-color-primary-darker: #b67d17;
+  --ifm-color-primary-darkest: #966713;
+  --ifm-color-primary-light: #dba63a;
+  --ifm-color-primary-lighter: #dead49;
+  --ifm-color-primary-lightest: #e4be6d;
+  --ifm-background-color: #121215;
+  --ifm-background-surface-color: #0a0a0d;
+  --ifm-global-shadow-md: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
-:root {
-  --ifm-font-family-base: "Poppins";
+.navbar--dark {
+  --ifm-navbar-background-color: #0a0a0d;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 article {
   max-width: 730px;
   margin-left: auto;
   margin-right: auto;
-}
-
-:root {
-  --ifm-global-shadow-md: 0px;
 }
 
 @media (min-width: 1416px) {

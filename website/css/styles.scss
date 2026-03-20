@@ -23,7 +23,15 @@ $title-color: #1a84b2;
 $secondary-title-color: #d69722;
 
 $font: "Poppins";
-$background-color: rgb(0, 0, 0);
+$background-color: #050508;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
 
 @keyframes gradient-rotate {
   to {
@@ -31,46 +39,128 @@ $background-color: rgb(0, 0, 0);
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
 body {
   background: $background-color;
   color: white;
-  font-family: sans-serif;
+  font-family: $font, sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
 div.topbar {
   width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(5, 5, 8, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  h1 {
+    font-size: 24px;
+    letter-spacing: -0.5px;
+  }
 }
 div.social-buttons {
   display: inline-flex;
   gap: 20px;
   align-items: center;
+  a svg {
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 div.header {
-  margin-top: 44px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 80px;
+  margin-bottom: 40px;
   text-align: center;
+  position: relative;
+  animation: fadeInUp 0.8s ease-out;
   h2 {
-    font-size: 70px;
-    line-height: 1;
+    font-size: 72px;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    background: linear-gradient(
+      135deg,
+      #fff 0%,
+      rgba(255, 255, 255, 0.85) 50%,
+      $title-color 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba($title-color, 0.15) 0%,
+      rgba($secondary-title-color, 0.05) 40%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
   }
 }
 p.subtitle {
   margin: 0px;
   padding: 0px;
+  font-size: 50px;
+  background: linear-gradient(
+    90deg,
+    $secondary-title-color,
+    lighten($secondary-title-color, 25%)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 div.content {
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
   flex-direction: column;
-
   align-items: center;
 }
 h1,
@@ -84,58 +174,64 @@ h6 {
 }
 p {
   font-family: $font;
-  font-weight: 600;
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
 }
 .row {
   display: flex;
   flex-direction: row;
   column-gap: 40px;
   &.eight {
-    column-gap: 8px;
+    column-gap: 12px;
   }
 }
 h1 {
   font-size: 42px;
   margin: 0;
+  letter-spacing: -0.5px;
 }
 h2 {
   margin: 0;
   font-size: 38px;
-  background: -webkit-linear-gradient(
-    45deg,
+  background: linear-gradient(
+    135deg,
     $title-color,
-    lighten($title-color, 30%)
+    lighten($title-color, 25%)
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .claim {
   font-family: $font;
   font-size: 18px;
-  font-weight: normal;
-  max-width: 500px;
+  font-weight: 400;
+  max-width: 520px;
   text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
 }
 video {
   height: 200px;
 }
 div.section {
   display: flex;
-  margin: 40px 0px;
+  margin: 48px 0px;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 20px;
+  padding: 32px;
   align-items: center;
-  border-radius: 20px;
+  border-radius: 24px;
   max-width: 1050px;
-  align-items: center;
-  column-gap: 40px;
+  column-gap: 48px;
+  transition: transform 0.3s ease;
 }
 div.section img,
 div.section video {
   max-width: 45%;
   height: auto;
-  border-radius: 6px;
+  border-radius: 12px;
   max-height: 600px;
 }
 div.section .info {
@@ -146,27 +242,35 @@ div.section .info {
 div.section .info h1 {
   margin: 0;
   font-size: 43px;
-  line-height: 1.3;
-  margin-bottom: 10px;
-  background: -webkit-linear-gradient(
-    90deg,
+  line-height: 1.2;
+  margin-bottom: 16px;
+  background: linear-gradient(
+    135deg,
     $secondary-title-color,
-    lighten($secondary-title-color, 30%)
+    lighten($secondary-title-color, 25%)
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 div.section .info p {
   font-family: $font;
   margin: 0;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 300;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
 }
 div.section a {
-  font-weight: bold;
+  font-weight: 600;
   color: #d69722;
-  margin-top: 10px;
+  margin-top: 12px;
   display: block;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  &:hover {
+    color: lighten(#d69722, 15%);
+  }
 }
 div.metric {
   display: flex;
@@ -174,23 +278,25 @@ div.metric {
   align-items: center;
 }
 .black {
-  background-color: #151516;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .highlight pre {
-  padding: 10px 20px;
+  padding: 16px 24px;
 }
 
 pre {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     Liberation Mono, Courier New, monospace;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 100;
+  line-height: 1.6;
 }
 .section.half {
-  column-gap: 40px;
+  column-gap: 48px;
   h1 {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
   h3 {
     margin-top: 0;
@@ -219,14 +325,16 @@ pre {
 }
 
 .highlight {
-  border-radius: 20px;
+  border-radius: 16px;
   margin: 0px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .column .highlight {
   margin: 0px;
 }
 .column {
   flex-direction: column;
+  display: flex;
 }
 .full {
   width: 100%;
@@ -242,27 +350,24 @@ pre {
 }
 .gray {
   .bar {
-    background: -webkit-linear-gradient(0deg, $gray, lighten($gray, 30%));
+    background: linear-gradient(90deg, $gray, lighten($gray, 20%));
   }
   h2 {
-    background: -webkit-linear-gradient(0deg, $gray, lighten($gray, 30%));
+    background: linear-gradient(90deg, $gray, lighten($gray, 20%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 h3.gray {
   color: $gray;
 }
-.column {
-  display: flex;
-  flex-direction: column;
-}
 .bar {
   text-align: center;
-  background: -webkit-linear-gradient(
-    0deg,
+  background: linear-gradient(
+    90deg,
     $title-color,
-    lighten($title-color, 30%)
+    lighten($title-color, 25%)
   );
   height: 10px;
   display: block;
@@ -303,7 +408,11 @@ h2.metric-explanation {
   text-align: center;
 }
 .metric-section {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding: 24px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 .graph {
   .row {
@@ -320,20 +429,36 @@ h2.metric-explanation {
 }
 p.note {
   font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
 }
 a.button {
   &.primary {
-    background: $secondary-title-color;
+    background: linear-gradient(135deg, $secondary-title-color, lighten($secondary-title-color, 10%));
+    box-shadow: 0 4px 20px rgba($secondary-title-color, 0.3);
+    &:hover {
+      box-shadow: 0 6px 30px rgba($secondary-title-color, 0.5);
+      transform: translateY(-2px);
+    }
   }
   &.secondary {
-    background: $title-color;
+    background: linear-gradient(135deg, $title-color, lighten($title-color, 10%));
+    box-shadow: 0 4px 20px rgba($title-color, 0.3);
+    &:hover {
+      box-shadow: 0 6px 30px rgba($title-color, 0.5);
+      transform: translateY(-2px);
+    }
   }
-  padding: 8px 20px;
+  padding: 12px 28px;
   text-decoration: none;
-  border-radius: 22px;
+  border-radius: 50px;
   color: white;
   display: block;
   margin: 20px 0px;
+  font-family: $font;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
 }
 div.section.fullwidth {
   flex-direction: column;
@@ -344,6 +469,16 @@ div.section.fullwidth {
   .info {
     text-align: center;
     max-width: none;
+    h1 {
+      background: linear-gradient(
+        135deg,
+        #fff,
+        rgba(255, 255, 255, 0.7)
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
   }
 }
 div.tweets {
@@ -357,15 +492,17 @@ div.tweets {
 }
 div.section.casestudy {
   margin: 100px 0px;
-  padding: 40px;
+  padding: 48px;
   width: 100%;
   position: relative;
   justify-content: space-between;
-  background: -webkit-linear-gradient(
-    0deg,
+  background: linear-gradient(
+    135deg,
     $secondary-title-color,
-    lighten($secondary-title-color, 30%)
+    lighten($secondary-title-color, 20%)
   );
+  border-radius: 24px;
+  overflow: hidden;
   a.button {
     color: white;
     display: inline-block;
@@ -375,13 +512,15 @@ div.section.casestudy {
     max-width: 570px;
     padding: 40px 0px;
     h2 {
-      background: -webkit-linear-gradient(0deg, #000, #111);
+      background: linear-gradient(135deg, #000, #222);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
       span.shopify {
-        background: -webkit-linear-gradient(0deg, #5e8e3e, darken(#5e8e3e, 0%));
+        background: linear-gradient(135deg, #5e8e3e, lighten(#5e8e3e, 10%));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
       span.mission {
         font-weight: 800;
@@ -403,24 +542,30 @@ div.section.casestudy {
 #footer {
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: -webkit-linear-gradient(
-    270deg,
+  background: linear-gradient(
+    135deg,
+    darken($title-color, 15%),
     $title-color,
-    lighten($title-color, 15%)
+    lighten($title-color, 10%)
   );
-  height: 200px;
+  padding: 48px 20px;
+  margin-top: 60px;
+  p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    margin-top: 16px;
+  }
   img {
     height: auto;
   }
   #shopifylogo {
-    width: 200px;
+    width: 180px;
     height: auto;
+    opacity: 0.9;
   }
-}
-p.subtitle {
-  font-size: 50px;
 }
 
 .conference {
@@ -428,17 +573,20 @@ p.subtitle {
   img {
     width: 100% !important;
     aspect-ratio: 16/9;
+    border-radius: 12px;
   }
 }
 p.date {
-  color: #666;
+  color: rgba(255, 255, 255, 0.35);
   font-size: 14px !important;
-  font-weight: bold !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 ul.events li {
   list-style: none;
-  border-bottom: 0.5px solid #444;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
   padding-top: 20px;
   padding-bottom: 20px;
   max-width: 700px;
@@ -457,9 +605,19 @@ ul.events li {
     margin-bottom: 30px;
     margin-top: 0px;
   }
+  div.topbar {
+    position: sticky;
+    padding: 12px 16px;
+  }
   div.header {
+    margin-top: 40px;
     h2 {
-      font-size: 60px;
+      font-size: 48px;
+      letter-spacing: -1px;
+    }
+    &::before {
+      width: 300px;
+      height: 250px;
     }
   }
   h2 {
@@ -497,7 +655,7 @@ ul.events li {
     &.casestudy {
       flex-direction: column;
       margin: 30px 0px;
-      padding: 0px;
+      padding: 24px;
       img {
         position: relative;
         margin: 0 auto;
@@ -527,11 +685,12 @@ ul.events li {
   }
   p.subtitle {
     margin: 0;
-    font-size: 20px;
+    font-size: 24px;
   }
 
   .metric-section {
-    margin-bottom: 60px;
+    margin-bottom: 40px;
+    padding: 16px;
   }
   .section.pair {
     flex-direction: column-reverse;
@@ -542,9 +701,12 @@ ul.events li {
   div.section.fullwidth .highlight {
     width: auto;
   }
+  a.button {
+    text-align: center;
+  }
 }
 
-/* Table styles */
+/* Tablet styles */
 @media only screen and (min-width: 700px) and (max-width: 1100px) {
   div.tweets .tweet {
     max-width: 47%;
@@ -554,7 +716,7 @@ ul.events li {
   }
   .highlight {
     margin: 5px;
-    border-radius: 20px;
+    border-radius: 16px;
     pre {
       font-size: 14px;
     }
