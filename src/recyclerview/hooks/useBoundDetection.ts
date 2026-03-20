@@ -84,6 +84,14 @@ export function useBoundDetection<T>(
         (isHorizontal ? contentSize.width : contentSize.height) +
         recyclerViewManager.firstItemOffset;
 
+      // Skip bound detection if the window has no measurable size.
+      // This can happen when the list is mounted off-screen (e.g., in a
+      // background tab) and all measurements come back as 0, which would
+      // incorrectly trigger onEndReached/onStartReached.
+      if (visibleLength <= 0) {
+        return;
+      }
+
       // Check if we're near the end of the list
       if (onEndReached) {
         const onEndReachedThreshold = onEndReachedThresholdProp ?? 0.5;
