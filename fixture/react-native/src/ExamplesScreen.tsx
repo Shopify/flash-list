@@ -123,6 +123,10 @@ export const ExamplesScreen = () => {
       title: "Grid with Separator",
       destination: "GridWithSeparator",
     },
+    {
+      title: "Flight Booking",
+      destination: "FlightBooking",
+    },
   ];
   return (
     <>

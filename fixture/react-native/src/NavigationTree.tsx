@@ -35,6 +35,7 @@ import ManualBenchmarkExample from "./ManualBenchmarkExample";
 import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 import { StickyHeaderExample } from "./StickyHeaderExample";
 import { GridWithSeparator } from "./GridWithSeparator";
+import FlightBooking from "./FlightBooking";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -129,6 +130,11 @@ const NavigationTree = () => {
             name="GridWithSeparator"
             component={GridWithSeparator}
             options={{ title: "Grid with Separator" }}
+          />
+          <Stack.Screen
+            name="FlightBooking"
+            component={FlightBooking}
+            options={{ title: "Flight Booking" }}
           />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
