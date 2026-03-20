@@ -23,6 +23,11 @@ yarn lint
 
 **Important:** `dist/` is NOT rebuilt on branch switch. Always run `yarn build` after checking out a different branch.
 
+## CI Limitations
+
+- **Cannot edit workflow files:** GitHub App tokens (used by `claude-code-action`) lack the `workflows` permission required to modify `.github/workflows/` files. Changes to workflow files must be committed manually or with a PAT that has the `workflows` scope.
+- **Skill files (`.claude/skills/`) can be edited** — they live in the repo, not in `.github/workflows/`.
+
 ## Node Version
 
 Node 22.18.0
