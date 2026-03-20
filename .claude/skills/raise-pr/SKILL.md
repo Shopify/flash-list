@@ -83,10 +83,11 @@ Fix any issues found, then amend the commit before proceeding.
 
 ### PR body template
 
-```bash
-gh pr create \
-  --title "fix(<scope>): <description>" \
-  --body "$(cat <<'EOF'
+**Always use `--body-file`** — inline `--body` with markdown `#` headers triggers Claude Code permission checks and wastes turns. Use the `Write` tool to create the file (not `cat` or `echo`, which may not be in allowed tools on CI).
+
+Write the following to `/tmp/pr-body.md` using the Write tool:
+
+```markdown
 ## Description
 
 <1-3 sentences: what the bug was and how the fix works>
@@ -108,7 +109,10 @@ Fixes #<number>
 - [ ] Verified on iOS simulator
 - [ ] No regressions on related screens
 EOF
-)"
+
+gh pr create \
+  --title "fix(<scope>): <description>" \
+  --body-file /tmp/pr-body.md
 ```
 
 Before running `gh pr create`, double-check:

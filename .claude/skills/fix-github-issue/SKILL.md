@@ -13,7 +13,7 @@ These are hard rules. Violating any of them is a failure.
 
 1. **NO mobile MCP** — Never call any `mcp__mobile-mcp__*` tool. No exceptions.
 2. **Device interaction = `agent-device` only** — All simulator/emulator interaction (screenshots, taps, typing, scrolling, app launch/kill) MUST go through `agent-device` CLI commands. Read the agent-device skill for allowed commands. Exception: `adb` is allowed for Android emulator setup (devices, install, reverse, shell getprop, screenrecord).
-3. **Reproduce first, code later** — Always reproduce the issue on the simulator before exploring code. The bug might already be fixed. Do not explore the codebase until you have confirmed the bug exists.
+3. **Reproduce first, code later** — Always reproduce the issue on the simulator before exploring code. The bug might already be fixed. Do not explore the codebase until you have confirmed the bug exists. **Exception**: Feature requests and new example screens have nothing to reproduce — go straight to implementation.
 4. **If you can't repro** — When running interactively, stop and prompt the user with suggestions. When running on CI (no user), attempt to diagnose from code and issue description.
 
 ## Steps
