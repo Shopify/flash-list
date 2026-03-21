@@ -1,1 +1,1 @@
-export { FlashListProps as RecyclerViewProps } from "../FlashListProps";
+export type { FlashListProps as RecyclerViewProps } from "../FlashListProps";
