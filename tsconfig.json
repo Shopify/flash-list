@@ -3,7 +3,8 @@
   "compilerOptions": {
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "module": "commonjs"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "src/__tests__", "**/*.test.ts?(x)"]
