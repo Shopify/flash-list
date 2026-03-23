@@ -89,12 +89,10 @@ export default class ViewabilityManager<T> {
     });
   };
 
-  public recomputeViewableItems = () => {
+  public clearLastReportedViewableIndices = () => {
     this.viewabilityHelpers.forEach((viewabilityHelper) =>
       viewabilityHelper.clearLastReportedViewableIndices()
     );
-
-    this.updateViewableItems();
   };
 
   /**

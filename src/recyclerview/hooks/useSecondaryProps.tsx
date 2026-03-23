@@ -2,9 +2,10 @@ import { Animated, RefreshControl } from "react-native";
 import React, { useMemo } from "react";
 
 import { RecyclerViewProps } from "../RecyclerViewProps";
-import { getValidComponent } from "../utils/componentUtils";
+import { getValidComponent, isComponentClass } from "../utils/componentUtils";
 import { CompatView } from "../components/CompatView";
 import { CompatAnimatedScroller } from "../components/CompatScroller";
+import { getInvertedTransformStyle } from "../utils/getInvertedTransformStyle";
 
 /**
  * Hook that manages secondary props and components for the RecyclerView.
@@ -30,6 +31,7 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     ListFooterComponent,
     ListFooterComponentStyle,
     ListEmptyComponent,
+    ListEmptyComponentStyle,
     renderScrollComponent,
     refreshing,
     progressViewOffset,
@@ -37,7 +39,13 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     data,
     refreshControl: customRefreshControl,
     stickyHeaderConfig,
+    inverted,
+    horizontal,
   } = props;
+
+  const invertedTransformStyle = inverted
+    ? getInvertedTransformStyle(horizontal)
+    : undefined;
 
   /**
    * Creates the refresh control component if onRefresh is provided.
@@ -65,11 +73,11 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
       return null;
     }
     return (
-      <CompatView style={ListHeaderComponentStyle}>
+      <CompatView style={[ListHeaderComponentStyle, invertedTransformStyle]}>
         {getValidComponent(ListHeaderComponent)}
       </CompatView>
     );
-  }, [ListHeaderComponent, ListHeaderComponentStyle]);
+  }, [ListHeaderComponent, ListHeaderComponentStyle, invertedTransformStyle]);
 
   /**
    * Creates the footer component with optional styling.
@@ -79,11 +87,11 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
       return null;
     }
     return (
-      <CompatView style={ListFooterComponentStyle}>
+      <CompatView style={[ListFooterComponentStyle, invertedTransformStyle]}>
         {getValidComponent(ListFooterComponent)}
       </CompatView>
     );
-  }, [ListFooterComponent, ListFooterComponentStyle]);
+  }, [ListFooterComponent, ListFooterComponentStyle, invertedTransformStyle]);
 
   /**
    * Creates the empty state component when there's no data.
@@ -93,8 +101,21 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     if (!ListEmptyComponent || (data && data.length > 0)) {
       return null;
     }
-    return getValidComponent(ListEmptyComponent);
-  }, [ListEmptyComponent, data]);
+    const emptyContent = getValidComponent(ListEmptyComponent);
+    if (!invertedTransformStyle && !ListEmptyComponentStyle) {
+      return emptyContent;
+    }
+    return (
+      <CompatView style={[ListEmptyComponentStyle, invertedTransformStyle]}>
+        {emptyContent}
+      </CompatView>
+    );
+  }, [
+    ListEmptyComponent,
+    data,
+    invertedTransformStyle,
+    ListEmptyComponentStyle,
+  ]);
 
   /**
    * Creates the sticky header backdrop component.
@@ -105,32 +126,41 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     }
     return (
       <CompatView
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-        }}
+        style={[
+          {
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+          },
+          invertedTransformStyle,
+        ]}
       >
         {getValidComponent(stickyHeaderConfig?.backdropComponent)}
       </CompatView>
     );
-  }, [stickyHeaderConfig?.backdropComponent]);
+  }, [stickyHeaderConfig?.backdropComponent, invertedTransformStyle]);
 
   /**
    * Creates an animated scroll component based on the provided renderScrollComponent.
    * If no custom component is provided, uses the default CompatAnimatedScroller.
    */
   const CompatScrollView = useMemo(() => {
-    let scrollComponent = CompatAnimatedScroller;
-    if (typeof renderScrollComponent === "function") {
+    let scrollComponent: React.ComponentType<any> = CompatAnimatedScroller;
+    if (
+      typeof renderScrollComponent === "function" &&
+      !isComponentClass(renderScrollComponent)
+    ) {
       // Create a forwarded ref wrapper for the custom scroll component
       const ForwardedScrollComponent = React.forwardRef((_props, ref) =>
-        (renderScrollComponent as any)({ ..._props, ref } as any)
+        (renderScrollComponent as (...args: unknown[]) => React.ReactNode)({
+          ..._props,
+          ref,
+        })
       );
       ForwardedScrollComponent.displayName = "CustomScrollView";
-      scrollComponent = ForwardedScrollComponent as any;
+      scrollComponent = ForwardedScrollComponent as React.ComponentType<any>;
     } else if (renderScrollComponent) {
-      scrollComponent = renderScrollComponent;
+      scrollComponent = renderScrollComponent as React.ComponentType<any>;
     }
     // Wrap the scroll component with Animated.createAnimatedComponent
     return Animated.createAnimatedComponent(scrollComponent);

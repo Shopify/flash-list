@@ -12,8 +12,8 @@ module.exports = {
         },
       },
     ],
-    // Reanimated plugin has to be listed last
-    "react-native-reanimated/plugin",
+    // Worklets plugin has to be listed last
+    "react-native-worklets/plugin",
   ],
   overrides: [
     {

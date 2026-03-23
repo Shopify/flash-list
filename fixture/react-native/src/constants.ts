@@ -24,6 +24,8 @@ export type RootStackParamList = {
   DynamicColumnSpan: undefined;
   HorizontalList: undefined;
   Chat: undefined;
+  ChatInverted: undefined;
+  InvertedTest: undefined;
   CellRendererExamples: undefined;
   HeaderFooterExample: undefined;
   DynamicItems: undefined;
@@ -36,4 +38,5 @@ export type RootStackParamList = {
   ManualBenchmarkExample: undefined;
   ManualFlatListBenchmarkExample: undefined;
   StickyHeaderExample: undefined;
+  GridWithSeparator: undefined;
 };

@@ -15,6 +15,7 @@ import React, {
 import { Animated, NativeScrollEvent } from "react-native";
 
 import { FlashListProps } from "../..";
+import { PlatformConfig } from "../../native/config/PlatformHelper";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { ViewHolder } from "../ViewHolder";
 
@@ -43,6 +44,8 @@ export interface StickyHeaderProps<TItem> {
   recyclerViewManager: RecyclerViewManager<TItem>;
   /** Additional data to trigger re-renders */
   extraData: FlashListProps<TItem>["extraData"];
+  /** Whether the list is inverted */
+  inverted: FlashListProps<TItem>["inverted"];
 }
 
 /**
@@ -68,6 +71,7 @@ export const StickyHeaders = <TItem,>({
   data,
   extraData,
   onChangeStickyIndex,
+  inverted,
 }: StickyHeaderProps<TItem>) => {
   const [stickyHeaderState, setStickyHeaderState] = useState<StickyHeaderState>(
     {
@@ -213,6 +217,7 @@ export const StickyHeaders = <TItem,>({
             trailingItem={null}
             target="StickyHeader"
             hidden={false}
+            inverted={inverted}
           />
         ) : null}
       </CompatAnimatedView>
@@ -226,7 +231,12 @@ export const StickyHeaders = <TItem,>({
     refHolder,
     extraData,
     stickyHeaderOffset,
+    inverted,
   ]);
+
+  if (PlatformConfig.isRN083OrAbove && currentStickyIndex === -1) {
+    return null;
+  }
 
   return headerContent;
 };

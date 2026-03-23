@@ -224,4 +224,68 @@ describe("LinearLayoutManager", () => {
       expect(getAllLayouts(manager).length).toBe(0);
     });
   });
+
+  describe("Stale layoutInfo handling", () => {
+    it("should filter out stale indices when layouts are truncated", () => {
+      // Start with 5 items
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        5,
+        defaultParams,
+        400,
+        100
+      );
+      expect(getAllLayouts(manager).length).toBe(5);
+      expect(manager.getLayoutSize().height).toBe(500);
+
+      // Simulate the race condition: layoutInfo contains indices 0-4 (from rendered ViewHolders)
+      // but totalItemCount is only 3 (data has shrunk)
+      const staleLayoutInfo = [
+        createMockLayoutInfo(0, 400, 100),
+        createMockLayoutInfo(1, 400, 100),
+        createMockLayoutInfo(2, 400, 100),
+        createMockLayoutInfo(3, 400, 100), // This index is now out of bounds
+        createMockLayoutInfo(4, 400, 100), // This index is now out of bounds
+      ];
+
+      // This should NOT crash - stale indices should be filtered out
+      expect(() => {
+        manager.modifyLayout(staleLayoutInfo, 3);
+      }).not.toThrow();
+
+      // Verify the layout was properly truncated
+      const updatedLayouts = getAllLayouts(manager);
+      expect(updatedLayouts.length).toBe(3);
+      expect(manager.getLayoutSize().height).toBe(300);
+
+      // Verify remaining items have correct positions
+      expect(updatedLayouts[0].y).toBe(0);
+      expect(updatedLayouts[1].y).toBe(100);
+      expect(updatedLayouts[2].y).toBe(200);
+    });
+
+    it("should handle all indices being stale", () => {
+      // Start with 5 items
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        5,
+        defaultParams,
+        400,
+        100
+      );
+
+      // All layoutInfo indices are >= new totalItemCount
+      const allStaleLayoutInfo = [
+        createMockLayoutInfo(3, 400, 100),
+        createMockLayoutInfo(4, 400, 100),
+      ];
+
+      // Should not crash when all indices are stale
+      expect(() => {
+        manager.modifyLayout(allStaleLayoutInfo, 3);
+      }).not.toThrow();
+
+      expect(getAllLayouts(manager).length).toBe(3);
+    });
+  });
 });

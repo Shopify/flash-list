@@ -38,6 +38,14 @@ export const ExamplesScreen = () => {
       destination: "Chat",
     },
     {
+      title: "Chat (Inverted)",
+      destination: "ChatInverted",
+    },
+    {
+      title: "Inverted Test",
+      destination: "InvertedTest",
+    },
+    {
       title: "RecyclerView Handler Test",
       destination: "RecyclerViewHandlerTest",
     },
@@ -110,6 +118,10 @@ export const ExamplesScreen = () => {
     {
       title: "Manual FlatList Benchmark Example",
       destination: "ManualFlatListBenchmarkExample",
+    },
+    {
+      title: "Grid with Separator",
+      destination: "GridWithSeparator",
     },
   ];
   return (

@@ -7,6 +7,11 @@ interface Layout {
   height: number;
 }
 
+interface Size {
+  width: number;
+  height: number;
+}
+
 /**
  * Measures the layout of a view relative to itselft.
  * Using measure wasn't returing accurate values but this workaround does.
@@ -89,14 +94,15 @@ export function roundOffPixel(value: number): number {
 }
 
 /**
- * Specific method for easier mocking
- * Measures the layout of parent of RecyclerView
- * Returns the x, y coordinates and dimensions of the view.
+ * Measures the size of the RecyclerView's outer container.
+ * Uses a self-relative measureLayout call to get width/height synchronously.
+ *
  * @param view - The React Native View component to measure
- * @returns An object containing x, y, width, and height measurements
+ * @returns An object containing width and height
  */
-export function measureParentSize(view: View): Layout {
-  return measureLayout(view, undefined);
+export function measureParentSize(view: View): Size {
+  const layout = measureLayout(view, undefined);
+  return { width: layout.width, height: layout.height };
 }
 
 /**
