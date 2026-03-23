@@ -171,10 +171,13 @@ export const ViewHolderCollection = <TItem,>(
   //   })
   // );
 
+  if (!hasData) {
+    return null;
+  }
+
   return (
-    <CompatView style={hasData && containerStyle}>
+    <CompatView style={containerStyle}>
       {containerLayout &&
-        hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
           const item = data[index];
           // Suppress separators for items in the last row to prevent
