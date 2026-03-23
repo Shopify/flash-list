@@ -110,10 +110,12 @@ Fixes #<number>
 - [ ] No regressions on related screens
 EOF
 
-gh pr create \
+GH_TOKEN="$AGENT_PR_TOKEN" gh pr create \
   --title "fix(<scope>): <description>" \
   --body-file /tmp/pr-body.md
 ```
+
+**MANDATORY:** The `GH_TOKEN="$AGENT_PR_TOKEN"` prefix is required. PRs created without it cannot be merged. On CI, `AGENT_PR_TOKEN` is set automatically from `SHOPIFY_GH_ACCESS_TOKEN`. Locally, ensure it is exported or pass your token directly.
 
 Before running `gh pr create`, double-check:
 - [ ] No mention of Claude, AI, Anthropic, or any AI tool anywhere

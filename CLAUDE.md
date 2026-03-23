@@ -35,6 +35,15 @@ Node 22.18.0
 - PR titles should be under 70 characters and match the commit format
 - Link issues with `Fixes #<number>` in the commit/PR body
 
+## Agent PR Token (MANDATORY)
+
+**All agent-raised PRs MUST use `SHOPIFY_GH_ACCESS_TOKEN` for PR creation.** PRs created without this token cannot be merged.
+
+- On CI: The token is available as `$AGENT_PR_TOKEN` environment variable in agent workflows.
+- When creating a PR, **always** use: `GH_TOKEN="$AGENT_PR_TOKEN" gh pr create ...`
+- The default `GITHUB_TOKEN` is used for all other operations (issue comments, push, checkout). Only PR creation uses `AGENT_PR_TOKEN`.
+- **Never** use bare `gh pr create` without the `GH_TOKEN="$AGENT_PR_TOKEN"` prefix — the PR will be unmergeable.
+
 ## Available Skills
 
 Skills are reusable workflows in `.claude/skills/`. Use them when relevant:

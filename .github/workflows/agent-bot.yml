@@ -75,6 +75,7 @@ jobs:
         uses: anthropics/claude-code-action@bf4f0de6fccd1eea7044a5f903fc928aff363134 # v1
         env:
           ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
+          AGENT_PR_TOKEN: ${{ secrets.SHOPIFY_GH_ACCESS_TOKEN }}
         with:
           trigger_phrase: "@agent"
           anthropic_api_key: ${{ secrets.AI_PROXY_TOKEN }}
