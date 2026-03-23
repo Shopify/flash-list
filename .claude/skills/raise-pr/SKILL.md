@@ -125,9 +125,17 @@ GH_TOKEN="$AGENT_PR_TOKEN" gh pr create \
   --body-file /tmp/pr-body.md
 ```
 
-**MANDATORY:** The `GH_TOKEN="$AGENT_PR_TOKEN"` prefix is required. PRs created without it cannot be merged. On CI, `AGENT_PR_TOKEN` is set automatically from `SHOPIFY_GH_ACCESS_TOKEN`. Locally, ensure it is exported or pass your token directly.
+> **CRITICAL — TOKEN VERIFICATION (read this before running `gh pr create`)**
+>
+> 1. First, verify the token is available: `echo "AGENT_PR_TOKEN is set: ${AGENT_PR_TOKEN:+yes}"` — if it prints "yes", proceed.
+> 2. You **MUST** use `GH_TOKEN="$AGENT_PR_TOKEN" gh pr create ...` — never bare `gh pr create`.
+> 3. PRs created with the default `GITHUB_TOKEN` show as `app/github-actions` and **cannot be merged**.
+> 4. After creating the PR, verify the author: `gh pr view --json author --jq '.author.login'` — it must NOT be `app/github-actions`.
+>
+> If `AGENT_PR_TOKEN` is empty, try `SHOPIFY_GH_ACCESS_TOKEN` as fallback: `GH_TOKEN="${AGENT_PR_TOKEN:-$SHOPIFY_GH_ACCESS_TOKEN}" gh pr create ...`
 
 Before running `gh pr create`, double-check:
+- [ ] Token is verified (see above)
 - [ ] No mention of Claude, AI, Anthropic, or any AI tool anywhere
 - [ ] Description explains the "what" and "why" clearly
 - [ ] Test plan is specific to the change
