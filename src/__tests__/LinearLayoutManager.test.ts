@@ -225,6 +225,42 @@ describe("LinearLayoutManager", () => {
     });
   });
 
+  describe("Position consistency after partial recomputation", () => {
+    it("should maintain monotonic y positions when early items grow", () => {
+      // Create a large list with uniform heights
+      const itemCount = 500;
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        itemCount,
+        defaultParams,
+        400,
+        100
+      );
+
+      // Verify initial positions are correct
+      const initialLayouts = getAllLayouts(manager);
+      expect(initialLayouts[499].y).toBe(49900);
+
+      // Now simulate items 0-9 being re-measured with much larger heights.
+      // This will cause the average height estimate to increase, making
+      // the recomputed range's positions shift forward while items beyond
+      // the recomputed range still have their old (lower) positions.
+      const updatedLayoutInfos = [];
+      for (let i = 0; i < 10; i++) {
+        updatedLayoutInfos.push(createMockLayoutInfo(i, 400, 300));
+      }
+      manager.modifyLayout(updatedLayoutInfos, itemCount);
+
+      // Verify all positions are monotonically increasing (no backwards jumps)
+      const layouts = getAllLayouts(manager);
+      for (let i = 1; i < itemCount; i++) {
+        expect(layouts[i].y).toBeGreaterThanOrEqual(
+          layouts[i - 1].y + layouts[i - 1].height
+        );
+      }
+    });
+  });
+
   describe("Stale layoutInfo handling", () => {
     it("should filter out stale indices when layouts are truncated", () => {
       // Start with 5 items

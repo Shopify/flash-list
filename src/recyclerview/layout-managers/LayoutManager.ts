@@ -359,9 +359,18 @@ export abstract class RVLayoutManager {
         this.lastSkippedLayoutIndex
       );
       const lastIndex = this.layouts.length - 1;
-      // Since layout managers derive height from last indices we need to make
-      // sure they're not too much out of sync.
-      if (this.layouts[lastIndex].y < this.layouts[endIndex].y) {
+      // Check if the item immediately after the recomputed range has a stale
+      // position that goes backwards relative to the last recomputed item.
+      // When dynamic item heights cause the average estimate to grow, items
+      // in the recomputed range shift forward while items beyond it keep
+      // their old (lower) positions. This breaks the monotonic ordering
+      // that the binary search in getVisibleLayouts relies on, causing
+      // items to overlap and jump during fast scrolling.
+      const endLayout = this.layouts[endIndex];
+      const nextLayout = this.layouts[endIndex + 1];
+      const endPos = this.horizontal ? endLayout.x : endLayout.y;
+      const nextPos = this.horizontal ? nextLayout.x : nextLayout.y;
+      if (nextPos < endPos) {
         this.recomputeLayouts(this.lastSkippedLayoutIndex, lastIndex);
         this.lastSkippedLayoutIndex = Number.MAX_VALUE;
       }
