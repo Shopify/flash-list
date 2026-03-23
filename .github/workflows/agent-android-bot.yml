@@ -26,7 +26,7 @@ env:
     Bash(git log),Bash(git log *),Bash(git diff),Bash(git diff *),Bash(git status),Bash(git show *),
     Bash(git checkout *),Bash(git add *),Bash(git commit *),Bash(git push -u *),
     Bash(git branch),Bash(git branch *),Bash(git rev-parse *),Bash(git fetch),Bash(git fetch *),
-    Bash(gh issue *),Bash(gh pr *),Bash(gh label *),
+    Bash(gh issue *),Bash(gh pr *),Bash(gh label *),Bash(GH_TOKEN=* gh pr *),
     Bash(agent-device *),
     Bash(adb devices),Bash(adb wait-for-device),Bash(adb install *),Bash(adb reverse *),
     Bash(adb shell getprop *),Bash(adb shell am *),Bash(adb shell pm *),Bash(adb shell screenrecord *),
