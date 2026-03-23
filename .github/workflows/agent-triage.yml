@@ -29,7 +29,7 @@ jobs:
           claude_args: >-
             --model claude-sonnet-4-6
             --max-turns 10
-            --allowedTools "Read,Write,Glob,Grep,Bash(gh issue *),Bash(gh label *)"
+            --allowedTools "Read,Write,Glob,Grep,WebSearch,WebFetch,Bash(gh issue *),Bash(gh label *)"
             --disallowedTools "Edit,MultiEdit"
           prompt: |
             You are running on CI (GitHub Actions).

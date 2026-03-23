@@ -13,7 +13,7 @@ permissions:
 
 env:
   ALLOWED_TOOLS: >-
-    Read,Edit,Write,Glob,Grep,
+    Read,Edit,Write,Glob,Grep,WebSearch,WebFetch,
     Bash(yarn install),Bash(yarn install *),Bash(yarn build),Bash(yarn build *),Bash(yarn test),Bash(yarn test *),Bash(yarn type-check),Bash(yarn lint),Bash(yarn start),Bash(yarn start *),Bash(yarn e2e:*),Bash(yarn react-native *),Bash(bundle exec *),Bash(pod install),Bash(pod install *),
     Bash(git log),Bash(git log *),Bash(git diff),Bash(git diff *),Bash(git status),Bash(git show *),
     Bash(git checkout *),Bash(git add *),Bash(git commit *),Bash(git push -u *),
