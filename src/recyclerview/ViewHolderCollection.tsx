@@ -172,7 +172,7 @@ export const ViewHolderCollection = <TItem,>(
   // );
 
   return (
-    <CompatView style={hasData && containerStyle}>
+    <CompatView style={hasData && containerStyle} removeClippedSubviews={false}>
       {containerLayout &&
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {

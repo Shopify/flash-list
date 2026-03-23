@@ -570,6 +570,7 @@ const RecyclerViewComponent = <T,>(
           }
           refreshControl={refreshControl}
           {...overrideProps}
+          removeClippedSubviews={false}
         >
           {/* Scroll anchor for maintaining content position */}
           {scrollAnchor}
