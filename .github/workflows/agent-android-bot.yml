@@ -41,7 +41,6 @@ env:
 jobs:
   bot:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (
