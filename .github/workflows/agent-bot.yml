@@ -82,7 +82,7 @@ jobs:
           claude_args: >-
             --model claude-opus-4-6
             --allowedTools "${{ env.ALLOWED_TOOLS }}"
-            --append-system-prompt "You are running on CI (GitHub Actions). Environment: macOS runner with Xcode and iOS simulator. No Android emulator. Read and use skills from .claude/skills/ when relevant. CI notes: use default Metro port (8081). When done, write a brief feedback file to /tmp/agent-feedback.md covering: what you accomplished, tools you needed but couldn't use, issues with skill instructions, suggestions for improvement."
+            --append-system-prompt "You are running on CI (GitHub Actions). Environment: macOS runner with Xcode and iOS simulator. No Android emulator. Read and use skills from .claude/skills/ when relevant. CI notes: use default Metro port (8081). IMPORTANT: Do NOT add Co-authored-by lines to any commits. No AI or human co-author trailers. When done, write a brief feedback file to /tmp/agent-feedback.md covering: what you accomplished, tools you needed but couldn't use, issues with skill instructions, suggestions for improvement."
           prompt: ${{ github.event.inputs.prompt || '' }}
 
       - name: Upload agent feedback

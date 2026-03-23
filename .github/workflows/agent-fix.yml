@@ -87,6 +87,7 @@ jobs:
             Fix ONLY this issue — do not fix other issues. Read and follow .claude/skills/fix-github-issue/SKILL.md for the full workflow.
             After fixing, read and follow .claude/skills/raise-pr/SKILL.md to raise a PR.
             CI notes: use default Metro port (8081).
+            IMPORTANT: Do NOT add Co-authored-by lines to any commits. No AI or human co-author trailers.
 
             When done (whether successful or not), write a brief feedback file to /tmp/agent-feedback.md with:
             - What you accomplished (or where you got stuck)
