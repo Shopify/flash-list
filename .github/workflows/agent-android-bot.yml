@@ -31,7 +31,7 @@ env:
     Bash(adb devices),Bash(adb wait-for-device),Bash(adb install *),Bash(adb reverse *),
     Bash(adb shell getprop *),Bash(adb shell am *),Bash(adb shell pm *),Bash(adb shell screenrecord *),
     Bash(adb pull *),Bash(adb shell kill *),Bash(adb shell pidof *),
-    Bash(curl *),
+    Bash(curl http://localhost:*),Bash(curl -s http://localhost:*),Bash(curl -sS http://localhost:*),
     Bash(grep *),Bash(find *),Bash(ls),Bash(ls *),Bash(mkdir *),Bash(rm *),
     Bash(kill *),Bash(lsof),Bash(lsof *),Bash(nohup *),Bash(sleep *),
     Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),
