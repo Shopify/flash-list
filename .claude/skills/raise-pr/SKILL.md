@@ -15,6 +15,16 @@ description: Create a GitHub PR for FlashList. Ensures no AI/Claude attribution 
 
 ---
 
+## Step 0 — Kill Background Processes (MANDATORY on CI)
+
+Before creating the branch and PR, kill any background processes you started (Metro, emulators, etc.). On CI, leftover processes prevent the GitHub Actions job from exiting.
+
+```bash
+lsof -ti:8081 | xargs kill -9 2>/dev/null || true
+```
+
+---
+
 ## Step 1 — Create Branch and Commit
 
 ### Branch naming

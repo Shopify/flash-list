@@ -44,6 +44,14 @@ Node 22.18.0
 - The default `GITHUB_TOKEN` is used for all other operations (issue comments, push, checkout). Only PR creation uses `AGENT_PR_TOKEN`.
 - **Never** use bare `gh pr create` without the `GH_TOKEN="$AGENT_PR_TOKEN"` prefix — the PR will be unmergeable.
 
+## CI Cleanup (MANDATORY)
+
+**Before finishing on CI, kill all background processes you started** — especially Metro (`port 8081`). Leftover processes prevent the GitHub Actions job from exiting, causing it to run until timeout and waste CI minutes.
+
+```bash
+lsof -ti:8081 | xargs kill -9 2>/dev/null || true
+```
+
 ## Available Skills
 
 Skills are reusable workflows in `.claude/skills/`. Use them when relevant:

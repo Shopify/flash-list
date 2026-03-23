@@ -23,7 +23,8 @@ These are hard rules. Violating any of them is a failure.
 3. Implement the fix
 4. Review your code for any obvious problems
 5. Verify the fix using `agent-device` skill
-6. **Raise a PR** using the raise-pr skill. When running interactively, confirm with dev first. On CI, raise directly.
+6. **Kill background processes** — before raising a PR, kill any Metro bundler or other background processes you started (see Cleanup section below).
+7. **Raise a PR** using the raise-pr skill. When running interactively, confirm with dev first. On CI, raise directly.
 
 ## Running Metro
 
@@ -68,6 +69,19 @@ This runs `detox build -c ios.sim.release` followed by `detox test -c ios.sim.re
 ```bash
 cd fixture/react-native && yarn react-native run-ios
 ```
+
+## Cleanup (MANDATORY on CI)
+
+**Before raising a PR or finishing, kill all background processes you started.** On CI, leftover processes (especially Metro) prevent the GitHub Actions job from exiting, causing it to run until the timeout.
+
+```bash
+# Kill Metro bundler
+lsof -ti:8081 | xargs kill -9 2>/dev/null || true
+# Kill any other background processes you started
+kill %1 2>/dev/null || true
+```
+
+Always do this **before** the raise-pr step.
 
 ## Common Pitfalls
 
