@@ -127,7 +127,7 @@ GH_TOKEN="$AGENT_PR_TOKEN" gh pr create \
 
 > **CRITICAL — TOKEN VERIFICATION (read this before running `gh pr create`)**
 >
-> 1. First, verify the token is available: `echo "AGENT_PR_TOKEN is set: ${AGENT_PR_TOKEN:+yes}"` — if it prints "yes", proceed.
+> 1. First, verify the token is available: `[ -n "$AGENT_PR_TOKEN" ] && echo "token ok" || echo "TOKEN MISSING"` — do NOT echo the token value itself.
 > 2. You **MUST** use `GH_TOKEN="$AGENT_PR_TOKEN" gh pr create ...` — never bare `gh pr create`.
 > 3. PRs created with the default `GITHUB_TOKEN` show as `app/github-actions` and **cannot be merged**.
 > 4. After creating the PR, verify the author: `gh pr view --json author --jq '.author.login'` — it must NOT be `app/github-actions`.

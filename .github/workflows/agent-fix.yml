@@ -80,7 +80,11 @@ jobs:
           prompt: |
             You are running on CI (GitHub Actions). There is no human to confirm with — act autonomously.
             Environment: macOS runner with Xcode and iOS simulator. No Android emulator.
-            Fix this GitHub issue. Read and follow .claude/skills/fix-github-issue/SKILL.md for the full workflow.
+
+            YOUR ASSIGNED ISSUE: #${{ github.event.issue.number }}
+            TITLE: ${{ github.event.issue.title }}
+
+            Fix ONLY this issue — do not fix other issues. Read and follow .claude/skills/fix-github-issue/SKILL.md for the full workflow.
             After fixing, read and follow .claude/skills/raise-pr/SKILL.md to raise a PR.
             CI notes: use default Metro port (8081).
 
