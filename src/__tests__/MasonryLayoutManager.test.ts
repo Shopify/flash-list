@@ -202,11 +202,11 @@ describe("MasonryLayoutManager", () => {
       // Col 1: items 1 (h=50),  3 (h=50),  5 (h=50)  -> y: 0, 50, 100
       const layoutInfos = [
         createMockLayoutInfo(0, 200, 300), // Col 0, y=0
-        createMockLayoutInfo(1, 200, 50),  // Col 1, y=0
+        createMockLayoutInfo(1, 200, 50), // Col 1, y=0
         createMockLayoutInfo(2, 200, 100), // Col 0, y=300
-        createMockLayoutInfo(3, 200, 50),  // Col 1, y=50
+        createMockLayoutInfo(3, 200, 50), // Col 1, y=50
         createMockLayoutInfo(4, 200, 100), // Col 0, y=400
-        createMockLayoutInfo(5, 200, 50),  // Col 1, y=100
+        createMockLayoutInfo(5, 200, 50), // Col 1, y=100
       ];
       manager.modifyLayout(layoutInfos, 6);
       const layouts = getAllLayouts(manager);
@@ -240,10 +240,10 @@ describe("MasonryLayoutManager", () => {
       // Col 0: item 0 (h=50), item 2 (h=50) -> y: 0, 50
       // Col 1: item 1 (h=300), item 3 (h=50) -> y: 0, 300
       const layoutInfos = [
-        createMockLayoutInfo(0, 200, 50),  // Col 0, y=0
+        createMockLayoutInfo(0, 200, 50), // Col 0, y=0
         createMockLayoutInfo(1, 200, 300), // Col 1, y=0
-        createMockLayoutInfo(2, 200, 50),  // Col 0, y=50
-        createMockLayoutInfo(3, 200, 50),  // Col 1, y=300
+        createMockLayoutInfo(2, 200, 50), // Col 0, y=50
+        createMockLayoutInfo(3, 200, 50), // Col 1, y=300
       ];
       manager.modifyLayout(layoutInfos, 4);
 

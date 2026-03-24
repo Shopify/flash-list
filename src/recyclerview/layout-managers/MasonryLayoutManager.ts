@@ -1,3 +1,5 @@
+import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
+
 import {
   LayoutParams,
   RVDimension,
@@ -5,7 +7,6 @@ import {
   RVLayoutInfo,
   RVLayoutManager,
 } from "./LayoutManager";
-import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
 
 /**
  * MasonryLayoutManager implementation that arranges items in a masonry/pinterest-style layout.
@@ -19,6 +20,8 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   private columnHeights: number[];
   /** Current column index for sequential placement */
   private currentColumn = 0;
+  /** Per-column sorted lists of item indices for efficient visibility detection */
+  private columnItems: number[][] = [];
 
   /** If there's a span change for masonry layout, we need to recompute all the widths */
   private fullRelayoutRequired = false;
@@ -156,6 +159,8 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         this.placeItemSequentially(layout, span);
       }
     }
+    // Rebuild per-column item mappings for efficient visibility detection
+    this.rebuildColumnItems();
   }
 
   /**
@@ -323,31 +328,86 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
   }
 
   /**
-   * Override getVisibleLayouts to avoid using binary search on the full
-   * layouts array. In masonry layout, item y-positions are NOT sorted by
-   * index (items are placed in columns), so binary search produces wrong
-   * results causing items to disappear. Instead, we scan each column
-   * independently where y-positions ARE sorted, and combine the results.
+   * Rebuilds per-column item index arrays from layout positions.
+   * Within each column, items are sorted by y-position (guaranteed by
+   * placement order since column heights only increase).
+   */
+  private rebuildColumnItems(): void {
+    const columnWidth = this.boundedSize / this.maxColumns;
+    this.columnItems = Array.from({ length: this.maxColumns }, () => []);
+    for (let i = 0; i < this.layouts.length; i++) {
+      const layout = this.layouts[i];
+      const col = Math.min(
+        Math.round(layout.x / columnWidth),
+        this.maxColumns - 1
+      );
+      this.columnItems[col].push(i);
+    }
+  }
+
+  /**
+   * Override getVisibleLayouts to use per-column binary search instead of
+   * a single binary search on the full layouts array. In masonry layout,
+   * y-positions are NOT sorted by index (items are placed in columns), but
+   * they ARE sorted within each column. Binary searching each column gives
+   * O(numColumns * log(n/numColumns)) performance.
    */
   getVisibleLayouts(
     unboundDimensionStart: number,
     unboundDimensionEnd: number
   ): ConsecutiveNumbers {
+    if (this.layouts.length === 0) {
+      return ConsecutiveNumbers.EMPTY;
+    }
+
     let firstVisibleIndex = -1;
     let lastVisibleIndex = -1;
-    const layoutCount = this.layouts.length;
 
-    for (let i = 0; i < layoutCount; i++) {
-      const layout = this.layouts[i];
-      const position = layout.y;
-      const size = layout.height;
+    for (const items of this.columnItems) {
+      if (items.length === 0) continue;
 
-      // Item is visible if it overlaps with the viewport
-      if (position + size > unboundDimensionStart && position < unboundDimensionEnd) {
-        if (firstVisibleIndex === -1) {
-          firstVisibleIndex = i;
+      // Binary search for first visible item in this column:
+      // find first item where y + height > unboundDimensionStart
+      let lo = 0;
+      let hi = items.length - 1;
+      let colFirst = -1;
+      while (lo <= hi) {
+        const mid = (lo + hi) >>> 1;
+        const layout = this.layouts[items[mid]];
+        if (layout.y + layout.height > unboundDimensionStart) {
+          colFirst = mid;
+          hi = mid - 1;
+        } else {
+          lo = mid + 1;
         }
-        lastVisibleIndex = i;
+      }
+      if (colFirst === -1) continue;
+
+      // Binary search for last visible item in this column:
+      // find last item where y < unboundDimensionEnd
+      lo = colFirst;
+      hi = items.length - 1;
+      let colLast = -1;
+      while (lo <= hi) {
+        const mid = (lo + hi) >>> 1;
+        const layout = this.layouts[items[mid]];
+        if (layout.y < unboundDimensionEnd) {
+          colLast = mid;
+          lo = mid + 1;
+        } else {
+          hi = mid - 1;
+        }
+      }
+      if (colLast === -1) continue;
+
+      // Update global min/max with item indices from this column
+      const colFirstIndex = items[colFirst];
+      const colLastIndex = items[colLast];
+      if (firstVisibleIndex === -1 || colFirstIndex < firstVisibleIndex) {
+        firstVisibleIndex = colFirstIndex;
+      }
+      if (lastVisibleIndex === -1 || colLastIndex > lastVisibleIndex) {
+        lastVisibleIndex = colLastIndex;
       }
     }
 
