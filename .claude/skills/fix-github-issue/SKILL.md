@@ -97,6 +97,7 @@ Always do this **before** the raise-pr step.
 
 - **`dist/` is NOT rebuilt on branch switch** — you MUST `yarn build` after every `git checkout`. Verify with `grep` in `dist/` that the expected code change is present. Without this, you test stale code and get false results.
 - **Always reproduce the bug on `main` BEFORE testing the fix** — without confirming the bug exists on the base branch, you can't prove the fix works. See `review-and-test` skill → "Review Methodology".
+- **Code-only diagnosis is acceptable on CI** — layout/scroll bugs, Android-only issues (no emulator on macOS CI), and web/SSR issues (no browser on CI) can be diagnosed from code analysis + unit tests when simulator reproduction isn't feasible.
 
 For more testing/debugging pitfalls (console.log, RTL setup, agent-device swipe, observable callbacks), see the **`review-and-test` skill**.
 

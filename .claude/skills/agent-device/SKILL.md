@@ -286,6 +286,12 @@ settings wifi off                     # Toggle wifi
 settings permission grant camera      # Grant camera permission
 ```
 
+## CI Known Issues
+
+- **Session creation may hang on CI runners** — `agent-device open` can hang indefinitely on CI. Set reasonable timeouts and be prepared to fall back to code-only verification with unit tests.
+- **Use full bundle ID on CI** — the app may not be recognized by display name; use the full bundle ID (e.g., `org.reactjs.native.example.FlatListPro`) instead of `FlatListPro`.
+- **Snapshot/session timeouts** — CI runners may experience persistent timeouts with snapshots and sessions. If agent-device is unavailable, document it in feedback and proceed with automated tests only.
+
 ## Tips
 
 - Round coordinates to the nearest integer
