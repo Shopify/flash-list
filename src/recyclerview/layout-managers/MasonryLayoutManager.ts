@@ -5,6 +5,7 @@ import {
   RVLayoutInfo,
   RVLayoutManager,
 } from "./LayoutManager";
+import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
 
 /**
  * MasonryLayoutManager implementation that arranges items in a masonry/pinterest-style layout.
@@ -319,6 +320,41 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         this.currentColumn = (startColumn + span) % this.maxColumns;
       }
     }
+  }
+
+  /**
+   * Override getVisibleLayouts to avoid using binary search on the full
+   * layouts array. In masonry layout, item y-positions are NOT sorted by
+   * index (items are placed in columns), so binary search produces wrong
+   * results causing items to disappear. Instead, we scan each column
+   * independently where y-positions ARE sorted, and combine the results.
+   */
+  getVisibleLayouts(
+    unboundDimensionStart: number,
+    unboundDimensionEnd: number
+  ): ConsecutiveNumbers {
+    let firstVisibleIndex = -1;
+    let lastVisibleIndex = -1;
+    const layoutCount = this.layouts.length;
+
+    for (let i = 0; i < layoutCount; i++) {
+      const layout = this.layouts[i];
+      const position = layout.y;
+      const size = layout.height;
+
+      // Item is visible if it overlaps with the viewport
+      if (position + size > unboundDimensionStart && position < unboundDimensionEnd) {
+        if (firstVisibleIndex === -1) {
+          firstVisibleIndex = i;
+        }
+        lastVisibleIndex = i;
+      }
+    }
+
+    if (firstVisibleIndex !== -1 && lastVisibleIndex !== -1) {
+      return new ConsecutiveNumbers(firstVisibleIndex, lastVisibleIndex);
+    }
+    return ConsecutiveNumbers.EMPTY;
   }
 
   // TODO: For masonry, the "last row" is the last item in each column.
