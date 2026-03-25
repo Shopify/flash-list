@@ -51,6 +51,7 @@ import { useSecondaryProps } from "./hooks/useSecondaryProps";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
 import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
 import { useRecyclerViewController } from "./hooks/useRecyclerViewController";
+import { useStickyHeaderIndices } from "./hooks/useStickyHeaderIndices";
 import { RenderTimeTracker } from "./helpers/RenderTimeTracker";
 
 /**
@@ -81,7 +82,8 @@ const RecyclerViewComponent = <T,>(
     ItemSeparatorComponent,
     renderScrollComponent,
     style,
-    stickyHeaderIndices,
+    stickyHeaderIndices: stickyHeaderIndicesProp,
+    isStickyItem,
     maintainVisibleContentPosition,
     onCommitLayoutEffect,
     onChangeStickyIndex,
@@ -99,6 +101,18 @@ const RecyclerViewComponent = <T,>(
     stickyHeaderConfig?.useNativeDriver ?? true;
   const stickyHeaderHideRelatedCell =
     stickyHeaderConfig?.hideRelatedCell ?? false;
+
+  if (isStickyItem && stickyHeaderIndicesProp) {
+    console.warn(
+      WarningMessages.isStickyItemAndStickyHeaderIndicesBothProvided
+    );
+  }
+
+  const stickyHeaderIndices = useStickyHeaderIndices(
+    isStickyItem,
+    data,
+    stickyHeaderIndicesProp
+  );
 
   // Core refs for managing scroll view, internal view, and child container
   const scrollViewRef = useRef<CompatScroller>(null);

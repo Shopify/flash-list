@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { ScrollView } from "react-native";
 
@@ -23,15 +23,10 @@ const Contacts = () => {
     setData(contactsWithTitles);
   }, []);
 
-  const stickyHeaderIndices = data
-    .map((item, index) => {
-      if (typeof item === "string") {
-        return index;
-      } else {
-        return null;
-      }
-    })
-    .filter((item) => item !== null) as number[];
+  const isStickyItem = useCallback(
+    (item: Contact | string) => typeof item === "string",
+    []
+  );
 
   const renderScrollComponent = useMemo(() => {
     // eslint-disable-next-line react/display-name
@@ -55,7 +50,7 @@ const Contacts = () => {
         return typeof item === "string" ? "sectionHeader" : "row";
       }}
       ItemSeparatorComponent={ContactDivider}
-      stickyHeaderIndices={stickyHeaderIndices}
+      isStickyItem={isStickyItem}
       ListHeaderComponent={ContactHeader}
       initialScrollIndex={debugContext.initialScrollIndex}
       renderScrollComponent={renderScrollComponent}

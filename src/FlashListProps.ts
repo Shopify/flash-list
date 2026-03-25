@@ -408,4 +408,12 @@ export interface FlashListProps<TItem>
         hideRelatedCell?: boolean;
       }
     | undefined;
+
+  /**
+   * Predicate function to determine which items should be sticky headers.
+   * Called for each item in `data`. Return `true` to make the item sticky.
+   * This is an alternative to `stickyHeaderIndices` — do not use both.
+   * For best performance, memoize with `useCallback`.
+   */
+  isStickyItem?: (item: TItem, index: number) => boolean;
 }
