@@ -64,6 +64,7 @@ Skills are reusable workflows in `.claude/skills/`. Use them when relevant:
 | `triage-issue` | Classifying an issue (P0/P1/P2), finding duplicates, applying labels |
 | `agent-device` | Interacting with iOS simulator or Android emulator (snapshot-based coordinates) |
 | `upgrade-react-native` | Upgrading the fixture app's React Native version |
+| `analyze-feedback` | Scanning agent workflow feedback artifacts and incorporating learnings into skills |
 
 ## Self-Learning
 
@@ -80,6 +81,7 @@ When you discover something important during a session — a pitfall, a non-obvi
 - Testing edge cases → `review-and-test` skill (Edge Cases section)
 - Device interaction quirks → `agent-device` skill
 - Project-wide facts → this file (`CLAUDE.md`)
+- Batch analysis of agent feedback → use the `analyze-feedback` skill to scan workflow artifacts
 
 **How:**
 - Include the update in the same PR as the fix (not a separate PR)

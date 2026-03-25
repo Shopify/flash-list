@@ -32,5 +32,11 @@ description: Triage a GitHub issue — classify priority (P0/P1/P2), search for 
 - Do NOT modify any code.
 - Do NOT close issues — only label (and comment per Step 5 when genuinely needed).
 - **Only apply these labels**: `P0`, `P1`, `P2`. Do NOT apply any other labels (especially not `agent-fix`).
+- If the issue already has non-priority labels (e.g., `agent-fix`), leave them as-is — triage only adds priority labels, never removes existing ones.
+- **Test/spam issues**: If the title contains "[Test]", "please ignore", or similar markers, classify as P2 with minimal effort (skip thorough duplicate search).
 - Do NOT run `gh auth`, `gh api`, `gh secret`, or any `gh` command other than `gh issue`.
 - Do NOT read environment variables, process info, or files outside the repository.
+
+## CI Notes
+
+On CI, the issue number should be passed in the workflow prompt. If `gh issue` commands are blocked by permissions, the workflow's `allowedTools` or `settings.json` must include `gh issue view`, `gh issue list`, `gh issue edit`, and `gh issue comment`.
