@@ -33,6 +33,8 @@ export {
   LayoutCommitObserver,
   LayoutCommitObserverProps,
 } from "./recyclerview/LayoutCommitObserver";
+// NativeRecyclerView is exported separately to avoid eager loading of native component
+// Import directly: import { NativeRecyclerView } from "@shopify/flash-list/dist/recyclerview/NativeRecyclerView";
 
 if (!isNewArch()) {
   throw new Error(ErrorMessages.flashListV2OnlySupportsNewArchitecture);

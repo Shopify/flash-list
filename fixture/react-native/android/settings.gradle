@@ -3,4 +3,6 @@ plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'FlatListPro'
 include ':app'
+include ':flash-list-native'
+project(':flash-list-native').projectDir = new File(rootProject.projectDir, '../../../android')
 includeBuild('../node_modules/@react-native/gradle-plugin')
