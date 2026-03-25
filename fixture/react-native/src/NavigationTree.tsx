@@ -36,6 +36,7 @@ import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 import { StickyHeaderExample } from "./StickyHeaderExample";
 import { GridWithSeparator } from "./GridWithSeparator";
 import { HorizontalMVCP } from "./HorizontalMVCP";
+import { NativeRecyclerTestScreen } from "./NativeRecyclerTest";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -154,6 +155,11 @@ const NavigationTree = () => {
           name="HorizontalMVCP"
           component={HorizontalMVCP}
           options={{ title: "Horizontal MVCP" }}
+        />
+        <Stack.Screen
+          name="NativeRecyclerTest"
+          component={NativeRecyclerTestScreen}
+          options={{ title: "Native Recycler Tests" }}
         />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />

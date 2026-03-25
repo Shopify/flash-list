@@ -81,6 +81,9 @@
   "files": [
     "dist",
     "src",
+    "android",
+    "ios",
+    "RNFlashList.podspec",
     "jestSetup.js",
     "!__tests__"
   ]

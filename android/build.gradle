@@ -1,0 +1,72 @@
+def isNewArchitectureEnabled() {
+    return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
+}
+
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+
+// Note: com.facebook.react plugin not applied here since this module
+// uses a simple ViewManager, not codegen-based Fabric components.
+// This avoids duplicate class conflicts from codegen schema.
+
+def getExtOrDefault(name) {
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["FlashList_" + name]
+}
+
+def getExtOrIntegerDefault(name) {
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["FlashList_" + name]).toInteger()
+}
+
+def supportsNamespace() {
+    def parsed = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')
+    def major = parsed[0].toInteger()
+    def minor = parsed[1].toInteger()
+    return (major == 7 && minor >= 3) || major >= 8
+}
+
+android {
+    if (supportsNamespace()) {
+        namespace "com.shopify.reactnative.flash_list"
+    }
+
+    compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
+
+    defaultConfig {
+        minSdkVersion getExtOrIntegerDefault("minSdkVersion")
+        targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    sourceSets {
+        main {
+            if (isNewArchitectureEnabled()) {
+                java.srcDirs += [
+                    "src/newarch",
+                    "src/newarch/java"
+                ]
+            } else {
+                java.srcDirs += [
+                    "src/oldarch",
+                    "src/oldarch/java"
+                ]
+            }
+        }
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.facebook.react:react-android:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${getExtOrDefault("kotlinVersion")}"
+    implementation "androidx.recyclerview:recyclerview:1.3.2"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+}

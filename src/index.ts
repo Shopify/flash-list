@@ -33,6 +33,7 @@ export {
   LayoutCommitObserver,
   LayoutCommitObserverProps,
 } from "./recyclerview/LayoutCommitObserver";
+export { NativeFlashListView } from "./native/NativeFlashListView";
 
 if (!isNewArch()) {
   throw new Error(ErrorMessages.flashListV2OnlySupportsNewArchitecture);

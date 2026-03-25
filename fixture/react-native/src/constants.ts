@@ -40,4 +40,5 @@ export type RootStackParamList = {
   StickyHeaderExample: undefined;
   GridWithSeparator: undefined;
   HorizontalMVCP: undefined;
+  NativeRecyclerTest: undefined;
 };

@@ -127,6 +127,10 @@ export const ExamplesScreen = () => {
       title: "Horizontal MVCP",
       destination: "HorizontalMVCP",
     },
+    {
+      title: "Native Recycler Tests",
+      destination: "NativeRecyclerTest",
+    },
   ];
   return (
     <>
