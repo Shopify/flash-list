@@ -122,9 +122,7 @@ export const StickyHeaderExample = forwardRef(
             }
             stickyHeaderConfig={stickyHeaderConfig}
             contentContainerStyle={
-              withHorizontalPadding
-                ? { paddingHorizontal: 16 }
-                : undefined
+              withHorizontalPadding ? { paddingHorizontal: 16 } : undefined
             }
             ItemSeparatorComponent={ItemSeparator}
           />
