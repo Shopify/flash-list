@@ -12,7 +12,13 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { Animated, NativeScrollEvent } from "react-native";
+import {
+  Animated,
+  NativeScrollEvent,
+  StyleProp,
+  StyleSheet,
+  ViewStyle,
+} from "react-native";
 
 import { FlashListProps } from "../..";
 import { PlatformConfig } from "../../native/config/PlatformHelper";
@@ -46,6 +52,8 @@ export interface StickyHeaderProps<TItem> {
   extraData: FlashListProps<TItem>["extraData"];
   /** Whether the list is inverted */
   inverted: FlashListProps<TItem>["inverted"];
+  /** Content container style from which horizontal padding is extracted */
+  contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -72,6 +80,7 @@ export const StickyHeaders = <TItem,>({
   extraData,
   onChangeStickyIndex,
   inverted,
+  contentContainerStyle,
 }: StickyHeaderProps<TItem>) => {
   const [stickyHeaderState, setStickyHeaderState] = useState<StickyHeaderState>(
     {
@@ -192,6 +201,23 @@ export const StickyHeaders = <TItem,>({
     stickyHeaderOffset,
   ]);
 
+  // Extract horizontal padding from contentContainerStyle
+  const horizontalPadding = useMemo(() => {
+    const flatStyle = StyleSheet.flatten(contentContainerStyle) ?? {};
+    return {
+      paddingLeft:
+        flatStyle.paddingLeft ??
+        flatStyle.paddingHorizontal ??
+        flatStyle.padding,
+      paddingRight:
+        flatStyle.paddingRight ??
+        flatStyle.paddingHorizontal ??
+        flatStyle.padding,
+      paddingStart: flatStyle.paddingStart,
+      paddingEnd: flatStyle.paddingEnd,
+    };
+  }, [contentContainerStyle]);
+
   // Memoize header content
   const headerContent = useMemo(() => {
     return (
@@ -204,6 +230,7 @@ export const StickyHeaders = <TItem,>({
           zIndex: 2,
           transform: [{ translateY }],
           opacity,
+          ...horizontalPadding,
         }}
       >
         {currentStickyIndex !== -1 && currentStickyIndex < data.length ? (
@@ -232,6 +259,7 @@ export const StickyHeaders = <TItem,>({
     extraData,
     stickyHeaderOffset,
     inverted,
+    horizontalPadding,
   ]);
 
   if (PlatformConfig.isRN083OrAbove && currentStickyIndex === -1) {

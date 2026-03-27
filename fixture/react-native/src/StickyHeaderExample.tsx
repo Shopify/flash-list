@@ -60,6 +60,7 @@ export const StickyHeaderExample = forwardRef(
     const [withStickyHeaderOffset, setWithStickyHeaderOffset] = useState(false);
     const [withStickyHeaderBackground, setWithStickyHeaderBackground] =
       useState(false);
+    const [withHorizontalPadding, setWithHorizontalPadding] = useState(false);
 
     // Memoize the renderItem function
     const renderItem = useCallback(
@@ -86,7 +87,7 @@ export const StickyHeaderExample = forwardRef(
     return (
       <View
         style={styles.container}
-        key={`${stickyHeadersEnabled}-${withStickyHeaderOffset}-${withStickyHeaderBackground}`}
+        key={`${stickyHeadersEnabled}-${withStickyHeaderOffset}-${withStickyHeaderBackground}-${withHorizontalPadding}`}
       >
         <View>
           <Toggle
@@ -104,6 +105,11 @@ export const StickyHeaderExample = forwardRef(
             value={withStickyHeaderBackground}
             onChange={setWithStickyHeaderBackground}
           />
+          <Toggle
+            label="Horizontal Padding"
+            value={withHorizontalPadding}
+            onChange={setWithHorizontalPadding}
+          />
         </View>
         <View style={styles.listContainer}>
           <FlashList
@@ -115,6 +121,11 @@ export const StickyHeaderExample = forwardRef(
               stickyHeadersEnabled ? headerIndices : undefined
             }
             stickyHeaderConfig={stickyHeaderConfig}
+            contentContainerStyle={
+              withHorizontalPadding
+                ? { paddingHorizontal: 16 }
+                : undefined
+            }
             ItemSeparatorComponent={ItemSeparator}
           />
         </View>

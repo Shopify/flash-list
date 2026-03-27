@@ -641,4 +641,133 @@ describe("StickyHeaders - Compute Function", () => {
       });
     });
   });
+
+  describe("Content Container Style Padding", () => {
+    it("should apply paddingHorizontal from contentContainerStyle", () => {
+      const layouts = createStandardLayouts();
+
+      const manager = createMockRecyclerViewManager({
+        scrollOffset: 100,
+        layouts,
+      });
+
+      const result = render(
+        <StickyHeaders
+          stickyHeaderIndices={[0, 10, 20]}
+          stickyHeaderOffset={0}
+          data={testData}
+          scrollY={new Animated.Value(0)}
+          renderItem={renderItem}
+          stickyHeaderRef={createRef()}
+          recyclerViewManager={manager}
+          extraData={undefined}
+          onChangeStickyIndex={jest.fn()}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+        />
+      );
+
+      const animatedView = result.find(Animated.View);
+      expect(animatedView).toHaveReactProps({
+        style: expect.objectContaining({
+          paddingLeft: 16,
+          paddingRight: 16,
+        }),
+      });
+    });
+
+    it("should apply individual paddingLeft and paddingRight from contentContainerStyle", () => {
+      const layouts = createStandardLayouts();
+
+      const manager = createMockRecyclerViewManager({
+        scrollOffset: 100,
+        layouts,
+      });
+
+      const result = render(
+        <StickyHeaders
+          stickyHeaderIndices={[0, 10, 20]}
+          stickyHeaderOffset={0}
+          data={testData}
+          scrollY={new Animated.Value(0)}
+          renderItem={renderItem}
+          stickyHeaderRef={createRef()}
+          recyclerViewManager={manager}
+          extraData={undefined}
+          onChangeStickyIndex={jest.fn()}
+          contentContainerStyle={{ paddingLeft: 10, paddingRight: 20 }}
+        />
+      );
+
+      const animatedView = result.find(Animated.View);
+      expect(animatedView).toHaveReactProps({
+        style: expect.objectContaining({
+          paddingLeft: 10,
+          paddingRight: 20,
+        }),
+      });
+    });
+
+    it("should apply padding shorthand from contentContainerStyle", () => {
+      const layouts = createStandardLayouts();
+
+      const manager = createMockRecyclerViewManager({
+        scrollOffset: 100,
+        layouts,
+      });
+
+      const result = render(
+        <StickyHeaders
+          stickyHeaderIndices={[0, 10, 20]}
+          stickyHeaderOffset={0}
+          data={testData}
+          scrollY={new Animated.Value(0)}
+          renderItem={renderItem}
+          stickyHeaderRef={createRef()}
+          recyclerViewManager={manager}
+          extraData={undefined}
+          onChangeStickyIndex={jest.fn()}
+          contentContainerStyle={{ padding: 24 }}
+        />
+      );
+
+      const animatedView = result.find(Animated.View);
+      expect(animatedView).toHaveReactProps({
+        style: expect.objectContaining({
+          paddingLeft: 24,
+          paddingRight: 24,
+        }),
+      });
+    });
+
+    it("should not apply horizontal padding when contentContainerStyle is undefined", () => {
+      const layouts = createStandardLayouts();
+
+      const manager = createMockRecyclerViewManager({
+        scrollOffset: 100,
+        layouts,
+      });
+
+      const result = render(
+        <StickyHeaders
+          stickyHeaderIndices={[0, 10, 20]}
+          stickyHeaderOffset={0}
+          data={testData}
+          scrollY={new Animated.Value(0)}
+          renderItem={renderItem}
+          stickyHeaderRef={createRef()}
+          recyclerViewManager={manager}
+          extraData={undefined}
+          onChangeStickyIndex={jest.fn()}
+        />
+      );
+
+      const animatedView = result.find(Animated.View);
+      expect(animatedView).toHaveReactProps({
+        style: expect.objectContaining({
+          paddingLeft: undefined,
+          paddingRight: undefined,
+        }),
+      });
+    });
+  });
 });
