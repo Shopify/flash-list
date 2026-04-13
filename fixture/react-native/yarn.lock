@@ -1637,6 +1637,14 @@
     "@babel/traverse" "^7.25.3"
     "@react-native/codegen" "0.84.1"
 
+"@react-native/babel-plugin-codegen@0.85.0":
+  version "0.85.0"
+  resolved "https://registry.yarnpkg.com/@react-native/babel-plugin-codegen/-/babel-plugin-codegen-0.85.0.tgz#cd27b18026edb6f16864052a6a1f76c53a9978c8"
+  integrity sha512-+b+kilQXUMEREXyFZxmSrnvUZ6rIW2ATu6pkMZLsituRUx85fg22A8Z+hKHXj7q9Hyny1W0+506gHoxYr6zevw==
+  dependencies:
+    "@babel/traverse" "^7.29.0"
+    "@react-native/codegen" "0.85.0"
+
 "@react-native/babel-preset@0.84.1":
   version "0.84.1"
   resolved "https://registry.yarnpkg.com/@react-native/babel-preset/-/babel-preset-0.84.1.tgz#61d82b56286457eea1fae350c582b81211056f6e"
@@ -1676,6 +1684,45 @@
     babel-plugin-transform-flow-enums "^0.0.2"
     react-refresh "^0.14.0"
 
+"@react-native/babel-preset@0.85.0":
+  version "0.85.0"
+  resolved "https://registry.yarnpkg.com/@react-native/babel-preset/-/babel-preset-0.85.0.tgz#3b6d826c4819a0ece49c7f0d8aee3c2b6c41c531"
+  integrity sha512-xU3q7VeSiBGrT5n0cdtzWf/3NtQlw1C3rJXwOftbFPdbb8nvCpefOdSAKL2UKNHSvA3rcCkNqMeZEtjXRKjcCA==
+  dependencies:
+    "@babel/core" "^7.25.2"
+    "@babel/plugin-proposal-export-default-from" "^7.24.7"
+    "@babel/plugin-syntax-dynamic-import" "^7.8.3"
+    "@babel/plugin-syntax-export-default-from" "^7.24.7"
+    "@babel/plugin-syntax-nullish-coalescing-operator" "^7.8.3"
+    "@babel/plugin-syntax-optional-chaining" "^7.8.3"
+    "@babel/plugin-transform-async-generator-functions" "^7.25.4"
+    "@babel/plugin-transform-async-to-generator" "^7.24.7"
+    "@babel/plugin-transform-block-scoping" "^7.25.0"
+    "@babel/plugin-transform-class-properties" "^7.25.4"
+    "@babel/plugin-transform-classes" "^7.25.4"
+    "@babel/plugin-transform-destructuring" "^7.24.8"
+    "@babel/plugin-transform-flow-strip-types" "^7.25.2"
+    "@babel/plugin-transform-for-of" "^7.24.7"
+    "@babel/plugin-transform-modules-commonjs" "^7.24.8"
+    "@babel/plugin-transform-named-capturing-groups-regex" "^7.24.7"
+    "@babel/plugin-transform-nullish-coalescing-operator" "^7.24.7"
+    "@babel/plugin-transform-optional-catch-binding" "^7.24.7"
+    "@babel/plugin-transform-optional-chaining" "^7.24.8"
+    "@babel/plugin-transform-private-methods" "^7.24.7"
+    "@babel/plugin-transform-private-property-in-object" "^7.24.7"
+    "@babel/plugin-transform-react-display-name" "^7.24.7"
+    "@babel/plugin-transform-react-jsx" "^7.25.2"
+    "@babel/plugin-transform-react-jsx-self" "^7.24.7"
+    "@babel/plugin-transform-react-jsx-source" "^7.24.7"
+    "@babel/plugin-transform-regenerator" "^7.24.7"
+    "@babel/plugin-transform-runtime" "^7.24.7"
+    "@babel/plugin-transform-typescript" "^7.25.2"
+    "@babel/plugin-transform-unicode-regex" "^7.24.7"
+    "@react-native/babel-plugin-codegen" "0.85.0"
+    babel-plugin-syntax-hermes-parser "0.33.3"
+    babel-plugin-transform-flow-enums "^0.0.2"
+    react-refresh "^0.14.0"
+
 "@react-native/codegen@0.84.1":
   version "0.84.1"
   resolved "https://registry.yarnpkg.com/@react-native/codegen/-/codegen-0.84.1.tgz#91508dac73ca28f91681765bbeb6b7b4d1020c99"
@@ -1684,6 +1731,19 @@
     "@babel/core" "^7.25.2"
     "@babel/parser" "^7.25.3"
     hermes-parser "0.32.0"
+    invariant "^2.2.4"
+    nullthrows "^1.1.1"
+    tinyglobby "^0.2.15"
+    yargs "^17.6.2"
+
+"@react-native/codegen@0.85.0":
+  version "0.85.0"
+  resolved "https://registry.yarnpkg.com/@react-native/codegen/-/codegen-0.85.0.tgz#c31790e0dda05ff3e69d5c389fb6e88cb0170463"
+  integrity sha512-5CHJkC9UpBxQokGju7gD6W615RO1zR17INuB1PB4kcXNy3rre7tyy6ufct+sllDD6ildRC9A//cyh6TI03+jxA==
+  dependencies:
+    "@babel/core" "^7.25.2"
+    "@babel/parser" "^7.29.0"
+    hermes-parser "0.33.3"
     invariant "^2.2.4"
     nullthrows "^1.1.1"
     tinyglobby "^0.2.15"
@@ -2455,6 +2515,13 @@ babel-plugin-syntax-hermes-parser@0.32.0:
   integrity sha512-m5HthL++AbyeEA2FcdwOLfVFvWYECOBObLHNqdR8ceY4TsEdn4LdX2oTvbB2QJSSElE2AWA/b2MXZ/PF/CqLZg==
   dependencies:
     hermes-parser "0.32.0"
+
+babel-plugin-syntax-hermes-parser@0.33.3:
+  version "0.33.3"
+  resolved "https://registry.yarnpkg.com/babel-plugin-syntax-hermes-parser/-/babel-plugin-syntax-hermes-parser-0.33.3.tgz#07602f8163cc7e63c4ec17d47467f2a3c5db70e9"
+  integrity sha512-/Z9xYdaJ1lC0pT9do6TqCqhOSLfZ5Ot8D5za1p+feEfWYupCOfGbhhEXN9r2ZgJtDNUNRw/Z+T2CvAGKBqtqWA==
+  dependencies:
+    hermes-parser "0.33.3"
 
 babel-plugin-transform-flow-enums@^0.0.2:
   version "0.0.2"
