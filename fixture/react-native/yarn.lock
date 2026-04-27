@@ -3093,10 +3093,10 @@ detect-newline@^3.0.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-3.1.0.tgz#576f5dfc63ae1a192ff192d8ad3af6308991b651"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
 
-detox@^20.44.0:
-  version "20.47.0"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-20.47.0.tgz#47f19bf43f249186bae74f94ee540dd45d61bcfc"
-  integrity sha512-Jpk296Ct006MnemKQP25X1q4fQ3G6rwSX+f0BqC5Py7qKdJ9cRh4H39D1GIIV56UJ/nJEI5IAgg7jrSPjCT9sA==
+detox@^20.51.0:
+  version "20.51.0"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-20.51.0.tgz#8daaed0f003ed3810cbda9b3e9563b4a76202e7e"
+  integrity sha512-epO3hZwxY/cN38vZoF5FSOAdDu2rnS4pvurPxpI5RZ7E5h++EiieZDC8yIV/uLjTxEnU5SoKIb6lfUMk57TrTA==
   dependencies:
     "@wix-pilot/core" "^3.4.2"
     "@wix-pilot/detox" "^1.0.13"
