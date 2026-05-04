@@ -166,6 +166,10 @@ const RecyclerViewComponent = <T,>(
     if (internalViewRef.current && firstChildViewRef.current) {
       // Measure the outer container size and inner container layout
       const outerViewSize = measureParentSize(internalViewRef.current);
+      if (outerViewSize.width === 0 && outerViewSize.height === 0) {
+        containerViewSizeRef.current = outerViewSize;
+        return;
+      }
       const firstChildViewLayout = measureFirstChildLayout(
         firstChildViewRef.current,
         internalViewRef.current
@@ -202,6 +206,12 @@ const RecyclerViewComponent = <T,>(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (pendingChildIds.size > 0) {
+      return;
+    }
+    if (
+      containerViewSizeRef.current?.width === 0 &&
+      containerViewSizeRef.current?.height === 0
+    ) {
       return;
     }
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
