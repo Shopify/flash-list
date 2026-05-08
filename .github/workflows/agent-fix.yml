@@ -78,22 +78,11 @@ jobs:
             --model claude-opus-4-6
             --allowedTools "${{ env.ALLOWED_TOOLS }}"
           prompt: |
-            You are running on CI (GitHub Actions). There is no human to confirm with — act autonomously.
-            Environment: macOS runner with Xcode and iOS simulator. No Android emulator.
+            Read `.claude/prompts/agent-fix.md` before doing anything else and follow it for the entire
+            session. It contains the environment, security rules, workflow steps, CI notes, and feedback
+            requirements that govern this run.
 
             YOUR ASSIGNED ISSUE: #${{ github.event.issue.number }}
-            TITLE: ${{ github.event.issue.title }}
-
-            Fix ONLY this issue — do not fix other issues. Read and follow .claude/skills/fix-github-issue/SKILL.md for the full workflow.
-            After fixing, read and follow .claude/skills/raise-pr/SKILL.md to raise a PR.
-            CI notes: use default Metro port (8081).
-            IMPORTANT: Do NOT add Co-authored-by lines to any commits. No AI or human co-author trailers.
-
-            When done (whether successful or not), write a brief feedback file to /tmp/agent-feedback.md with:
-            - What you accomplished (or where you got stuck)
-            - Any tools you needed but couldn't use
-            - Any issues with the skill instructions
-            - Suggestions for improvement
 
       - name: Upload agent feedback
         if: always()

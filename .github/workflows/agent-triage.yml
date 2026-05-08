@@ -3,10 +3,16 @@ name: Agent Triage
 on:
   issues:
     types: [labeled]
+  pull_request_target:
+    types: [labeled]
 
 permissions:
   contents: read
   issues: write
+  pull-requests: write
+
+env:
+  TARGET_NUM: ${{ github.event.issue.number || github.event.pull_request.number }}
 
 jobs:
   triage:
@@ -19,6 +25,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
+      # Build the allowlist with TARGET_NUM pinned into every state-changing
+      # command, so the agent can only act on the triggering issue/PR.
+      - name: Build allowedTools
+        env:
+          NUM: ${{ env.TARGET_NUM }}
+        run: |
+          PATTERNS=(
+            "Read"
+            "Write"
+            "Bash(gh issue list *)"
+            "Bash(gh issue view $NUM)"
+            "Bash(gh issue view $NUM *)"
+            "Bash(gh issue edit $NUM --add-label P0)"
+            "Bash(gh issue edit $NUM --add-label P1)"
+            "Bash(gh issue edit $NUM --add-label P2)"
+            "Bash(gh issue comment $NUM)"
+            "Bash(gh issue comment $NUM *)"
+            "Bash(gh issue close $NUM)"
+            "Bash(gh pr view $NUM)"
+            "Bash(gh pr view $NUM *)"
+            "Bash(gh pr comment $NUM)"
+            "Bash(gh pr comment $NUM *)"
+            "Bash(gh pr close $NUM)"
+          )
+          ( IFS=,; echo "ALLOWED_TOOLS=${PATTERNS[*]}" >> "$GITHUB_ENV" )
+
       - name: Triage issue
         uses: anthropics/claude-code-action@bf4f0de6fccd1eea7044a5f903fc928aff363134 # v1
         env:
@@ -29,26 +61,20 @@ jobs:
           claude_args: >-
             --model claude-sonnet-4-6
             --max-turns 10
-            --allowedTools "Read,Write,Glob,Grep,WebSearch,WebFetch,Bash(gh issue *),Bash(gh label *)"
+            --allowedTools "${{ env.ALLOWED_TOOLS }}"
             --disallowedTools "Edit,MultiEdit"
           prompt: |
-            You are running on CI (GitHub Actions).
-            Triage issue #${{ github.event.issue.number }}.
-            Title: ${{ github.event.issue.title }}
+            Read `.claude/prompts/agent-triage.md` before doing anything else and follow it for the entire
+            session. It contains the security rules, scope limits, per-event permissions, and feedback
+            requirements that govern this run.
 
-            Read the skill file at .claude/skills/triage-issue/SKILL.md and follow its instructions.
-            Do NOT edit any repository files. Only use Write for /tmp/agent-feedback.md.
-
-            When done, write /tmp/agent-feedback.md with:
-            - What you accomplished (or where you got stuck)
-            - Any tools you needed but couldn't use (list exact tool names)
-            - Any issues with the skill instructions
-            - Suggestions for improvement
+            EVENT TYPE: ${{ github.event_name }}
+            TARGET NUMBER: #${{ env.TARGET_NUM }}
 
       - name: Upload agent feedback
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: agent-feedback-triage-${{ github.event.issue.number }}
+          name: agent-feedback-triage-${{ github.event.issue.number || github.event.pull_request.number }}
           path: /tmp/agent-feedback.md
           if-no-files-found: ignore
