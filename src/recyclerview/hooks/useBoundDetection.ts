@@ -141,6 +141,14 @@ export function useBoundDetection<T>(
   }, [recyclerViewManager]);
 
   const runAutoScrollToBottomCheck = useCallback(() => {
+    // Suppress MVCP autoscroll while a programmatic scrollToIndex is in
+    // flight. FlashList disables offset projection at the start of
+    // scrollToIndex and reenables it ~200-300ms after settling. Without
+    // this guard, the sticky pendingAutoscrollToBottom ref races against
+    // scrollToIndex and fires scrollToEnd mid flight.
+    if (!recyclerViewManager.isOffsetProjectionEnabled) {
+      return;
+    }
     if (pendingAutoscrollToBottom.current) {
       pendingAutoscrollToBottom.current = false;
       requestAnimationFrame(() => {
