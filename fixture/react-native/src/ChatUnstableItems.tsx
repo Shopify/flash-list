@@ -54,27 +54,14 @@ const messageTexts = [
 ];
 
 export function ChatUnstableItems() {
-  const [messages, setMessages] = useState<ChatMessage[]>(() =>
+  const [messages] = useState<ChatMessage[]>(() =>
     generateInitialMessages(300)
   );
   const listRef = useRef<FlashListRef<ChatMessage>>(null);
 
-  const addMessageAtTop = useCallback(() => {
-    const newMessages = Array.from({ length: 50 }, (_, i) =>
-      generateRandomMessage(i)
-    );
-    setMessages((prev) => [...newMessages, ...prev]);
-  }, []);
-
-  // const addMessageAtBottom = useCallback(() => {
-  //   const newMessage = generateRandomMessage(messages.length);
-  //   setMessages((prev) => [...prev, newMessage]);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  // Mirror stream-chat-react-native's "tap a reply" timing pattern:
-  // the tap schedules a state update; the actual scrollToIndex runs on a
-  // later tick via setTimeout(0). This separates the re-render (where
+  // Mirror something similar to tapping a quoted message to scroll to it.
+  // The tap schedules a state update; the actual scrollToIndex runs on a
+  // later tick via setTimeout(0). This separates the rerender (where
   // applyOffsetCorrection can fire its stray scrollBy with the anchor's
   // stale layout snapshot) from the scrollToIndex call (which would
   // otherwise have already set pauseOffsetCorrection.current = true and
@@ -136,13 +123,6 @@ export function ChatUnstableItems() {
 
         <View style={styles.buttonContainer}>
           <Pressable
-            style={[styles.button, styles.topButton]}
-            onPress={addMessageAtTop}
-          >
-            <Text style={styles.buttonText}>Add at Top</Text>
-          </Pressable>
-
-          <Pressable
             style={[styles.button, styles.scrollBottomButton]}
             onPress={scrollToBottom}
           >
@@ -161,10 +141,6 @@ export function ChatUnstableItems() {
           ref={listRef}
           data={messages}
           maintainVisibleContentPosition={maintainVisibleContentPositionConfig}
-          // onStartReached={() => {
-          //   console.log("onStartReached");
-          //   addMessageAtTop();
-          // }}
           ListHeaderComponent={listHeaderComponent}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
@@ -191,15 +167,6 @@ function generateInitialMessages(count: number): ChatMessage[] {
   }
 
   return messages;
-}
-
-function generateRandomMessage(index: number): ChatMessage {
-  return {
-    id: `msg-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-    text: `${index}. ${messageTexts[index % messageTexts.length]}`,
-    sender: index % 2 === 0 ? "user" : "other",
-    timestamp: new Date(),
-  };
 }
 
 // deterministic hash, to be used as seed for the randomizer
@@ -269,12 +236,6 @@ const MessageImage = ({
   placeholderHeight: number;
   finalHeight: number;
 }) => {
-  // useRecyclingState resets to `false` whenever `uri` changes — i.e. when
-  // FlashList recycles this cell to a different message. That guarantees
-  // every cell-image swap goes through the placeholder → finalHeight
-  // transition and produces a real onLoad-driven layout shift, which is
-  // the production-style drift mechanism we're using to make
-  // firstVisibleItemLayout.current go stale.
   const [loaded, setLoaded] = useRecyclingState(false, [uri]);
   return (
     <Image
@@ -367,9 +328,6 @@ const styles = StyleSheet.create({
     minWidth: "45%",
     flexGrow: 1,
     margin: 4,
-  },
-  topButton: {
-    backgroundColor: "#4a90e2",
   },
   scrollButton: {
     backgroundColor: "#e2a04a",
