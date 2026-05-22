@@ -42,6 +42,10 @@ export const ExamplesScreen = () => {
       destination: "ChatInverted",
     },
     {
+      title: "Chat (Unstable Items)",
+      destination: "ChatUnstableItems",
+    },
+    {
       title: "Inverted Test",
       destination: "InvertedTest",
     },
