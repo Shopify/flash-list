@@ -1,5 +1,15 @@
 import { PixelRatio, View } from "react-native";
 
+// unstable_getBoundingClientRect is not part of the official RN View type yet
+type ViewWithBoundingClientRect = View & {
+  unstable_getBoundingClientRect?: () => {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+};
+
 interface Layout {
   x: number;
   y: number;
@@ -21,10 +31,29 @@ interface Size {
  * @returns An object containing x, y, width, and height measurements
  */
 function measureLayout(view: View, oldLayout: Layout | undefined) {
-  // const layout = view.unstable_getBoundingClientRect();
-  // layout.width = roundOffPixel(layout.width);
-  // layout.height = roundOffPixel(layout.height);
-  // return layout;
+  // On Android New Architecture (RN 0.78+), View.measureLayout() invokes its
+  // callback asynchronously, so by the time we return `layout` the values are
+  // still {0,0,0,0}.  unstable_getBoundingClientRect() reads directly from the
+  // Fabric shadow tree and is synchronous, so use it when available.
+  const viewWithRect = view as ViewWithBoundingClientRect;
+  if (typeof viewWithRect.unstable_getBoundingClientRect === "function") {
+    const rect = viewWithRect.unstable_getBoundingClientRect();
+    const layout: Layout = {
+      x: rect.x ?? 0,
+      y: rect.y ?? 0,
+      width: roundOffPixel(rect.width ?? 0),
+      height: roundOffPixel(rect.height ?? 0),
+    };
+    if (oldLayout) {
+      if (areDimensionsEqual(layout.width, oldLayout.width)) {
+        layout.width = oldLayout.width;
+      }
+      if (areDimensionsEqual(layout.height, oldLayout.height)) {
+        layout.height = oldLayout.height;
+      }
+    }
+    return layout;
+  }
   return measureLayoutRelative(view, view, oldLayout);
 }
 
