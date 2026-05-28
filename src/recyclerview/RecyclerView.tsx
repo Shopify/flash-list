@@ -175,9 +175,10 @@ const RecyclerViewComponent = <T,>(
 
       // firstChildViewLayout is already relative to the outer container,
       // so its x/y directly gives the first item offset.
-      const firstItemOffset = horizontal
+      const axisOffset = horizontal
         ? firstChildViewLayout.x
         : firstChildViewLayout.y;
+      const firstItemOffset = inverted ? 0 : axisOffset;
 
       // Update the RecyclerView manager with window dimensions
       recyclerViewManager.updateLayoutParams(
