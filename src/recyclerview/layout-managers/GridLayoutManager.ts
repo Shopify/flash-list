@@ -253,4 +253,17 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
     }
     return Math.max(i, 0);
   }
+
+  /**
+   * Returns whether the item is in the same row as the last item.
+   * Items in the same row share the same y-coordinate, regardless of column spans.
+   */
+  isInLastRow(index: number): boolean {
+    if (this.layouts.length === 0) return false;
+    const lastIndex = this.layouts.length - 1;
+    return (
+      index === lastIndex ||
+      this.layouts[index]?.y === this.layouts[lastIndex]?.y
+    );
+  }
 }

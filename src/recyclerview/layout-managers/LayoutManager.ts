@@ -265,6 +265,20 @@ export abstract class RVLayoutManager {
   }
 
   /**
+   * Returns whether the item at the given index is in the last row of the layout.
+   * Used to suppress separators for all items in the last row, preventing
+   * height mismatch when the last data item has no separator.
+   *
+   * Base implementation returns false — only layouts that normalize heights
+   * across multiple items (e.g., grid) need to override this.
+   * @param index Index of the item
+   * @returns True if the item is in the last row
+   */
+  isInLastRow(index: number): boolean {
+    return false;
+  }
+
+  /**
    * Abstract method to recompute layouts for items in the given range.
    * @param startIndex Starting index of items to recompute
    * @param endIndex Ending index of items to recompute

@@ -93,27 +93,41 @@ export interface FlashListProps<TItem>
    *
    * Note: Changing layout of the cell can conflict with the native layout operations. You may need to set `disableAutoLayout` to `true` to prevent this.
    */
-  CellRendererComponent?: React.ComponentType<any> | undefined;
+  CellRendererComponent?:
+    | React.ComponentType<any>
+    | React.ExoticComponent<any>
+    | undefined;
 
   /**
    * Rendered in between each item, but not at the top or bottom. By default, `leadingItem` and `trailingItem` (if available) props are provided.
    */
-  ItemSeparatorComponent?: React.ComponentType<any> | null | undefined;
+  ItemSeparatorComponent?:
+    | React.ComponentType<any>
+    | React.ExoticComponent<any>
+    | null
+    | undefined;
 
   /**
    * Rendered when the list is empty. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
    */
   ListEmptyComponent?:
     | React.ComponentType<any>
+    | React.ExoticComponent<any>
     | React.ReactElement
     | null
     | undefined;
+
+  /**
+   * Styling for internal View for `ListEmptyComponent`.
+   */
+  ListEmptyComponentStyle?: StyleProp<ViewStyle> | undefined;
 
   /**
    * Rendered at the bottom of all the items. Can be a React Component (e.g. `SomeComponent`), or a React element (e.g. `<SomeComponent />`).
    */
   ListFooterComponent?:
     | React.ComponentType<any>
+    | React.ExoticComponent<any>
     | React.ReactElement
     | null
     | undefined;
@@ -128,6 +142,7 @@ export interface FlashListProps<TItem>
    */
   ListHeaderComponent?:
     | React.ComponentType<any>
+    | React.ExoticComponent<any>
     | React.ReactElement
     | null
     | undefined;
@@ -142,6 +157,7 @@ export interface FlashListProps<TItem>
    */
   renderScrollComponent?:
     | React.ComponentType<ScrollViewProps>
+    | React.ExoticComponent<ScrollViewProps>
     | React.FC<ScrollViewProps>;
 
   /**
@@ -160,6 +176,14 @@ export interface FlashListProps<TItem>
    * If true, renders items next to each other horizontally instead of stacked vertically.
    */
   horizontal?: boolean | null | undefined;
+
+  /**
+   * Reverses the direction of scroll. Uses scale transforms of -1.
+   *
+   * Note: On Android, a rotate transform is used instead of scale for performance reasons.
+   * This causes the scrollbar to appear on the left side of the list.
+   */
+  inverted?: boolean | null | undefined;
 
   /**
    * Instead of starting at the top with the first item, start at initialScrollIndex.
@@ -258,7 +282,23 @@ export interface FlashListProps<TItem>
   ) => void;
 
   /**
-   * For debugging and exception use cases, internal props will be overriden with these values if used
+   * Allows overriding internal ScrollView props. Props provided here are
+   * spread onto the internal ScrollView after all other props, so they take
+   * highest priority.
+   *
+   * This can be useful for cases where you need to set a style on the
+   * ScrollView itself rather than the outer container. For example, to enable
+   * visible overflow you can combine this with the `style` prop:
+   *
+   * ```tsx
+   * <FlashList
+   *   style={{ overflow: "visible" }}
+   *   overrideProps={{ style: { overflow: "visible" } }}
+   * />
+   * ```
+   *
+   * Use with caution — overriding internal props may interfere with
+   * FlashList's layout and recycling behavior.
    */
   overrideProps?: OverrideProps;
 
@@ -327,6 +367,15 @@ export interface FlashListProps<TItem>
    * New arch only
    * Style for the RecyclerView's parent container.
    * Please avoid anything which can mess size of children in this view. For example, margin is okay but padding is not.
+   *
+   * Note: To enable `overflow: "visible"`, you must also set it on the
+   * internal ScrollView via `overrideProps`:
+   * ```tsx
+   * <FlashList
+   *   style={{ overflow: "visible" }}
+   *   overrideProps={{ style: { overflow: "visible" } }}
+   * />
+   * ```
    */
   style?: StyleProp<ViewStyle>;
 
@@ -397,6 +446,7 @@ export interface FlashListProps<TItem>
          */
         backdropComponent?:
           | React.ComponentType<any>
+          | React.ExoticComponent<any>
           | React.ReactElement
           | null
           | undefined;

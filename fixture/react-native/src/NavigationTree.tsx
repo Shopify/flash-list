@@ -20,6 +20,9 @@ import { Grid } from "./Grid";
 import { DynamicColumnSpan } from "./DynamicColumnSpan";
 import HorizontalList from "./HorizontalList";
 import { Chat } from "./Chat";
+import { ChatInverted } from "./ChatInverted";
+import { ChatUnstableItems } from "./ChatUnstableItems";
+import { InvertedTest } from "./InvertedTest";
 import FlashListCellRenderer from "./CellRendererExamples";
 import { HeaderFooterExample } from "./HeaderFooterExample";
 import DynamicItems from "./DynamicItems";
@@ -32,6 +35,8 @@ import LotOfItems from "./lot-of-items/LotOfItems";
 import ManualBenchmarkExample from "./ManualBenchmarkExample";
 import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 import { StickyHeaderExample } from "./StickyHeaderExample";
+import { GridWithSeparator } from "./GridWithSeparator";
+import { HorizontalMVCP } from "./HorizontalMVCP";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -73,6 +78,21 @@ const NavigationTree = () => {
           <Stack.Screen name="TwitterBenchmark" component={TwitterBenchmark} />
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen
+            name="ChatInverted"
+            component={ChatInverted}
+            options={{ title: "Chat (Inverted)" }}
+          />
+          <Stack.Screen
+            name="ChatUnstableItems"
+            component={ChatUnstableItems}
+            options={{ title: "Chat (Unstable Items)" }}
+          />
+          <Stack.Screen
+            name="InvertedTest"
+            component={InvertedTest}
+            options={{ title: "Inverted Test" }}
+          />
+          <Stack.Screen
             name="HeaderFooterExample"
             component={HeaderFooterExample}
             options={{ title: "Header Footer Empty Example" }}
@@ -112,6 +132,11 @@ const NavigationTree = () => {
             component={StickyHeaderExample}
             options={{ title: "Sticky Headers" }}
           />
+          <Stack.Screen
+            name="GridWithSeparator"
+            component={GridWithSeparator}
+            options={{ title: "Grid with Separator" }}
+          />
         </Stack.Group>
         <Stack.Screen name="Masonry" component={Masonry} />
         <Stack.Screen name="ComplexMasonry" component={ComplexMasonry} />
@@ -130,6 +155,11 @@ const NavigationTree = () => {
           name="ManualFlatListBenchmarkExample"
           component={ManualFlatListBenchmarkExample}
           options={{ title: "Manual Flat List Benchmark Example" }}
+        />
+        <Stack.Screen
+          name="HorizontalMVCP"
+          component={HorizontalMVCP}
+          options={{ title: "Horizontal MVCP" }}
         />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="Debug" component={DebugScreen} />

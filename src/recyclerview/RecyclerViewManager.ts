@@ -39,6 +39,7 @@ export class RecyclerViewManager<T> {
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
   public isFirstPaintOnUiComplete = false;
+  public isInitialScrollComplete = false;
 
   public get animationOptimizationsEnabled() {
     return this._animationOptimizationsEnabled;
@@ -71,6 +72,7 @@ export class RecyclerViewManager<T> {
       props.maxItemsInRecyclePool
     );
     this.itemViewabilityManager = new ViewabilityManager<T>(this as any);
+    this.isInitialScrollComplete = this.getInitialScrollIndex() === undefined;
     this.checkPropsAndWarn();
   }
 
@@ -149,6 +151,10 @@ export class RecyclerViewManager<T> {
       return this.layoutManager.getLayout(index);
     }
     return undefined;
+  }
+
+  isInLastRow(index: number): boolean {
+    return this.layoutManager?.isInLastRow(index) ?? false;
   }
 
   // Doesn't include header / foot etc
@@ -333,11 +339,8 @@ export class RecyclerViewManager<T> {
   }
 
   shouldMaintainVisibleContentPosition() {
-    // Return true if maintainVisibleContentPosition is enabled and not horizontal
-    return (
-      !this.propsRef.maintainVisibleContentPosition?.disabled &&
-      !this.propsRef.horizontal
-    );
+    // Return true if maintainVisibleContentPosition is enabled
+    return !this.propsRef.maintainVisibleContentPosition?.disabled;
   }
 
   getDataLength() {
@@ -376,27 +379,26 @@ export class RecyclerViewManager<T> {
     }
 
     const initialScrollIndex = this.getInitialScrollIndex();
-    const initialItemLayout = this.layoutManager?.getLayout(
-      initialScrollIndex ?? 0
-    );
-    const initialItemOffset = this.propsRef.horizontal
-      ? initialItemLayout?.x
-      : initialItemLayout?.y;
 
     if (initialScrollIndex !== undefined) {
-      // console.log(
-      //   "initialItemOffset",
-      //   initialScrollIndex,
-      //   initialItemOffset,
-      //   this.firstItemOffset
-      // );
+      // Recompute layouts first, then read the offset. The recompute may
+      // re-estimate unmeasured items with an updated average height, changing
+      // the target item's position. Reading before recompute would capture a
+      // stale offset, causing the wrong items to be rendered.
       this.layoutManager.recomputeLayouts(0, initialScrollIndex);
-      this.engagedIndicesTracker.scrollOffset =
-        initialItemOffset ?? 0 + this.firstItemOffset;
+      const initialItemLayout =
+        this.layoutManager.getLayout(initialScrollIndex);
+      const initialItemOffset = this.propsRef.horizontal
+        ? initialItemLayout.x
+        : initialItemLayout.y;
+      this.engagedIndicesTracker.scrollOffset = initialItemOffset;
     } else {
-      // console.log("initialItemOffset", initialItemOffset, this.firstItemOffset);
+      const initialItemLayout = this.layoutManager.getLayout(0);
+      const initialItemOffset = this.propsRef.horizontal
+        ? initialItemLayout.x
+        : initialItemLayout.y;
       this.engagedIndicesTracker.scrollOffset =
-        (initialItemOffset ?? 0) - this.firstItemOffset;
+        initialItemOffset - this.firstItemOffset;
     }
   }
 
