@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import { Text, View } from "react-native";
+import { Animated, Text, View } from "react-native";
 import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
@@ -75,6 +75,28 @@ describe("RecyclerView", () => {
 
       expect(result).toContainReactComponent(Text, { children: 0 });
       expect(result).not.toContainReactComponent(Text, { children: 11 });
+    });
+  });
+
+  describe("Sticky header config", () => {
+    it("applies configured sticky header zIndex", () => {
+      const result = render(
+        <FlashList
+          data={[0, 1, 2]}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          stickyHeaderIndices={[0]}
+          stickyHeaderConfig={{ zIndex: 0 }}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+        />
+      );
+
+      const animatedView = result.find(Animated.View);
+      expect(animatedView).toHaveReactProps({
+        style: expect.objectContaining({
+          zIndex: 0,
+        }),
+      });
     });
   });
 

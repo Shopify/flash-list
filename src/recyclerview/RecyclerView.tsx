@@ -101,6 +101,7 @@ const RecyclerViewComponent = <T,>(
     stickyHeaderConfig?.useNativeDriver ?? true;
   const stickyHeaderHideRelatedCell =
     stickyHeaderConfig?.hideRelatedCell ?? false;
+  const stickyHeaderZIndex = stickyHeaderConfig?.zIndex ?? 2;
 
   // Compute the inverted transform style based on platform and orientation
   const invertedTransformStyle = inverted
@@ -438,6 +439,7 @@ const RecyclerViewComponent = <T,>(
           renderItem={renderItem}
           scrollY={scrollY}
           stickyHeaderRef={stickyHeaderRef}
+          stickyHeaderZIndex={stickyHeaderZIndex}
           recyclerViewManager={recyclerViewManager}
           extraData={extraData}
           inverted={inverted}
@@ -463,6 +465,7 @@ const RecyclerViewComponent = <T,>(
     currentStickyIndex,
     onChangeStickyIndex,
     stickyHeaderHideRelatedCell,
+    stickyHeaderZIndex,
     inverted,
   ]);
 
