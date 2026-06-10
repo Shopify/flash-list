@@ -452,6 +452,12 @@ export interface FlashListProps<TItem>
           | undefined;
 
         /**
+         * zIndex applied to the sticky header container.
+         * @default 2
+         */
+        zIndex?: number;
+
+        /**
          * When a sticky header is displayed, the cell associated with it is hidden.
          * @default false
          */

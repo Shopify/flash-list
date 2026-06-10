@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import { Text, View } from "react-native";
+import { Animated, Text, View } from "react-native";
 import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
@@ -75,6 +75,28 @@ describe("RecyclerView", () => {
 
       expect(result).toContainReactComponent(Text, { children: 0 });
       expect(result).not.toContainReactComponent(Text, { children: 11 });
+    });
+  });
+
+  describe("Sticky header config", () => {
+    it("applies configured sticky header zIndex", () => {
+      const result = render(
+        <FlashList
+          data={[0, 1, 2]}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          stickyHeaderIndices={[0]}
+          stickyHeaderConfig={{ zIndex: 0 }}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+        />
+      );
+
+      const animatedView = result.find(Animated.View);
+      expect(animatedView).toHaveReactProps({
+        style: expect.objectContaining({
+          zIndex: 0,
+        }),
+      });
     });
   });
 
@@ -373,6 +395,123 @@ describe("RecyclerView", () => {
         renderFlashListWithStickyHeaders(100);
       scrollTo(result, 400);
       expect(onChangeStickyIndex).toHaveBeenLastCalledWith(0, -1);
+    });
+  });
+
+  describe("autoscrolling to bottom is suppressed while offset projection is disabled", () => {
+    const scrollTo = (root: ReturnType<typeof render>, y: number) => {
+      const scrollable = root.findWhere((node: any) => node.props.onScroll);
+      if (!scrollable) throw new Error("Could not find scrollable component");
+
+      const onScroll: any = scrollable.prop("onScroll" as never);
+      root.act(() => {
+        onScroll({
+          nativeEvent: {
+            contentOffset: { x: 0, y },
+            contentSize: { width: 399, height: 2000 },
+            layoutMeasurement: { width: 399, height: 899 },
+          },
+        });
+      });
+    };
+
+    const renderChatList = (data: number[]) => {
+      const ref = createRef<FlashListRef<number>>();
+      const result = render(
+        <FlashList
+          ref={ref}
+          data={data}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          maintainVisibleContentPosition={{
+            autoscrollToBottomThreshold: 1,
+            animateAutoScrollToBottom: false,
+            startRenderingFromBottom: true,
+          }}
+        />
+      );
+      return { result, ref };
+    };
+
+    const { measureItemLayout } = jest.requireMock(
+      "../recyclerview/utils/measureLayout"
+    ) as { measureItemLayout: jest.Mock };
+
+    it("does not fire scrollToEnd from the autoscroll path while scrollToIndex is in flight", () => {
+      const data = Array.from({ length: 20 }, (_, i) => i);
+      const { result, ref } = renderChatList(data);
+
+      const scrollToEndSpy = jest.fn();
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      expect(nativeScrollRef).toBeTruthy();
+      nativeScrollRef.scrollToEnd = scrollToEndSpy;
+
+      // 1. Load the target message into memory: scroll up so index 5
+      //    renders and is laid out at least once. After this, FlashList
+      //    has measurements for the target.
+      scrollTo(result, 200);
+      jest.runAllTimers();
+
+      // 2. Return to the bottom to arm MVCP autoscroll. The momentum-end
+      //    path in onScrollHandler refreshes firstVisibleItemKey /
+      //    firstVisibleItemLayout to a snapshot of the current anchor.
+      scrollTo(result, 1101);
+      jest.runAllTimers();
+
+      // 3. Sit still past useBoundDetection's 100ms checkBounds guard.
+      jest.advanceTimersByTime(150);
+      scrollToEndSpy.mockClear();
+
+      // 4. Simulate the background remeasurement that drifts the cached
+      //    anchor layout in an app. We change the mock so the next
+      //    measurement pass produces different item heights than the ones
+      //    cached in firstVisibleItemLayout.current. In production this
+      //    drift is a bunch  of estimates resolving into measurements
+      //    while the user sits still; in jest, we make it coarse so the
+      //    cascade is observable.
+      measureItemLayout.mockImplementation(() => ({
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 50,
+      }));
+
+      // 5. Programmatic scrollToIndex on the already rendered target.
+      //    Internally: setOffsetProjectionEnabled(false), then drives the
+      //    scroll via setRenderId++. The upcoming rerender runs the
+      //    layout measurement useLayoutEffect, which absorbs the new
+      //    (drifted) heights via modifyChildrenLayout. contentHeight
+      //    therefore shifts between renders, which is exactly the
+      //    misalignment that fires useBoundDetection's second useEffect
+      //    in an actual app.
+      result.act(() => {
+        ref.current?.scrollToIndex({
+          index: 5,
+          animated: false,
+          viewPosition: 0.5,
+        });
+      });
+      jest.advanceTimersByTime(50);
+
+      expect(scrollToEndSpy).not.toHaveBeenCalled();
+    });
+
+    it("fires scrollToEnd from the autoscroll path when isOffsetProjectionEnabled is true", () => {
+      const data = Array.from({ length: 20 }, (_, i) => i);
+      const { result, ref } = renderChatList(data);
+
+      const scrollToEndSpy = jest.fn();
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      expect(nativeScrollRef).toBeTruthy();
+      nativeScrollRef.scrollToEnd = scrollToEndSpy;
+
+      scrollTo(result, 1101);
+      jest.runAllTimers();
+      scrollToEndSpy.mockClear();
+
+      result.setProps({ data: [...data, 100] });
+      jest.runAllTimers();
+
+      expect(scrollToEndSpy).toHaveBeenCalled();
     });
   });
 });
