@@ -110,6 +110,16 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
    * @param layoutInfo Array of layout information for items
    */
   private normalizeLayoutHeights(layoutInfo: RVLayoutInfo[]) {
+    // Tallest item was removed: clear tracking so items get re-measured.
+    if (this.tallestItem && !this.layouts.includes(this.tallestItem)) {
+      for (const layout of this.layouts) {
+        layout.minHeight = 0;
+      }
+      this.tallestItem = undefined;
+      this.tallestItemHeight = 0;
+      this.requiresRepaint = true;
+      return;
+    }
     let newTallestItem: RVLayout | undefined;
     for (const info of layoutInfo) {
       const { index } = info;
@@ -135,8 +145,29 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
         layout.minHeight = targetMinHeight;
       }
       newTallestItem.minHeight = 0;
-      this.tallestItem = newTallestItem;
-      this.tallestItemHeight = newTallestItem.height;
+      // When items shrink (targetMinHeight = 0), reset tracking so the
+      // next cycle re-detects the tallest item after repaint and properly
+      // re-applies minHeight for all layouts.
+      if (targetMinHeight === 0) {
+        this.tallestItem = undefined;
+        this.tallestItemHeight = 0;
+      } else {
+        this.tallestItem = newTallestItem;
+        this.tallestItemHeight = newTallestItem.height;
+      }
+      return;
+    }
+    // Normalize newly added items that don't yet have minHeight applied.
+    if (this.tallestItem) {
+      for (const layout of this.layouts) {
+        if (
+          layout !== this.tallestItem &&
+          layout.minHeight !== this.tallestItemHeight
+        ) {
+          layout.minHeight = this.tallestItemHeight;
+          layout.height = this.tallestItemHeight;
+        }
+      }
     }
   }
 
