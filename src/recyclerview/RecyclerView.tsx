@@ -374,7 +374,10 @@ const RecyclerViewComponent = <T,>(
    */
   const validateItemSize = useCallback(
     (index: number, size: RVDimension) => {
-      const layout = recyclerViewManager.getLayout(index);
+      const layout = recyclerViewManager.tryGetLayout(index);
+      if (!layout) {
+        return;
+      }
       const width = Math.max(
         Math.min(layout.width, layout.maxWidth ?? Infinity),
         layout.minWidth ?? 0
