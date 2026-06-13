@@ -199,4 +199,98 @@ describe("MasonryLayoutManager", () => {
       expect(getAllLayouts(manager).length).toBe(0);
     });
   });
+
+  describe("Visibility with uneven column heights (optimizeItemArrangement: false)", () => {
+    const unevenParams = {
+      windowSize,
+      maxColumns: 2,
+      optimizeItemArrangement: false,
+    };
+
+    // Creates a masonry layout with different column heights.
+    // Sequential placement: item 0->col0, item 1->col1, item 2->col0, ...
+    // Col 0 items have height 100, col 1 items have height 50.
+    // Col 0: items 0,2,4,6 at y=0,100,200,300
+    // Col 1: items 1,3,5,7 at y=0,50,100,150
+    const createUnevenMasonryLayout = () => {
+      const manager = createLayoutManager(
+        LayoutManagerType.MASONRY,
+        unevenParams
+      );
+      const layoutInfos = [
+        createMockLayoutInfo(0, 200, 100),
+        createMockLayoutInfo(1, 200, 50),
+        createMockLayoutInfo(2, 200, 100),
+        createMockLayoutInfo(3, 200, 50),
+        createMockLayoutInfo(4, 200, 100),
+        createMockLayoutInfo(5, 200, 50),
+        createMockLayoutInfo(6, 200, 100),
+        createMockLayoutInfo(7, 200, 50),
+      ];
+      manager.modifyLayout(layoutInfos, 8);
+      return manager;
+    };
+
+    it("should find items visible at the top of the layout", () => {
+      const manager = createUnevenMasonryLayout();
+
+      const visible = manager.getVisibleLayouts(0, 100);
+
+      expect(visible.includes(0)).toBe(true);
+      expect(visible.includes(1)).toBe(true);
+      expect(visible.includes(3)).toBe(true);
+      expect(visible.includes(6)).toBe(false);
+    });
+
+    it("should find visible items when viewport is in the middle (column heights diverge)", () => {
+      const manager = createUnevenMasonryLayout();
+
+      const visible = manager.getVisibleLayouts(100, 200);
+
+      expect(visible.includes(2)).toBe(true);
+      expect(visible.includes(5)).toBe(true);
+      expect(visible.includes(7)).toBe(true);
+      expect(visible.includes(0)).toBe(false);
+      expect(visible.includes(1)).toBe(false);
+    });
+
+    it("should return empty for viewport beyond all content", () => {
+      const manager = createUnevenMasonryLayout();
+
+      const visible = manager.getVisibleLayouts(500, 600);
+
+      expect(visible.length).toBe(0);
+    });
+  });
+
+  describe("Visibility with optimizeItemArrangement: true", () => {
+    it("should find visible items correctly with optimized placement", () => {
+      const manager = createLayoutManager(
+        LayoutManagerType.MASONRY,
+        defaultParams
+      );
+      // Items placed in shortest column:
+      // Item 0 -> col 0, y=0, h=200
+      // Item 1 -> col 1, y=0, h=50
+      // Item 2 -> col 1, y=50, h=50 (col 1 is shorter)
+      // Item 3 -> col 1, y=100, h=50 (col 1 is still shorter)
+      // Item 4 -> col 1, y=150, h=50 (col 1 at 150, col 0 at 200)
+      const layoutInfos = [
+        createMockLayoutInfo(0, 200, 200),
+        createMockLayoutInfo(1, 200, 50),
+        createMockLayoutInfo(2, 200, 50),
+        createMockLayoutInfo(3, 200, 50),
+        createMockLayoutInfo(4, 200, 50),
+      ];
+      manager.modifyLayout(layoutInfos, 5);
+
+      // Viewport from y=0 to y=100: should include items at y=0 (items 0, 1)
+      // and items that end after y=0 and start before y=100 (items 2, 3)
+      const visible = manager.getVisibleLayouts(0, 100);
+      expect(visible.includes(0)).toBe(true);
+      expect(visible.includes(1)).toBe(true);
+      expect(visible.includes(2)).toBe(true);
+      expect(visible.includes(3)).toBe(true);
+    });
+  });
 });
