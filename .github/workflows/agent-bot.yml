@@ -39,14 +39,18 @@ jobs:
   bot:
     runs-on: macos-latest
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      github.actor == 'naqvitalha' &&
+      github.triggering_actor == 'naqvitalha' &&
       (
-        contains(github.event.comment.body || github.event.review.body, '@agent') &&
-        !contains(github.event.comment.body || github.event.review.body, '/fix') &&
+        github.event_name == 'workflow_dispatch' ||
         (
-          (github.event.comment.author_association || github.event.review.author_association) == 'OWNER' ||
-          (github.event.comment.author_association || github.event.review.author_association) == 'MEMBER' ||
-          (github.event.comment.author_association || github.event.review.author_association) == 'COLLABORATOR'
+          contains(github.event.comment.body || github.event.review.body, '@agent') &&
+          !contains(github.event.comment.body || github.event.review.body, '/fix') &&
+          (
+            (github.event.comment.author_association || github.event.review.author_association) == 'OWNER' ||
+            (github.event.comment.author_association || github.event.review.author_association) == 'MEMBER' ||
+            (github.event.comment.author_association || github.event.review.author_association) == 'COLLABORATOR'
+          )
         )
       )
     steps:

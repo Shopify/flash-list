@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: >-
+      github.actor == 'naqvitalha' &&
+      github.triggering_actor == 'naqvitalha' &&
       github.event.label.name == 'agent-triage' &&
       github.event.sender.type != 'Bot'
     steps:
