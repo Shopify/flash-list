@@ -52,6 +52,7 @@ import { getInvertedTransformStyle } from "./utils/getInvertedTransformStyle";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
 import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
 import { useRecyclerViewController } from "./hooks/useRecyclerViewController";
+import { useInvertedWheelFix } from "./hooks/useInvertedWheelFix";
 import { RenderTimeTracker } from "./helpers/RenderTimeTracker";
 
 /**
@@ -482,6 +483,9 @@ const RecyclerViewComponent = <T,>(
     }
     return onScrollHandler;
   }, [onScrollHandler, scrollY, stickyHeaders, stickyHeaderUseNativeDriver]);
+
+  // Re-invert mouse-wheel direction for inverted lists on web (no-op native).
+  useInvertedWheelFix(scrollViewRef, inverted, horizontal);
 
   const shouldMaintainVisibleContentPosition =
     recyclerViewManager.shouldMaintainVisibleContentPosition();
