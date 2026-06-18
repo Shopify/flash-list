@@ -40,6 +40,8 @@ export interface StickyHeaderProps<TItem> {
   renderItem: FlashListProps<TItem>["renderItem"];
   /** Ref to access sticky header methods */
   stickyHeaderRef: React.RefObject<StickyHeaderRef>;
+  /** zIndex applied to the sticky header container */
+  stickyHeaderZIndex?: number;
   /** Manager for recycler view operations */
   recyclerViewManager: RecyclerViewManager<TItem>;
   /** Additional data to trigger re-renders */
@@ -72,6 +74,7 @@ export const StickyHeaders = <TItem,>({
   extraData,
   onChangeStickyIndex,
   inverted,
+  stickyHeaderZIndex = 2,
 }: StickyHeaderProps<TItem>) => {
   const [stickyHeaderState, setStickyHeaderState] = useState<StickyHeaderState>(
     {
@@ -87,13 +90,13 @@ export const StickyHeaders = <TItem,>({
     return [...stickyHeaderIndices].sort((first, second) => first - second);
   }, [stickyHeaderIndices]);
 
-  const legthInvalid =
+  const lengthInvalid =
     sortedIndices.length === 0 ||
     recyclerViewManager.getDataLength() <=
       sortedIndices[sortedIndices.length - 1];
 
   const compute = useCallback(() => {
-    if (legthInvalid) {
+    if (lengthInvalid) {
       return;
     }
     const adjustedScrollOffset = recyclerViewManager.getLastScrollOffset();
@@ -139,7 +142,7 @@ export const StickyHeaders = <TItem,>({
       onChangeStickyIndex?.(newStickyIndex);
     }
   }, [
-    legthInvalid,
+    lengthInvalid,
     recyclerViewManager,
     sortedIndices,
     currentStickyIndex,
@@ -201,7 +204,7 @@ export const StickyHeaders = <TItem,>({
           top: stickyHeaderOffset,
           left: 0,
           right: 0,
-          zIndex: 2,
+          zIndex: stickyHeaderZIndex,
           transform: [{ translateY }],
           opacity,
         }}
@@ -231,6 +234,7 @@ export const StickyHeaders = <TItem,>({
     refHolder,
     extraData,
     stickyHeaderOffset,
+    stickyHeaderZIndex,
     inverted,
   ]);
 

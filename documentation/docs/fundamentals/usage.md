@@ -332,6 +332,7 @@ stickyHeaderConfig?: {
   useNativeDriver?: boolean;
   offset?: number;
   backdropComponent?: React.ComponentType<any> | React.ReactElement | null;
+  zIndex?: number;
   hideRelatedCell?: boolean;
 };
 ```
@@ -365,6 +366,14 @@ Useful for creating visual separation or effects like backgrounds with blur.
 backdropComponent?: React.ComponentType<any> | React.ReactElement | null;
 ```
 
+#### `zIndex`
+
+zIndex applied to the sticky header container. Default is `2`.
+
+```tsx
+zIndex?: number;
+```
+
 #### `hideRelatedCell`
 
 When a sticky header is displayed, the cell associated with it is hidden.
@@ -384,6 +393,7 @@ hideRelatedCell?: boolean;
     useNativeDriver: true,
     offset: 50, // Headers stick 50px from top
     backdropComponent: <BlurView style={StyleSheet.absoluteFill} />,
+    zIndex: 3,
     hideRelatedCell: true,
   }}
   renderItem={({ item }) => <ListItem item={item} />}

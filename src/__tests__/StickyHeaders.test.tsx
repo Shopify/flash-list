@@ -640,5 +640,36 @@ describe("StickyHeaders - Compute Function", () => {
         }),
       });
     });
+
+    it("should render sticky header with configured zIndex", () => {
+      const layouts = createStandardLayouts();
+
+      const manager = createMockRecyclerViewManager({
+        scrollOffset: 100,
+        layouts,
+      });
+
+      const result = render(
+        <StickyHeaders
+          stickyHeaderIndices={[0, 10, 20]}
+          stickyHeaderOffset={0}
+          stickyHeaderZIndex={7}
+          data={testData}
+          scrollY={new Animated.Value(0)}
+          renderItem={renderItem}
+          stickyHeaderRef={createRef()}
+          recyclerViewManager={manager}
+          extraData={undefined}
+          onChangeStickyIndex={jest.fn()}
+        />
+      );
+
+      const animatedView = result.find(Animated.View);
+      expect(animatedView).toHaveReactProps({
+        style: expect.objectContaining({
+          zIndex: 7,
+        }),
+      });
+    });
   });
 });
