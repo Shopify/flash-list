@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@babel/runtime": "^7.25.0",
+    "@babel/runtime": "^8.0.0",
     "@quilted/react-testing": "0.5.27",
     "@react-native-community/eslint-config": "^3.0.3",
     "@shopify/eslint-plugin": "^41.3.1",
