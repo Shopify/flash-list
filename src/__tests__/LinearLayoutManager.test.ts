@@ -288,4 +288,94 @@ describe("LinearLayoutManager", () => {
       expect(getAllLayouts(manager).length).toBe(3);
     });
   });
+
+  describe("Web scrollbar oscillation (issue #2334)", () => {
+    // On web with classic (non-overlay) scrollbars, the scrollbar's own width
+    // (~15-17px) feeds back into boundedSize: showing the scrollbar narrows the
+    // measured width, which can make content fit and hide the scrollbar, which
+    // widens the measurement again, re-triggering the scrollbar... forever.
+    // updateLayoutParams must detect this A/B/A bounce and stop recomputing.
+    const noScrollbarWidth = 400;
+    const scrollbarWidth = 383; // 400 - 17px classic scrollbar
+
+    it("locks boundedSize and stops recomputing once a scrollbar-width oscillation is detected", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        3,
+        defaultParams,
+        100,
+        100
+      );
+      const recomputeSpy = jest.spyOn(manager, "recomputeLayouts");
+
+      const oscillation = [
+        scrollbarWidth,
+        noScrollbarWidth,
+        scrollbarWidth,
+        noScrollbarWidth,
+        scrollbarWidth,
+        noScrollbarWidth,
+        scrollbarWidth,
+        noScrollbarWidth,
+        scrollbarWidth,
+        noScrollbarWidth,
+      ];
+
+      for (const width of oscillation) {
+        manager.updateLayoutParams(
+          createLayoutParams({
+            ...defaultParams,
+            windowSize: { width, height: 900 },
+          })
+        );
+      }
+
+      // Without hysteresis every alternation triggers a fresh recompute (10
+      // calls -> 10 recomputes), which is exactly the "Maximum update depth
+      // exceeded" feedback loop from the report. Detection should lock the
+      // layout after the first A/B/A bounce and stop recomputing further.
+      expect(recomputeSpy.mock.calls.length).toBeLessThanOrEqual(3);
+
+      const callsAfterFirstBatch = recomputeSpy.mock.calls.length;
+
+      // The scrollbar keeps flickering indefinitely - this must never grow
+      // the recompute count again (i.e. the layout has converged/locked).
+      for (let i = 0; i < 20; i++) {
+        manager.updateLayoutParams(
+          createLayoutParams({
+            ...defaultParams,
+            windowSize: {
+              width: i % 2 === 0 ? scrollbarWidth : noScrollbarWidth,
+              height: 900,
+            },
+          })
+        );
+      }
+
+      expect(recomputeSpy.mock.calls.length).toBe(callsAfterFirstBatch);
+    });
+
+    it("still recomputes for a genuine width change larger than the scrollbar threshold", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        3,
+        defaultParams,
+        100,
+        100
+      );
+      const recomputeSpy = jest.spyOn(manager, "recomputeLayouts");
+
+      // A real resize (150px), not scrollbar noise - must still recompute.
+      manager.updateLayoutParams(
+        createLayoutParams({
+          ...defaultParams,
+          windowSize: { width: 250, height: 900 },
+        })
+      );
+
+      expect(recomputeSpy.mock.calls.length).toBe(1);
+      const layouts = getAllLayouts(manager);
+      expect(layouts[0].width).toBe(250);
+    });
+  });
 });

@@ -21,6 +21,26 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
   /** Height of the tallest item */
   private tallestItemHeight = 0;
 
+  /**
+   * Rolling history (most recent last) of raw incoming bounded-size values,
+   * used to detect a web scrollbar show/hide feedback loop before it is
+   * "locked". Cleared once a real (non-oscillating) resize is observed.
+   */
+  private boundedSizeHistory: number[] = [];
+  /**
+   * When set, boundedSize is pinned to this value because an oscillation was
+   * detected. Incoming sizes within SCROLLBAR_OSCILLATION_THRESHOLD of this
+   * value are treated as scrollbar noise and ignored; a larger delta is
+   * treated as a genuine resize and clears the lock.
+   */
+  private lockedBoundedSize?: number;
+  /**
+   * Max cross-axis delta (px) treated as scrollbar-induced noise rather than
+   * a real resize. Classic (non-overlay) scrollbars are typically 15-17px
+   * wide; 20px gives a small margin without masking real resizes.
+   */
+  private static readonly SCROLLBAR_OSCILLATION_THRESHOLD = 20;
+
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
     this.boundedSize = this.horizontal
@@ -31,15 +51,32 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
 
   /**
    * Updates layout parameters and triggers recomputation if necessary.
+   *
+   * On web with classic (non-overlay) scrollbars, showing/hiding the
+   * scrollbar changes the measured cross-axis size by its width, which can
+   * flip content between "fits" and "overflows" and re-trigger the
+   * scrollbar - an infinite show/hide/relayout loop (issue #2334). To break
+   * that loop we detect an A/B/A bounce within a small threshold and lock
+   * boundedSize until a genuinely larger change arrives.
    * @param params New layout parameters
    */
   updateLayoutParams(params: LayoutParams): void {
     const prevHorizontal = this.horizontal;
     super.updateLayoutParams(params);
     const oldBoundedSize = this.boundedSize;
-    this.boundedSize = this.horizontal
+    const incomingBoundedSize = this.horizontal
       ? params.windowSize.height
       : params.windowSize.width;
+
+    if (prevHorizontal !== this.horizontal) {
+      // Axis changed: bounded size now means something different, so any
+      // in-progress oscillation tracking no longer applies.
+      this.lockedBoundedSize = undefined;
+      this.boundedSizeHistory = [];
+    }
+
+    this.boundedSize = this.resolveBoundedSize(incomingBoundedSize);
+
     if (
       oldBoundedSize !== this.boundedSize ||
       prevHorizontal !== this.horizontal
@@ -50,6 +87,44 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
         this.requiresRepaint = true;
       }
     }
+  }
+
+  /**
+   * Resolves the bounded size to use for this update, applying scrollbar
+   * oscillation detection/locking. See updateLayoutParams for context.
+   * @param incomingBoundedSize Raw bounded size derived from this update's params
+   */
+  private resolveBoundedSize(incomingBoundedSize: number): number {
+    const threshold = RVLinearLayoutManagerImpl.SCROLLBAR_OSCILLATION_THRESHOLD;
+
+    if (this.lockedBoundedSize !== undefined) {
+      if (Math.abs(incomingBoundedSize - this.lockedBoundedSize) <= threshold) {
+        // Scrollbar noise while locked - ignore, stay pinned.
+        return this.lockedBoundedSize;
+      }
+      // Large enough to be a genuine resize - unlock and re-baseline.
+      this.lockedBoundedSize = undefined;
+      this.boundedSizeHistory = [];
+    }
+
+    this.boundedSizeHistory.push(incomingBoundedSize);
+    if (this.boundedSizeHistory.length > 3) {
+      this.boundedSizeHistory.shift();
+    }
+
+    const [first, second, third] = this.boundedSizeHistory;
+    const isOscillating =
+      this.boundedSizeHistory.length === 3 &&
+      first === third &&
+      first !== second &&
+      Math.abs(first - second) <= threshold;
+
+    if (isOscillating) {
+      this.lockedBoundedSize = first;
+      return first;
+    }
+
+    return incomingBoundedSize;
   }
 
   /**
