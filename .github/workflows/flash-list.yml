@@ -197,6 +197,7 @@ jobs:
         run: |
           yarn
           brew tap wix/brew
+          brew trust --formula wix/brew/applesimutils
           brew install applesimutils
           yarn build
           cd fixture/react-native
