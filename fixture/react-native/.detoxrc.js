@@ -30,7 +30,7 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 16 Pro",
+        type: process.env.DETOX_IOS_DEVICE_TYPE || "iPhone 16 Pro",
       },
     },
     emulator: {
