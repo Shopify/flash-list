@@ -184,6 +184,62 @@ describe("MasonryLayoutManager", () => {
       expect(updatedLayouts[2].x).toBe(400); // Col 2 starts at 400
       expect(getColumnHeights(manager)).toEqual([100, 150, 120]);
     });
+
+    it("should keep visible appended items inside the engaged range", () => {
+      const manager = createLayoutManager(LayoutManagerType.MASONRY, {
+        windowSize: { width: 400, height: 500 },
+        maxColumns: 2,
+        optimizeItemArrangement: true,
+      });
+      const firstPageHeights = [
+        371, 99, 281, 497, 327, 191, 89, 441, 407, 407, 441, 89, 191, 327, 497,
+        281, 99, 371,
+      ];
+      manager.modifyLayout(
+        firstPageHeights.map((height, index) =>
+          createMockLayoutInfo(index, 200, height)
+        ),
+        firstPageHeights.length
+      );
+
+      const appendedHeights = [
+        257, 177, 131, 119, 141, 197, 287, 411, 149, 341, 147, 407,
+      ];
+      manager.modifyLayout(
+        appendedHeights.map((height, index) =>
+          createMockLayoutInfo(firstPageHeights.length + index, 200, height)
+        ),
+        firstPageHeights.length + appendedHeights.length
+      );
+
+      const viewportStart = 3600;
+      const viewportEnd = 4100;
+      const engaged = manager.getVisibleLayouts(viewportStart, viewportEnd);
+      const layouts = getAllLayouts(manager);
+      expect(layouts[25]).toEqual(
+        expect.objectContaining({ x: 200, y: 3292, height: 411 })
+      );
+      const actuallyVisibleIndices = layouts
+        .map((layout, index) => ({ index, layout }))
+        .filter(
+          ({ layout }) =>
+            layout.y < viewportEnd && layout.y + layout.height > viewportStart
+        )
+        .map(({ index }) => index);
+      const missingVisibleIndices = actuallyVisibleIndices.filter(
+        (index) => !engaged.includes(index)
+      );
+
+      expect({
+        engaged: engaged.toArray(),
+        actuallyVisibleIndices,
+        missingVisibleIndices,
+      }).toEqual({
+        engaged: expect.arrayContaining(actuallyVisibleIndices),
+        actuallyVisibleIndices: [25, 27, 28, 29],
+        missingVisibleIndices: [],
+      });
+    });
   });
 
   describe("Empty Layout", () => {
