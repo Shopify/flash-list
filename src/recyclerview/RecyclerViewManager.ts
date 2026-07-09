@@ -35,6 +35,15 @@ export class RecyclerViewManager<T> {
   private _isDisposed = false;
   private _isLayoutManagerDirty = false;
   private _animationOptimizationsEnabled = false;
+  /**
+   * Snapshot of `keyExtractor(item, index)` results from the last
+   * processDataUpdate call, indexed by position. Used to detect when the
+   * item at a given index has been replaced by a different one on an
+   * in-place data swap so we can invalidate that index's stale measured
+   * height/minHeight and let it be remeasured against the new content.
+   * See `invalidateChangedLayouts`.
+   */
+  private prevDataKeys: string[] = [];
 
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
@@ -301,12 +310,68 @@ export class RecyclerViewManager<T> {
 
   processDataUpdate() {
     if (this.hasLayout()) {
+      this.invalidateChangedLayouts();
       this.modifyChildrenLayout([], this.propsRef.data?.length ?? 0);
       if (this.hasRenderedProgressively && !this.recomputeEngagedIndices()) {
         // recomputeEngagedIndices will update the render stack if there are any changes in the engaged indices.
         // It's important to update render stack so that elements are assgined right keys incase items were deleted.
         this.updateRenderStack(this.engagedIndicesTracker.getEngagedIndices());
       }
+    } else {
+      this.recordCurrentDataKeys();
+    }
+  }
+
+  /**
+   * Detects per-index identity changes between the previous and current data
+   * arrays (using keyExtractor) and invalidates the cached measured height
+   * for indices whose item changed.
+   *
+   * Without this, an in-place data swap (e.g. category/filter change) leaves
+   * the LayoutManager believing every index is still measured at its previous
+   * height. In a multi-column grid this leaks the previous row's tallest-item
+   * constraint onto the new content: the ViewHolder applies the stale
+   * `minHeight`, and the row's `y` for the next row is computed against the
+   * stale height — so a taller new card overflows into the row below.
+   *
+   * Clearing `isHeightMeasured` ensures the next `modifyLayout` call sees
+   * the index as needing a fresh recompute via
+   * `computeEstimatesAndMinMaxChangedLayout`, and clearing `minHeight` stops
+   * the stale constraint from being applied in the next render before the
+   * first measurement arrives.
+   *
+   * No-op when `keyExtractor` is not provided (we cannot safely diff
+   * positions without stable keys).
+   */
+  private invalidateChangedLayouts(): void {
+    if (!this.hasStableDataKeys() || !this.layoutManager) {
+      this.recordCurrentDataKeys();
+      return;
+    }
+    const newLength = this.getDataLength();
+    const layoutCount = this.layoutManager.getLayoutCount();
+    const compareLength = Math.min(layoutCount, newLength);
+    for (let i = 0; i < compareLength; i++) {
+      const oldKey = this.prevDataKeys[i];
+      const newKey = this.getDataKey(i);
+      if (oldKey !== undefined && oldKey !== newKey) {
+        const layout = this.layoutManager.getLayout(i);
+        layout.isHeightMeasured = false;
+        layout.minHeight = undefined;
+      }
+    }
+    this.recordCurrentDataKeys();
+  }
+
+  private recordCurrentDataKeys(): void {
+    if (!this.hasStableDataKeys()) {
+      this.prevDataKeys.length = 0;
+      return;
+    }
+    const newLength = this.getDataLength();
+    this.prevDataKeys.length = newLength;
+    for (let i = 0; i < newLength; i++) {
+      this.prevDataKeys[i] = this.getDataKey(i);
     }
   }
 
