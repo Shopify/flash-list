@@ -266,7 +266,7 @@ export interface FlashListRef<T> {
    * @returns An object with startIndex and endIndex properties
    *
    * @example
-   * const { startIndex, endIndex } = listRef.current?.getVisibleIndices();
+   * const { startIndex, endIndex } = listRef.current?.computeVisibleIndices();
    * console.log(`Visible items: ${startIndex} to ${endIndex}`);
    */
   computeVisibleIndices: () => { startIndex: number; endIndex: number };
