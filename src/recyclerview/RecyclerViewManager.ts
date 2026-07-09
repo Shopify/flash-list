@@ -385,7 +385,12 @@ export class RecyclerViewManager<T> {
       // re-estimate unmeasured items with an updated average height, changing
       // the target item's position. Reading before recompute would capture a
       // stale offset, causing the wrong items to be rendered.
-      this.layoutManager.recomputeLayouts(0, initialScrollIndex);
+      // The recompute must cover the entire table, not just up to
+      // initialScrollIndex: moving items 0..initialScrollIndex while leaving
+      // later items at positions derived from older estimates can make the
+      // table non-monotonic, which breaks the binary search over item
+      // positions and renders the wrong items (#2307).
+      this.layoutManager.recomputeLayouts(0, this.getDataLength() - 1);
       const initialItemLayout =
         this.layoutManager.getLayout(initialScrollIndex);
       const initialItemOffset = this.propsRef.horizontal
