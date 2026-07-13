@@ -412,12 +412,28 @@ const RecyclerViewComponent = <T,>(
     renderStickyHeaderBackdrop,
   } = useSecondaryProps(props);
 
-  if (
-    !recyclerViewManager.getIsFirstLayoutComplete() &&
-    recyclerViewManager.getDataLength() > 0
-  ) {
-    parentRecyclerViewContext?.markChildLayoutAsPending(recyclerViewId);
-  }
+  // Mark only committed children so interrupted renders cannot leave orphaned IDs.
+  useLayoutEffect(() => {
+    const shouldSkipPendingMark =
+      horizontal &&
+      recyclerViewManager.hasLayout() &&
+      recyclerViewManager.getWindowSize().height > 0;
+
+    if (
+      !recyclerViewManager.getIsFirstLayoutComplete() &&
+      recyclerViewManager.getDataLength() > 0 &&
+      !shouldSkipPendingMark
+    ) {
+      parentRecyclerViewContext?.markChildLayoutAsPending(recyclerViewId);
+    }
+  });
+
+  // Release the parent if this child unmounts before its first layout commits.
+  useLayoutEffect(() => {
+    return () => {
+      parentRecyclerViewContext?.unmarkChildLayoutAsPending(recyclerViewId);
+    };
+  }, [parentRecyclerViewContext, recyclerViewId]);
 
   // Render sticky headers if configured
   const stickyHeaders = useMemo(() => {
