@@ -10,7 +10,7 @@ import { FlashListProps } from "../FlashListProps";
 
 import { ViewHolder, ViewHolderProps } from "./ViewHolder";
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
-import { CompatView } from "./components/CompatView";
+import { AccessibilityContainer } from "./components/AccessibilityContainer";
 import { useRecyclerViewContext } from "./RecyclerViewContextProvider";
 
 /**
@@ -172,7 +172,10 @@ export const ViewHolderCollection = <TItem,>(
   // );
 
   return (
-    <CompatView style={hasData && containerStyle}>
+    <AccessibilityContainer
+      style={hasData && containerStyle}
+      reverseAccessibilityOrder={Boolean(inverted)}
+    >
       {containerLayout &&
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
@@ -209,6 +212,6 @@ export const ViewHolderCollection = <TItem,>(
             />
           );
         })}
-    </CompatView>
+    </AccessibilityContainer>
   );
 };
