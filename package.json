@@ -79,6 +79,8 @@
     "typescript": "5.8.3"
   },
   "files": [
+    "android/build.gradle",
+    "android/src",
     "dist",
     "src",
     "jestSetup.js",
