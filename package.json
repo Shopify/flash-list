@@ -45,7 +45,7 @@
     "ri": "yarn fixture:rn:ios",
     "fixture:expo:start": "cd fixture/expo && yarn start",
     "rw": "yarn fixture:expo:start",
-    "e2e:up": "cd fixture/react-native/ios && brew tap wix/brew && brew install applesimutils && cd ../../../",
+    "e2e:up": "cd fixture/react-native/ios && brew tap wix/brew && brew trust --formula wix/brew/applesimutils && brew install applesimutils && cd ../../../",
     "e2e:ios": "cd fixture/react-native && yarn e2e:build:ios && yarn e2e:test:ios",
     "rei": "yarn run e2e:ios",
     "e2e:android": "cd fixture/react-native && yarn e2e:build:android && yarn e2e:test:android",

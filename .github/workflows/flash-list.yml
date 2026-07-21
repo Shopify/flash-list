@@ -197,12 +197,23 @@ jobs:
         run: |
           yarn
           brew tap wix/brew
+          brew trust --formula wix/brew/applesimutils
           brew install applesimutils
           yarn build
           cd fixture/react-native
           yarn
           cd ios
           bundle exec pod install
+      - name: Select iOS simulator
+        run: |
+          xcrun simctl list devices available
+          DETOX_IOS_DEVICE_TYPE=$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { name=$1; sub(/^[[:space:]]*/, "", name); sub(/[[:space:]]*$/, "", name); print name; exit }')
+          if [ -z "$DETOX_IOS_DEVICE_TYPE" ]; then
+            echo "No available iPhone simulator found" >&2
+            exit 1
+          fi
+          echo "Using iOS simulator: $DETOX_IOS_DEVICE_TYPE"
+          echo "DETOX_IOS_DEVICE_TYPE=$DETOX_IOS_DEVICE_TYPE" >> "$GITHUB_ENV"
       - name: Build and Run e2e tests
         run: |
           cd fixture/react-native
