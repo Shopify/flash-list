@@ -71,7 +71,7 @@ jobs:
         run: git fetch origin main
 
       - name: Run agent
-        uses: anthropics/claude-code-action@bf4f0de6fccd1eea7044a5f903fc928aff363134 # v1
+        uses: anthropics/claude-code-action@df37d2f0760a4b5683a6e617c9325bc1a36443f6 # v1
         env:
           ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
           ANTHROPIC_CUSTOM_HEADERS: |-
