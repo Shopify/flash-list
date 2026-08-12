@@ -98,6 +98,27 @@ describe("RecyclerView", () => {
         }),
       });
     });
+
+    it("does not apply the sticky header offset to the content layout", () => {
+      const result = render(
+        <FlashList
+          data={[0, 1, 2]}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          stickyHeaderIndices={[0]}
+          stickyHeaderConfig={{ offset: 100 }}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+        />
+      );
+
+      const measurementView = result.findAll(View).find(({ props }) => {
+        const style = props.style;
+        return !Array.isArray(style) && style?.height === 0;
+      });
+
+      expect(measurementView).toBeDefined();
+      expect(measurementView?.props.style).not.toHaveProperty("marginTop");
+    });
   });
 
   describe("Masonry Layout", () => {
