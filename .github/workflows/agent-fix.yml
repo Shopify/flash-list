@@ -28,23 +28,79 @@ env:
     Bash(cd *),Bash(./gradlew *)
 
 jobs:
-  fix:
-    runs-on: macos-latest
+  approval:
+    name: Agent fix approval
+    runs-on: ubuntu-latest
+    permissions: {}
     if: >-
       (
-        github.event.action == 'labeled' &&
-        github.event.label.name == 'agent-fix' &&
-        github.event.issue.pull_request == null &&
-        github.event.sender.type != 'Bot'
-      ) || (
-        github.event.action == 'created' &&
-        contains(github.event.comment.body, '/fix') &&
-        !github.event.issue.pull_request &&
         (
-          github.event.comment.author_association == 'OWNER' ||
-          github.event.comment.author_association == 'MEMBER' ||
-          github.event.comment.author_association == 'COLLABORATOR'
+          github.event.action == 'labeled' &&
+          github.event.label.name == 'agent-fix' &&
+          github.event.issue.pull_request == null &&
+          github.event.sender.type != 'Bot' &&
+          (
+            github.event.issue.author_association == 'OWNER' ||
+            github.event.issue.author_association == 'MEMBER' ||
+            github.event.issue.author_association == 'COLLABORATOR'
+          )
+        ) || (
+          github.event.action == 'created' &&
+          contains(github.event.comment.body, '/fix') &&
+          !github.event.issue.pull_request &&
+          (
+            github.event.issue.author_association == 'OWNER' ||
+            github.event.issue.author_association == 'MEMBER' ||
+            github.event.issue.author_association == 'COLLABORATOR'
+          ) &&
+          (
+            github.event.comment.author_association == 'OWNER' ||
+            github.event.comment.author_association == 'MEMBER' ||
+            github.event.comment.author_association == 'COLLABORATOR'
+          )
         )
+      ) &&
+      !contains(',naqvitalha,', format(',{0},', github.actor))
+    environment: agent-fix
+    steps:
+      - name: Await approval
+        run: echo "Approved agent-fix run for ${{ github.actor }}"
+
+  fix:
+    needs: approval
+    runs-on: macos-latest
+    if: >-
+      always() &&
+      (
+        (
+          github.event.action == 'labeled' &&
+          github.event.label.name == 'agent-fix' &&
+          github.event.issue.pull_request == null &&
+          github.event.sender.type != 'Bot' &&
+          (
+            github.event.issue.author_association == 'OWNER' ||
+            github.event.issue.author_association == 'MEMBER' ||
+            github.event.issue.author_association == 'COLLABORATOR'
+          )
+        ) || (
+          github.event.action == 'created' &&
+          contains(github.event.comment.body, '/fix') &&
+          !github.event.issue.pull_request &&
+          (
+            github.event.issue.author_association == 'OWNER' ||
+            github.event.issue.author_association == 'MEMBER' ||
+            github.event.issue.author_association == 'COLLABORATOR'
+          ) &&
+          (
+            github.event.comment.author_association == 'OWNER' ||
+            github.event.comment.author_association == 'MEMBER' ||
+            github.event.comment.author_association == 'COLLABORATOR'
+          )
+        )
+      ) &&
+      (
+        contains(',naqvitalha,', format(',{0},', github.actor)) ||
+        needs.approval.result == 'success'
       )
     steps:
       - name: Check triggering actor permission
@@ -92,7 +148,7 @@ jobs:
 
       - name: Fix issue
         if: steps.actor_permission.outputs.allowed == 'true'
-        uses: anthropics/claude-code-action@bf4f0de6fccd1eea7044a5f903fc928aff363134 # v1
+        uses: anthropics/claude-code-action@ba0aafd4308cbba7165f9f2cdb0cfbed5a3c99ce # v1.0.168
         env:
           ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
           ANTHROPIC_CUSTOM_HEADERS: |-
@@ -125,7 +181,7 @@ jobs:
             - Suggestions for improvement
 
       - name: Upload agent feedback
-        if: always()
+        if: always() && steps.actor_permission.outputs.allowed == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: agent-feedback-fix-${{ github.event.issue.number || github.run_id }}

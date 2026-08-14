@@ -15,7 +15,12 @@ jobs:
     if: >-
       github.event.label.name == 'agent-triage' &&
       github.event.issue.pull_request == null &&
-      github.event.sender.type != 'Bot'
+      github.event.sender.type != 'Bot' &&
+      (
+        github.event.issue.author_association == 'OWNER' ||
+        github.event.issue.author_association == 'MEMBER' ||
+        github.event.issue.author_association == 'COLLABORATOR'
+      )
     steps:
       - name: Check triggering actor permission
         id: actor_permission
@@ -41,7 +46,7 @@ jobs:
 
       - name: Triage issue
         if: steps.actor_permission.outputs.allowed == 'true'
-        uses: anthropics/claude-code-action@bf4f0de6fccd1eea7044a5f903fc928aff363134 # v1
+        uses: anthropics/claude-code-action@ba0aafd4308cbba7165f9f2cdb0cfbed5a3c99ce # v1.0.168
         env:
           ANTHROPIC_BASE_URL: https://proxy.shopify.ai/vendors/anthropic
           ANTHROPIC_CUSTOM_HEADERS: |-
@@ -71,7 +76,7 @@ jobs:
             - Suggestions for improvement
 
       - name: Upload agent feedback
-        if: always()
+        if: always() && steps.actor_permission.outputs.allowed == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: agent-feedback-triage-${{ github.event.issue.number }}
