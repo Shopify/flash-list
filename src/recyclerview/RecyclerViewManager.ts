@@ -86,6 +86,35 @@ export class RecyclerViewManager<T> {
     );
   };
 
+  private clampEngagedIndices(
+    engagedIndices: ConsecutiveNumbers,
+    dataLength: number
+  ): ConsecutiveNumbers {
+    if (dataLength <= 0 || engagedIndices.length === 0) {
+      return ConsecutiveNumbers.EMPTY;
+    }
+    const lastIndex = dataLength - 1;
+    if (engagedIndices.startIndex > lastIndex) {
+      return ConsecutiveNumbers.EMPTY;
+    }
+    if (engagedIndices.endIndex <= lastIndex) {
+      return engagedIndices;
+    }
+    return new ConsecutiveNumbers(engagedIndices.startIndex, lastIndex);
+  }
+
+  private syncRenderStackAfterLayoutChange(dataLength: number): void {
+    if (!this.hasRenderedProgressively) {
+      return;
+    }
+    this.updateRenderStack(
+      this.clampEngagedIndices(
+        this.engagedIndicesTracker.getEngagedIndices(),
+        dataLength
+      )
+    );
+  }
+
   get props() {
     return this.propsRef;
   }
@@ -262,18 +291,28 @@ export class RecyclerViewManager<T> {
   ): boolean {
     this.layoutManager?.modifyLayout(layoutInfo, dataLength);
     if (dataLength === 0) {
+      this.syncRenderStackAfterLayoutChange(dataLength);
       return false;
     }
     if (this.layoutManager?.requiresRepaint) {
       // console.log("requiresRepaint triggered");
       this.layoutManager.requiresRepaint = false;
+      this.syncRenderStackAfterLayoutChange(dataLength);
       return true;
     }
     if (this.hasRenderedProgressively) {
       if (!this.isFirstPaintOnUiComplete) {
+        this.syncRenderStackAfterLayoutChange(dataLength);
         return false;
       }
-      return this.recomputeEngagedIndices() !== undefined;
+      const engagedIndicesChanged =
+        this.recomputeEngagedIndices() !== undefined;
+      if (!engagedIndicesChanged) {
+        // Engaged range endpoints can stay the same while the layout table
+        // shrinks, leaving recycle pool keys pointing past the last layout.
+        this.syncRenderStackAfterLayoutChange(dataLength);
+      }
+      return engagedIndicesChanged;
     } else {
       this.renderProgressively();
     }
