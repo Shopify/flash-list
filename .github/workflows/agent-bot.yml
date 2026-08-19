@@ -38,15 +38,21 @@ env:
 jobs:
   bot:
     runs-on: macos-latest
+    # Temporarily disabled while the agent workflow security review is in progress.
     if: >-
-      github.event_name == 'workflow_dispatch' ||
       (
-        contains(github.event.comment.body || github.event.review.body, '@agent') &&
-        !contains(github.event.comment.body || github.event.review.body, '/fix') &&
+        false &&
         (
-          (github.event.comment.author_association || github.event.review.author_association) == 'OWNER' ||
-          (github.event.comment.author_association || github.event.review.author_association) == 'MEMBER' ||
-          (github.event.comment.author_association || github.event.review.author_association) == 'COLLABORATOR'
+          github.event_name == 'workflow_dispatch' ||
+          (
+            contains(github.event.comment.body || github.event.review.body, '@agent') &&
+            !contains(github.event.comment.body || github.event.review.body, '/fix') &&
+            (
+              (github.event.comment.author_association || github.event.review.author_association) == 'OWNER' ||
+              (github.event.comment.author_association || github.event.review.author_association) == 'MEMBER' ||
+              (github.event.comment.author_association || github.event.review.author_association) == 'COLLABORATOR'
+            )
+          )
         )
       )
     steps:

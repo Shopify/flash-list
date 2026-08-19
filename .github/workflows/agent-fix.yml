@@ -30,20 +30,26 @@ env:
 jobs:
   fix:
     runs-on: macos-latest
+    # Temporarily disabled while the agent workflow security review is in progress.
     if: >-
       (
-        github.event.action == 'labeled' &&
-        github.event.label.name == 'agent-fix' &&
-        github.event.issue.pull_request == null &&
-        github.event.sender.type != 'Bot'
-      ) || (
-        github.event.action == 'created' &&
-        contains(github.event.comment.body, '/fix') &&
-        !github.event.issue.pull_request &&
+        false &&
         (
-          github.event.comment.author_association == 'OWNER' ||
-          github.event.comment.author_association == 'MEMBER' ||
-          github.event.comment.author_association == 'COLLABORATOR'
+          (
+            github.event.action == 'labeled' &&
+            github.event.label.name == 'agent-fix' &&
+            github.event.issue.pull_request == null &&
+            github.event.sender.type != 'Bot'
+          ) || (
+            github.event.action == 'created' &&
+            contains(github.event.comment.body, '/fix') &&
+            !github.event.issue.pull_request &&
+            (
+              github.event.comment.author_association == 'OWNER' ||
+              github.event.comment.author_association == 'MEMBER' ||
+              github.event.comment.author_association == 'COLLABORATOR'
+            )
+          )
         )
       )
     steps:

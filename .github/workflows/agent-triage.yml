@@ -12,7 +12,9 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Temporarily disabled while the agent workflow security review is in progress.
     if: >-
+      false &&
       github.event.label.name == 'agent-triage' &&
       github.event.issue.pull_request == null &&
       github.event.sender.type != 'Bot'
