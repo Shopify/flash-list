@@ -338,6 +338,12 @@ Run through relevant entries after any fix or review. This is the single source 
 - [ ] `firstItemOffset` after fix — confirm it equals `ListHeaderComponent` height/width
 - [ ] `measureParentSize(view)` returns `x=0, y=0` on RN 0.84 Fabric — the #2017 bug may only manifest on other RN versions
 
+### Autoscroll to bottom (`maintainVisibleContentPosition.autoscrollToBottomThreshold`)
+- [ ] Item heights settling after the row mounts (image loads, text wraps) still keeps the list pinned to the bottom
+- [ ] New content arriving mid-scroll still lands at the bottom once the scroll stops
+- [ ] Scrolling up while content is still growing is NOT yanked back down
+- [ ] `scrollToIndex` in flight is still not hijacked by the autoscroll (`isOffsetProjectionEnabled` guard)
+
 ### Performance
 - [ ] Benchmark screen shows no FPS regression (use `ManualBenchmarkExample`)
 
@@ -345,6 +351,8 @@ Run through relevant entries after any fix or review. This is the single source 
 
 ## Common Issues
 
+- **A `not.toHaveBeenCalled()` test can pass without ever reaching the code it names** — negative assertions are vacuous by default. Mutation-test each guard separately (delete one, confirm exactly the test that names it goes red), or drop a temporary `console.log` in the branch to prove the test enters it. A test that stays green when its guard is deleted is testing nothing.
+- **A time-guarded bug hides under `jest.runAllTimers()`** — `runAllTimers` advances the fake clock past every `Date.now()` guard in the code (e.g. `useBoundDetection`'s 100ms quiet window), so a bug that only happens inside that window silently passes. Drive those cases with `jest.advanceTimersByTime(16)` and only drain with `runAllTimers` at the end.
 - **Tests pass but device shows bug** — did you `yarn build` and relaunch? The dist/ folder may be stale
 - **Switched branches but behavior didn't change** — `dist/` is NOT rebuilt on branch switch. You MUST run `yarn build` after every `git checkout`. Verify with `grep` in `dist/` that the expected code is present before testing.
 - **RTL looks wrong but LTR is fine** — did you set `forceRTL(true)` in `index.js` and do a full kill+relaunch?
