@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix wrong items rendered with `initialScrollIndex` when item size exceeds the default average estimate
+  - https://github.com/Shopify/flash-list/issues/2307
 - Introduce optional view offset param for initial scroll position
   - https://github.com/Shopify/flash-list/pull/1870
 - Add sticky header offset and sticky header backgrounds
