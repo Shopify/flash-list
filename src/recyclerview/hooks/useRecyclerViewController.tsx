@@ -21,6 +21,7 @@ import { adjustOffsetForRTL } from "../utils/adjustOffsetForRTL";
 import { RVLayout } from "../layout-managers/LayoutManager";
 import { ScrollAnchorRef } from "../components/ScrollAnchor";
 import { PlatformConfig } from "../../native/config/PlatformHelper";
+import { supportsNativeMaintainVisibleContentPosition } from "../utils/snapping";
 import { WarningMessages } from "../../errors/WarningMessages";
 
 import { useUnmountFlag } from "./useUnmountFlag";
@@ -181,7 +182,16 @@ export function useRecyclerViewController<T>(
             !recyclerViewManager.animationOptimizationsEnabled
           ) {
             // console.log("diff", diff, firstVisibleItemKey.current);
-            if (PlatformConfig.supportsOffsetCorrection) {
+            // The anchor nudge only moves the scroll position through the
+            // native maintainVisibleContentPosition the ScrollView was given.
+            // A snapping list on Android is not given it (see snapping.ts), so
+            // there the correction has to drive the scroll position directly.
+            if (
+              PlatformConfig.supportsOffsetCorrection &&
+              supportsNativeMaintainVisibleContentPosition(
+                recyclerViewManager.props
+              )
+            ) {
               // console.log("scrollBy", diff);
               scrollAnchorRef.current?.scrollBy(diff);
             } else {
