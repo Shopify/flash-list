@@ -374,7 +374,13 @@ const RecyclerViewComponent = <T,>(
    */
   const validateItemSize = useCallback(
     (index: number, size: RVDimension) => {
-      const layout = recyclerViewManager.getLayout(index);
+      // A ViewHolder can report its size after the layout table has already
+      // shrunk past the index it was rendered with. There is nothing left to
+      // validate the measurement against, so drop it.
+      const layout = recyclerViewManager.tryGetLayout(index);
+      if (layout === undefined) {
+        return;
+      }
       const width = Math.max(
         Math.min(layout.width, layout.maxWidth ?? Infinity),
         layout.minWidth ?? 0
@@ -586,7 +592,7 @@ const RecyclerViewComponent = <T,>(
             data={data}
             horizontal={horizontal}
             renderStack={recyclerViewManager.getRenderStack()}
-            getLayout={(index) => recyclerViewManager.getLayout(index)}
+            getLayout={(index) => recyclerViewManager.tryGetLayout(index)}
             getAdjustmentMargin={() => {
               if (!shouldRenderFromBottom || !recyclerViewManager.hasLayout()) {
                 return 0;
