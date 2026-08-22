@@ -505,14 +505,14 @@ const RecyclerViewComponent = <T,>(
     return (
       <CompatView
         style={{
-          marginTop: horizontal ? undefined : stickyHeaderOffset,
+          marginTop: undefined,
           height: horizontal ? undefined : 0,
           width: horizontal ? 0 : undefined,
         }}
         ref={firstChildViewRef}
       />
     );
-  }, [horizontal, stickyHeaderOffset]);
+  }, [horizontal]);
 
   const scrollAnchor = useMemo(() => {
     if (shouldMaintainVisibleContentPosition) {
