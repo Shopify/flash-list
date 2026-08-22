@@ -176,7 +176,9 @@ export const ViewHolderCollection = <TItem,>(
       {containerLayout &&
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
-          const item = data[index];
+          // Skip indices that are now out of bounds. The render stack
+          // may still contain entries from a previous larger data array
+          // while data has already shrunk, l...[truncated]
           // Suppress separators for items in the last row to prevent
           // height mismatch. The last data item has no separator (no
           // trailingItem), so all items sharing its row must match.
