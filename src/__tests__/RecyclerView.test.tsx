@@ -495,6 +495,41 @@ describe("RecyclerView", () => {
       expect(scrollToEndSpy).not.toHaveBeenCalled();
     });
 
+    it("does not fire scrollToEnd from a latch armed before autoscrollToBottomThreshold was disabled", () => {
+      const data = Array.from({ length: 20 }, (_, i) => i);
+      const { result, ref } = renderChatList(data);
+
+      const scrollToEndSpy = jest.fn();
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      expect(nativeScrollRef).toBeTruthy();
+      nativeScrollRef.scrollToEnd = scrollToEndSpy;
+
+      // 1. Arm the latch while autoscroll is enabled: sit at the bottom.
+      scrollTo(result, 1101);
+      jest.runAllTimers();
+      scrollToEndSpy.mockClear();
+
+      // 2. Disable autoscroll. checkBounds now skips latch updates, so the
+      //    armed latch survives frozen instead of clearing. setProps resets
+      //    unspecified props to the originally rendered element, so the
+      //    disabled config rides along with every later update.
+      const disabledAutoscroll = {
+        maintainVisibleContentPosition: {
+          animateAutoScrollToBottom: false,
+          startRenderingFromBottom: true,
+        },
+      };
+      result.setProps(disabledAutoscroll);
+      jest.runAllTimers();
+
+      // 3. A data change consumes the latch. With autoscroll disabled the
+      //    caller owns scrolling, so nothing may fire.
+      result.setProps({ ...disabledAutoscroll, data: [...data, 100] });
+      jest.runAllTimers();
+
+      expect(scrollToEndSpy).not.toHaveBeenCalled();
+    });
+
     it("fires scrollToEnd from the autoscroll path when isOffsetProjectionEnabled is true", () => {
       const data = Array.from({ length: 20 }, (_, i) => i);
       const { result, ref } = renderChatList(data);

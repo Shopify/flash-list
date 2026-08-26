@@ -151,6 +151,18 @@ export function useBoundDetection<T>(
     }
     if (pendingAutoscrollToBottom.current) {
       pendingAutoscrollToBottom.current = false;
+      // Drop the latch instead of firing it when autoscroll is currently
+      // disabled. checkBounds skips latch updates entirely while
+      // autoscrollToBottomThreshold is unset/negative, so a latch armed
+      // while autoscroll was enabled survives frozen and would otherwise
+      // fire stale on the next data change, stomping caller-owned scroll
+      // choreography.
+      const autoscrollToBottomThreshold =
+        recyclerViewManager.props.maintainVisibleContentPosition
+          ?.autoscrollToBottomThreshold ?? -1;
+      if (autoscrollToBottomThreshold < 0) {
+        return;
+      }
       requestAnimationFrame(() => {
         const shouldAnimate =
           recyclerViewManager.props.maintainVisibleContentPosition
