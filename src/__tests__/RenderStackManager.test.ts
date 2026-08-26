@@ -366,6 +366,25 @@ describe("RenderStackManager with maxItemsInRecyclePool", () => {
     expect(keys2).toEqual(["5", "6", "7"]); // Expect new keys as pool was cleared by emptyMock sync
   });
 
+  it("should not reuse a key after an item scrolls out of view when maxItemsInRecyclePool is 0", () => {
+    const rsm = new RenderStackManager(0);
+    const data = createMockData([
+      { id: "first", itemType: "typeA" },
+      { id: "second", itemType: "typeA" },
+    ]);
+
+    runSyncAndGetEntireKeyMapKeys(rsm, data, new ConsecutiveNumbers(0, 0));
+    const firstKey = getKeysForMockItems(rsm, data)[0];
+
+    runSyncAndGetEntireKeyMapKeys(rsm, data, new ConsecutiveNumbers(1, 1));
+    const secondKey = getKeysForMockItems(rsm, data)[0];
+
+    expect(secondKey).not.toBe(firstKey);
+    expect(Array.from(rsm.getRenderStack().values())).toEqual([
+      { index: 1, itemType: "typeA", stableId: "second" },
+    ]);
+  });
+
   it("should effectively not recycle if intermediate sync has dataLength 0, regardless of maxPoolSize", () => {
     const maxPoolSize = 2;
     const rsm = new RenderStackManager(maxPoolSize);

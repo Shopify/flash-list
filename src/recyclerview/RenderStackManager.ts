@@ -69,7 +69,7 @@ export class RenderStackManager {
         this.recycleKey(key);
         return;
       }
-      if (!this.disableRecycling) {
+      if (!this.isRecyclingDisabled()) {
         this.unProcessedIndices.add(index);
       }
       if (!engagedIndices.includes(index)) {
@@ -202,7 +202,7 @@ export class RenderStackManager {
    * Places a key back into its type-specific recycle pool for future reuse
    */
   private recycleKey(key: string): void {
-    if (this.disableRecycling) {
+    if (this.isRecyclingDisabled()) {
       return;
     }
     const keyInfo = this.keyMap.get(key);
@@ -217,6 +217,10 @@ export class RenderStackManager {
     const pool = this.getRecyclePoolForType(itemType);
 
     pool.add(key);
+  }
+
+  private isRecyclingDisabled(): boolean {
+    return this.disableRecycling || this.maxItemsInRecyclePool === 0;
   }
 
   /**
