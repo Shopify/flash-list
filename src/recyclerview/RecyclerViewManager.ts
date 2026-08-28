@@ -401,14 +401,6 @@ export class RecyclerViewManager<T> {
     }
   }
 
-  /**
-   * Places the anchor item within the viewport. An explicit initialScrollIndex
-   * anchors the item's leading edge, matching a scroll to that index. An index
-   * derived from startRenderingFromBottom anchors the last item, so its
-   * trailing edge is aligned with the viewport's instead — otherwise nothing
-   * sits below it and the first pass engages a single row, leaving every row
-   * above it to arrive through progressive rendering.
-   */
   private getInitialScrollOffset(itemLayout: RVLayout): number {
     const itemOffset = this.propsRef.horizontal ? itemLayout.x : itemLayout.y;
 
