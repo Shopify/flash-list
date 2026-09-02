@@ -288,4 +288,63 @@ describe("LinearLayoutManager", () => {
       expect(getAllLayouts(manager).length).toBe(3);
     });
   });
+  describe("Tail sync after a partial recompute", () => {
+    // A recompute pass is capped at maxItemsToProcess items. When the items it
+    // touched end up positioned past the (untouched) last item, the layout
+    // manager has to recompute the tail as well, otherwise the reported content
+    // size is stale and the tail overlaps the items that were just moved.
+    const itemCount = 300;
+    const measuredCount = 25;
+    const measuredSize = 1000;
+
+    it("recomputes the tail of a vertical list", () => {
+      const manager = createLayoutManager(
+        LayoutManagerType.LINEAR,
+        defaultParams
+      );
+      manager.modifyLayout([], itemCount);
+
+      manager.modifyLayout(
+        Array.from({ length: measuredCount }, (_, index) =>
+          createMockLayoutInfo(index, 400, measuredSize)
+        ),
+        itemCount
+      );
+
+      const layouts = getAllLayouts(manager);
+      for (let index = 1; index < itemCount; index++) {
+        expect(layouts[index].y).toBeGreaterThanOrEqual(layouts[index - 1].y);
+      }
+      const lastLayout = layouts[itemCount - 1];
+      expect(manager.getLayoutSize().height).toBe(
+        lastLayout.y + lastLayout.height
+      );
+    });
+
+    it("recomputes the tail of a horizontal list", () => {
+      const manager = createLayoutManager(
+        LayoutManagerType.LINEAR,
+        horizontalParams
+      );
+      manager.modifyLayout([], itemCount);
+
+      manager.modifyLayout(
+        Array.from({ length: measuredCount }, (_, index) =>
+          createMockLayoutInfo(index, measuredSize, 300)
+        ),
+        itemCount
+      );
+
+      const layouts = getAllLayouts(manager);
+      // Every item must still start at or after the previous one - a stale tail
+      // shows up here as item n sitting on top of much earlier items.
+      for (let index = 1; index < itemCount; index++) {
+        expect(layouts[index].x).toBeGreaterThanOrEqual(layouts[index - 1].x);
+      }
+      const lastLayout = layouts[itemCount - 1];
+      expect(manager.getLayoutSize().width).toBe(
+        lastLayout.x + lastLayout.width
+      );
+    });
+  });
 });
