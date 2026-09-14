@@ -138,14 +138,24 @@ export class RVEngagedIndicesTrackerImpl implements RVEngagedIndicesTracker {
     const bufferAfter = Math.ceil(totalBuffer * afterRatio);
 
     // STEP 3: Calculate the extended viewport (visible area + buffers)
-    // The start position with buffer (never less than 0)
-    let extendedStart = Math.max(0, viewportStart - bufferBefore);
+    // The start position with buffer (never less than 0). The window is
+    // computed from the projected offset, so clamp it to also cover the real
+    // viewport start; otherwise, when the trailing buffer is smaller than the
+    // projection delta, rows that are actually on screen would be excluded.
+    let extendedStart = Math.max(
+      0,
+      Math.min(viewportStart - bufferBefore, offset)
+    );
 
     // If we couldn't apply full buffer at start, calculate how much was unused
     const unusedStartBuffer = Math.max(0, bufferBefore - viewportStart);
 
-    // Add any unused start buffer to the end buffer
-    let extendedEnd = viewportEnd + bufferAfter + unusedStartBuffer;
+    // Add any unused start buffer to the end buffer. Clamp so the window also
+    // covers the real viewport end (mirror case when scrolling backward).
+    let extendedEnd = Math.max(
+      viewportEnd + bufferAfter + unusedStartBuffer,
+      offset + viewportSize
+    );
 
     // STEP 4: Handle end boundary adjustments
     // Get the total content size to check for end boundary
