@@ -444,9 +444,7 @@ const RecyclerViewComponent = <T,>(
           extraData={extraData}
           inverted={inverted}
           onChangeStickyIndex={(newStickyHeaderIndex) => {
-            if (stickyHeaderHideRelatedCell) {
-              setCurrentStickyIndex(newStickyHeaderIndex);
-            }
+            setCurrentStickyIndex(newStickyHeaderIndex);
             onChangeStickyIndex?.(newStickyHeaderIndex, currentStickyIndex);
           }}
         />
@@ -464,7 +462,6 @@ const RecyclerViewComponent = <T,>(
     extraData,
     currentStickyIndex,
     onChangeStickyIndex,
-    stickyHeaderHideRelatedCell,
     stickyHeaderZIndex,
     inverted,
   ]);
@@ -635,7 +632,7 @@ const RecyclerViewComponent = <T,>(
                 ? recyclerViewManager.getChildContainerDimensions()
                 : undefined
             }
-            currentStickyIndex={currentStickyIndex}
+            currentStickyIndex={stickyHeaders ? currentStickyIndex : -1}
             hideStickyHeaderRelatedCell={stickyHeaderHideRelatedCell}
             inverted={inverted}
           />
