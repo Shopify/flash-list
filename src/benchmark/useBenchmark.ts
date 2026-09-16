@@ -46,7 +46,7 @@ export interface BenchmarkResult {
  */
 
 export function useBenchmark(
-  flashListRef: React.RefObject<FlashListRef<any>>,
+  flashListRef: React.RefObject<FlashListRef<any> | null>,
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {

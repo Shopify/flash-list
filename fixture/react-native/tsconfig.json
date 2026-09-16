@@ -1,5 +1,13 @@
 {
   "extends": "../../shared/tsconfig.base.json",
-  "references": [{ "path": "../../" }],
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
+    "paths": {
+      "react": ["./node_modules/@types/react"],
+      "react-native": ["./node_modules/react-native"]
+    }
+  },
   "include": ["src/**/*", "e2e/**/*"]
 }
