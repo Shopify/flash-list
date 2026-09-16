@@ -4,6 +4,8 @@ import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
 import { FlashListRef } from "../FlashListRef";
+import { RecyclerViewContextProvider } from "../recyclerview/RecyclerViewContextProvider";
+import type { RecyclerViewContext } from "../recyclerview/RecyclerViewContextProvider";
 import { FlashList } from "..";
 
 // Mock measureLayout to return fixed dimensions
@@ -75,6 +77,83 @@ describe("RecyclerView", () => {
 
       expect(result).toContainReactComponent(Text, { children: 0 });
       expect(result).not.toContainReactComponent(Text, { children: 11 });
+    });
+  });
+
+  describe("nested layout coordination", () => {
+    const createParentContext = (): RecyclerViewContext<unknown> => ({
+      layout: jest.fn(),
+      getRef: jest.fn(() => null),
+      getParentRef: jest.fn(() => null),
+      getScrollViewRef: jest.fn(() => null),
+      getParentScrollViewRef: jest.fn(() => null),
+      markChildLayoutAsPending: jest.fn(),
+      unmarkChildLayoutAsPending: jest.fn(),
+    });
+
+    it("does not mark a child layout as pending when rendering is discarded", () => {
+      const parentContext = createParentContext();
+      const consoleError = jest.spyOn(console, "error").mockImplementation();
+      class ErrorBoundary extends React.Component<
+        React.PropsWithChildren,
+        { hasError: boolean }
+      > {
+        state: { hasError: boolean } = { hasError: false };
+
+        static getDerivedStateFromError() {
+          return { hasError: true };
+        }
+
+        render() {
+          return this.state.hasError ? null : this.props.children;
+        }
+      }
+
+      render(
+        <RecyclerViewContextProvider value={parentContext}>
+          <ErrorBoundary>
+            <FlashList
+              horizontal
+              stickyHeaderIndices={[0]}
+              data={[0]}
+              renderItem={({ item }) => <Text>{item}</Text>}
+              overrideProps={{ initialDrawBatchSize: 1 }}
+              drawDistance={0}
+            />
+          </ErrorBoundary>
+        </RecyclerViewContextProvider>
+      );
+
+      expect(parentContext.markChildLayoutAsPending).not.toHaveBeenCalled();
+      consoleError.mockRestore();
+    });
+
+    it("unmarks a pending child layout when it unmounts", () => {
+      const parentContext = createParentContext();
+      const NestedList = ({ show }: { show: boolean }) => (
+        <View>
+          {show ? (
+            <RecyclerViewContextProvider value={parentContext}>
+              <FlashList
+                data={[0]}
+                renderItem={({ item }) => <Text>{item}</Text>}
+                overrideProps={{ initialDrawBatchSize: 1 }}
+                drawDistance={0}
+              />
+            </RecyclerViewContextProvider>
+          ) : null}
+        </View>
+      );
+      const result = render(<NestedList show />);
+      const markedId = (parentContext.markChildLayoutAsPending as jest.Mock)
+        .mock.calls[0][0];
+
+      (parentContext.unmarkChildLayoutAsPending as jest.Mock).mockClear();
+      result.setProps({ show: false });
+
+      expect(parentContext.unmarkChildLayoutAsPending).toHaveBeenCalledWith(
+        markedId
+      );
     });
   });
 
