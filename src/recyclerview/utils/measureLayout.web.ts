@@ -58,6 +58,21 @@ export function measureParentSize(view: Element): Size {
 }
 
 /**
+ * Detects whether an element is flipped vertically via a scaleY(-1) transform
+ * (used by inverted lists on web). Reads the computed transform matrix.
+ */
+function isVerticallyFlipped(element: Element): boolean {
+  const transform = getComputedStyle(element as HTMLElement).transform;
+  if (!transform || transform === "none") return false;
+  const match = transform.match(/matrix(3d)?\(([^)]+)\)/);
+  if (!match) return false;
+  const values = match[2].split(",").map((value) => parseFloat(value));
+  // matrix(a,b,c,d,e,f) -> scaleY = d (index 3); matrix3d -> m22 (index 5)
+  const scaleY = match[1] ? values[5] : values[3];
+  return scaleY < 0;
+}
+
+/**
  * Measures the layout of child container of RecyclerView
  */
 export function measureFirstChildLayout(
@@ -70,9 +85,16 @@ export function measureFirstChildLayout(
   // Get scroll offsets for child container (max 3 parents)
   const scrollOffsets = getScrollOffsets(childContainerView, parentView);
 
+  // When inverted on web the outer container is flipped with scaleY(-1), so
+  // getBoundingClientRect returns mirrored coordinates. Measure from the bottom
+  // edge in that case so firstItemOffset stays ~0 (matches non-inverted).
+  const y = isVerticallyFlipped(parentView)
+    ? parentRect.bottom - childRect.bottom + scrollOffsets.scrollY
+    : childRect.top - parentRect.top + scrollOffsets.scrollY;
+
   return {
     x: childRect.left - parentRect.left + scrollOffsets.scrollX,
-    y: childRect.top - parentRect.top + scrollOffsets.scrollY,
+    y,
     width: roundOffPixel(childRect.width),
     height: roundOffPixel(childRect.height),
   };
