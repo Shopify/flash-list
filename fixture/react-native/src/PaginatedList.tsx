@@ -47,11 +47,9 @@ export default class PaginatedList extends React.Component<PaginatedListState> {
         onEndReached={() => {
           console.log("onEndReached");
           // Since FlatList is a pure component, data reference should change for a render
-          const elems = [...this.state.elems];
-          elems.push(...this._generateArray(elems.length, 20));
-          this.setState(() => {
-            return { elems };
-          });
+          this.setState(({ elems }: PaginatedListState) => ({
+            elems: [...elems, ...this._generateArray(elems.length, 20)],
+          }));
         }}
         onStartReached={() => {
           console.log("onStartReached");

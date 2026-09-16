@@ -81,7 +81,7 @@ export function ChatUnstableItems() {
     return () => clearTimeout(id);
   }, [scrollTarget]);
 
-  const scrollToItem25 = useCallback(() => {
+  const scrollToItem150 = useCallback(() => {
     setScrollTarget(150);
   }, []);
 
@@ -131,9 +131,9 @@ export function ChatUnstableItems() {
 
           <Pressable
             style={[styles.button, styles.scrollButton]}
-            onPress={scrollToItem25}
+            onPress={scrollToItem150}
           >
-            <Text style={styles.buttonText}>Scroll to 25</Text>
+            <Text style={styles.buttonText}>Scroll to 150</Text>
           </Pressable>
         </View>
 

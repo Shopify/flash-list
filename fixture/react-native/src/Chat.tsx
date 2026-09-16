@@ -42,9 +42,7 @@ export function Chat() {
   }, []);
 
   const addMessageAtBottom = useCallback(() => {
-    const newMessage = generateRandomMessage(messages.length);
-    setMessages((prev) => [...prev, newMessage]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setMessages((prev) => [...prev, generateRandomMessage(prev.length)]);
   }, []);
 
   const renderItem = useCallback((info: { item: ChatMessage }) => {

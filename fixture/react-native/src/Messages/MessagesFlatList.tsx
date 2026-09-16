@@ -24,7 +24,7 @@ const MessagesFlatList = () => {
       type: MessageType.Text,
     } as Message;
 
-    setMessages([message, ...messages]);
+    setMessages((previous) => [message, ...previous]);
   };
 
   return (

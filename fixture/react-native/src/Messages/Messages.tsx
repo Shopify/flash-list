@@ -19,7 +19,7 @@ const Messages = () => {
       sender: userName,
       type: MessageType.Text,
     } as Message;
-    setMessages([...messages, message]);
+    setMessages((previous) => [...previous, message]);
   };
 
   return (
