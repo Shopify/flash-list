@@ -862,10 +862,10 @@ Retriggers viewability calculations. Useful to imperatively trigger viewability 
 ### `scrollToEnd()`
 
 ```tsx
-scrollToEnd?: (params?: { animated?: boolean | null | undefined });
+scrollToEnd(params?: { animated?: boolean }): Promise<void>;
 ```
 
-Scrolls to the end of the content.
+Scrolls to the end of the content. The promise resolves after the native scroll command is dispatched, or if a newer index/item/end request supersedes it or the list unmounts. Scroll failures reject. Resolution does not mean the native animation has finished.
 
 ### `scrollToIndex()`
 
@@ -875,10 +875,10 @@ scrollToIndex(params: {
   index: number;
   viewOffset?: number | undefined;
   viewPosition?: number | undefined;
-});
+}): Promise<void>;
 ```
 
-Scroll to a given index.
+Scroll to a given index. The promise resolves after the settling delay, when superseded by another index/item/end request, or when the list unmounts. Invalid indices resolve without scrolling; layout and scroll failures reject.
 
 ### `scrollToItem()`
 
@@ -886,11 +886,14 @@ Scroll to a given index.
 scrollToItem(params: {
   animated?: boolean | null | undefined;
   item: any;
+  viewOffset?: number | undefined;
   viewPosition?: number | undefined;
-});
+}): Promise<void>;
 ```
 
-Scroll to a given item.
+Scroll to a given item, returning the underlying `scrollToIndex` promise. Missing items resolve without scrolling.
+
+`scrollToItem` and `scrollToEnd` now declare `Promise<void>` return values. Existing fire-and-forget calls remain valid, but typed mocks or custom ref implementations must return a promise. Await or catch the promise when handling scroll failures.
 
 ### `scrollToOffset()`
 
