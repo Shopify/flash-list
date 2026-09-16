@@ -7,6 +7,7 @@ import { RVGridLayoutManagerImpl } from "./layout-managers/GridLayoutManager";
 import {
   LayoutParams,
   RVDimension,
+  RVLayout,
   RVLayoutInfo,
   RVLayoutManager,
   SpanSizeInfo,
@@ -388,10 +389,8 @@ export class RecyclerViewManager<T> {
       this.layoutManager.recomputeLayouts(0, initialScrollIndex);
       const initialItemLayout =
         this.layoutManager.getLayout(initialScrollIndex);
-      const initialItemOffset = this.propsRef.horizontal
-        ? initialItemLayout.x
-        : initialItemLayout.y;
-      this.engagedIndicesTracker.scrollOffset = initialItemOffset;
+      this.engagedIndicesTracker.scrollOffset =
+        this.getInitialScrollOffset(initialItemLayout);
     } else {
       const initialItemLayout = this.layoutManager.getLayout(0);
       const initialItemOffset = this.propsRef.horizontal
@@ -400,6 +399,23 @@ export class RecyclerViewManager<T> {
       this.engagedIndicesTracker.scrollOffset =
         initialItemOffset - this.firstItemOffset;
     }
+  }
+
+  private getInitialScrollOffset(itemLayout: RVLayout): number {
+    const itemOffset = this.propsRef.horizontal ? itemLayout.x : itemLayout.y;
+
+    if (this.propsRef.initialScrollIndex !== undefined) {
+      return itemOffset;
+    }
+
+    const itemExtent = this.propsRef.horizontal
+      ? itemLayout.width
+      : itemLayout.height;
+    const viewportExtent = this.propsRef.horizontal
+      ? this.getWindowSize().width
+      : this.getWindowSize().height;
+
+    return Math.max(0, itemOffset + itemExtent - viewportExtent);
   }
 
   private renderProgressively() {
