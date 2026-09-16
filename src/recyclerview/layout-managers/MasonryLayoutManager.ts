@@ -1,3 +1,5 @@
+import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
+
 import {
   LayoutParams,
   RVDimension,
@@ -116,6 +118,31 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
       width: this.boundedSize,
       height: maxHeight,
     };
+  }
+
+  getVisibleLayouts(
+    unboundDimensionStart: number,
+    unboundDimensionEnd: number
+  ): ConsecutiveNumbers {
+    let firstVisibleIndex = -1;
+    let lastVisibleIndex = -1;
+
+    for (let index = 0; index < this.layouts.length; index++) {
+      const layout = this.layouts[index];
+      if (
+        layout.y < unboundDimensionEnd &&
+        layout.y + layout.height > unboundDimensionStart
+      ) {
+        if (firstVisibleIndex === -1) {
+          firstVisibleIndex = index;
+        }
+        lastVisibleIndex = index;
+      }
+    }
+
+    return firstVisibleIndex === -1
+      ? ConsecutiveNumbers.EMPTY
+      : new ConsecutiveNumbers(firstVisibleIndex, lastVisibleIndex);
   }
 
   /**
