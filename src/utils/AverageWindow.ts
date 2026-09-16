@@ -10,7 +10,7 @@ export class AverageWindow {
     this.inputValues = new Array<number>(Math.max(1, size));
     this.currentAverage = startValue ?? 0;
     this.currentCount = startValue === undefined ? 0 : 1;
-    this.nextIndex = this.currentCount;
+    this.nextIndex = this.currentCount % this.inputValues.length;
     this.inputValues[0] = startValue;
   }
 
