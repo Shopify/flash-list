@@ -26,6 +26,8 @@ class ViewabilityHelper {
   ) => void;
 
   private timers: Set<NodeJS.Timeout> = new Set();
+  private visibilityGenerations = new Map<number, number>();
+  private updateGeneration = 0;
 
   constructor(
     viewabilityConfig: ViewabilityConfig | null | undefined,
@@ -42,6 +44,9 @@ class ViewabilityHelper {
   public dispose() {
     // Clean up on dismount
     this.timers.forEach(clearTimeout);
+    this.timers.clear();
+    this.viewableIndices = [];
+    this.visibilityGenerations.clear();
   }
 
   public updateViewableItems(
@@ -81,13 +86,46 @@ class ViewabilityHelper {
         getLayout
       )
     );
+    if (
+      newViewableIndices.length === this.viewableIndices.length &&
+      newViewableIndices.every(
+        (index, position) => index === this.viewableIndices[position]
+      ) &&
+      (this.timers.size > 0 ||
+        (newViewableIndices.length ===
+          this.lastReportedViewableIndices.length &&
+          newViewableIndices.every(
+            (index, position) =>
+              index === this.lastReportedViewableIndices[position]
+          )))
+    ) {
+      return;
+    }
+    const generation = ++this.updateGeneration;
+    const currentIndices = new Set(newViewableIndices);
+    for (const index of this.visibilityGenerations.keys()) {
+      if (!currentIndices.has(index)) {
+        this.visibilityGenerations.delete(index);
+      }
+    }
+    for (const index of newViewableIndices) {
+      if (!this.visibilityGenerations.has(index)) {
+        this.visibilityGenerations.set(index, generation);
+      }
+    }
     this.viewableIndices = newViewableIndices;
     const minimumViewTime = this.viewabilityConfig?.minimumViewTime ?? 250;
     // Setting default to 250. Default of 0 can impact performance when user scrolls fast.
     if (minimumViewTime > 0) {
       const timeoutId = setTimeout(() => {
         this.timers.delete(timeoutId);
-        this.checkViewableIndicesChanges(newViewableIndices);
+        // A returning item must complete a new uninterrupted visibility interval.
+        this.checkViewableIndicesChanges(
+          newViewableIndices.filter((index) => {
+            const visibleSince = this.visibilityGenerations.get(index);
+            return visibleSince !== undefined && visibleSince <= generation;
+          })
+        );
       }, minimumViewTime);
       this.timers.add(timeoutId);
     } else {
@@ -97,14 +135,17 @@ class ViewabilityHelper {
 
   public checkViewableIndicesChanges(newViewableIndices: number[]) {
     // Check if all viewable indices are still available (applicable if minimumViewTime > 0)
+    const currentIndices = new Set(this.viewableIndices);
+    const lastReportedIndices = new Set(this.lastReportedViewableIndices);
     const currentlyNewViewableIndices = newViewableIndices.filter((index) =>
-      this.viewableIndices.includes(index)
+      currentIndices.has(index)
     );
+    const newIndices = new Set(currentlyNewViewableIndices);
     const newlyVisibleItems = currentlyNewViewableIndices.filter(
-      (index) => !this.lastReportedViewableIndices.includes(index)
+      (index) => !lastReportedIndices.has(index)
     );
     const newlyNonvisibleItems = this.lastReportedViewableIndices.filter(
-      (index) => !currentlyNewViewableIndices.includes(index)
+      (index) => !newIndices.has(index)
     );
 
     if (newlyVisibleItems.length > 0 || newlyNonvisibleItems.length > 0) {
@@ -118,6 +159,7 @@ class ViewabilityHelper {
   }
 
   public clearLastReportedViewableIndices() {
+    this.dispose();
     this.lastReportedViewableIndices = [];
   }
 
@@ -140,13 +182,12 @@ class ViewabilityHelper {
     const pixelsVisible =
       Math.min(itemTop + itemSize, listMainSize) - Math.max(itemTop, 0);
 
+    if (pixelsVisible <= 0) {
+      return false;
+    }
     // Always consider item fully viewable if it is fully visible, regardless of the `viewAreaCoveragePercentThreshold`
     if (pixelsVisible === itemSize) {
       return true;
-    }
-    // Skip checking item if it's not visible at all
-    if (pixelsVisible === 0) {
-      return false;
     }
     const viewAreaMode =
       viewAreaCoveragePercentThreshold !== null &&
