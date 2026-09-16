@@ -10,7 +10,7 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   );
   const [velocityTracker] = useState(() => new VelocityTracker());
 
-  const { data } = props;
+  const { data, extraData } = props;
 
   useMemo(() => {
     recyclerViewManager.updateProps(props);
@@ -19,13 +19,13 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   }, [props]);
 
   /**
-   * When data changes, we need to process the data update before the render happens
+   * When data or extraData changes, process the layout update before render.
    */
   useMemo(() => {
     recyclerViewManager.processDataUpdate();
     // used to process data update so rule can be disabled
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, extraData]);
 
   useEffect(() => {
     recyclerViewManager.restoreIfNeeded();
