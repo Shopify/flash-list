@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList } from "react-native";
 
 import { ErrorMessages } from "../errors/ErrorMessages";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
-import { JSFPSMonitor } from "./JSFPSMonitor";
 import {
   BenchmarkParams,
   BenchmarkResult,
-  getFormattedString,
+  useBenchmarkRunner,
 } from "./useBenchmark";
 
 export interface FlatListBenchmarkParams extends BenchmarkParams {
@@ -25,75 +23,28 @@ export function useFlatListBenchmark(
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: FlatListBenchmarkParams
 ) {
-  const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(false);
-  const cancellableRef = useRef<Cancellable | null>(null);
-
-  const startBenchmark = useCallback(() => {
-    if (isBenchmarkRunning) {
-      return;
-    }
-    const cancellable = new Cancellable();
-    cancellableRef.current = cancellable;
-    if (flatListRef.current && flatListRef.current.props) {
-      if (!(Number(flatListRef.current.props.data?.length) > 0)) {
-        throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
+  return useBenchmarkRunner(
+    async (cancellable) => {
+      if (flatListRef.current && flatListRef.current.props) {
+        if (!(Number(flatListRef.current.props.data?.length) > 0)) {
+          throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
+        }
       }
-    }
 
-    setIsBenchmarkRunning(true);
-
-    const runBenchmark = async () => {
-      const jsFPSMonitor = new JSFPSMonitor();
-      jsFPSMonitor.startTracking();
-      for (let i = 0; i < (params.repeatCount || 1); i++) {
+      for (let i = 0; i < (params.repeatCount ?? 1); i++) {
+        if (cancellable.isCancelled()) break;
         await runScrollBenchmark(
           flatListRef,
           params.targetOffset,
           cancellable,
-          params.speedMultiplier || 1
+          params.speedMultiplier ?? 1
         );
       }
-      const jsProfilerResponse = jsFPSMonitor.stopAndGetData();
-      const result: BenchmarkResult = {
-        js: jsProfilerResponse,
-        suggestions: [],
-        interrupted: cancellable.isCancelled(),
-      };
-      if (!cancellable.isCancelled()) {
-        result.formattedString = getFormattedString(result);
-      }
-      callback(result);
-      setIsBenchmarkRunning(false);
-    };
-
-    runBenchmark();
-  }, [
+      return [];
+    },
     callback,
-    flatListRef,
-    isBenchmarkRunning,
-    params.repeatCount,
-    params.speedMultiplier,
-    params.targetOffset,
-  ]);
-
-  useEffect(() => {
-    if (params.startManually) {
-      return;
-    }
-
-    const cancelTimeout = setTimeout(() => {
-      startBenchmark();
-    }, params.startDelayInMs || 3000);
-
-    return () => {
-      clearTimeout(cancelTimeout);
-      if (cancellableRef.current) {
-        cancellableRef.current.cancel();
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return { startBenchmark, isBenchmarkRunning };
+    params
+  );
 }
 
 /**

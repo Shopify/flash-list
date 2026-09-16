@@ -60,6 +60,10 @@ The `useBenchmark` hook accepts an optional `BenchmarkParams` object:
 
 ## Understanding Results
 
+Both benchmark hooks ignore duplicate starts while a run is active and cancel automatic or manual runs on unmount. Cancelled unmounted runs do not invoke the result callback. An explicit `startDelayInMs: 0` starts without the default delay.
+
+Use a positive finite `speedMultiplier` and a positive integer `repeatCount`. Invalid options or failed scrolling produce a result with `interrupted: true` and an explanation in `suggestions`; the running state and FPS monitor are cleaned up so another run can start. Check `interrupted` before treating the FPS data as a completed benchmark.
+
 The benchmark returns a `BenchmarkResult` object containing:
 
 ```typescript
