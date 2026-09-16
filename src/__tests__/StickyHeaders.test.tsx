@@ -671,5 +671,36 @@ describe("StickyHeaders - Compute Function", () => {
         }),
       });
     });
+
+    it("should not intercept touches on the full-width container (multi-column gutter)", () => {
+      const layouts = createStandardLayouts();
+
+      const manager = createMockRecyclerViewManager({
+        scrollOffset: 100,
+        layouts,
+      });
+
+      const result = render(
+        <StickyHeaders
+          stickyHeaderIndices={[0, 10, 20]}
+          stickyHeaderOffset={0}
+          data={testData}
+          scrollY={new Animated.Value(0)}
+          renderItem={renderItem}
+          stickyHeaderRef={createRef()}
+          recyclerViewManager={manager}
+          extraData={undefined}
+          onChangeStickyIndex={jest.fn()}
+        />
+      );
+
+      // The full-width absolute container must use box-none so the empty gutter
+      // region in multi-column layouts lets touches pass through to the content
+      // below while the header content itself stays interactive (issue #2249).
+      const animatedView = result.find(Animated.View);
+      expect(animatedView).toHaveReactProps({
+        pointerEvents: "box-none",
+      });
+    });
   });
 });
