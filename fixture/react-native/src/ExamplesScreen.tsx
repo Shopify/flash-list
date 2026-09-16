@@ -30,6 +30,7 @@ export const ExamplesScreen = () => {
     { title: "Sticky Header Example", destination: "StickyHeaderExample" },
     { title: "Horizontal List", destination: "HorizontalList" },
     { title: "Carousel", destination: "Carousel" },
+    { title: "Snap Carousel Repro", destination: "SnapCarouselRepro" },
     { title: "Grid", destination: "Grid" },
     { title: "Masonry", destination: "Masonry" },
     { title: "Complex Masonry", destination: "ComplexMasonry" },

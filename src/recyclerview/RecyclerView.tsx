@@ -49,6 +49,7 @@ import { useBoundDetection } from "./hooks/useBoundDetection";
 import { adjustOffsetForRTL } from "./utils/adjustOffsetForRTL";
 import { useSecondaryProps } from "./hooks/useSecondaryProps";
 import { getInvertedTransformStyle } from "./utils/getInvertedTransformStyle";
+import { supportsNativeMaintainVisibleContentPosition } from "./utils/snapping";
 import { StickyHeaders, StickyHeaderRef } from "./components/StickyHeaders";
 import { ScrollAnchor, ScrollAnchorRef } from "./components/ScrollAnchor";
 import { useRecyclerViewController } from "./hooks/useRecyclerViewController";
@@ -486,15 +487,27 @@ const RecyclerViewComponent = <T,>(
   const shouldMaintainVisibleContentPosition =
     recyclerViewManager.shouldMaintainVisibleContentPosition();
 
+  // A snapping list on Android cannot be given the native prop without its
+  // flings being retargeted, so offset corrections fall back to scrollTo there.
+  const canUseNativeMaintainVisibleContentPosition =
+    supportsNativeMaintainVisibleContentPosition(props);
+
   const maintainVisibleContentPositionInternal = useMemo(() => {
-    if (shouldMaintainVisibleContentPosition) {
+    if (
+      shouldMaintainVisibleContentPosition &&
+      canUseNativeMaintainVisibleContentPosition
+    ) {
       return {
         ...maintainVisibleContentPosition,
         minIndexForVisible: 0,
       };
     }
     return undefined;
-  }, [maintainVisibleContentPosition, shouldMaintainVisibleContentPosition]);
+  }, [
+    maintainVisibleContentPosition,
+    shouldMaintainVisibleContentPosition,
+    canUseNativeMaintainVisibleContentPosition,
+  ]);
 
   const shouldRenderFromBottom =
     recyclerViewManager.getDataLength() > 0 &&
