@@ -66,7 +66,8 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
       layout.width = this.horizontal ? dimensions.width : this.boundedSize;
       layout.isHeightMeasured = true;
       layout.isWidthMeasured = true;
-      layout.height = dimensions.height;
+      layout.height =
+        this.horizontal && this.hasSize ? this.boundedSize : dimensions.height;
     }
 
     if (this.horizontal && !this.hasSize) {
@@ -86,6 +87,7 @@ export class RVLinearLayoutManagerImpl extends RVLayoutManager {
     layout.height = this.getEstimatedHeight(index);
     layout.isWidthMeasured = !this.horizontal;
     layout.enforcedWidth = !this.horizontal;
+    layout.enforcedHeight = this.horizontal;
   }
 
   /**
