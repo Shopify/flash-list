@@ -1579,7 +1579,7 @@
 
 "@shopify/flash-list@^2.0.0-alpha.9":
   version "2.0.0-alpha.9"
-  resolved "https://npm.shopify.io/node/@shopify/flash-list/-/flash-list-2.0.0-alpha.9.tgz#37c0805c3b3da92215bb225df11c669a108d2ade"
+  resolved "https://registry.npmjs.org/@shopify/flash-list/-/flash-list-2.0.0-alpha.9.tgz#37c0805c3b3da92215bb225df11c669a108d2ade"
   integrity sha512-lEZ61g2gWUoHatBjKBo1C0iOYiYPfXs/KWcyq2MeQSeXoJXVRPapzLoPsG3GFzbyVC7ZzCtjN6PgCcnt1z+U1A==
   dependencies:
     recyclerlistview "4.2.3"
