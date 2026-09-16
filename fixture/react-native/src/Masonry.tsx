@@ -1,5 +1,11 @@
 import React from "react";
-import { Text, View, StyleSheet, Platform } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Platform,
+  useWindowDimensions,
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
 interface MasonryData {
@@ -8,6 +14,7 @@ interface MasonryData {
 }
 
 export function Masonry() {
+  const { height } = useWindowDimensions();
   const columnCount = 3;
   const data: MasonryData[] = new Array(999).fill(null).map((_, index) => {
     return {
@@ -17,7 +24,7 @@ export function Masonry() {
   });
   return (
     <React.StrictMode>
-      <View style={styles.container}>
+      <View style={[styles.container, Platform.OS === "web" && { height }]}>
         <FlashList
           testID="MasonryList"
           data={data}
@@ -100,7 +107,6 @@ const Component = (props: {
 const styles = StyleSheet.create({
   container: {
     flex: Platform.OS === "web" ? undefined : 1,
-    height: Platform.OS === "web" ? window.innerHeight : undefined,
     justifyContent: "center",
     backgroundColor: "#ecf0f1",
   },

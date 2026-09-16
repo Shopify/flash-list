@@ -1,5 +1,12 @@
 import React, { useMemo, useState, useCallback } from "react";
-import { Text, View, StyleSheet, Platform, Pressable } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Platform,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
 import { FlashList, useRecyclingState } from "@shopify/flash-list";
 
 interface GridItem {
@@ -41,6 +48,7 @@ const generateData = (count: number): GridItem[] => {
 };
 
 export function Grid() {
+  const { height } = useWindowDimensions();
   const [numItems] = useState(1000); // Default to 100 items
 
   // Generate colors for the grid items
@@ -69,7 +77,7 @@ export function Grid() {
 
   return (
     <React.StrictMode>
-      <View style={styles.container}>
+      <View style={[styles.container, Platform.OS === "web" && { height }]}>
         <FlashList
           testID="GridScreen"
           data={data}
@@ -118,7 +126,6 @@ const GridItem = ({ item }: { item: GridItem }) => {
 const styles = StyleSheet.create({
   container: {
     flex: Platform.OS === "web" ? undefined : 1,
-    height: Platform.OS === "web" ? window.innerHeight : undefined,
     backgroundColor: "#f5f5f5",
   },
   itemWrapper: {
