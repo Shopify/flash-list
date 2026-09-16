@@ -2,7 +2,7 @@
  Use this component inside your React Native Application.
  A scrollable list with different item type
  */
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -50,21 +50,32 @@ type SectionListItem = Section | Item;
 
 export const SectionList = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [sections, setSections] = useState(generateSectionsData(10));
+  const [sections, setSections] = useState(() => generateSectionsData(10));
+  const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (refreshTimeout.current !== null) {
+        clearTimeout(refreshTimeout.current);
+        refreshTimeout.current = null;
+      }
+    },
+    []
+  );
 
   const list = useRef<FlashListRef<SectionListItem> | null>(null);
 
   const flattenedSections = useMemo(
     () =>
-      sections.reduce<SectionListItem[]>((acc, { index, data }) => {
+      sections.flatMap<SectionListItem>(({ index, data }) => {
         const items: Item[] = data.map((itemIndex) => ({
           type: "item",
           index: itemIndex,
           sectionIndex: index,
         }));
 
-        return [...acc, { index, type: "section" }, ...items];
-      }, []),
+        return [{ index, type: "section" }, ...items];
+      }),
     [sections]
   );
 
@@ -77,28 +88,34 @@ export const SectionList = () => {
   );
 
   const removeItem = (item: Item) => {
-    setSections(
-      sections.map((section) => ({
-        ...section,
-        data: section.data.filter((index) => index === item.index),
-      }))
-    );
     list.current?.prepareForLayoutAnimationRender();
+    setSections((previous) =>
+      previous.map((section) =>
+        section.index === item.sectionIndex
+          ? {
+              ...section,
+              data: section.data.filter((index) => index !== item.index),
+            }
+          : section
+      )
+    );
     // after removing the item, we start animation
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
 
   const removeSection = () => {
-    setSections(sections.slice(1));
     list.current?.prepareForLayoutAnimationRender();
+    setSections((previous) => previous.slice(1));
     // after removing the item, we start animation
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
 
   const addSection = () => {
-    const lastIndex = sections[sections.length - 1].index;
-    setSections([...sections, ...generateSectionsData(1, lastIndex + 1)]);
     list.current?.prepareForLayoutAnimationRender();
+    setSections((previous) => {
+      const lastIndex = previous[previous.length - 1]?.index ?? -1;
+      return [...previous, ...generateSectionsData(1, lastIndex + 1)];
+    });
     // after removing the item, we start animation
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
@@ -158,15 +175,17 @@ export const SectionList = () => {
         ref={list}
         refreshing={refreshing}
         onRefresh={() => {
+          if (refreshTimeout.current !== null) return;
           setRefreshing(true);
-          setTimeout(() => {
+          refreshTimeout.current = setTimeout(() => {
+            refreshTimeout.current = null;
             setRefreshing(false);
           }, 2000);
         }}
         keyExtractor={(item) =>
           item.type === "section"
-            ? `${item.index}`
-            : `${item.sectionIndex}${item.index}`
+            ? `section:${item.index}`
+            : `item:${item.sectionIndex}:${item.index}`
         }
         renderItem={renderItem}
         stickyHeaderIndices={stickyHeaderIndices}

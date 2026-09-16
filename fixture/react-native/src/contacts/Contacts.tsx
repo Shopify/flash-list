@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { ScrollView } from "react-native";
 
-import { DebugContext } from "../Debug";
+import { DebugContext } from "../Debug/DebugContext";
 
 import Contact from "./models/Contact";
 import contacts from "./data/contacts";
@@ -13,32 +13,21 @@ import ContactDivider from "./ContactDivider";
 
 const Contacts = () => {
   const debugContext = useContext(DebugContext);
-  const [data, setData] = useState<(Contact | string)[]>([]);
-  useEffect(() => {
-    const contactsWithTitles = Array.from(contacts.keys())
+  const [data] = useState<(Contact | string)[]>(() =>
+    Array.from(contacts.keys())
       .sort((aKey, bKey) => aKey.localeCompare(bKey))
       .flatMap((key) => {
         return [key, ...(contacts.get(key) ?? [])];
-      });
-    setData(contactsWithTitles);
-  }, []);
+      })
+  );
 
-  const stickyHeaderIndices = data
-    .map((item, index) => {
-      if (typeof item === "string") {
-        return index;
-      } else {
-        return null;
-      }
-    })
-    .filter((item) => item !== null) as number[];
-
-  const renderScrollComponent = useMemo(() => {
-    // eslint-disable-next-line react/display-name
-    return (props: any) => {
-      return <ScrollView {...props} />;
-    };
-  }, []);
+  const stickyHeaderIndices = useMemo(() => {
+    const indices: number[] = [];
+    data.forEach((item, index) => {
+      if (typeof item === "string") indices.push(index);
+    });
+    return indices;
+  }, [data]);
 
   return (
     <FlashList
@@ -48,7 +37,7 @@ const Contacts = () => {
         if (typeof item === "string") {
           return <ContactSectionHeader title={item} />;
         } else {
-          return <ContactCell contact={item as Contact} />;
+          return <ContactCell contact={item} />;
         }
       }}
       getItemType={(item) => {
@@ -58,7 +47,7 @@ const Contacts = () => {
       stickyHeaderIndices={stickyHeaderIndices}
       ListHeaderComponent={ContactHeader}
       initialScrollIndex={debugContext.initialScrollIndex}
-      renderScrollComponent={renderScrollComponent}
+      renderScrollComponent={ScrollView}
     />
   );
 };

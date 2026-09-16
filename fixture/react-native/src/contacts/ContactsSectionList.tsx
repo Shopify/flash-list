@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { SectionList } from "react-native";
 
-import { DebugContext } from "../Debug";
+import { DebugContext } from "../Debug/DebugContext";
 
 import Contact from "./models/Contact";
 import ContactSectionHeader from "./ContactSectionHeader";
@@ -17,20 +17,18 @@ interface Section {
 
 const ContactsSectionList = () => {
   const debugContext = useContext(DebugContext);
-  const [data, setData] = useState<Section[]>([]);
-  useEffect(() => {
-    const sectionedContacts: Section[] = Array.from(contacts.keys())
+  const [data] = useState<Section[]>(() =>
+    Array.from(contacts.keys())
       .map((key) => {
         return {
           title: key,
           data: contacts.get(key) ?? [],
-        } as Section;
+        };
       })
       .sort((aSection, bSection) =>
         aSection.title.localeCompare(bSection.title)
-      );
-    setData(sectionedContacts);
-  }, []);
+      )
+  );
 
   return (
     <SectionList
