@@ -39,12 +39,12 @@ appname: FlashList
     <div class="content">
         <div class="topbar">
             <h1>⚡️ {{page.appname}}</h1>
-            <div class="social-buttons"">
-            <a class=" github-button" href="https://github.com/shopify/flash-list"
+            <div class="social-buttons">
+            <a class="github-button" href="https://github.com/shopify/flash-list"
                 data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
                 data-show-count="true" aria-label="Github shopify/flash-list on GitHub">Github</a>
-                <a href="https://discord.gg/k2gzABTfav">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 16 16">
+                <a href="https://discord.gg/k2gzABTfav" aria-label="Join the FlashList Discord community">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 16 16">
                         <path
                             d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z" />
                     </svg>
@@ -119,7 +119,7 @@ appname: FlashList
         </div>
 
         {% for section in site.data.sections %}
-        {% assign isEven = forloop.index | modulo: 2 | contains: 1 %}
+        {% assign isEven = forloop.index | modulo: 2 %}
         {% include section.html title=section.title description=section.description image=section.image
         video=section.video isEven=isEven code=section.code alt=section.alt %}
         {% endfor %}
@@ -133,7 +133,7 @@ appname: FlashList
                 <a class="button secondary" target="_blank"
                     href="https://shopify.engineering/instant-performance-upgrade-flatlist-flashlist">Read it now</a>
             </div>
-            <img src="img/commerce-better-for-everyone.png"
+            <img loading="lazy" decoding="async" src="img/commerce-better-for-everyone.png"
                 alt="Shopify uses FlashList to make commerce better for everyone" />
         </div>
 
@@ -156,7 +156,7 @@ appname: FlashList
             </div>
         </div>
         <div class="section half">
-            <img style="max-height: 350px" src="img/RNR-Radio.jpg" alt="FlashList on the React Advanced London Meetup">
+            <img loading="lazy" decoding="async" style="max-height: 350px" src="img/RNR-Radio.jpg" alt="React Native Radio podcast">
             <div class="info">
                 <h2>React Native Radio Podcast</h2>
                 <p class="date">Aug 27th, 2022</p>
@@ -180,15 +180,15 @@ appname: FlashList
                 </p>
             </div>
             <div class="conference">
-                <iframe width="100%" height="auto" src="https://www.youtube.com/embed/BrYxGrE9sW8"
-                    title="YouTube video player" frameborder="0"
+                <iframe loading="lazy" width="100%" height="auto" src="https://www.youtube.com/embed/BrYxGrE9sW8"
+                    title="FlashList at React Native EU 2022" frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen></iframe>
             </div>
         </div>
         <div class="section half">
             <div class="conference">
-                <iframe src="https://www.youtube.com/embed/l2-nR_neb9Y?start=644" title="YouTube video player"
+                <iframe loading="lazy" src="https://www.youtube.com/embed/l2-nR_neb9Y?start=644" title="FlashList at App.js conf 2022"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen></iframe>
@@ -211,7 +211,7 @@ appname: FlashList
                     recording once it's available.
                 </p>
             </div>
-            <img src="img/london-meetup.jpg" alt="FlashList on the React Advanced London Meetup">
+            <img loading="lazy" decoding="async" src="img/london-meetup.jpg" alt="FlashList on the React Advanced London Meetup">
         </div>
 
         <div class="section fullwidth" id="install">
@@ -237,4 +237,4 @@ appname: FlashList
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 
-</htm25l
+</html>
