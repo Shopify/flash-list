@@ -441,8 +441,11 @@ export class RecyclerViewManager<T> {
 
   private getItemType(index: number): string {
     return (
-      this.propsRef.getItemType?.(this.propsRef.data![index], index) ??
-      "default"
+      this.propsRef.getItemType?.(
+        this.propsRef.data![index],
+        index,
+        this.propsRef.extraData
+      ) ?? "default"
     ).toString();
   }
 
