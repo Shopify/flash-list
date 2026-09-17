@@ -21,6 +21,7 @@ const createMockRecyclerViewManager = (config: {
   dataLength?: number;
   engagedEndIndex?: number;
   firstItemOffset?: number;
+  layoutCount?: number;
 }): RecyclerViewManager<any> => {
   const {
     scrollOffset,
@@ -28,19 +29,29 @@ const createMockRecyclerViewManager = (config: {
     dataLength = 100,
     engagedEndIndex = 99,
     firstItemOffset = 0,
+    layoutCount,
   } = config;
+
+  // When layoutCount is set, mimic LayoutManager for indices beyond it:
+  // getLayout throws and tryGetLayout returns undefined.
+  const hasLayout = (index: number) =>
+    layoutCount === undefined || index < layoutCount;
 
   return {
     getDataLength: jest.fn(() => dataLength),
     getLastScrollOffset: jest.fn(() => scrollOffset),
-    getLayout: jest.fn(
-      (index: number) =>
-        layouts[index] || { x: 0, y: index * 50, width: 400, height: 50 }
-    ),
-    tryGetLayout: jest.fn(
-      (index: number) =>
-        layouts[index] || { x: 0, y: index * 50, width: 400, height: 50 }
-    ),
+    getLayout: jest.fn((index: number) => {
+      if (!hasLayout(index)) {
+        throw new Error("index out of bounds, not enough layouts");
+      }
+      return layouts[index] || { x: 0, y: index * 50, width: 400, height: 50 };
+    }),
+    tryGetLayout: jest.fn((index: number) => {
+      if (!hasLayout(index)) {
+        return undefined;
+      }
+      return layouts[index] || { x: 0, y: index * 50, width: 400, height: 50 };
+    }),
     getEngagedIndices: jest.fn(() => ({
       startIndex: 0,
       endIndex: engagedEndIndex,
@@ -505,6 +516,62 @@ describe("StickyHeaders - Compute Function", () => {
 
       // Should not crash, compute returns early
       expect(onChangeStickyIndex).not.toHaveBeenCalled();
+    });
+
+    it("should skip compute without throwing when data length exceeds layout count", () => {
+      const onChangeStickyIndex = jest.fn();
+      const layouts = createStandardLayouts();
+
+      // Data already reports 100 items but only layouts 0-14 exist, e.g.
+      // data was updated while no layout manager existed. Sticky index 20
+      // passes the data length guard but has no layout yet.
+      const manager = createMockRecyclerViewManager({
+        scrollOffset: 1200,
+        layouts,
+        dataLength: 100,
+        layoutCount: 15,
+      });
+
+      const ref = createRef<StickyHeaderRef>();
+      // Regression test for #2509: the binary search used to call
+      // getLayout(20) and throw "index out of bounds, not enough layouts".
+      expect(() =>
+        render(
+          <StickyHeaders
+            stickyHeaderIndices={[0, 10, 20]}
+            stickyHeaderOffset={0}
+            data={testData}
+            scrollY={new Animated.Value(0)}
+            renderItem={renderItem}
+            stickyHeaderRef={ref}
+            recyclerViewManager={manager}
+            extraData={undefined}
+            onChangeStickyIndex={onChangeStickyIndex}
+          />
+        )
+      ).not.toThrow();
+
+      // The frame is skipped instead of resolving a sticky header
+      expect(onChangeStickyIndex).not.toHaveBeenCalled();
+
+      // Scroll events landing in the same window must not throw either
+      expect(() =>
+        act(() => ref.current?.reportScrollEvent({} as any))
+      ).not.toThrow();
+
+      // Once layouts catch up, compute resumes working normally
+      manager.getLayout = jest.fn(
+        (index: number) =>
+          layouts[index] || { x: 0, y: index * 50, width: 400, height: 50 }
+      );
+      manager.tryGetLayout = jest.fn(
+        (index: number) =>
+          layouts[index] || { x: 0, y: index * 50, width: 400, height: 50 }
+      );
+      act(() => ref.current?.reportScrollEvent({} as any));
+
+      // At scroll 1200, item 20 (y=1000) is the current sticky header
+      expect(onChangeStickyIndex).toHaveBeenCalledWith(20);
     });
 
     it("should handle variable height items", () => {
