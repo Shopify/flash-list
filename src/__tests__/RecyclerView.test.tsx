@@ -231,6 +231,52 @@ describe("RecyclerView", () => {
     });
   });
 
+  describe("First render with initialScrollIndex", () => {
+    const data = Array.from({ length: 30 }, (_, index) => index);
+    const renderAt = (
+      initialScrollIndex: number,
+      initialScrollIndexParams?: { viewOffset?: number }
+    ) =>
+      render(
+        <FlashList
+          data={data}
+          initialScrollIndex={initialScrollIndex}
+          initialScrollIndexParams={initialScrollIndexParams}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+
+    it("renders the items that viewOffset brings into view before the initial item", () => {
+      // Lands at 15 * 100 - 300 = 1200, so items 12-20 are on screen
+      const result = renderAt(15, { viewOffset: -300 });
+
+      [12, 13, 14, 15, 20].forEach((item) =>
+        expect(result).toContainReactComponent(Text, { children: item })
+      );
+      expect(result).not.toContainReactComponent(Text, { children: 21 });
+    });
+
+    it("renders from the start when viewOffset reaches past the start of the list", () => {
+      // 1 * 100 - 300 is below 0, so the list stays at the top with items 0-8 on screen
+      const result = renderAt(1, { viewOffset: -300 });
+
+      [0, 1, 8].forEach((item) =>
+        expect(result).toContainReactComponent(Text, { children: item })
+      );
+    });
+
+    it("renders the last screen when the initial item is near the end", () => {
+      // The list can scroll at most to 3000 - 899 = 2101, so items 21-29 are on screen
+      const result = renderAt(28);
+
+      [21, 25, 28, 29].forEach((item) =>
+        expect(result).toContainReactComponent(Text, { children: item })
+      );
+    });
+  });
+
   describe("Viewability with initialScrollIndex", () => {
     const scrollTo = (root: ReturnType<typeof render>, y: number) => {
       const scrollable = root.findWhere((node: any) => node.props.onScroll);

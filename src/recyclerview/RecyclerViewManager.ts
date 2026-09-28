@@ -391,7 +391,17 @@ export class RecyclerViewManager<T> {
       const initialItemOffset = this.propsRef.horizontal
         ? initialItemLayout.x
         : initialItemLayout.y;
-      this.engagedIndicesTracker.scrollOffset = initialItemOffset;
+      // Render the first items where applyInitialScrollIndex will land: include
+      // initialScrollIndexParams.viewOffset and clamp to the range the
+      // ScrollView can scroll to. Otherwise the items between the viewport edge
+      // and the initial item stay blank until the next render pass.
+      const viewOffset =
+        this.propsRef.initialScrollIndexParams?.viewOffset ?? 0;
+      const maxOffset = this.getMaxScrollOffset() - this.firstItemOffset;
+      this.engagedIndicesTracker.scrollOffset = Math.max(
+        -this.firstItemOffset,
+        Math.min(initialItemOffset + viewOffset, maxOffset)
+      );
     } else {
       const initialItemLayout = this.layoutManager.getLayout(0);
       const initialItemOffset = this.propsRef.horizontal
