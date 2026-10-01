@@ -101,11 +101,15 @@ export const StickyHeaders = <TItem,>({
     }
     const adjustedScrollOffset = recyclerViewManager.getLastScrollOffset();
 
-    // Binary search for current sticky index
+    // Binary search for current sticky index. An index the layout table has
+    // not reached yet is treated as below the viewport: the data prop grows a
+    // commit before the layouts do, so `lengthInvalid` can pass while the
+    // trailing indices are still unmeasured.
     const currentIndexInArray = findCurrentStickyIndex(
       sortedIndices,
       adjustedScrollOffset + stickyHeaderOffset,
-      (index) => recyclerViewManager.getLayout(index).y
+      (index) =>
+        recyclerViewManager.tryGetLayout(index)?.y ?? Number.MAX_SAFE_INTEGER
     );
 
     const newStickyIndex = sortedIndices[currentIndexInArray] ?? -1;

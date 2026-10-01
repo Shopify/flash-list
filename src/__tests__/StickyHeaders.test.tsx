@@ -10,6 +10,7 @@ import {
 } from "../recyclerview/components/StickyHeaders";
 import { RecyclerViewManager } from "../recyclerview/RecyclerViewManager";
 import { RVLayout } from "../recyclerview/layout-managers/LayoutManager";
+import { ErrorMessages } from "../errors/ErrorMessages";
 
 /**
  * Creates a mock RecyclerViewManager with controlled scroll offset and layouts.
@@ -670,6 +671,108 @@ describe("StickyHeaders - Compute Function", () => {
           zIndex: 7,
         }),
       });
+    });
+  });
+
+  describe("Unmeasured Trailing Layouts", () => {
+    /**
+     * Mirrors the real managers: the layout table holds `measuredCount`
+     * entries, `getLayout` throws past the end and `tryGetLayout` returns
+     * undefined. `getDataLength` is the data prop, which grows a commit
+     * earlier than the layout table does.
+     */
+    const createGrowingDataManager = (config: {
+      scrollOffset: number;
+      measuredCount: number;
+      dataLength: number;
+    }): RecyclerViewManager<any> => {
+      const { scrollOffset, measuredCount, dataLength } = config;
+      const layoutAt = (index: number): RVLayout => ({
+        x: 0,
+        y: index * 50,
+        width: 400,
+        height: 50,
+      });
+
+      return {
+        getDataLength: jest.fn(() => dataLength),
+        getLastScrollOffset: jest.fn(() => scrollOffset),
+        getLayout: jest.fn((index: number) => {
+          if (index >= measuredCount) {
+            throw new Error(ErrorMessages.indexOutOfBounds);
+          }
+          return layoutAt(index);
+        }),
+        tryGetLayout: jest.fn((index: number) =>
+          index >= 0 && index < measuredCount ? layoutAt(index) : undefined
+        ),
+        getEngagedIndices: jest.fn(() => ({
+          startIndex: 0,
+          endIndex: dataLength - 1,
+        })),
+        firstItemOffset: 0,
+      } as any;
+    };
+
+    it("should not throw when a sticky index has no layout yet", () => {
+      const onChangeStickyIndex = jest.fn();
+
+      // Data grew to 31 items and index 30 is already a sticky header, but the
+      // layout table still only covers 0..20 — the window a scroll event
+      // between the data commit and the layout commit lands in.
+      const manager = createGrowingDataManager({
+        scrollOffset: 1100,
+        measuredCount: 21,
+        dataLength: 31,
+      });
+
+      expect(() =>
+        render(
+          <StickyHeaders
+            stickyHeaderIndices={[0, 10, 20, 30]}
+            stickyHeaderOffset={0}
+            data={Array.from({ length: 31 }, (_, index) => index)}
+            scrollY={new Animated.Value(0)}
+            renderItem={renderItem}
+            stickyHeaderRef={createRef()}
+            recyclerViewManager={manager}
+            extraData={undefined}
+            onChangeStickyIndex={onChangeStickyIndex}
+          />
+        )
+      ).not.toThrow();
+
+      // Scroll 1100 is past item 20 (y=1000), so 20 is still the right answer.
+      expect(onChangeStickyIndex).toHaveBeenCalledWith(20);
+    });
+
+    it("should treat an unmeasured sticky index as below the viewport", () => {
+      const onChangeStickyIndex = jest.fn();
+
+      // Scrolled past where item 30 would sit (y=1500) had it been measured.
+      const manager = createGrowingDataManager({
+        scrollOffset: 1600,
+        measuredCount: 21,
+        dataLength: 31,
+      });
+
+      render(
+        <StickyHeaders
+          stickyHeaderIndices={[0, 10, 20, 30]}
+          stickyHeaderOffset={0}
+          data={Array.from({ length: 31 }, (_, index) => index)}
+          scrollY={new Animated.Value(0)}
+          renderItem={renderItem}
+          stickyHeaderRef={createRef()}
+          recyclerViewManager={manager}
+          extraData={undefined}
+          onChangeStickyIndex={onChangeStickyIndex}
+        />
+      );
+
+      // 30 has no position to compare against, so the last measured header
+      // wins rather than one that may not be on screen at all.
+      expect(onChangeStickyIndex).toHaveBeenCalledWith(20);
     });
   });
 });
