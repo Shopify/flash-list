@@ -22,8 +22,9 @@ export interface ViewHolderCollectionProps<TItem> {
   data: FlashListProps<TItem>["data"];
   /** Map of indices to React keys for each rendered item */
   renderStack: Map<string, { index: number }>;
-  /** Function to get layout information for a specific index */
-  getLayout: (index: number) => RVLayout;
+  /** Function to get layout information for a specific index, or undefined
+   * when the index has no layout yet */
+  getLayout: (index: number) => RVLayout | undefined;
   /** Ref to control layout updates from parent components */
   viewHolderCollectionRef: React.Ref<ViewHolderCollectionRef>;
   /** Map to store refs for each ViewHolder instance */
@@ -176,6 +177,15 @@ export const ViewHolderCollection = <TItem,>(
       {containerLayout &&
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
+          const layout = getLayout(index);
+          // The render stack can outlive a layout-table shrink: modifyLayout
+          // truncates layouts before the stack is pruned, and the pruning pass
+          // is skipped when the engaged range is unchanged. Skip the stale
+          // entry until the next sync restores the pairing, rather than
+          // reading past the end of the layout table.
+          if (!layout) {
+            return null;
+          }
           const item = data[index];
           // Suppress separators for items in the last row to prevent
           // height mismatch. The last data item has no separator (no
@@ -192,7 +202,7 @@ export const ViewHolderCollection = <TItem,>(
               item={item}
               trailingItem={trailingItem}
               layout={{
-                ...getLayout(index),
+                ...layout,
               }}
               refHolder={refHolder}
               onSizeChanged={onSizeChanged}
