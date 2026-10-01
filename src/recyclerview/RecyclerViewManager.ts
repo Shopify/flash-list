@@ -385,7 +385,15 @@ export class RecyclerViewManager<T> {
       // re-estimate unmeasured items with an updated average height, changing
       // the target item's position. Reading before recompute would capture a
       // stale offset, causing the wrong items to be rendered.
-      this.layoutManager.recomputeLayouts(0, initialScrollIndex);
+      //
+      // This has to run to the end of the list rather than stopping at
+      // initialScrollIndex. Items are positioned from their predecessor, so
+      // recomputing only the prefix moves the target item without moving the
+      // items after it, and the layout array is left out of order at that
+      // boundary. getVisibleLayouts binary searches that array and documents
+      // that it assumes it is sorted, so once it is not, the search can return
+      // an item nowhere near the one requested.
+      this.layoutManager.recomputeLayouts(0, this.getDataLength() - 1);
       const initialItemLayout =
         this.layoutManager.getLayout(initialScrollIndex);
       const initialItemOffset = this.propsRef.horizontal
