@@ -139,8 +139,9 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
       style={style}
       index={index}
     >
+      {inverted ? separator : null}
       {children}
-      {separator}
+      {inverted ? null : separator}
     </CompatContainer>
   );
 };
