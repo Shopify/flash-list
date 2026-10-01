@@ -359,13 +359,25 @@ export abstract class RVLayoutManager {
         this.lastSkippedLayoutIndex
       );
       const lastIndex = this.layouts.length - 1;
-      // Since layout managers derive height from last indices we need to make
-      // sure they're not too much out of sync.
-      if (this.layouts[lastIndex].y < this.layouts[endIndex].y) {
+      // Since layout managers derive the content size from the last indices we
+      // need to make sure they're not too much out of sync. The position that
+      // grows along the list is x for horizontal layouts and y otherwise.
+      const lastPosition = this.getScrollAxisPosition(this.layouts[lastIndex]);
+      const endPosition = this.getScrollAxisPosition(this.layouts[endIndex]);
+      if (lastPosition < endPosition) {
         this.recomputeLayouts(this.lastSkippedLayoutIndex, lastIndex);
         this.lastSkippedLayoutIndex = Number.MAX_VALUE;
       }
     }
+  }
+
+  /**
+   * Returns the position of a layout along the scroll axis.
+   * @param layout Layout to read the position from
+   * @returns x for horizontal layouts, y otherwise
+   */
+  private getScrollAxisPosition(layout: RVLayout): number {
+    return this.horizontal ? layout.x : layout.y;
   }
 
   /**
