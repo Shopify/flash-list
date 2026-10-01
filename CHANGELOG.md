@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix blank rows on the first render when `initialScrollIndex` lands away from the item's own offset (`initialScrollIndexParams.viewOffset`, or an item inside the last screen)
+  - https://github.com/Shopify/flash-list/pull/2516
+
 - Fix render window missing visible rows during flings when drawDistance is small (blank band at the top when scrolling forward, at the bottom when scrolling backward)
   - https://github.com/Shopify/flash-list/pull/2510
 
