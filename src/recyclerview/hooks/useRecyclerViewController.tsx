@@ -238,8 +238,14 @@ export function useRecyclerViewController<T>(
       }: ScrollToOffsetParams) => {
         const { horizontal } = recyclerViewManager.props;
         if (scrollViewRef.current) {
-          // Adjust offset for RTL layouts in horizontal mode
-          if (I18nManager.isRTL && horizontal) {
+          // Adjust offset for RTL layouts in horizontal mode.
+          // Gated on hasLayout(): the RTL math reads child container and
+          // window size, which throw while the list is hidden (0x0).
+          if (
+            I18nManager.isRTL &&
+            horizontal &&
+            recyclerViewManager.hasLayout()
+          ) {
             // eslint-disable-next-line no-param-reassign
             offset =
               adjustOffsetForRTL(
@@ -323,6 +329,12 @@ export function useRecyclerViewController<T>(
         viewPosition,
         viewOffset,
       }: ScrollToIndexParams): Promise<void> => {
+        // While the list is hidden (parent measured 0x0) the layout manager
+        // is never initialized, so reading window size below would throw.
+        // No-op until the next layout pass makes scrolling meaningful.
+        if (!recyclerViewManager.hasLayout()) {
+          return Promise.resolve();
+        }
         return new Promise((resolve) => {
           const { horizontal } = recyclerViewManager.props;
           if (
