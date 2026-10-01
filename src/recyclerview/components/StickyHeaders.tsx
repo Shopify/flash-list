@@ -99,13 +99,22 @@ export const StickyHeaders = <TItem,>({
     if (lengthInvalid) {
       return;
     }
+    // Layouts can lag behind data updates (they only grow once a layout
+    // manager exists), so the last sticky index may not have a layout yet.
+    // A layout for the last index guarantees one for every other sticky
+    // index, so skip this frame until layouts catch up.
+    if (
+      !recyclerViewManager.tryGetLayout(sortedIndices[sortedIndices.length - 1])
+    ) {
+      return;
+    }
     const adjustedScrollOffset = recyclerViewManager.getLastScrollOffset();
 
     // Binary search for current sticky index
     const currentIndexInArray = findCurrentStickyIndex(
       sortedIndices,
       adjustedScrollOffset + stickyHeaderOffset,
-      (index) => recyclerViewManager.getLayout(index).y
+      (index) => recyclerViewManager.tryGetLayout(index)?.y ?? 0
     );
 
     const newStickyIndex = sortedIndices[currentIndexInArray] ?? -1;
