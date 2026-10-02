@@ -176,6 +176,9 @@ export const ViewHolderCollection = <TItem,>(
       {containerLayout &&
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
+          if (index < 0 || index >= (data?.length ?? 0)) {
+            return null;
+          }
           const item = data[index];
           // Suppress separators for items in the last row to prevent
           // height mismatch. The last data item has no separator (no
