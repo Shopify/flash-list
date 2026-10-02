@@ -18,6 +18,7 @@ import { FlashListProps, RenderTarget } from "../FlashListProps";
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { CompatView } from "./components/CompatView";
 import { getInvertedTransformStyle } from "./utils/getInvertedTransformStyle";
+import { ColumnIndexProvider } from "./hooks/useColumnIndex";
 
 /**
  * Props interface for the ViewHolder component
@@ -28,6 +29,8 @@ export interface ViewHolderProps<TItem> {
   index: number;
   /** Layout information for positioning and sizing the item */
   layout: RVLayout;
+  /** Zero-based column the item is placed in (start column for multi-column spans) */
+  columnIndex: number;
   /** Map to store refs for each ViewHolder instance, keyed by index */
   refHolder: Map<number, RefObject<CompatView | null>>;
   /** Additional data passed to renderItem that can trigger re-renders */
@@ -65,6 +68,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
     index,
     refHolder,
     layout,
+    columnIndex,
     onSizeChanged,
     renderItem,
     extraData,
@@ -139,7 +143,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
       style={style}
       index={index}
     >
-      {children}
+      <ColumnIndexProvider value={columnIndex}>{children}</ColumnIndexProvider>
       {separator}
     </CompatContainer>
   );
@@ -156,6 +160,7 @@ export const ViewHolder = React.memo(
     return (
       prevProps.index === nextProps.index &&
       areLayoutsEqual(prevProps.layout, nextProps.layout) &&
+      prevProps.columnIndex === nextProps.columnIndex &&
       prevProps.refHolder === nextProps.refHolder &&
       prevProps.onSizeChanged === nextProps.onSizeChanged &&
       prevProps.extraData === nextProps.extraData &&

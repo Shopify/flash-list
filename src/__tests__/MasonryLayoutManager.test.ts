@@ -186,6 +186,125 @@ describe("MasonryLayoutManager", () => {
     });
   });
 
+  describe("getColumnIndex", () => {
+    const getColumnIndices = (manager: RVLayoutManager, count: number) =>
+      Array.from({ length: count }, (_, i) => manager.getColumnIndex(i));
+
+    it("should return the column each item was placed in", () => {
+      const manager = createLayoutManager(
+        LayoutManagerType.MASONRY,
+        defaultParams
+      );
+      manager.modifyLayout(
+        [
+          createMockLayoutInfo(0, 200, 100),
+          createMockLayoutInfo(1, 200, 150),
+          createMockLayoutInfo(2, 200, 120),
+          createMockLayoutInfo(3, 200, 80),
+          createMockLayoutInfo(4, 200, 200),
+        ],
+        5
+      );
+
+      expect(getColumnIndices(manager, 5)).toEqual([0, 1, 0, 1, 0]);
+    });
+
+    it("should not follow index order when optimizing arrangement", () => {
+      const manager = createLayoutManager(LayoutManagerType.MASONRY, {
+        ...defaultParams,
+        maxColumns: 3,
+      });
+      manager.modifyLayout(
+        [
+          createMockLayoutInfo(0, 133, 300),
+          createMockLayoutInfo(1, 133, 100),
+          createMockLayoutInfo(2, 133, 200),
+          createMockLayoutInfo(3, 133, 50), // Col 1 (shortest: 100)
+          createMockLayoutInfo(4, 133, 50), // Col 1 (shortest: 150)
+        ],
+        5
+      );
+
+      expect(getColumnIndices(manager, 5)).toEqual([0, 1, 2, 1, 1]);
+    });
+
+    it("should cycle through columns when arrangement is not optimized", () => {
+      const manager = createLayoutManager(LayoutManagerType.MASONRY, {
+        ...defaultParams,
+        maxColumns: 3,
+        optimizeItemArrangement: false,
+      });
+      manager.modifyLayout(
+        [
+          createMockLayoutInfo(0, 133, 300),
+          createMockLayoutInfo(1, 133, 100),
+          createMockLayoutInfo(2, 133, 200),
+          createMockLayoutInfo(3, 133, 50),
+          createMockLayoutInfo(4, 133, 50),
+        ],
+        5
+      );
+
+      expect(getColumnIndices(manager, 5)).toEqual([0, 1, 2, 0, 1]);
+    });
+
+    it("should return the start column for items spanning multiple columns", () => {
+      const manager = createLayoutManager(LayoutManagerType.MASONRY, {
+        ...defaultParams,
+        maxColumns: 3,
+        overrideItemLayout: (index, layout) => {
+          layout.span = index === 3 ? 2 : undefined;
+        },
+      });
+      manager.modifyLayout(
+        [
+          createMockLayoutInfo(0, 133, 300),
+          createMockLayoutInfo(1, 133, 100),
+          createMockLayoutInfo(2, 133, 100),
+          // Starting at col 1 keeps total column height lowest
+          createMockLayoutInfo(3, 266, 100), // Cols 1-2
+          createMockLayoutInfo(4, 133, 100), // Col 1 (shortest, leftmost tie)
+        ],
+        5
+      );
+
+      expect(getAllLayouts(manager)[3].width).toBeCloseTo(
+        (windowSize.width / 3) * 2
+      );
+      expect(getColumnIndices(manager, 5)).toEqual([0, 1, 2, 1, 1]);
+    });
+
+    it("should update when an item resize moves later items to another column", () => {
+      const manager = createLayoutManager(
+        LayoutManagerType.MASONRY,
+        defaultParams
+      );
+      manager.modifyLayout(
+        [
+          createMockLayoutInfo(0, 200, 100),
+          createMockLayoutInfo(1, 200, 150),
+          createMockLayoutInfo(2, 200, 100),
+        ],
+        3
+      );
+      expect(getColumnIndices(manager, 3)).toEqual([0, 1, 0]);
+
+      // Item 0 grows taller than item 1, so item 2 moves to column 1
+      manager.modifyLayout([createMockLayoutInfo(0, 200, 300)], 3);
+      expect(getColumnIndices(manager, 3)).toEqual([0, 1, 1]);
+    });
+
+    it("should return 0 when the bounded size is not known", () => {
+      const manager = createLayoutManager(LayoutManagerType.MASONRY, {
+        ...defaultParams,
+        windowSize: { width: 0, height: 0 },
+      });
+      manager.modifyLayout([createMockLayoutInfo(0, 0, 100)], 1);
+
+      expect(manager.getColumnIndex(0)).toBe(0);
+    });
+  });
+
   describe("Empty Layout", () => {
     it("should return zero size for empty layout", () => {
       const manager = createLayoutManager(

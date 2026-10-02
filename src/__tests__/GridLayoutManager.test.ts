@@ -74,6 +74,50 @@ describe("GridLayoutManager", () => {
     });
   });
 
+  describe("getColumnIndex", () => {
+    it("should return the column of each item", () => {
+      const manager = createPopulatedLayoutManager(LayoutManagerType.GRID, 7, {
+        ...defaultParams,
+        maxColumns: 3,
+      });
+
+      expect(
+        [0, 1, 2, 3, 4, 5, 6].map((i) => manager.getColumnIndex(i))
+      ).toEqual([0, 1, 2, 0, 1, 2, 0]);
+    });
+
+    it("should return the start column for items spanning multiple columns", () => {
+      const manager = createPopulatedLayoutManager(LayoutManagerType.GRID, 5, {
+        ...defaultParams,
+        maxColumns: 3,
+        overrideItemLayout: (index, layout) => {
+          layout.span = index === 1 ? 2 : undefined;
+        },
+      });
+
+      // Row 1: [0][1 1], Row 2: [2][3][4]
+      expect([0, 1, 2, 3, 4].map((i) => manager.getColumnIndex(i))).toEqual([
+        0, 1, 0, 1, 2,
+      ]);
+    });
+
+    it("should update column indices when numColumns changes", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        4,
+        defaultParams
+      );
+      expect(manager.getColumnIndex(2)).toBe(0);
+
+      manager.updateLayoutParams(
+        createLayoutParams({ ...defaultParams, maxColumns: 4 })
+      );
+      expect([0, 1, 2, 3].map((i) => manager.getColumnIndex(i))).toEqual([
+        0, 1, 2, 3,
+      ]);
+    });
+  });
+
   describe("Layout recalculations", () => {
     it("should adjust layout when window size changes", () => {
       const manager = createPopulatedLayoutManager(

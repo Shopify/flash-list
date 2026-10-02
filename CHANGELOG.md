@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add `columnIndex` to `renderItem` info for grid and masonry layouts
+  - **TypeScript:** `columnIndex` is a required field on `ListRenderItemInfo`. Code that builds this object by hand (e.g. tests or wrappers calling `renderItem({ item, index, target })`) must now pass `columnIndex` (use `0` for single-column lists).
+
 - Fix render window missing visible rows during flings when drawDistance is small (blank band at the top when scrolling forward, at the bottom when scrolling backward)
   - https://github.com/Shopify/flash-list/pull/2510
 

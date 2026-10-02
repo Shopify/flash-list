@@ -279,6 +279,23 @@ export abstract class RVLayoutManager {
   }
 
   /**
+   * Returns the column the item starts in (the first column for multi-column spans).
+   * Assumes multi-column layouts are vertical and place items at x = columnWidth * startColumn.
+   */
+  getColumnIndex(index: number): number {
+    if (this.maxColumns <= 1) {
+      return 0;
+    }
+    const layout = this.layouts[index];
+    const columnWidth = this.windowSize.width / this.maxColumns;
+    if (!layout || columnWidth <= 0) {
+      return 0;
+    }
+    const column = Math.round(layout.x / columnWidth);
+    return Math.min(Math.max(column, 0), this.maxColumns - 1);
+  }
+
+  /**
    * Abstract method to recompute layouts for items in the given range.
    * @param startIndex Starting index of items to recompute
    * @param endIndex Ending index of items to recompute

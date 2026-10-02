@@ -157,6 +157,10 @@ export class RecyclerViewManager<T> {
     return this.layoutManager?.isInLastRow(index) ?? false;
   }
 
+  getColumnIndex(index: number): number {
+    return this.layoutManager?.getColumnIndex(index) ?? 0;
+  }
+
   // Doesn't include header / foot etc
   getChildContainerDimensions() {
     if (!this.layoutManager) {
