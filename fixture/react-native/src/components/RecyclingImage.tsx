@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { Animated, Image, ImageProps, Platform } from "react-native";
 
 interface RecyclingImageProps extends Omit<ImageProps, "source"> {
@@ -9,17 +9,17 @@ const isIOS = Platform.OS === "ios";
 const RecyclingImageIOS = (props: RecyclingImageProps) => {
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
-  useMemo(() => {
+  useLayoutEffect(() => {
     animatedOpacity.setValue(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.source.uri]);
+  }, [animatedOpacity, props.source.uri]);
 
   return (
     <Animated.Image
       {...props}
       style={[props.style, { opacity: animatedOpacity }]}
-      onLoad={() => {
+      onLoad={(event) => {
         animatedOpacity.setValue(1);
+        props.onLoad?.(event);
       }}
     />
   );

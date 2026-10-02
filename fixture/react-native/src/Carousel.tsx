@@ -127,12 +127,13 @@ const Carousel = () => {
   useEffect(() => {
     if (isLayoutCompleteRef.current) {
       const targetIndex = lastVisibleIndexRef.current;
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         flatListRef.current?.scrollToIndex({
           index: targetIndex,
           animated: false,
         });
       }, 0);
+      return () => clearTimeout(timeout);
     }
   }, [screenWidth]);
 

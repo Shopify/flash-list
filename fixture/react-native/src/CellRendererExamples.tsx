@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { forwardRef, useLayoutEffect, useRef, useCallback } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
@@ -7,57 +7,69 @@ import Tweet from "./twitter/models/Tweet";
 import TweetCell from "./twitter/TweetCell";
 
 // Example 1: Fade-in animation CellRendererComponent
-const FadeInCellRenderer = (props: any) => {
+const FadeInCellRenderer = forwardRef<View, any>((props, ref) => {
   const opacity = useRef(new Animated.Value(0)).current;
+  const cellStyle = StyleSheet.flatten(props.style);
 
-  useEffect(() => {
-    Animated.timing(opacity, {
+  useLayoutEffect(() => {
+    opacity.setValue(0);
+    const animation = Animated.timing(opacity, {
       toValue: 1,
       duration: 500,
       delay: props.index * 100,
       useNativeDriver: true,
-    }).start();
+    });
+    animation.start();
+    return () => animation.stop();
   }, [opacity, props.index]);
 
   return (
     <Animated.View
       {...props}
+      ref={ref}
       style={[
         props.style,
         {
-          opacity,
+          opacity: cellStyle?.opacity === 0 ? 0 : opacity,
         },
       ]}
     />
   );
-};
+});
+FadeInCellRenderer.displayName = "FadeInCellRenderer";
 
 // Example 2: Scale animation CellRendererComponent
-const ScaleCellRenderer = (props: any) => {
+const ScaleCellRenderer = forwardRef<View, any>((props, ref) => {
   const scale = useRef(new Animated.Value(0.8)).current;
+  const cellStyle = StyleSheet.flatten(props.style);
 
-  useEffect(() => {
-    Animated.spring(scale, {
+  useLayoutEffect(() => {
+    scale.setValue(0.8);
+    const animation = Animated.spring(scale, {
       toValue: 1,
       friction: 8,
       tension: 40,
       delay: props.index * 50,
       useNativeDriver: true,
-    }).start();
+    });
+    animation.start();
+    return () => animation.stop();
   }, [scale, props.index]);
 
   return (
     <Animated.View
       {...props}
+      ref={ref}
       style={[
         props.style,
         {
-          transform: [{ scale }],
+          transform: [...(cellStyle?.transform ?? []), { scale }],
         },
       ]}
     />
   );
-};
+});
+ScaleCellRenderer.displayName = "ScaleCellRenderer";
 
 // Main component that combines both examples
 const FlashListCellRenderer = () => {

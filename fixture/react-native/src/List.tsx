@@ -2,7 +2,13 @@
  Use this component inside your React Native Application.
  A scrollable list with different item type
  */
-import React, { useCallback, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import Animated, {
@@ -24,6 +30,17 @@ const List = () => {
   const [data, setData] = useState(() => generateArray(100));
 
   const list = useRef<FlashListRef<number> | null>(null);
+  const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (refreshTimeout.current !== null) {
+        clearTimeout(refreshTimeout.current);
+        refreshTimeout.current = null;
+      }
+    },
+    []
+  );
 
   const removeItem = useCallback((item: number) => {
     list.current?.prepareForLayoutAnimationRender();
@@ -65,8 +82,10 @@ const List = () => {
       ref={list}
       refreshing={refreshing}
       onRefresh={() => {
+        if (refreshTimeout.current !== null) return;
         setRefreshing(true);
-        setTimeout(() => {
+        refreshTimeout.current = setTimeout(() => {
+          refreshTimeout.current = null;
           setRefreshing(false);
         }, 2000);
       }}
@@ -85,16 +104,18 @@ const List = () => {
 
 export default List;
 
-const CellRenderer = (props: any) => {
+const CellRenderer = forwardRef<View, any>((props, ref) => {
   return (
     <Animated.View
       {...props}
+      ref={ref}
       layout={LinearTransition}
       entering={FadeIn}
       exiting={FadeOut}
     />
   );
-};
+});
+CellRenderer.displayName = "CellRenderer";
 const styles = StyleSheet.create({
   container: {
     justifyContent: "space-around",
