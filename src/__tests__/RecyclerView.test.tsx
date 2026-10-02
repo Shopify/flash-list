@@ -36,6 +36,7 @@ const renderRecyclerView = (args: {
   numColumns?: number;
   masonry?: boolean;
   horizontal?: boolean;
+  inverted?: boolean;
   ref?: React.Ref<FlashListRef<number>>;
   data?: number[];
 }) => {
@@ -43,6 +44,7 @@ const renderRecyclerView = (args: {
     numColumns = 1,
     masonry = false,
     horizontal = false,
+    inverted = false,
     ref,
     data,
   } = args;
@@ -59,6 +61,7 @@ const renderRecyclerView = (args: {
       drawDistance={0}
       numColumns={numColumns}
       horizontal={horizontal}
+      inverted={inverted}
       renderItem={({ item }) => <Text>{item}</Text>}
     />
   );
@@ -75,6 +78,23 @@ describe("RecyclerView", () => {
 
       expect(result).toContainReactComponent(Text, { children: 0 });
       expect(result).not.toContainReactComponent(Text, { children: 11 });
+    });
+
+    it("reverses native accessibility order for inverted items", () => {
+      const result = renderRecyclerView({
+        data: [0, 1, 2],
+        inverted: true,
+      });
+
+      const accessibilityContainer = result
+        .findAll(View)
+        .find(
+          (component) => component.props.reverseAccessibilityOrder !== undefined
+        );
+
+      expect(accessibilityContainer).toHaveReactProps({
+        reverseAccessibilityOrder: true,
+      });
     });
   });
 
