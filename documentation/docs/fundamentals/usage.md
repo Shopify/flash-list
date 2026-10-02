@@ -825,6 +825,40 @@ const MyComponent = ({ items }) => {
 - When building nested components that render multiple items from an array
 - To ensure consistent key generation that works well with FlashList's recycling system
 
+### useColumnIndex
+
+```tsx
+const columnIndex = useColumnIndex();
+```
+
+Returns the zero-based column the enclosing item is placed in when `numColumns > 1` (grid or [masonry](../guides/masonry-layout)). For items spanning multiple columns, this is the start column. Returns `0` for single-column lists and outside of FlashList items. In RTL layouts, column `0` is the rightmost column.
+
+Only components that call `useColumnIndex` re-render when an item's column changes, so keep it in the component that needs it rather than at the top of a large item.
+
+```jsx
+import { useColumnIndex } from "@shopify/flash-list";
+
+const ColumnSpacing = ({ children }) => {
+  const columnIndex = useColumnIndex();
+  return (
+    <View
+      style={{
+        paddingLeft: columnIndex === 0 ? 0 : 4,
+        paddingRight: columnIndex === 0 ? 4 : 0,
+      }}
+    >
+      {children}
+    </View>
+  );
+};
+
+const renderItem = ({ item }) => (
+  <ColumnSpacing>
+    <Card item={item} />
+  </ColumnSpacing>
+);
+```
+
 ### useFlashListContext
 
 Exposes helpers to easily access `ref` of FlashList. It also exposes `ref` of ScrollView. Ideal for use within child components or `CellRendererComponent`.

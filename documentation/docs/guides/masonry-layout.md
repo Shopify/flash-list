@@ -80,6 +80,45 @@ optimizeItemArrangement?: boolean;
 
 When enabled with `masonry` layout, this will try to reduce differences in column height by modifying item order. Default is `true`.
 
+### Getting the column of an item
+
+Use the [`useColumnIndex`](../fundamentals/usage#usecolumnindex) hook inside your item to get the zero-based column it is placed in. With `optimizeItemArrangement`, items go into the shortest column, so `index % numColumns` doesn't give the right column. For example, to apply per-column spacing:
+
+```tsx
+import { FlashList, useColumnIndex } from "@shopify/flash-list";
+
+const ColumnSpacing = ({ children }) => {
+  const columnIndex = useColumnIndex();
+  return (
+    <View
+      style={{
+        paddingLeft: columnIndex === 0 ? 0 : 4,
+        paddingRight: columnIndex === 0 ? 4 : 0,
+      }}
+    >
+      {children}
+    </View>
+  );
+};
+
+<FlashList
+  data={data}
+  masonry
+  numColumns={2}
+  renderItem={({ item }) => (
+    <ColumnSpacing>
+      <Card item={item} />
+    </ColumnSpacing>
+  )}
+/>;
+```
+
+Only components that call `useColumnIndex` re-render when an item's column changes. In the example above, `Card` is not re-rendered.
+
+:::note
+Columns are assigned from measured heights, so an item's column can change after the first render or when the size of an item above it changes. Keep the item's height independent of its column. Symmetric per-column padding, like in the example above, is safe because every column has the same width.
+:::
+
 ## Migration from v1
 
 If you're migrating from v1's `MasonryFlashList`, here are the key changes:
@@ -87,4 +126,5 @@ If you're migrating from v1's `MasonryFlashList`, here are the key changes:
 1. **Use `FlashList` with `masonry` prop** instead of `MasonryFlashList`
 2. **`overrideItemLayout` no longer needs size estimates** - only use it for setting `layout.span`
 3. **`getColumnFlex` is not supported** in v2 masonry layout
-4. **Item heights are determined by actual rendered component** rather than estimates
+4. **`renderItem` no longer receives `columnIndex` or `columnSpan`**: use the [`useColumnIndex`](../fundamentals/usage#usecolumnindex) hook inside your item for the column, and the `span` you set in `overrideItemLayout` for the span
+5. **Item heights are determined by actual rendered component** rather than estimates

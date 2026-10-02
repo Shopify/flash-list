@@ -211,6 +211,26 @@ describe("LinearLayoutManager", () => {
     });
   });
 
+  describe("getColumnIndex", () => {
+    it("should always return 0 for vertical and horizontal lists", () => {
+      const vertical = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        3,
+        defaultParams
+      );
+      const horizontal = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        3,
+        horizontalParams
+      );
+
+      [0, 1, 2].forEach((i) => {
+        expect(vertical.getColumnIndex(i)).toBe(0);
+        expect(horizontal.getColumnIndex(i)).toBe(0);
+      });
+    });
+  });
+
   describe("Empty layout", () => {
     it("should return zero size for empty layout", () => {
       const manager = createLayoutManager(

@@ -4,7 +4,7 @@ import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
 import { FlashListRef } from "../FlashListRef";
-import { FlashList } from "..";
+import { FlashList, useColumnIndex } from "..";
 
 // Mock measureLayout to return fixed dimensions
 jest.mock("../recyclerview/utils/measureLayout", () => {
@@ -159,6 +159,125 @@ describe("RecyclerView", () => {
       const result = renderRecyclerView({ ref, data: [0, 1, 2] });
       result.setProps({ data: [0, 1, 2, 3] });
       expect(ref.current?.props.data).toEqual([0, 1, 2, 3]);
+    });
+  });
+
+  describe("useColumnIndex", () => {
+    const renderWithColumnTracking = (
+      props: Partial<React.ComponentProps<typeof FlashList<number>>>
+    ) => {
+      const columns = new Map<number, number>();
+      const columnHistory = new Map<number, number[]>();
+      const renderItemCalls = new Map<number, number>();
+      const ColumnTracker = ({ item }: { item: number }) => {
+        const columnIndex = useColumnIndex();
+        columns.set(item, columnIndex);
+        const history = columnHistory.get(item) ?? [];
+        if (history[history.length - 1] !== columnIndex) {
+          columnHistory.set(item, [...history, columnIndex]);
+        }
+        return <Text>{item}</Text>;
+      };
+      const renderItem = ({ item }: { item: number }) => {
+        renderItemCalls.set(item, (renderItemCalls.get(item) ?? 0) + 1);
+        return <ColumnTracker item={item} />;
+      };
+      const result = render(
+        <FlashList
+          data={[0, 1, 2, 3, 4, 5]}
+          renderItem={renderItem}
+          {...props}
+        />
+      );
+      const getColumns = () =>
+        Array.from(columns.entries())
+          .sort(([itemA], [itemB]) => itemA - itemB)
+          .map(([, column]) => column);
+      return { result, getColumns, columnHistory, renderItemCalls };
+    };
+
+    it("returns 0 for single-column lists", () => {
+      const { getColumns } = renderWithColumnTracking({});
+      expect(getColumns()).toEqual([0, 0, 0, 0, 0, 0]);
+    });
+
+    it("returns 0 outside of FlashList items", () => {
+      let columnIndex: number | undefined;
+      const Outside = () => {
+        columnIndex = useColumnIndex();
+        return null;
+      };
+      render(<Outside />);
+      expect(columnIndex).toBe(0);
+    });
+
+    it("returns the column for grid layouts", () => {
+      const { getColumns } = renderWithColumnTracking({ numColumns: 3 });
+      expect(getColumns()).toEqual([0, 1, 2, 0, 1, 2]);
+    });
+
+    it("returns the start column for grid items spanning multiple columns", () => {
+      const { getColumns } = renderWithColumnTracking({
+        numColumns: 3,
+        overrideItemLayout: (layout, item) => {
+          layout.span = item === 1 ? 2 : undefined;
+        },
+      });
+      // Rows: [0][1 1] / [2][3][4] / [5]
+      expect(getColumns()).toEqual([0, 1, 0, 1, 2, 0]);
+    });
+
+    it("returns the column for masonry layouts", () => {
+      const { getColumns } = renderWithColumnTracking({
+        numColumns: 2,
+        masonry: true,
+      });
+      // Equal measured heights place items in alternating columns
+      expect(getColumns()).toEqual([0, 1, 0, 1, 0, 1]);
+    });
+
+    it("updates when the layout changes", () => {
+      const { result, getColumns } = renderWithColumnTracking({
+        numColumns: 3,
+      });
+      expect(getColumns()).toEqual([0, 1, 2, 0, 1, 2]);
+
+      result.setProps({ numColumns: 2 });
+      expect(getColumns()).toEqual([0, 1, 0, 1, 0, 1]);
+    });
+
+    describe("when measured heights move masonry items to another column", () => {
+      const { measureItemLayout } = jest.requireMock(
+        "../recyclerview/utils/measureLayout"
+      ) as { measureItemLayout: jest.Mock };
+      const defaultImplementation = measureItemLayout.getMockImplementation();
+
+      afterEach(() => {
+        measureItemLayout.mockImplementation(defaultImplementation);
+      });
+
+      it("updates useColumnIndex without calling renderItem again", () => {
+        // Measurements happen in index order, so item 0 is the tallest and
+        // item 2 moves from column 0 (estimated layout) to column 1
+        const heights = [300, 80, 120, 60, 250, 90];
+        let call = 0;
+        measureItemLayout.mockImplementation(() => ({
+          x: 0,
+          y: 0,
+          width: 200,
+          height: heights[call++ % heights.length],
+        }));
+
+        const { columnHistory, renderItemCalls } = renderWithColumnTracking({
+          numColumns: 2,
+          masonry: true,
+        });
+
+        expect(columnHistory.get(2)).toEqual([0, 1]);
+        expect(Array.from(renderItemCalls.values())).toEqual(
+          Array(renderItemCalls.size).fill(1)
+        );
+      });
     });
   });
 

@@ -215,6 +215,8 @@ export const StickyHeaders = <TItem,>({
             item={data[currentStickyIndex]}
             renderItem={renderItem}
             layout={{ x: 0, y: 0, width: 0, height: 0 }}
+            // The sticky copy spans the full list width, so it isn't in any column
+            columnIndex={0}
             refHolder={refHolder}
             extraData={extraData}
             trailingItem={null}

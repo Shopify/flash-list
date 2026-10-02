@@ -630,6 +630,9 @@ const RecyclerViewComponent = <T,>(
             CellRendererComponent={CellRendererComponent}
             ItemSeparatorComponent={ItemSeparatorComponent}
             isInLastRow={(index) => recyclerViewManager.isInLastRow(index)}
+            getColumnIndex={(index) =>
+              recyclerViewManager.getColumnIndex(index)
+            }
             getChildContainerLayout={() =>
               recyclerViewManager.hasLayout()
                 ? recyclerViewManager.getChildContainerDimensions()
