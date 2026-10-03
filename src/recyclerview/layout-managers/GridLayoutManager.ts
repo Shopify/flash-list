@@ -183,6 +183,18 @@ export class RVGridLayoutManagerImpl extends RVLayoutManager {
       if (maxHeight - tallestItem.height > 1) {
         targetHeight = 0;
         this.requiresRepaint = true;
+        // A stale minHeight (e.g. after data changed) can hide the row's real
+        // tallest item from the check above. The next row has to start below
+        // it, or it overlaps the taller items in this row.
+        for (
+          let j = startIndex;
+          j <= endIndex && j < this.layouts.length;
+          j++
+        ) {
+          if (this.layouts[j].height > tallestItem.height) {
+            tallestItem = this.layouts[j];
+          }
+        }
       }
       i = startIndex;
       while (i <= endIndex) {
