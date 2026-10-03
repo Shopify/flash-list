@@ -1,4 +1,6 @@
 import {
+  createLayoutManager,
+  createMockLayoutInfo,
   createPopulatedLayoutManager,
   getAllLayouts,
   LayoutManagerType,
@@ -108,6 +110,34 @@ describe("GridLayoutManager", () => {
       const updatedLayouts = getAllLayouts(manager);
       expect(updatedLayouts[0]).toEqual(initialLayouts[0]);
       expect(updatedLayouts[3].y).toBe(initialLayouts[0].height);
+    });
+
+    it("should place the next row below the tallest item after data changes", () => {
+      const manager = createLayoutManager(LayoutManagerType.GRID, {
+        ...defaultParams,
+        windowSize: { width: 300, height: 900 },
+        maxColumns: 3,
+      });
+      const measure = (heights: number[]) =>
+        manager.modifyLayout(
+          heights.map((height, index) =>
+            createMockLayoutInfo(index, 100, height)
+          ),
+          heights.length
+        );
+
+      // The middle item is tallest, so its neighbours get its height as minHeight.
+      measure([408, 437, 408, 400, 400, 400]);
+      // New data at the same indices: tall, short, tall. The outer items now
+      // measure exactly their stale minHeight.
+      measure([437, 408, 437, 400, 400, 400]);
+
+      const layouts = getAllLayouts(manager);
+      expect(layouts[3].y).toBe(437);
+
+      // Measuring the same sizes again keeps it there.
+      measure([437, 408, 437, 400, 400, 400]);
+      expect(getAllLayouts(manager)[3].y).toBe(437);
     });
   });
 });
