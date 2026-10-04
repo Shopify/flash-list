@@ -435,6 +435,9 @@ export interface FlashListProps<TItem>
          * Offset from the top of the list where sticky headers should stick.
          * This is useful when you have a fixed header or navigation bar at the top of your screen
          * and want sticky headers to appear below it instead of at the very top.
+         *
+         * Items hidden behind this offset are also excluded from `onViewableItemsChanged`,
+         * since they aren't actually visible to the user.
          * @default 0
          */
         offset?: number;

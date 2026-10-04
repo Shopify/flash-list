@@ -251,6 +251,37 @@ describe("ViewabilityHelper", () => {
     );
   });
 
+  it("excludes items hidden behind a top offset (fixed header)", () => {
+    const viewabilityHelper = new ViewabilityHelper(
+      null,
+      viewableIndicesChanged
+    );
+    // Items 0, 1, 2 fit in a 300px list. A 120px fixed header covers item 0
+    // entirely and part of item 1, so only 1 and 2 should be viewable.
+    viewabilityHelper.possiblyViewableIndices = [0, 1, 2];
+    updateViewableItems({ viewabilityHelper, topOffset: 120 });
+    expect(viewableIndicesChanged).toHaveBeenCalledWith([1, 2], [1, 2], []);
+  });
+
+  it("counts an item's visibility against the area below the top offset", () => {
+    // Item 1 (y: 100..200) sits partly behind the fixed header. With a 120px
+    // offset, 80 of its 100px are below the header (80% >= 50%, viewable); with a
+    // 160px offset only 40px are (40% < 50%, not viewable).
+    const config = { itemVisiblePercentThreshold: 50 };
+
+    const helperA = new ViewabilityHelper(config, viewableIndicesChanged);
+    helperA.possiblyViewableIndices = [1];
+    updateViewableItems({ viewabilityHelper: helperA, topOffset: 120 });
+    expect(viewableIndicesChanged).toHaveBeenCalledWith([1], [1], []);
+
+    viewableIndicesChanged.mockReset();
+
+    const helperB = new ViewabilityHelper(config, viewableIndicesChanged);
+    helperB.possiblyViewableIndices = [1];
+    updateViewableItems({ viewabilityHelper: helperB, topOffset: 160 });
+    expect(viewableIndicesChanged).not.toHaveBeenCalled();
+  });
+
   const updateViewableItems = ({
     viewabilityHelper,
     horizontal,
@@ -258,6 +289,7 @@ describe("ViewabilityHelper", () => {
     listSize,
     getLayout,
     runAllTimers,
+    topOffset,
   }: {
     viewabilityHelper: ViewabilityHelper;
     horizontal?: boolean;
@@ -265,6 +297,7 @@ describe("ViewabilityHelper", () => {
     listSize?: RVDimension;
     getLayout?: (index: number) => RVLayout | undefined;
     runAllTimers?: boolean;
+    topOffset?: number;
   }) => {
     viewabilityHelper.updateViewableItems(
       horizontal ?? false,
@@ -273,7 +306,9 @@ describe("ViewabilityHelper", () => {
       getLayout ??
         ((index) => {
           return { x: 0, y: index * 100, height: 100, width: 300 } as RVLayout;
-        })
+        }),
+      undefined,
+      topOffset ?? 0
     );
     if (runAllTimers ?? true) {
       jest.runAllTimers();

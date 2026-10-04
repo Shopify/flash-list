@@ -49,7 +49,8 @@ class ViewabilityHelper {
     scrollOffset: number,
     listSize: RVDimension,
     getLayout: (index: number) => RVLayout | undefined,
-    viewableIndices?: number[]
+    viewableIndices?: number[],
+    topOffset = 0
   ) {
     if (viewableIndices !== undefined) {
       this.possiblyViewableIndices = viewableIndices;
@@ -78,7 +79,8 @@ class ViewabilityHelper {
         listSize,
         this.viewabilityConfig?.viewAreaCoveragePercentThreshold,
         this.viewabilityConfig?.itemVisiblePercentThreshold,
-        getLayout
+        getLayout,
+        topOffset
       )
     );
     this.viewableIndices = newViewableIndices;
@@ -128,7 +130,8 @@ class ViewabilityHelper {
     listSize: RVDimension,
     viewAreaCoveragePercentThreshold: number | null | undefined,
     itemVisiblePercentThreshold: number | null | undefined,
-    getLayout: (index: number) => RVLayout | undefined
+    getLayout: (index: number) => RVLayout | undefined,
+    topOffset: number
   ) {
     const itemLayout = getLayout(index);
     if (itemLayout === undefined) {
@@ -137,22 +140,24 @@ class ViewabilityHelper {
     const itemTop = (horizontal ? itemLayout.x : itemLayout.y) - scrollOffset;
     const itemSize = horizontal ? itemLayout.width : itemLayout.height;
     const listMainSize = horizontal ? listSize.width : listSize.height;
+    // `topOffset` is the height occluded at the top of the list (e.g. a fixed
+    // header via `stickyHeaderConfig.offset`), so the visible region starts there.
     const pixelsVisible =
-      Math.min(itemTop + itemSize, listMainSize) - Math.max(itemTop, 0);
+      Math.min(itemTop + itemSize, listMainSize) - Math.max(itemTop, topOffset);
 
     // Always consider item fully viewable if it is fully visible, regardless of the `viewAreaCoveragePercentThreshold`
     if (pixelsVisible === itemSize) {
       return true;
     }
     // Skip checking item if it's not visible at all
-    if (pixelsVisible === 0) {
+    if (pixelsVisible <= 0) {
       return false;
     }
     const viewAreaMode =
       viewAreaCoveragePercentThreshold !== null &&
       viewAreaCoveragePercentThreshold !== undefined;
     const percent = viewAreaMode
-      ? pixelsVisible / listMainSize
+      ? pixelsVisible / (listMainSize - topOffset)
       : pixelsVisible / itemSize;
     const viewableAreaPercentThreshold = viewAreaMode
       ? viewAreaCoveragePercentThreshold * 0.01

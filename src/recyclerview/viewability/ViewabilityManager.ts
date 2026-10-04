@@ -78,13 +78,17 @@ export default class ViewabilityManager<T> {
     const scrollOffset =
       (this.rvManager.getAbsoluteLastScrollOffset() ?? 0) -
       this.rvManager.firstItemOffset;
+    // A fixed header at the top of the list (configured via `stickyHeaderConfig.offset`)
+    // occludes the top of the viewport, so items behind it aren't actually visible.
+    const topOffset = this.rvManager.props.stickyHeaderConfig?.offset ?? 0;
     this.viewabilityHelpers.forEach((viewabilityHelper) => {
       viewabilityHelper.updateViewableItems(
         this.rvManager.props.horizontal ?? false,
         scrollOffset,
         listSize,
         (index: number) => this.rvManager.getLayout(index),
-        newViewableIndices
+        newViewableIndices,
+        topOffset
       );
     });
   };
