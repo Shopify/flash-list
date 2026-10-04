@@ -231,6 +231,75 @@ describe("RecyclerView", () => {
     });
   });
 
+  describe("Item separators in inverted mode", () => {
+    const Separator = (props: {
+      leadingItem?: number;
+      trailingItem?: number;
+    }) => (
+      <View style={{ height: 10 }}>
+        <Text>{`sep:${props.leadingItem}-${props.trailingItem}`}</Text>
+      </View>
+    );
+
+    it("passes the visually-adjacent item as trailingItem in inverted mode", () => {
+      // In inverted layout the cell at data[i] visually sits ABOVE the cell at
+      // data[i-1] (index 0 = visual bottom). A separator owned by cell `i`
+      // visually appears between cell `i` and cell `i-1`, so `trailingItem`
+      // must be `data[i-1]` to stay semantically aligned with the visually
+      // adjacent item below the separator.
+      const result = render(
+        <FlashList
+          inverted
+          data={[10, 20, 30]}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          ItemSeparatorComponent={Separator}
+        />
+      );
+
+      // Three items, two separators (no separator below index 0 = visual bottom).
+      const separators = result.findAll(Separator);
+      expect(separators.length).toBe(2);
+
+      // Separator inside cell at array index 1 (data=20) should have
+      // leading=20 (cell's own item) and trailing=10 (data[i-1], visually below).
+      expect(result).toContainReactComponent(Separator, {
+        leadingItem: 20,
+        trailingItem: 10,
+      });
+
+      // Separator inside cell at array index 2 (data=30) should have
+      // leading=30 and trailing=20 (visually below).
+      expect(result).toContainReactComponent(Separator, {
+        leadingItem: 30,
+        trailingItem: 20,
+      });
+    });
+
+    it("does not render a separator below the visual-bottom item (index 0) in inverted mode", () => {
+      const result = render(
+        <FlashList
+          inverted
+          data={[10, 20]}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          ItemSeparatorComponent={Separator}
+        />
+      );
+
+      // Two items: only one separator (between data[1] above and data[0] below).
+      // No separator at index 0 since there's nothing visually below it.
+      const separators = result.findAll(Separator);
+      expect(separators.length).toBe(1);
+      expect(result).toContainReactComponent(Separator, {
+        leadingItem: 20,
+        trailingItem: 10,
+      });
+    });
+  });
+
   describe("Viewability with initialScrollIndex", () => {
     const scrollTo = (root: ReturnType<typeof render>, y: number) => {
       const scrollable = root.findWhere((node: any) => node.props.onScroll);

@@ -180,10 +180,23 @@ export const ViewHolderCollection = <TItem,>(
           // Suppress separators for items in the last row to prevent
           // height mismatch. The last data item has no separator (no
           // trailingItem), so all items sharing its row must match.
-          const trailingItem =
-            ItemSeparatorComponent && !isInLastRow(index)
+          //
+          // In `inverted` mode the cell is positioned in reverse visual
+          // order, so `data[index + 1]` is no longer the item visually
+          // adjacent to the separator — `data[index - 1]` is. Swap the
+          // computation so `trailingItem` stays semantically aligned with
+          // the visually-adjacent item below the separator, regardless of
+          // orientation. For inverted there's also no separator below the
+          // very-first item (index 0 = visual bottom).
+          const trailingItem = ItemSeparatorComponent
+            ? inverted
+              ? index > 0
+                ? data[index - 1]
+                : undefined
+              : !isInLastRow(index)
               ? data[index + 1]
-              : undefined;
+              : undefined
+            : undefined;
 
           return (
             <ViewHolder
