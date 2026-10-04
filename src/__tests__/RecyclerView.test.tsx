@@ -5,6 +5,7 @@ import { render } from "@quilted/react-testing";
 
 import { FlashListRef } from "../FlashListRef";
 import { FlashList } from "..";
+import { PlatformConfig } from "../native/config/PlatformHelper";
 
 // Mock measureLayout to return fixed dimensions
 jest.mock("../recyclerview/utils/measureLayout", () => {
@@ -512,6 +513,71 @@ describe("RecyclerView", () => {
       jest.runAllTimers();
 
       expect(scrollToEndSpy).toHaveBeenCalled();
+    });
+  });
+  describe("native maintainVisibleContentPosition on snapping lists", () => {
+    const platform = PlatformConfig as unknown as {
+      nativeMvcpBreaksSnapFling: boolean;
+    };
+
+    afterEach(() => {
+      platform.nativeMvcpBreaksSnapFling = false;
+    });
+
+    // The prop the ScrollView is actually handed. Android's
+    // MaintainVisibleScrollPositionHelper only runs when this is present, so
+    // this is the single thing that decides whether a snap fling survives.
+    const nativeMvcpPropOf = (root: ReturnType<typeof render>) => {
+      const scrollable = root.findWhere((node: any) => node.props.onScroll);
+      if (!scrollable) throw new Error("Could not find scrollable component");
+      return scrollable.prop("maintainVisibleContentPosition" as never);
+    };
+
+    const renderCarousel = (snapProps: Record<string, unknown>) => {
+      const data = Array.from({ length: 30 }, (_, i) => i);
+      const result = render(
+        <FlashList
+          data={data}
+          horizontal
+          {...snapProps}
+          keyExtractor={(item) => String(item)}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+      jest.runAllTimers();
+      return result;
+    };
+
+    it("withholds it from a snapToInterval list where the fling would be retargeted", () => {
+      platform.nativeMvcpBreaksSnapFling = true;
+
+      expect(nativeMvcpPropOf(renderCarousel({ snapToInterval: 100 }))).toBe(
+        undefined
+      );
+    });
+
+    it("withholds it from a pagingEnabled list too", () => {
+      platform.nativeMvcpBreaksSnapFling = true;
+
+      expect(nativeMvcpPropOf(renderCarousel({ pagingEnabled: true }))).toBe(
+        undefined
+      );
+    });
+
+    it("still passes it to a list that does not snap", () => {
+      platform.nativeMvcpBreaksSnapFling = true;
+
+      expect(nativeMvcpPropOf(renderCarousel({}))).toEqual(
+        expect.objectContaining({ minIndexForVisible: 0 })
+      );
+    });
+
+    it("still passes it to a snapping list on platforms that are not affected", () => {
+      platform.nativeMvcpBreaksSnapFling = false;
+
+      expect(nativeMvcpPropOf(renderCarousel({ snapToInterval: 100 }))).toEqual(
+        expect.objectContaining({ minIndexForVisible: 0 })
+      );
     });
   });
 });

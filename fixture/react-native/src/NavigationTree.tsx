@@ -29,6 +29,7 @@ import DynamicItems from "./DynamicItems";
 import RecyclerViewHandlerTest from "./RecyclerViewHandlerTest";
 import MovieList from "./MovieList";
 import Carousel from "./Carousel";
+import SnapCarouselRepro from "./SnapCarouselRepro";
 import { LayoutOptions } from "./LayoutOptions";
 import ShowcaseApp from "./ShowcaseApp";
 import LotOfItems from "./lot-of-items/LotOfItems";
@@ -47,6 +48,10 @@ const NavigationTree = () => {
         <Stack.Group>
           <Stack.Screen name="Examples" component={ExamplesScreen} />
           <Stack.Screen name="List" component={List} />
+          <Stack.Screen
+            name="SnapCarouselRepro"
+            component={SnapCarouselRepro}
+          />
           <Stack.Screen name="Grid" component={Grid} />
           <Stack.Screen
             name="DynamicColumnSpan"

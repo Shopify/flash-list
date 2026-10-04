@@ -1,5 +1,6 @@
 const PlatformConfig = {
   defaultDrawDistance: 500,
+  nativeMvcpBreaksSnapFling: false,
   supportsOffsetCorrection: false,
   trackAverageRenderTimeForOffsetProjection: false,
   isRN083OrAbove: true,

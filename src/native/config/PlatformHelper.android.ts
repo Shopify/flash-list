@@ -2,6 +2,7 @@ import { isRN083OrAbove } from "./versionCheck";
 
 const PlatformConfig = {
   defaultDrawDistance: 250,
+  nativeMvcpBreaksSnapFling: true,
   supportsOffsetCorrection: true,
   trackAverageRenderTimeForOffsetProjection: true,
   isRN083OrAbove: isRN083OrAbove(),

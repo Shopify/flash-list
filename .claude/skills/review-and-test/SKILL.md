@@ -338,6 +338,12 @@ Run through relevant entries after any fix or review. This is the single source 
 - [ ] `firstItemOffset` after fix — confirm it equals `ListHeaderComponent` height/width
 - [ ] `measureParentSize(view)` returns `x=0, y=0` on RN 0.84 Fabric — the #2017 bug may only manifest on other RN versions
 
+### Snapping + maintainVisibleContentPosition (Android)
+- [ ] `snapToInterval` / `snapToOffsets` / `pagingEnabled` carousel on **Android** — swipe forward until recycling starts, then swipe backward. Landing on index 0 instead of the previous card is issue #2427. Use the `Snap Carousel Repro` fixture screen; its "settled on" readout makes it unmissable.
+- [ ] Prepending to a snapping list still holds the visible item in place (`Horizontal MVCP` screen with a `snapToInterval` added)
+- Android snapping is gated by one predicate in RN's `ScrollView.js`: `pagingEnabled === true || snapToInterval != null || snapToOffsets != null` becomes the native `pagingEnabled`. Anything keying off "does this list snap" must match it — `snapToInterval` alone misses paged carousels.
+- FlashList hands the **native** `maintainVisibleContentPosition` to the ScrollView (`RecyclerView.tsx`). Android's `MaintainVisibleScrollPositionHelper` then re-anchors on every layout change of the first visible **cell** — not of `ScrollAnchor` — so a recycling list triggers it constantly. Each one calls `scrollToPreservingMomentum` → `recreateFlingAnimation(x, Integer.MAX_VALUE)`, cancelling the snap animator. **Nothing on the JS side can suppress this; only withholding the native prop stops it.**
+
 ### Performance
 - [ ] Benchmark screen shows no FPS regression (use `ManualBenchmarkExample`)
 
@@ -345,6 +351,11 @@ Run through relevant entries after any fix or review. This is the single source 
 
 ## Common Issues
 
+- **A green unit suite is not evidence the fix works** — a guard can be correct, well-tested, and still sit on a code path the bug never takes. Before believing a fix for a device-only symptom, reproduce it on device, then A/B it: `git checkout main && yarn build` (bug present) vs the fix branch (bug gone). If you cannot reproduce it first, you cannot claim you fixed it. To check whether a JS path even runs, drop a temporary `console.log` and read it back with `adb logcat` — and validate the probe itself (confirm the string is in the served bundle and that some other `ReactNativeJS` line reaches logcat) before trusting a zero count.
+- **Test the wiring, not just the helper** — a pure predicate can be perfect while the call site ignores it. Assert on the prop the ScrollView actually receives, then delete the gate and confirm that test goes red.
+- **Metro port 8081 may be taken by another project** — do not kill it. Start ours with `yarn start --port 8092`; `adb reverse` will not help because RN on an emulator dials `10.0.2.2`, not `localhost`. Point the app at it by pushing a prefs file instead:
+  `adb push prefs.xml /data/local/tmp/ && adb shell "run-as <pkg> cp /data/local/tmp/prefs.xml /data/data/<pkg>/shared_prefs/<pkg>_preferences.xml"` with `<string name="debug_http_host">10.0.2.2:8092</string>`.
+- **Android build filling the disk** — `./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a` builds only the emulator ABI, roughly a quarter of the NDK output.
 - **Tests pass but device shows bug** — did you `yarn build` and relaunch? The dist/ folder may be stale
 - **Switched branches but behavior didn't change** — `dist/` is NOT rebuilt on branch switch. You MUST run `yarn build` after every `git checkout`. Verify with `grep` in `dist/` that the expected code is present before testing.
 - **RTL looks wrong but LTR is fine** — did you set `forceRTL(true)` in `index.js` and do a full kill+relaunch?
