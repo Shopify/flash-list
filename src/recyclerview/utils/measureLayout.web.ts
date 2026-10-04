@@ -30,6 +30,30 @@ function getScrollOffsets(element: Element, stopAt: Element) {
 }
 
 /**
+ * Gets layout-box offsets, which are unaffected by CSS transforms.
+ */
+function getLayoutOffsets(element: Element, stopAt: Element) {
+  let x = 0;
+  let y = 0;
+  let currentElement: Element | null = element;
+
+  while (currentElement && currentElement !== stopAt) {
+    const htmlElement = currentElement as HTMLElement;
+    if (
+      typeof htmlElement.offsetLeft !== "number" ||
+      typeof htmlElement.offsetTop !== "number"
+    ) {
+      return undefined;
+    }
+    x += htmlElement.offsetLeft;
+    y += htmlElement.offsetTop;
+    currentElement = htmlElement.offsetParent;
+  }
+
+  return currentElement === stopAt ? { x, y } : undefined;
+}
+
+/**
  * Checks if two dimension values are not equal, with a small tolerance.
  */
 export function areDimensionsNotEqual(value1: number, value2: number): boolean {
@@ -65,6 +89,16 @@ export function measureFirstChildLayout(
   parentView: Element
 ): Layout {
   const childRect = childContainerView.getBoundingClientRect();
+  const layoutOffsets = getLayoutOffsets(childContainerView, parentView);
+
+  if (layoutOffsets) {
+    return {
+      ...layoutOffsets,
+      width: roundOffPixel(childRect.width),
+      height: roundOffPixel(childRect.height),
+    };
+  }
+
   const parentRect = parentView.getBoundingClientRect();
 
   // Get scroll offsets for child container (max 3 parents)
