@@ -5,6 +5,7 @@ import {
   RVLayoutInfo,
   RVLayoutManager,
 } from "./LayoutManager";
+import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
 
 /**
  * MasonryLayoutManager implementation that arranges items in a masonry/pinterest-style layout.
@@ -319,6 +320,145 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         this.currentColumn = (startColumn + span) % this.maxColumns;
       }
     }
+  }
+
+  /**
+   * Overrides getVisibleLayouts to handle masonry layouts where item
+   * y-positions are not monotonically sorted by index. Instead of a
+   * single binary search over all items, we perform a binary search
+   * per column. Within each column, items are naturally sorted by y,
+   * so binary search works correctly.
+   *
+   * @param unboundDimensionStart Start of the viewport
+   * @param unboundDimensionEnd End of the viewport
+   * @returns ConsecutiveNumbers containing visible indices
+   */
+  getVisibleLayouts(
+    unboundDimensionStart: number,
+    unboundDimensionEnd: number
+  ): ConsecutiveNumbers {
+    if (this.layouts.length === 0) {
+      return ConsecutiveNumbers.EMPTY;
+    }
+
+    let minIdx = Infinity;
+    let maxIdx = -1;
+
+    for (let col = 0; col < this.maxColumns; col++) {
+      const first = this.binarySearchColumn(
+        col,
+        unboundDimensionStart,
+        true
+      );
+      const last = this.binarySearchColumn(col, unboundDimensionEnd, false);
+      if (first !== -1) minIdx = Math.min(minIdx, first);
+      if (last !== -1) maxIdx = Math.max(maxIdx, last);
+    }
+
+    return minIdx > maxIdx
+      ? ConsecutiveNumbers.EMPTY
+      : new ConsecutiveNumbers(minIdx, maxIdx);
+  }
+
+  /**
+   * Performs binary search within a single column of the masonry layout.
+   * Items in each column are sorted by y-position, enabling correct binary search.
+   *
+   * For sequential placement (optimizeItemArrangement=false), item i belongs
+   * to column i % maxColumns, allowing O(log(N/maxColumns)) lookup without
+   * extra memory. For optimized placement, we determine column from x-position.
+   *
+   * @param col Column index to search in
+   * @param threshold The viewport boundary to search for
+   * @param findFirst If true, find first visible; if false, find last visible
+   * @returns The original index of the found item, or -1
+   */
+  private binarySearchColumn(
+    col: number,
+    threshold: number,
+    findFirst: boolean
+  ): number {
+    const mc = this.maxColumns;
+    const columnWidth = this.boundedSize / mc;
+
+    if (!this.optimizeItemArrangement) {
+      // Sequential placement: item i belongs to column i % maxColumns.
+      // Items in this column: col, col+mc, col+2*mc, ...
+      const count = Math.ceil((this.layouts.length - col) / mc);
+      if (count <= 0) return -1;
+
+      let left = 0;
+      let right = count - 1;
+      let result = -1;
+
+      while (left <= right) {
+        const mid = (left + right) >> 1;
+        const idx = col + mid * mc;
+        const layout = this.layouts[idx];
+        const pos = this.horizontal ? layout.x : layout.y;
+        const size = this.horizontal ? layout.width : layout.height;
+
+        if (findFirst) {
+          if (pos >= threshold || pos + size > threshold) {
+            result = idx;
+            right = mid - 1;
+          } else {
+            left = mid + 1;
+          }
+        } else {
+          if (pos <= threshold) {
+            result = idx;
+            left = mid + 1;
+          } else {
+            right = mid - 1;
+          }
+        }
+      }
+
+      return result;
+    }
+
+    // Optimized placement: determine column from x-position.
+    // Collect indices for this column, then binary search.
+    const columnIndices: number[] = [];
+    for (let i = 0; i < this.layouts.length; i++) {
+      const layoutCol = Math.round(this.layouts[i].x / columnWidth);
+      if (layoutCol === col) {
+        columnIndices.push(i);
+      }
+    }
+
+    if (columnIndices.length === 0) return -1;
+
+    let left = 0;
+    let right = columnIndices.length - 1;
+    let result = -1;
+
+    while (left <= right) {
+      const mid = (left + right) >> 1;
+      const idx = columnIndices[mid];
+      const layout = this.layouts[idx];
+      const pos = this.horizontal ? layout.x : layout.y;
+      const size = this.horizontal ? layout.width : layout.height;
+
+      if (findFirst) {
+        if (pos >= threshold || pos + size > threshold) {
+          result = idx;
+          right = mid - 1;
+        } else {
+          left = mid + 1;
+        }
+      } else {
+        if (pos <= threshold) {
+          result = idx;
+          left = mid + 1;
+        } else {
+          right = mid - 1;
+        }
+      }
+    }
+
+    return result;
   }
 
   // TODO: For masonry, the "last row" is the last item in each column.
