@@ -199,6 +199,11 @@ export const StickyHeaders = <TItem,>({
   const headerContent = useMemo(() => {
     return (
       <CompatAnimatedView
+        // The container spans the full row width, so in multi-column layouts its
+        // empty gutter region would otherwise intercept touches meant for the
+        // content below. "box-none" makes the container transparent to touches
+        // while keeping its children (the header content) interactive.
+        pointerEvents="box-none"
         style={{
           position: "absolute",
           top: stickyHeaderOffset,
