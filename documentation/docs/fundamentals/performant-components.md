@@ -156,7 +156,6 @@ const MessageList = () => {
   return (
     <FlashList
       renderItem={MessageItem}
-      estimatedItemSize={200}
       getItemType={(item) => {
         return item.type;
       }}

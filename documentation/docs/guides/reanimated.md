@@ -9,7 +9,7 @@ We support view animations and most of [layout animations](https://docs.swmansio
 
 ## Layout Animations
 
-For layout animations, similarly to the React Native API, you need to call [`prepareLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before removing or inserting an element that you want to animate.
+For layout animations, similarly to the React Native API, you need to call [`prepareForLayoutAnimationRender()`](/usage#prepareforlayoutanimationrender) before removing or inserting an element that you want to animate.
 
 ## Hooks
 
