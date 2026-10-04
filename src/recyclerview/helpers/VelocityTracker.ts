@@ -32,7 +32,7 @@ export class VelocityTracker<T> {
     this.cleanUp();
     // Calculate time since last update
     const currentTime = Date.now();
-    const timeSinceLastUpdate = Math.max(1, currentTime - this.lastUpdateTime);
+    const timeSinceLastUpdate = Math.max(16, currentTime - this.lastUpdateTime);
 
     // Calculate velocity as distance/time
     const newVelocity = (newOffset - oldOffset) / timeSinceLastUpdate;
