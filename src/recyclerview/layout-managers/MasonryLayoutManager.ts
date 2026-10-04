@@ -1,3 +1,6 @@
+import { ConsecutiveNumbers } from "../helpers/ConsecutiveNumbers";
+import { findLastVisibleIndex } from "../utils/findVisibleIndex";
+
 import {
   LayoutParams,
   RVDimension,
@@ -21,6 +24,13 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
   /** If there's a span change for masonry layout, we need to recompute all the widths */
   private fullRelayoutRequired = false;
+
+  /**
+   * Tallest item placed so far, used to bound how far back
+   * {@link getVisibleLayouts} has to look. Kept as a running maximum: an
+   * over-estimate only widens the search, it can never hide an item.
+   */
+  private tallestItemHeight = 0;
 
   constructor(params: LayoutParams, previousLayoutManager?: RVLayoutManager) {
     super(params, previousLayoutManager);
@@ -129,6 +139,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
     if (startIndex === 0) {
       this.columnHeights = Array(this.maxColumns).fill(0);
       this.currentColumn = 0;
+      this.tallestItemHeight = 0;
     } else {
       // Find the y-position of the first item to recompute
       // and adjust column heights accordingly
@@ -139,6 +150,7 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
 
     for (let i = startIndex; i < itemCount; i++) {
       const layout = this.getLayout(i);
+      this.tallestItemHeight = Math.max(this.tallestItemHeight, layout.height);
       // Skip tracking span because we're not changing widths
       const span = this.getSpan(i, true);
 
@@ -319,6 +331,71 @@ export class RVMasonryLayoutManagerImpl extends RVLayoutManager {
         this.currentColumn = (startColumn + span) % this.maxColumns;
       }
     }
+  }
+
+  /**
+   * The base implementation binary searches for the first item whose end passes
+   * the viewport start, which needs item ends to grow with the index. They do in
+   * a linear or grid layout, where each item starts where the previous row
+   * ended. In masonry they do not: a tall item in one column can start above the
+   * viewport and reach well past a short item placed after it, so the search
+   * settles on a later index - or on nothing at all - and every item from the
+   * tall one up to it is dropped from the range and never renders.
+   *
+   * Item starts are still ordered, because an item goes at the height of the
+   * shortest column and column heights only grow, so searching on those is
+   * sound. The first item starting after the viewport begins is visible by
+   * definition and bounds the answer from above; from there walk back over the
+   * items that could still reach the viewport start. Once one cannot reach it
+   * even at the tallest height seen, no earlier item can either.
+   */
+  getVisibleLayouts(
+    unboundDimensionStart: number,
+    unboundDimensionEnd: number
+  ): ConsecutiveNumbers {
+    if (!this.optimizeItemArrangement) {
+      // Sequential placement fills columns in turn rather than by height, so
+      // item starts are not ordered either and neither search applies.
+      return super.getVisibleLayouts(
+        unboundDimensionStart,
+        unboundDimensionEnd
+      );
+    }
+
+    const lastVisibleIndex = findLastVisibleIndex(
+      this.layouts,
+      unboundDimensionEnd,
+      this.horizontal
+    );
+    if (lastVisibleIndex === -1) {
+      return ConsecutiveNumbers.EMPTY;
+    }
+
+    const lastStartingBeforeViewport = findLastVisibleIndex(
+      this.layouts,
+      unboundDimensionStart,
+      this.horizontal
+    );
+    const firstStartingInsideViewport = lastStartingBeforeViewport + 1;
+
+    let firstVisibleIndex =
+      firstStartingInsideViewport < this.layouts.length
+        ? firstStartingInsideViewport
+        : -1;
+
+    for (let i = lastStartingBeforeViewport; i >= 0; i--) {
+      const layout = this.layouts[i];
+      if (layout.y + layout.height > unboundDimensionStart) {
+        firstVisibleIndex = i;
+      } else if (layout.y + this.tallestItemHeight <= unboundDimensionStart) {
+        break;
+      }
+    }
+
+    if (firstVisibleIndex === -1 || firstVisibleIndex > lastVisibleIndex) {
+      return ConsecutiveNumbers.EMPTY;
+    }
+    return new ConsecutiveNumbers(firstVisibleIndex, lastVisibleIndex);
   }
 
   // TODO: For masonry, the "last row" is the last item in each column.
