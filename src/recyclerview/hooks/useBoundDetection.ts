@@ -3,7 +3,25 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { CompatScroller } from "../components/CompatScroller";
 
-import { useUnmountAwareAnimationFrame } from "./useUnmountAwareCallbacks";
+import {
+  useUnmountAwareAnimationFrame,
+  useUnmountAwareTimeout,
+} from "./useUnmountAwareCallbacks";
+
+/**
+ * How long the scroll has to stay quiet before a content size change is allowed
+ * to trigger the autoscroll to bottom. Autoscrolling in the middle of an active
+ * scroll fights the user, so the check waits for this gap instead.
+ */
+const AUTOSCROLL_QUIET_WINDOW = 100;
+
+/**
+ * Scroll offsets can come back off by a sub pixel without anything having
+ * actually moved, so a deferred autoscroll treats a difference this small as
+ * "nobody scrolled". A real drag covers far more than this in
+ * AUTOSCROLL_QUIET_WINDOW.
+ */
+const AUTOSCROLL_OFFSET_TOLERANCE = 1;
 
 /**
  * Hook to detect when the scroll position reaches near the start or end of the list
@@ -28,9 +46,14 @@ export function useBoundDetection<T>(
   const pendingAutoscrollToBottom = useRef(false);
 
   const lastCheckBoundsTime = useRef(Date.now());
+  // Holds an autoscroll that was owed when the content size changed mid scroll,
+  // along with the scroll offset at that moment so a real user scroll during the
+  // wait can cancel it.
+  const deferredAutoscroll = useRef<{ offset: number } | undefined>(undefined);
 
   const { data } = recyclerViewManager.props;
   const { requestAnimationFrame } = useUnmountAwareAnimationFrame();
+  const { setTimeout } = useUnmountAwareTimeout();
 
   const windowHeight = recyclerViewManager.hasLayout()
     ? recyclerViewManager.getWindowSize().height
@@ -140,27 +163,36 @@ export function useBoundDetection<T>(
     }
   }, [recyclerViewManager]);
 
-  const runAutoScrollToBottomCheck = useCallback(() => {
-    // Suppress MVCP autoscroll while a programmatic scrollToIndex is in
-    // flight. FlashList disables offset projection at the start of
-    // scrollToIndex and reenables it ~200-300ms after settling. Without
-    // this guard, the sticky pendingAutoscrollToBottom ref races against
-    // scrollToIndex and fires scrollToEnd mid flight.
-    if (!recyclerViewManager.isOffsetProjectionEnabled) {
-      return;
-    }
-    if (pendingAutoscrollToBottom.current) {
-      pendingAutoscrollToBottom.current = false;
-      requestAnimationFrame(() => {
-        const shouldAnimate =
-          recyclerViewManager.props.maintainVisibleContentPosition
-            ?.animateAutoScrollToBottom ?? true;
-        scrollViewRef.current?.scrollToEnd({
-          animated: shouldAnimate && !recyclerViewManager.ignoreScrollEvents,
+  /**
+   * @param force - run the autoscroll even though checkBounds has since cleared
+   * pendingAutoscrollToBottom. Used by the deferred path, where the content
+   * growing below the viewport is what put the bottom out of reach in the first
+   * place.
+   */
+  const runAutoScrollToBottomCheck = useCallback(
+    (force = false) => {
+      // Suppress MVCP autoscroll while a programmatic scrollToIndex is in
+      // flight. FlashList disables offset projection at the start of
+      // scrollToIndex and reenables it ~200-300ms after settling. Without
+      // this guard, the sticky pendingAutoscrollToBottom ref races against
+      // scrollToIndex and fires scrollToEnd mid flight.
+      if (!recyclerViewManager.isOffsetProjectionEnabled) {
+        return;
+      }
+      if (force || pendingAutoscrollToBottom.current) {
+        pendingAutoscrollToBottom.current = false;
+        requestAnimationFrame(() => {
+          const shouldAnimate =
+            recyclerViewManager.props.maintainVisibleContentPosition
+              ?.animateAutoScrollToBottom ?? true;
+          scrollViewRef.current?.scrollToEnd({
+            animated: shouldAnimate && !recyclerViewManager.ignoreScrollEvents,
+          });
         });
-      });
-    }
-  }, [requestAnimationFrame, scrollViewRef, recyclerViewManager]);
+      }
+    },
+    [requestAnimationFrame, scrollViewRef, recyclerViewManager]
+  );
 
   // Reset end reached state when data changes
   useMemo(() => {
@@ -174,16 +206,60 @@ export function useBoundDetection<T>(
     runAutoScrollToBottomCheck();
   }, [data, runAutoScrollToBottomCheck, windowHeight, windowWidth]);
 
+  /**
+   * Waits out AUTOSCROLL_QUIET_WINDOW and then runs the autoscroll that the
+   * content size change was owed, as long as nothing actually scrolled in the
+   * meantime.
+   */
+  const scheduleAutoScrollRetry = useCallback(() => {
+    if (!pendingAutoscrollToBottom.current || deferredAutoscroll.current) {
+      return;
+    }
+    deferredAutoscroll.current = {
+      offset: recyclerViewManager.getAbsoluteLastScrollOffset(),
+    };
+
+    setTimeout(() => {
+      const deferred = deferredAutoscroll.current;
+      deferredAutoscroll.current = undefined;
+      if (!deferred) {
+        return;
+      }
+      // An offset that moved means the user took over, and checkBounds has
+      // already recorded whether they are still near the bottom - leave the
+      // decision to it rather than yanking them back down. An offset that did
+      // not move means nothing is scrolling, which is both the case autoscroll
+      // exists for and proof that there is no scroll left to fight.
+      if (
+        Math.abs(
+          recyclerViewManager.getAbsoluteLastScrollOffset() - deferred.offset
+        ) > AUTOSCROLL_OFFSET_TOLERANCE
+      ) {
+        return;
+      }
+      runAutoScrollToBottomCheck(true);
+    }, AUTOSCROLL_QUIET_WINDOW);
+  }, [recyclerViewManager, runAutoScrollToBottomCheck, setTimeout]);
+
   // Since content changes frequently, we try and avoid doing the auto scroll during active scrolls
   useEffect(() => {
-    if (Date.now() - lastCheckBoundsTime.current >= 100) {
+    if (Date.now() - lastCheckBoundsTime.current >= AUTOSCROLL_QUIET_WINDOW) {
       runAutoScrollToBottomCheck();
+      return;
     }
+    // The content changed while a scroll was still settling. Giving up here
+    // loses the autoscroll for good: the taller content pushes the bottom out
+    // of reach, so the next checkBounds clears the pending autoscroll and
+    // nothing brings it back. Items measuring to their real height right after
+    // new content arrives is exactly that case, which is why a list with
+    // dynamic item heights stops sticking to the bottom.
+    scheduleAutoScrollRetry();
   }, [
     contentHeight,
     contentWidth,
     recyclerViewManager.firstItemOffset,
     runAutoScrollToBottomCheck,
+    scheduleAutoScrollRetry,
   ]);
 
   return {

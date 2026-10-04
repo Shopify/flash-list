@@ -514,4 +514,137 @@ describe("RecyclerView", () => {
       expect(scrollToEndSpy).toHaveBeenCalled();
     });
   });
+  describe("autoscroll to bottom when item sizes change", () => {
+    const { measureItemLayout } = jest.requireMock(
+      "../recyclerview/utils/measureLayout"
+    ) as { measureItemLayout: jest.Mock };
+
+    // jest.clearAllMocks() keeps implementations, so a grown item size would
+    // otherwise leak in from an earlier test and leave nothing left to grow.
+    beforeEach(() => {
+      measureItemLayout.mockImplementation(() => ({
+        x: 0,
+        y: 0,
+        width: 399,
+        height: 100,
+      }));
+    });
+
+    const itemCount = 30;
+    const itemHeight = 100;
+    const windowHeight = 899;
+    const contentHeight = itemCount * itemHeight;
+    const bottomOffset = contentHeight - windowHeight;
+
+    const scrollTo = (root: ReturnType<typeof render>, y: number) => {
+      const scrollable = root.findWhere((node: any) => node.props.onScroll);
+      if (!scrollable) throw new Error("Could not find scrollable component");
+
+      const onScroll: any = scrollable.prop("onScroll" as never);
+      root.act(() => {
+        onScroll({
+          nativeEvent: {
+            contentOffset: { x: 0, y },
+            contentSize: { width: 399, height: contentHeight },
+            layoutMeasurement: { width: 399, height: windowHeight },
+          },
+        });
+      });
+    };
+
+    // Renders a chat style list, parks it at the given offset and returns a spy
+    // on the scroll the autoscroll would issue.
+    const renderStickyBottomList = (offset: number = bottomOffset) => {
+      const data = Array.from({ length: itemCount }, (_, i) => i);
+      const ref = createRef<FlashListRef<number>>();
+      const result = render(
+        <FlashList
+          ref={ref}
+          data={data}
+          extraData={1}
+          keyExtractor={(item) => String(item)}
+          maintainVisibleContentPosition={{
+            autoscrollToBottomThreshold: 0.2,
+            animateAutoScrollToBottom: false,
+          }}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+      jest.runAllTimers();
+      scrollTo(result, offset);
+      jest.runAllTimers();
+
+      const scrollToEndSpy = jest.fn();
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      expect(nativeScrollRef).toBeTruthy();
+      nativeScrollRef.scrollToEnd = scrollToEndSpy;
+
+      return { result, scrollToEndSpy };
+    };
+
+    // Items settle to their real height with no data change - what an image
+    // finishing its load or a message wrapping onto another line does a frame
+    // after the row mounts.
+    const growItems = (result: ReturnType<typeof render>) => {
+      measureItemLayout.mockImplementation(() => ({
+        x: 0,
+        y: 0,
+        width: 399,
+        height: 300,
+      }));
+      result.setProps({ extraData: 2 });
+    };
+
+    it("still autoscrolls when items grow right after a scroll", () => {
+      const { result, scrollToEndSpy } = renderStickyBottomList();
+
+      // The growth lands inside the window where an active scroll suppresses
+      // the autoscroll check.
+      scrollTo(result, bottomOffset);
+      jest.advanceTimersByTime(16);
+      growItems(result);
+      jest.advanceTimersByTime(16);
+      expect(scrollToEndSpy).not.toHaveBeenCalled();
+
+      // Once the scroll goes quiet the deferred autoscroll runs.
+      jest.runAllTimers();
+      expect(scrollToEndSpy).toHaveBeenCalled();
+    });
+
+    it("autoscrolls right away when items grow well after the last scroll", () => {
+      const { result, scrollToEndSpy } = renderStickyBottomList();
+
+      scrollTo(result, bottomOffset);
+      jest.advanceTimersByTime(200);
+      growItems(result);
+      jest.runAllTimers();
+
+      expect(scrollToEndSpy).toHaveBeenCalled();
+    });
+
+    it("does not autoscroll if the user scrolls away while the growth settles", () => {
+      const { result, scrollToEndSpy } = renderStickyBottomList();
+
+      scrollTo(result, bottomOffset);
+      jest.advanceTimersByTime(16);
+      growItems(result);
+
+      // The user drags up before the deferred autoscroll gets its turn.
+      scrollTo(result, 200);
+      jest.runAllTimers();
+
+      expect(scrollToEndSpy).not.toHaveBeenCalled();
+    });
+
+    it("does not autoscroll when the list was not near the bottom", () => {
+      const { result, scrollToEndSpy } = renderStickyBottomList(0);
+
+      scrollTo(result, 0);
+      jest.advanceTimersByTime(16);
+      growItems(result);
+      jest.runAllTimers();
+
+      expect(scrollToEndSpy).not.toHaveBeenCalled();
+    });
+  });
 });
