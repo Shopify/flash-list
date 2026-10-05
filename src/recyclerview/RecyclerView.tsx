@@ -26,6 +26,7 @@ import { WarningMessages } from "../errors/WarningMessages";
 import { RVDimension } from "./layout-managers/LayoutManager";
 import {
   areDimensionsNotEqual,
+  isViewHidden,
   measureFirstChildLayout,
   measureItemLayout,
   measureParentSize,
@@ -164,6 +165,12 @@ const RecyclerViewComponent = <T,>(
    * This effect runs when the component mounts or when layout changes
    */
   useLayoutEffect(() => {
+    if (isViewHidden(internalViewRef.current)) {
+      // Record a zero size so onLayout sees a change when the container
+      // becomes visible again and triggers a fresh measurement.
+      containerViewSizeRef.current = { width: 0, height: 0 };
+      return;
+    }
     if (internalViewRef.current && firstChildViewRef.current) {
       // Measure the outer container size and inner container layout
       const outerViewSize = measureParentSize(internalViewRef.current);
@@ -202,7 +209,8 @@ const RecyclerViewComponent = <T,>(
    */
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    if (pendingChildIds.size > 0) {
+    // Hidden container reports 0 for every item; skip and keep last layouts.
+    if (pendingChildIds.size > 0 || isViewHidden(internalViewRef.current)) {
       return;
     }
     const layoutInfo = Array.from(refHolder, ([index, viewHolderRef]) => {
