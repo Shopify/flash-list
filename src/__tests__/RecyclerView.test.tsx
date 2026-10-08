@@ -162,6 +162,32 @@ describe("RecyclerView", () => {
     });
   });
 
+  describe("Viewability after data updates", () => {
+    it("reports visible items when data is replaced at the same indices", () => {
+      const onViewableItemsChanged = jest.fn();
+      const result = render(
+        <FlashList
+          data={[{ id: "a" }]}
+          keyExtractor={(item) => item.id}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={{ minimumViewTime: 0 }}
+          renderItem={({ item }) => <Text>{item.id}</Text>}
+        />
+      );
+
+      result.act(() => jest.runAllTimers());
+      onViewableItemsChanged.mockClear();
+
+      result.setProps({ data: [{ id: "b" }] });
+      result.act(() => jest.runAllTimers());
+
+      expect(onViewableItemsChanged).toHaveBeenCalledWith({
+        viewableItems: [expect.objectContaining({ item: { id: "b" } })],
+        changed: [expect.objectContaining({ item: { id: "b" } })],
+      });
+    });
+  });
+
   describe("Item separators in grid mode", () => {
     const Separator = () => <View style={{ height: 10 }} />;
 

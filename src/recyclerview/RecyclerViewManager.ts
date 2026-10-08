@@ -300,6 +300,7 @@ export class RecyclerViewManager<T> {
   }
 
   processDataUpdate() {
+    this.itemViewabilityManager.clearLastReportedViewableIndices();
     if (this.hasLayout()) {
       this.modifyChildrenLayout([], this.propsRef.data?.length ?? 0);
       if (this.hasRenderedProgressively && !this.recomputeEngagedIndices()) {
