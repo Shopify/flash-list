@@ -55,7 +55,7 @@ export function useRecyclingState<T>(
           : newValue;
 
       // Only update and trigger re-render if value has changed
-      if (nextState !== valueStore.current) {
+      if (!Object.is(nextState, valueStore.current)) {
         valueStore.current = nextState;
         setCounter((prev) => prev + 1, skipParentLayout);
       }

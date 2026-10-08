@@ -104,10 +104,7 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
 
   const children = useMemo(() => {
     return renderItem?.({ item, index, extraData, target }) ?? null;
-    // TODO: Test more thoroughly
-    // We don't really  to re-render the children when the index changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item, extraData, target, renderItem]);
+  }, [item, index, extraData, target, renderItem]);
 
   const invertedTransformStyle = inverted
     ? getInvertedTransformStyle(horizontal)
