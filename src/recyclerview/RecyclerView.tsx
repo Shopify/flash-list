@@ -327,6 +327,18 @@ const RecyclerViewComponent = <T,>(
     ]
   );
 
+  /**
+   * Tracks the scroll view's content size so scrollToIndex can scroll into
+   * content after the items (footer, padding). Forwards to the user's handler.
+   */
+  const onContentSizeChangeHandler = useCallback(
+    (width: number, height: number) => {
+      recyclerViewManager.updateScrollContentSize(width, height);
+      recyclerViewManager.props.onContentSizeChange?.(width, height);
+    },
+    [recyclerViewManager]
+  );
+
   const parentRecyclerViewContext = useRecyclerViewContext();
   const recyclerViewId = useId();
 
@@ -568,6 +580,7 @@ const RecyclerViewComponent = <T,>(
           horizontal={horizontal}
           ref={scrollViewRef}
           onScroll={animatedEvent}
+          onContentSizeChange={onContentSizeChangeHandler}
           maintainVisibleContentPosition={
             maintainVisibleContentPositionInternal
           }

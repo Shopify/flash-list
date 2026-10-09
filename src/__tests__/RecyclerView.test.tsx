@@ -398,6 +398,154 @@ describe("RecyclerView", () => {
     });
   });
 
+  describe("scrollToIndex max offset includes content after the items", () => {
+    // 20 items of 100px in an 899px window: items end at 2000, so the
+    // layout-based max offset is 2000 - 899 = 1101.
+    // Centering the last item needs 1900 - (899 - 100) * 0.5 = 1500.5.
+    const data = Array.from({ length: 20 }, (_, i) => i);
+
+    const { measureItemLayout } = jest.requireMock(
+      "../recyclerview/utils/measureLayout"
+    ) as { measureItemLayout: jest.Mock };
+
+    beforeEach(() => {
+      measureItemLayout.mockImplementation(() => ({
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+      }));
+    });
+
+    const renderList = ({
+      onContentSizeChange = jest.fn(),
+      horizontal = false,
+    }: { onContentSizeChange?: jest.Mock; horizontal?: boolean } = {}) => {
+      const ref = createRef<FlashListRef<number>>();
+      const result = render(
+        <FlashList
+          ref={ref}
+          data={data}
+          horizontal={horizontal}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          onContentSizeChange={onContentSizeChange}
+        />
+      );
+      const scrollToSpy = jest.fn();
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      expect(nativeScrollRef).toBeTruthy();
+      nativeScrollRef.scrollTo = scrollToSpy;
+      return { result, ref, scrollToSpy };
+    };
+
+    const reportContentSize = (
+      result: ReturnType<typeof render>,
+      width: number,
+      height: number
+    ) => {
+      // The scroll view is the node that receives both onScroll and onContentSizeChange
+      const scrollable = result.findWhere(
+        (node: any) => node.props.onScroll && node.props.onContentSizeChange
+      );
+      if (!scrollable) throw new Error("Could not find scrollable component");
+      const onContentSizeChange: any = scrollable.prop(
+        "onContentSizeChange" as never
+      );
+      result.act(() => {
+        onContentSizeChange(width, height);
+      });
+    };
+
+    const centerLastItem = (
+      result: ReturnType<typeof render>,
+      ref: React.RefObject<FlashListRef<number>>
+    ) => {
+      result.act(() => {
+        ref.current?.scrollToIndex({
+          index: data.length - 1,
+          viewPosition: 0.5,
+          animated: false,
+        });
+      });
+      jest.runAllTimers();
+    };
+
+    const lastScrollTo = (scrollToSpy: jest.Mock) =>
+      scrollToSpy.mock.calls[scrollToSpy.mock.calls.length - 1][0];
+
+    const lastScrollToY = (scrollToSpy: jest.Mock) =>
+      lastScrollTo(scrollToSpy).y;
+
+    it("falls back to the layout size before a content size is reported", () => {
+      const { result, ref, scrollToSpy } = renderList();
+
+      centerLastItem(result, ref);
+
+      expect(lastScrollToY(scrollToSpy)).toBe(1101);
+    });
+
+    it("scrolls into a footer or bottom padding reported by the scroll view", () => {
+      const { result, ref, scrollToSpy } = renderList();
+
+      // 400px of footer/padding after the items
+      reportContentSize(result, 399, 2400);
+      centerLastItem(result, ref);
+
+      expect(lastScrollToY(scrollToSpy)).toBe(1500.5);
+    });
+
+    it("still clamps to the end of the reported content", () => {
+      const { result, ref, scrollToSpy } = renderList();
+
+      // Only 200px after the items: not enough room to center the last item
+      reportContentSize(result, 399, 2200);
+      centerLastItem(result, ref);
+
+      expect(lastScrollToY(scrollToSpy)).toBe(2200 - 899);
+    });
+
+    it("uses the layout size when the reported content size is smaller (stale)", () => {
+      const { result, ref, scrollToSpy } = renderList();
+
+      reportContentSize(result, 399, 1500);
+      centerLastItem(result, ref);
+
+      expect(lastScrollToY(scrollToSpy)).toBe(1101);
+    });
+
+    it("ignores invalid content sizes", () => {
+      const { result, ref, scrollToSpy } = renderList();
+
+      reportContentSize(result, 399, NaN);
+      reportContentSize(result, 399, -1);
+      centerLastItem(result, ref);
+
+      expect(lastScrollToY(scrollToSpy)).toBe(1101);
+    });
+
+    it("uses the content width for horizontal lists", () => {
+      // 20 items of 100px in a 399px wide window: layout-based max offset is
+      // 2000 - 399 = 1601. Centering the last item needs 1900 - (399 - 100) * 0.5 = 1750.5.
+      const { result, ref, scrollToSpy } = renderList({ horizontal: true });
+
+      centerLastItem(result, ref);
+      expect(lastScrollTo(scrollToSpy).x).toBe(1601);
+
+      reportContentSize(result, 2400, 899);
+      centerLastItem(result, ref);
+      expect(lastScrollTo(scrollToSpy).x).toBe(1750.5);
+    });
+
+    it("forwards onContentSizeChange to the user's handler", () => {
+      const onContentSizeChange = jest.fn();
+      const { result } = renderList({ onContentSizeChange });
+
+      reportContentSize(result, 399, 2400);
+
+      expect(onContentSizeChange).toHaveBeenCalledWith(399, 2400);
+    });
+  });
+
   describe("autoscrolling to bottom is suppressed while offset projection is disabled", () => {
     const scrollTo = (root: ReturnType<typeof render>, y: number) => {
       const scrollable = root.findWhere((node: any) => node.props.onScroll);
