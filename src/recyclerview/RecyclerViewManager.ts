@@ -35,6 +35,9 @@ export class RecyclerViewManager<T> {
   private _isDisposed = false;
   private _isLayoutManagerDirty = false;
   private _animationOptimizationsEnabled = false;
+  // Content size reported by the scroll view. Unlike the layout manager's size,
+  // it includes content after the items (footer, contentContainerStyle padding).
+  private scrollContentSize?: RVDimension;
 
   public firstItemOffset = 0;
   public ignoreScrollEvents = false;
@@ -182,16 +185,37 @@ export class RecyclerViewManager<T> {
   }
 
   getMaxScrollOffset() {
+    const horizontal = this.propsRef.horizontal;
+    const layoutContentLength =
+      (horizontal
+        ? this.getChildContainerDimensions().width
+        : this.getChildContainerDimensions().height) + this.firstItemOffset;
+    const scrollContentLength =
+      (horizontal
+        ? this.scrollContentSize?.width
+        : this.scrollContentSize?.height) ?? 0;
+    const windowLength = horizontal
+      ? this.getWindowSize().width
+      : this.getWindowSize().height;
+    // The reported content size can lag behind the layout (e.g. right after
+    // items are appended), so use whichever is larger.
     return Math.max(
       0,
-      (this.propsRef.horizontal
-        ? this.getChildContainerDimensions().width
-        : this.getChildContainerDimensions().height) -
-        (this.propsRef.horizontal
-          ? this.getWindowSize().width
-          : this.getWindowSize().height) +
-        this.firstItemOffset
+      Math.max(layoutContentLength, scrollContentLength) - windowLength
     );
+  }
+
+  updateScrollContentSize(width: number, height: number) {
+    // Ignore invalid sizes instead of throwing: this comes from a native event
+    if (
+      !Number.isFinite(width) ||
+      !Number.isFinite(height) ||
+      width < 0 ||
+      height < 0
+    ) {
+      return;
+    }
+    this.scrollContentSize = { width, height };
   }
 
   // Doesn't include first item offset correction
