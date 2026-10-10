@@ -7,6 +7,9 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add estimates for unmeasured item types in FlashList v2
+  - https://github.com/Shopify/flash-list/pull/2531
+
 - Fix render window missing visible rows during flings when drawDistance is small (blank band at the top when scrolling forward, at the bottom when scrolling backward)
   - https://github.com/Shopify/flash-list/pull/2510
 
