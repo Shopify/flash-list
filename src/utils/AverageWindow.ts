@@ -78,6 +78,10 @@ export class MultiTypeAverageWindow {
     return averageWindow?.currentValue ?? this.defaultValue ?? 0;
   }
 
+  public hasValue(type: string | number): boolean {
+    return this.averageWindows.has(type);
+  }
+
   public reset(): void {
     this.averageWindows.clear();
   }

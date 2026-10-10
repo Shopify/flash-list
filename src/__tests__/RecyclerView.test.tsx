@@ -248,6 +248,38 @@ describe("RecyclerView", () => {
       });
     };
 
+    it("uses the estimated size for item types not measured before the initial index", () => {
+      const data = [
+        { type: "header", id: 0 },
+        ...Array.from({ length: 10 }, (_, index) => ({
+          type: "row",
+          id: index + 1,
+        })),
+      ];
+      const extraData = { version: 1 };
+      const getEstimatedItemSize = jest.fn((item: typeof data[number]) =>
+        item.type === "header" ? 53 : 44
+      );
+      const ref = createRef<FlashListRef<typeof data[number]>>();
+
+      render(
+        <FlashList
+          ref={ref}
+          data={data}
+          extraData={extraData}
+          initialScrollIndex={5}
+          getItemType={(item) => item.type}
+          getEstimatedItemSize={getEstimatedItemSize}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item.id}</Text>}
+        />
+      );
+
+      expect(ref.current?.getLayout(0)?.height).toBe(53);
+      expect(getEstimatedItemSize).toHaveBeenCalledWith(data[0], 0, extraData);
+    });
+
     it("should not fire onViewableItemsChanged on mount when waitForInteraction is true and initialScrollIndex is set", () => {
       const onViewableItemsChanged = jest.fn();
       const result = render(

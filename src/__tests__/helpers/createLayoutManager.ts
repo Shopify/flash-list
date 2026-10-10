@@ -40,6 +40,7 @@ export function createLayoutParams(
     optimizeItemArrangement: params.optimizeItemArrangement ?? true,
     overrideItemLayout: params.overrideItemLayout ?? (() => {}),
     getItemType: params.getItemType ?? (() => "default"),
+    getEstimatedItemSize: params.getEstimatedItemSize,
   };
 }
 

@@ -266,6 +266,19 @@ export interface FlashListProps<TItem>
   ) => string | number | undefined;
 
   /**
+   * Provides an initial size estimate for an item before an item of its type
+   * has been measured. Once measured, FlashList uses the running average for
+   * that item type instead. Return `undefined` to use the default estimate.
+   *
+   * Performance: This method may be called frequently. Keep it fast.
+   */
+  getEstimatedItemSize?: (
+    item: TItem,
+    index: number,
+    extraData?: any
+  ) => number | undefined;
+
+  /**
    * This method can be used to change column span of an item.
    * Changing item span is useful when you have grid layouts (numColumns > 1) and you want few items to be bigger than the rest.
    *

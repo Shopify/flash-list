@@ -113,6 +113,16 @@ describe("MultiTypeAverageWindow", () => {
     expect(multiTypeAverageWindow.getCurrentValue("nonExistentType")).toBe(0);
   });
 
+  it("reports whether a type has measured values", () => {
+    const multiTypeAverageWindow = new MultiTypeAverageWindow(5, 200);
+
+    expect(multiTypeAverageWindow.hasValue("type1")).toBe(false);
+
+    multiTypeAverageWindow.addValue(53, "type1");
+
+    expect(multiTypeAverageWindow.hasValue("type1")).toBe(true);
+  });
+
   it("should reset all averages", () => {
     const windowSize = 5;
     const multiTypeAverageWindow = new MultiTypeAverageWindow(windowSize);

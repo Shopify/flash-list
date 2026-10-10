@@ -13,6 +13,24 @@ describe("LinearLayoutManager", () => {
   const horizontalParams = { windowSize, horizontal: true };
 
   describe("Vertical layout", () => {
+    it("uses an item size estimate until an item of its type is measured", () => {
+      const manager = createLayoutManager(LayoutManagerType.LINEAR, {
+        ...defaultParams,
+        getItemType: (index) => (index % 2 === 0 ? "header" : "row"),
+        getEstimatedItemSize: (index: number) => (index % 2 === 0 ? 53 : 44),
+      });
+
+      manager.modifyLayout([], 2);
+
+      expect(manager.getLayout(0).height).toBe(53);
+      expect(manager.getLayout(1).height).toBe(44);
+
+      manager.modifyLayout([createMockLayoutInfo(0, 400, 60)], 1);
+      manager.modifyLayout([], 3);
+
+      expect(manager.getLayout(2).height).toBe(60);
+    });
+
     it("should stack items vertically", () => {
       const manager = createPopulatedLayoutManager(
         LayoutManagerType.LINEAR,
@@ -68,6 +86,18 @@ describe("LinearLayoutManager", () => {
   });
 
   describe("Horizontal layout", () => {
+    it("uses item size estimates for horizontal scrolling", () => {
+      const manager = createLayoutManager(LayoutManagerType.LINEAR, {
+        ...horizontalParams,
+        getEstimatedItemSize: (index: number) => (index === 0 ? 53 : 44),
+      });
+
+      manager.modifyLayout([], 2);
+
+      expect(manager.getLayout(0).width).toBe(53);
+      expect(manager.getLayout(1).width).toBe(44);
+    });
+
     it("should stack items horizontally", () => {
       const manager = createPopulatedLayoutManager(
         LayoutManagerType.LINEAR,

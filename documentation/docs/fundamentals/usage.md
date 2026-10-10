@@ -595,6 +595,29 @@ Changing item span is useful when you have grid layouts (numColumns > 1) and you
 This method is called very frequently. Keep it fast.
 :::
 
+### `getEstimatedItemSize`
+
+```tsx
+getEstimatedItemSize?: (item: T, index: number, extraData?: any) => number | undefined;
+```
+
+Provides an initial size estimate for an item before an item of its type has
+been measured. FlashList uses the measured running average for that item type
+after the first measurement. Return `undefined` to use the default estimate.
+
+```jsx
+<FlashList
+  data={data}
+  getItemType={(item) => item.type}
+  getEstimatedItemSize={(item) => (item.type === "section" ? 53 : 44)}
+  renderItem={({ item }) => <Row item={item} />}
+/>
+```
+
+:::warning Performance
+This method may be called frequently. Keep it fast.
+:::
+
 ### `overrideProps`
 
 ```tsx
