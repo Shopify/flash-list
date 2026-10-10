@@ -30,19 +30,19 @@ yarn start
 To run the fixture app on Android:
 
 ```sh
-yarn run-android
+yarn ra
 ```
 
 To run the example app on iOS:
 
 ```sh
-yarn run-ios
+yarn ri
 ```
 
 To run the web sample:
 
 ```sh
-yarn run-web
+cd fixture/web && yarn web
 ```
 
 To fix possible formatting errors, run the following:
@@ -59,15 +59,15 @@ Remember to add tests for your change if possible. Run the unit tests by:
 yarn test
 ```
 
-We also have an e2e screenshot test suite built on top of [Detox](https://github.com/wix/Detox/). You can find the e2e tests [here](https://github.com/Shopify/flash-list/tree/main/fixture/e2e). You can run them with:
+We also have an e2e screenshot test suite built on top of [Detox](https://github.com/wix/Detox/). You can find the e2e tests [here](https://github.com/Shopify/flash-list/tree/main/fixture/react-native/e2e). You can run them with:
 
 ```sh
-run-e2e-ios
+yarn e2e:ios
 # or on android with
-run-e2e-android
+yarn e2e:android
 ```
 
-Usually, the screenshots should not change. However, if you do expect change in the UI, you will need to remove the appropriate image in [this](https://github.com/Shopify/flash-list/tree/main/fixture/e2e/artifacts/ios) folder and re-run the tests again.
+Usually, the screenshots should not change. However, if you do expect change in the UI, you will need to remove the appropriate image in [this](https://github.com/Shopify/flash-list/tree/main/fixture/react-native/e2e/artifacts/ios) folder and re-run the tests again.
 
 ### Working with documentation website
 
