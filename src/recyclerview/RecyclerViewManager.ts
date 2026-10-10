@@ -65,6 +65,7 @@ export class RecyclerViewManager<T> {
   constructor(props: RecyclerViewProps<T>) {
     this.getDataKey = this.getDataKey.bind(this);
     this.getItemType = this.getItemType.bind(this);
+    this.getEstimatedItemSize = this.getEstimatedItemSize.bind(this);
     this.overrideItemLayout = this.overrideItemLayout.bind(this);
     this.propsRef = props;
     this.engagedIndicesTracker = new RVEngagedIndicesTrackerImpl();
@@ -228,6 +229,7 @@ export class RecyclerViewManager<T> {
       optimizeItemArrangement: this.propsRef.optimizeItemArrangement ?? true,
       overrideItemLayout: this.overrideItemLayout,
       getItemType: this.getItemType,
+      getEstimatedItemSize: this.getEstimatedItemSize,
     };
     if (!(this.layoutManager instanceof LayoutManagerClass)) {
       // console.log("-----> new LayoutManagerClass");
@@ -444,6 +446,14 @@ export class RecyclerViewManager<T> {
       this.propsRef.getItemType?.(this.propsRef.data![index], index) ??
       "default"
     ).toString();
+  }
+
+  private getEstimatedItemSize(index: number): number | undefined {
+    return this.propsRef.getEstimatedItemSize?.(
+      this.propsRef.data![index],
+      index,
+      this.propsRef.extraData
+    );
   }
 
   private overrideItemLayout(index: number, layout: SpanSizeInfo) {

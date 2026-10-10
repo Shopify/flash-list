@@ -34,6 +34,8 @@ export abstract class RVLayoutManager {
   private overrideItemLayout: (index: number, layout: SpanSizeInfo) => void;
   /** Optional function to determine item type */
   private getItemType: (index: number) => string;
+  /** Optional initial size estimate for an item that has not been measured */
+  private getEstimatedItemSize?: (index: number) => number | undefined;
   /** Window for tracking average heights by item type */
   private heightAverageWindow: MultiTypeAverageWindow;
   /** Window for tracking average widths by item type */
@@ -58,6 +60,7 @@ export abstract class RVLayoutManager {
     this.heightAverageWindow = new MultiTypeAverageWindow(5, 200);
     this.widthAverageWindow = new MultiTypeAverageWindow(5, 200);
     this.getItemType = params.getItemType;
+    this.getEstimatedItemSize = params.getEstimatedItemSize;
     this.overrideItemLayout = params.overrideItemLayout;
     this.layouts = previousLayoutManager?.layouts ?? [];
     if (previousLayoutManager) {
@@ -75,7 +78,9 @@ export abstract class RVLayoutManager {
    * @returns Estimated width
    */
   protected getEstimatedWidth(index: number): number {
-    return this.widthAverageWindow.getCurrentValue(this.getItemType(index));
+    return this.horizontal
+      ? this.getEstimatedSize(index, this.widthAverageWindow)
+      : this.widthAverageWindow.getCurrentValue(this.getItemType(index));
   }
 
   /**
@@ -84,7 +89,23 @@ export abstract class RVLayoutManager {
    * @returns Estimated height
    */
   protected getEstimatedHeight(index: number): number {
-    return this.heightAverageWindow.getCurrentValue(this.getItemType(index));
+    return this.horizontal
+      ? this.heightAverageWindow.getCurrentValue(this.getItemType(index))
+      : this.getEstimatedSize(index, this.heightAverageWindow);
+  }
+
+  private getEstimatedSize(
+    index: number,
+    averageWindow: MultiTypeAverageWindow
+  ): number {
+    const type = this.getItemType(index);
+    if (!averageWindow.hasValue(type)) {
+      const estimate = this.getEstimatedItemSize?.(index);
+      if (estimate !== undefined && Number.isFinite(estimate) && estimate > 0) {
+        return estimate;
+      }
+    }
+    return averageWindow.getCurrentValue(type);
   }
 
   /**
@@ -461,6 +482,12 @@ export interface LayoutParams {
    * Used for size estimation and optimization based on item types
    */
   getItemType: (index: number) => string;
+
+  /**
+   * Optional initial size estimate for an item at a given index. Only used
+   * until an item of its type has been measured.
+   */
+  getEstimatedItemSize?: (index: number) => number | undefined;
 }
 
 /**
