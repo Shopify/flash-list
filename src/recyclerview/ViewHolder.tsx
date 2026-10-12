@@ -139,8 +139,13 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
       style={style}
       index={index}
     >
+      {/* In an inverted list the scroller and every cell are both flipped, so a
+          cell's content reads normally while its neighbours are mirrored: the
+          item at index + 1 ends up on the cell's leading side. Render the
+          separator before the item so it still lands between the two. */}
+      {inverted ? separator : null}
       {children}
-      {separator}
+      {inverted ? null : separator}
     </CompatContainer>
   );
 };
