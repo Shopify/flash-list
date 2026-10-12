@@ -10,7 +10,11 @@ import {
   ViewProps,
   Pressable,
 } from "react-native";
-import { FlashList, FlashListRef } from "@shopify/flash-list";
+import {
+  FlashList,
+  FlashListRef,
+  useRecyclingState,
+} from "@shopify/flash-list";
 import Animated, { FadeOut, LinearTransition } from "react-native-reanimated";
 
 interface Reminder {
@@ -44,10 +48,10 @@ const ReminderCell = ({
   onIntroPressed,
   onLayout,
 }: ReminderCellProps) => {
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useRecyclingState(false, [item.id]);
 
   const toggle = () => {
-    setChecked(!checked);
+    setChecked((previous) => !previous);
   };
 
   useEffect(() => {
@@ -56,11 +60,12 @@ const ReminderCell = ({
     }
     // We delete the element after 1s
     // like the reminders app does on iOS
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setChecked(false);
       onCompleted(item);
     }, 1000);
-  }, [checked, item, onCompleted]);
+    return () => clearTimeout(timeout);
+  }, [checked, item, onCompleted, setChecked]);
 
   return (
     <Animated.View
@@ -69,13 +74,18 @@ const ReminderCell = ({
       layout={LinearTransition}
       exiting={FadeOut}
     >
-      <View style={styles.checkbox}>
-        <Pressable onPress={toggle}>
-          <Checkbox checked={checked} />
-        </Pressable>
-      </View>
+      <Pressable
+        style={styles.checkbox}
+        onPress={toggle}
+        accessibilityRole="checkbox"
+        accessibilityLabel={item.title || "Untitled reminder"}
+        accessibilityState={{ checked }}
+      >
+        <Checkbox checked={checked} />
+      </Pressable>
       <TextInput
         style={styles.textInput}
+        accessibilityLabel="Reminder title"
         onChangeText={(newText) => {
           const newTextNoLineBrakes = newText.replace("\n", "");
           onChangeText(item, newTextNoLineBrakes);
@@ -121,45 +131,22 @@ const Reminders = () => {
     ]);
   };
 
-  const updateTitle = useCallback(
-    (id: string, title: string) => {
-      const newReminders = [...reminders];
-      const elem = newReminders.find((reminder) => reminder.id === id);
-      if (elem !== undefined) {
-        elem.title = title;
-      }
-      setReminders(newReminders);
-    },
-    [setReminders, reminders]
-  );
-
-  const removeItem = useCallback(
-    (reminder: Reminder) => {
-      list.current?.prepareForLayoutAnimationRender();
-      setReminders(
-        reminders.filter(({ title }) => {
-          return title !== reminder.title;
-        })
-      );
-    },
-    [setReminders, reminders]
-  );
-
   const list = useRef<FlashListRef<Reminder> | null>(null);
 
-  const onChangeText = useCallback(
-    (item: Reminder, text: string) => {
-      updateTitle(item.id, text);
-    },
-    [updateTitle]
-  );
+  const onChangeText = useCallback((item: Reminder, text: string) => {
+    setReminders((previous) =>
+      previous.map((reminder) =>
+        reminder.id === item.id ? { ...reminder, title: text } : reminder
+      )
+    );
+  }, []);
 
-  const onCompleted = useCallback(
-    (item: Reminder) => {
-      removeItem(item);
-    },
-    [removeItem]
-  );
+  const onCompleted = useCallback((item: Reminder) => {
+    list.current?.prepareForLayoutAnimationRender();
+    setReminders((previous) =>
+      previous.filter((reminder) => reminder.id !== item.id)
+    );
+  }, []);
 
   const animateToBottomIfNewItemAdded = (item: Reminder) => {
     if (lastCreatedId.current === item.id) {
@@ -248,8 +235,8 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     padding: 6,
-    height: 40,
-    width: 40,
+    height: 44,
+    width: 44,
     marginRight: 8,
     marginTop: 4,
   },
