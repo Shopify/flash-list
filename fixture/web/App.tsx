@@ -1,4 +1,5 @@
-import React, { View } from "react-native";
+import React from "react";
+import { View } from "react-native";
 
 import RecyclerViewHandlerTest from "./RecyclerViewHandlerTest";
 // import { Chat } from "./Chat";
