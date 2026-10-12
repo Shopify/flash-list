@@ -122,6 +122,62 @@ describe("LinearLayoutManager", () => {
     });
   });
 
+  describe("Visible layouts", () => {
+    it.each([
+      ["vertical", defaultParams, 200],
+      ["horizontal", horizontalParams, 200],
+    ])(
+      "does not include an item starting at the %s viewport end",
+      (_, params, end) => {
+        const manager = createPopulatedLayoutManager(
+          LayoutManagerType.LINEAR,
+          3,
+          params,
+          100,
+          100
+        );
+
+        expect(manager.getVisibleLayouts(0, end).toArray()).toEqual([0, 1]);
+      }
+    );
+
+    it("keeps the existing range for a zero-size viewport", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        3,
+        defaultParams,
+        100,
+        100
+      );
+
+      expect(manager.getVisibleLayouts(200, 200).toArray()).toEqual([2]);
+    });
+
+    it("includes an item that is partially visible", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.LINEAR,
+        3,
+        defaultParams,
+        100,
+        100
+      );
+
+      expect(manager.getVisibleLayouts(0, 250).toArray()).toEqual([0, 1, 2]);
+    });
+
+    it("excludes every grid item starting at the viewport end", () => {
+      const manager = createPopulatedLayoutManager(
+        LayoutManagerType.GRID,
+        6,
+        { windowSize: { width: 400, height: 100 }, maxColumns: 2 },
+        100,
+        100
+      );
+
+      expect(manager.getVisibleLayouts(0, 100).toArray()).toEqual([0, 1]);
+    });
+  });
+
   describe("Layout modifications", () => {
     it("should update layout when items are added", () => {
       const manager = createPopulatedLayoutManager(

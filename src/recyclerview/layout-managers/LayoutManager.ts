@@ -133,11 +133,29 @@ export abstract class RVLayoutManager {
     );
 
     // Find the last visible index
-    const lastVisibleIndex = findLastVisibleIndex(
+    let lastVisibleIndex = findLastVisibleIndex(
       this.layouts,
       unboundDimensionEnd,
       this.horizontal
     );
+
+    // An item whose leading edge is at the viewport end has no visible area.
+    // Keep the existing zero-size viewport behaviour, but trim every layout
+    // sharing that edge (for example, all cells in the next grid row).
+    if (
+      firstVisibleIndex !== -1 &&
+      lastVisibleIndex > firstVisibleIndex &&
+      unboundDimensionEnd > unboundDimensionStart
+    ) {
+      while (lastVisibleIndex > firstVisibleIndex) {
+        const lastLayout = this.layouts[lastVisibleIndex];
+        const lastPosition = this.horizontal ? lastLayout.x : lastLayout.y;
+        if (Math.abs(lastPosition - unboundDimensionEnd) >= 0.5) {
+          break;
+        }
+        lastVisibleIndex -= 1;
+      }
+    }
 
     // Collect the indices in the range
     if (firstVisibleIndex !== -1 && lastVisibleIndex !== -1) {
