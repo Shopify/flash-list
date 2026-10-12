@@ -18,7 +18,19 @@ export function autoScroll(
   speedMultiplier = 1,
   cancellable: Cancellable = new Cancellable()
 ): Promise<boolean> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    if (cancellable.isCancelled()) {
+      resolve(false);
+      return;
+    }
+    if (
+      ![fromX, fromY, toX, toY, speedMultiplier].every(Number.isFinite) ||
+      speedMultiplier <= 0
+    ) {
+      throw new Error(
+        "Scroll coordinates must be finite and speed must be positive."
+      );
+    }
     scroll(fromX, fromY, false);
     // Very fast scrolls on Android/iOS typically move content 7px every millisecond.
     const incrementPerMs = 7 * speedMultiplier;
@@ -42,7 +54,12 @@ export function autoScroll(
         const distanceToCover = incrementPerMs * timeElapsed;
         startX += distanceToCover * directionMultiplierX;
         startY += distanceToCover * directionMultiplierY;
-        scroll(comparatorX(toX, startX), comparatorY(toY, startY), false);
+        try {
+          scroll(comparatorX(toX, startX), comparatorY(toY, startY), false);
+        } catch (error) {
+          reject(error);
+          return;
+        }
         startTime = currentTime;
         if (
           comparatorX(toX, startX) !== toX ||

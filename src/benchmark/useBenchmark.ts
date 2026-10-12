@@ -1,7 +1,14 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 
 import { FlashListRef } from "../FlashListRef";
 import { ErrorMessages } from "../errors/ErrorMessages";
+import { useUnmountFlag } from "../recyclerview/hooks/useUnmountFlag";
 
 import { autoScroll, Cancellable } from "./AutoScrollHelper";
 import { JSFPSMonitor, JSFPSResult } from "./JSFPSMonitor";
@@ -50,82 +57,107 @@ export function useBenchmark(
   callback: (benchmarkResult: BenchmarkResult) => void,
   params: BenchmarkParams = {}
 ) {
-  const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(false);
-  const cancellableRef = useRef<Cancellable | null>(null);
-
-  const startBenchmark = useCallback(() => {
-    if (isBenchmarkRunning) {
-      return;
-    }
-
-    const cancellable = new Cancellable();
-    cancellableRef.current = cancellable;
-    const suggestions: string[] = [];
-
-    if (flashListRef.current) {
-      if (!(Number(flashListRef.current.props.data?.length) > 0)) {
-        throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
+  return useBenchmarkRunner(
+    async (cancellable) => {
+      const suggestions: string[] = [];
+      if (flashListRef.current) {
+        if (!(Number(flashListRef.current.props.data?.length) > 0)) {
+          throw new Error(ErrorMessages.dataEmptyCannotRunBenchmark);
+        }
       }
-    }
-
-    setIsBenchmarkRunning(true);
-
-    const runBenchmark = async () => {
-      const jsFPSMonitor = new JSFPSMonitor();
-      jsFPSMonitor.startTracking();
-      for (let i = 0; i < (params.repeatCount || 1); i++) {
+      for (let i = 0; i < (params.repeatCount ?? 1); i++) {
+        if (cancellable.isCancelled()) break;
         await runScrollBenchmark(
           flashListRef,
           cancellable,
-          params.speedMultiplier || 1
-        );
-      }
-      const jsProfilerResponse = jsFPSMonitor.stopAndGetData();
-      if (jsProfilerResponse.averageFPS < 35) {
-        suggestions.push(
-          `Your average JS FPS is low. This can indicate that your components are doing too much work. Try to optimize your components and reduce re-renders if any`
+          params.speedMultiplier ?? 1
         );
       }
       computeSuggestions(flashListRef, suggestions);
-      const result: BenchmarkResult = generateResult(
-        jsProfilerResponse,
-        suggestions,
-        cancellable
-      );
-      if (!cancellable.isCancelled()) {
-        result.formattedString = getFormattedString(result);
-      }
-      callback(result);
-      setIsBenchmarkRunning(false);
-    };
-
-    runBenchmark();
-  }, [
+      return suggestions;
+    },
     callback,
-    flashListRef,
-    isBenchmarkRunning,
-    params.repeatCount,
-    params.speedMultiplier,
-  ]);
+    params,
+    true
+  );
+}
+
+/** Shared lifecycle for FlashList and FlatList benchmark runs. */
+export function useBenchmarkRunner(
+  run: (cancellable: Cancellable) => Promise<string[]>,
+  callback: (benchmarkResult: BenchmarkResult) => void,
+  params: BenchmarkParams,
+  suggestJSOptimization = false
+) {
+  const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(false);
+  const isUnmounted = useUnmountFlag();
+  const activeRun = useRef<{
+    cancellable: Cancellable;
+    monitor: JSFPSMonitor;
+  } | null>(null);
+  const latest = useRef({ run, callback, params, suggestJSOptimization });
+  useLayoutEffect(() => {
+    latest.current = { run, callback, params, suggestJSOptimization };
+  });
+  const [initialOptions] = useState(() => ({
+    startManually: params.startManually,
+    startDelayInMs: params.startDelayInMs ?? 3000,
+  }));
+
+  const startBenchmark = useCallback(() => {
+    if (activeRun.current || isUnmounted.current) return;
+    const request = {
+      cancellable: new Cancellable(),
+      monitor: new JSFPSMonitor(),
+    };
+    activeRun.current = request;
+    setIsBenchmarkRunning(true);
+    const options = latest.current;
+    const runBenchmark = async () => {
+      let suggestions: string[] = [];
+      let interrupted = false;
+      let js: JSFPSResult;
+      try {
+        const repeatCount = options.params.repeatCount ?? 1;
+        if (!Number.isInteger(repeatCount) || repeatCount < 1) {
+          throw new Error("repeatCount must be a positive integer.");
+        }
+        request.monitor.startTracking();
+        suggestions = await options.run(request.cancellable);
+      } catch (error) {
+        interrupted = true;
+        suggestions.push(`Benchmark failed: ${String(error)}`);
+      } finally {
+        js = request.monitor.stopAndGetData();
+        if (activeRun.current === request) {
+          activeRun.current = null;
+          if (!isUnmounted.current) setIsBenchmarkRunning(false);
+        }
+      }
+      if (isUnmounted.current || request.cancellable.isCancelled()) return;
+      if (!interrupted && options.suggestJSOptimization && js.averageFPS < 35) {
+        suggestions.unshift(
+          "Your average JS FPS is low. This can indicate that your components are doing too much work. Try to optimize your components and reduce re-renders if any"
+        );
+      }
+      const result: BenchmarkResult = { js, suggestions, interrupted };
+      result.formattedString = getFormattedString(result);
+      latest.current.callback(result);
+    };
+    return runBenchmark();
+  }, [isUnmounted]);
 
   useEffect(() => {
-    if (params.startManually) {
-      return;
-    }
-
-    const cancelTimeout = setTimeout(() => {
-      startBenchmark();
-    }, params.startDelayInMs || 3000);
-
+    const cancelTimeout = initialOptions.startManually
+      ? undefined
+      : setTimeout(startBenchmark, initialOptions.startDelayInMs);
     return () => {
       clearTimeout(cancelTimeout);
-      if (cancellableRef.current) {
-        cancellableRef.current.cancel();
-      }
+      activeRun.current?.cancellable.cancel();
+      activeRun.current?.monitor.stopAndGetData();
+      activeRun.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  }, [initialOptions, startBenchmark]);
   return { startBenchmark, isBenchmarkRunning } as const;
 }
 
@@ -141,18 +173,6 @@ export function getFormattedString(res: BenchmarkResult) {
         : ``
     }`
   );
-}
-
-function generateResult(
-  jsProfilerResponse: JSFPSResult,
-  suggestions: string[],
-  cancellable: Cancellable
-) {
-  return {
-    js: jsProfilerResponse,
-    suggestions,
-    interrupted: cancellable.isCancelled(),
-  };
 }
 
 /**
@@ -172,8 +192,12 @@ async function runScrollBenchmark(
 
       const fromX = 0;
       const fromY = 0;
-      const toX = rvContentSize.width - rvSize.width;
-      const toY = rvContentSize.height - rvSize.height;
+      const toX = horizontal
+        ? Math.max(0, rvContentSize.width - rvSize.width)
+        : 0;
+      const toY = horizontal
+        ? 0
+        : Math.max(0, rvContentSize.height - rvSize.height);
 
       const scrollNow = (x: number, y: number) => {
         flashListRef.current?.scrollToOffset({
@@ -209,7 +233,7 @@ function computeSuggestions(
   suggestions: string[]
 ) {
   if (flashListRef.current) {
-    if (flashListRef.current.props.data!!.length < 200) {
+    if ((flashListRef.current.props.data?.length ?? 0) < 200) {
       suggestions.push(
         `Data count is low. Try to increase it to a large number (e.g 200) using the 'useDataMultiplier' hook.`
       );
