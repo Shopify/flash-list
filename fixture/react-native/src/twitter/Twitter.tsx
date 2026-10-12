@@ -17,14 +17,9 @@ import Tweet from "./models/Tweet";
 export interface TwitterProps {
   instance?: React.RefObject<FlashListRef<Tweet>>;
   CellRendererComponent?: React.ComponentType<any>;
-  disableAutoLayout?: boolean;
 }
 
-const Twitter = ({
-  instance,
-  CellRendererComponent,
-  disableAutoLayout,
-}: TwitterProps) => {
+const Twitter = ({ instance, CellRendererComponent }: TwitterProps) => {
   const debugContext = useContext(DebugContext);
   const [refreshing, setRefreshing] = useState(false);
   const remainingTweets = useRef([...tweetsData].splice(10, tweetsData.length));
@@ -38,7 +33,6 @@ const Twitter = ({
   }).current;
 
   return (
-    // @ts-ignore - Type compatibility issue between different React versions
     <FlashList
       ref={instance}
       testID="FlashList"
@@ -58,7 +52,6 @@ const Twitter = ({
           setTweets(reversedTweets);
         }, 500);
       }}
-      // @ts-ignore - Type compatibility issue between different React versions
       CellRendererComponent={CellRendererComponent}
       onEndReached={() => {
         if (!debugContext.pagingEnabled) {
@@ -77,7 +70,6 @@ const Twitter = ({
         />
       }
       ListEmptyComponent={Empty()}
-      estimatedItemSize={150}
       ItemSeparatorComponent={Divider}
       data={debugContext.emptyListEnabled ? [] : tweets}
       initialScrollIndex={debugContext.initialScrollIndex}
@@ -85,7 +77,6 @@ const Twitter = ({
       onViewableItemsChanged={(info) => {
         console.log(info);
       }}
-      disableAutoLayout={disableAutoLayout}
     />
   );
 };
