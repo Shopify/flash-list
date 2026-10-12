@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -48,20 +48,38 @@ const generateItems = (count: number): Item[] => {
 };
 
 const RecyclerViewHandlerTest = () => {
-  const [items, setItems] = useState<Item[]>(generateItems(100));
+  const [items, setItems] = useState<Item[]>(() => generateItems(100));
   const [horizontal, setHorizontal] = useState(false);
   const [lastAction, setLastAction] = useState("None");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Reference to the FlashList
   const listRef = useRef<any>(null);
+  const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelRefresh = useCallback(() => {
+    if (refreshTimeout.current !== null) {
+      clearTimeout(refreshTimeout.current);
+      refreshTimeout.current = null;
+    }
+  }, []);
+
+  useEffect(() => cancelRefresh, [cancelRefresh]);
+
+  const resetItems = (count: number) => {
+    cancelRefresh();
+    setIsRefreshing(false);
+    setItems(generateItems(count));
+  };
 
   // Handle refresh
   const handleRefresh = () => {
+    if (refreshTimeout.current !== null) return;
     setIsRefreshing(true);
 
     // Simulate network request
-    setTimeout(() => {
+    refreshTimeout.current = setTimeout(() => {
+      refreshTimeout.current = null;
       setItems(generateItems(100));
       setIsRefreshing(false);
       setLastAction("Refreshed list");
@@ -103,12 +121,12 @@ const RecyclerViewHandlerTest = () => {
   };
 
   const scrollToItem = (
-    item: Item,
+    item: Item | undefined,
     animated = true,
     viewPosition?: number,
     viewOffset?: number
   ) => {
-    if (listRef.current) {
+    if (listRef.current && item !== undefined) {
       listRef.current.scrollToItem({
         item,
         animated,
@@ -275,7 +293,7 @@ const RecyclerViewHandlerTest = () => {
           <View style={styles.controlRow}>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => setItems([])}
+              onPress={() => resetItems(0)}
             >
               <Text style={styles.buttonText}>Clear Items</Text>
             </TouchableOpacity>
@@ -284,7 +302,7 @@ const RecyclerViewHandlerTest = () => {
           <View style={styles.controlRow}>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => setItems(generateItems(100))}
+              onPress={() => resetItems(100)}
             >
               <Text style={styles.buttonText}>Reset Items</Text>
             </TouchableOpacity>
