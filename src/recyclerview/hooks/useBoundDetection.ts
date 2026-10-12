@@ -162,9 +162,16 @@ export function useBoundDetection<T>(
     }
   }, [requestAnimationFrame, scrollViewRef, recyclerViewManager]);
 
-  // Reset end reached state when data changes
+  // Reset end/start reached state when data changes. Without resetting
+  // pendingStartReached here too, it can latch permanently: it only re-arms
+  // when isNearStart briefly reads false, but the maintainVisibleContentPosition
+  // offset adjustment after a backward prepend doesn't reliably push the
+  // offset outside onStartReachedThreshold before the next bounds check runs.
+  // Resetting here mirrors pendingEndReached and re-arms start-of-list
+  // detection on every data change instead of relying on that race.
   useMemo(() => {
     pendingEndReached.current = false;
+    pendingStartReached.current = false;
     // needs to run only when data changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
