@@ -71,6 +71,7 @@ GEM
     escape (0.0.4)
     ethon (0.16.0)
       ffi (>= 1.15.0)
+    ffi (1.17.2)
     ffi (1.17.2-arm64-darwin)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
@@ -79,7 +80,7 @@ GEM
       mutex_m
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
-    json (2.12.2)
+    json (2.19.9)
     logger (1.7.0)
     minitest (5.25.5)
     molinillo (0.8.0)
@@ -109,8 +110,6 @@ PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
   universal-darwin-23
-  x86_64-darwin-19
-  x86_64-darwin-20
   x86_64-linux
 
 DEPENDENCIES
