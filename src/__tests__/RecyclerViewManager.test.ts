@@ -71,4 +71,24 @@ describe("RecyclerViewManager", () => {
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
   });
+
+  it("forwards extraData to getItemType", () => {
+    const data = [{ id: 1 }];
+    const extraData = { itemType: "featured" };
+    const getItemType = jest.fn(
+      (item: typeof data[number], index: number, currentExtraData: any) =>
+        currentExtraData.itemType
+    );
+    const manager = new RecyclerViewManager({
+      data,
+      extraData,
+      getItemType,
+      renderItem: jest.fn(),
+    });
+
+    manager.updateLayoutParams({ width: 100, height: 100 }, 0);
+    manager.processDataUpdate();
+
+    expect(getItemType).toHaveBeenCalledWith(data[0], 0, extraData);
+  });
 });
