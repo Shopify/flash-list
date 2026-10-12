@@ -135,6 +135,8 @@ export interface FlashListRef<T> {
 
   /**
    * Scrolls to the end of the list.
+   * Resolves after native dispatch or cancellation, not after the native animation.
+   * Layout and native scroll failures reject the returned promise.
    *
    * @param params - Optional parameters for scrolling
    * @param params.animated - Whether the scroll should be animated (default: false)
@@ -143,7 +145,7 @@ export interface FlashListRef<T> {
    * // Animate scroll to the end of the list
    * listRef.current?.scrollToEnd({ animated: true });
    */
-  scrollToEnd: (params?: ScrollToEdgeParams) => void;
+  scrollToEnd: (params?: ScrollToEdgeParams) => Promise<void>;
 
   /**
    * Scrolls to the top (or start) of the list.
@@ -169,7 +171,8 @@ export interface FlashListRef<T> {
    *                              0 = top/left, 0.5 = center, 1 = bottom/right (default: 0)
    * @param params.viewOffset - Additional offset to apply after viewPosition calculation
    *
-   * @returns A Promise that resolves when the scroll operation is complete
+   * @returns A Promise that resolves after the settling delay, when superseded by
+   * another index/item/end request, or when the list unmounts. Layout/scroll failures reject.
    *
    * @example
    * // Scroll to the 5th item (index 4) and center it
@@ -186,6 +189,7 @@ export interface FlashListRef<T> {
    *
    * Similar to scrollToIndex, but works with the item reference instead of its index.
    * Useful when you have a reference to an item but don't know its index.
+   * Returns scrollToIndex's completion; missing items resolve without scrolling.
    *
    * @param params - Parameters for scrolling to item
    * @param params.item - The item object to scroll to
@@ -202,7 +206,7 @@ export interface FlashListRef<T> {
    *   animated: true
    * });
    */
-  scrollToItem: (params: ScrollToItemParams<T>) => void;
+  scrollToItem: (params: ScrollToItemParams<T>) => Promise<void>;
 
   /**
    * Returns the offset of the first item (accounts for header/padding).

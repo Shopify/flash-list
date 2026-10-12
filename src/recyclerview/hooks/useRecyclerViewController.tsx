@@ -2,6 +2,7 @@ import {
   RefObject,
   useCallback,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -60,6 +61,18 @@ export function useRecyclerViewController<T>(
 
   // Queue to store callbacks that should be executed after scroll offset updates
   const pendingScrollCallbacks = useRef<(() => void)[]>([]);
+  const activeScrollRequest = useRef<{ complete: () => void } | null>(null);
+  const scrollCommandId = useRef(0);
+  const pendingEndCompletions = useRef(new Set<() => void>());
+
+  useLayoutEffect(() => {
+    const endCompletions = pendingEndCompletions.current;
+    return () => {
+      pendingScrollCallbacks.current = [];
+      activeScrollRequest.current?.complete();
+      endCompletions.forEach((complete) => complete());
+    };
+  }, []);
 
   // Handle initial scroll position when the list first loads
   //   useOnLoad(recyclerViewManager, () => {
@@ -287,19 +300,41 @@ export function useRecyclerViewController<T>(
        * Scrolls to the end of the list.
        */
       scrollToEnd: async ({ animated }: ScrollToEdgeParams = {}) => {
+        if (isUnmounted.current) return;
+        activeScrollRequest.current?.complete();
+        let commandId = ++scrollCommandId.current;
         const { data } = recyclerViewManager.props;
         if (data && data.length > 0) {
           const lastIndex = data.length - 1;
           if (!recyclerViewManager.getEngagedIndices().includes(lastIndex)) {
-            await handlerMethods.scrollToIndex({
+            const preparation = handlerMethods.scrollToIndex({
               index: lastIndex,
               animated,
             });
+            commandId = scrollCommandId.current;
+            await preparation;
           }
         }
-        setTimeout(() => {
-          scrollViewRef.current?.scrollToEnd({ animated });
-        }, 0);
+        if (isUnmounted.current || commandId !== scrollCommandId.current)
+          return;
+        return new Promise<void>((resolve, reject) => {
+          const complete = () => {
+            pendingEndCompletions.current.delete(complete);
+            resolve();
+          };
+          pendingEndCompletions.current.add(complete);
+          setTimeout(() => {
+            try {
+              if (commandId === scrollCommandId.current) {
+                scrollViewRef.current?.scrollToEnd({ animated });
+              }
+              complete();
+            } catch (error) {
+              pendingEndCompletions.current.delete(complete);
+              reject(error);
+            }
+          }, 0);
+        });
       },
 
       /**
@@ -323,177 +358,206 @@ export function useRecyclerViewController<T>(
         viewPosition,
         viewOffset,
       }: ScrollToIndexParams): Promise<void> => {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           const { horizontal } = recyclerViewManager.props;
           if (
             scrollViewRef.current &&
+            !isUnmounted.current &&
+            Number.isInteger(index) &&
             index >= 0 &&
             index < recyclerViewManager.getDataLength()
           ) {
-            // Pause the scroll offset adjustments
-            pauseOffsetCorrection.current = true;
-            recyclerViewManager.setOffsetProjectionEnabled(false);
-
-            const getFinalOffset = () => {
-              const layout = recyclerViewManager.getLayout(index);
-              const offset = horizontal ? layout.x : layout.y;
-              let finalOffset = offset;
-              // take viewPosition etc into account
-              if (viewPosition !== undefined || viewOffset !== undefined) {
-                const containerSize = horizontal
-                  ? recyclerViewManager.getWindowSize().width
-                  : recyclerViewManager.getWindowSize().height;
-
-                const itemSize = horizontal ? layout.width : layout.height;
-
-                if (viewPosition !== undefined) {
-                  // viewPosition: 0 = top, 0.5 = center, 1 = bottom
-                  finalOffset =
-                    offset - (containerSize - itemSize) * viewPosition;
-                }
-
-                if (viewOffset !== undefined) {
-                  finalOffset += viewOffset;
-                }
+            activeScrollRequest.current?.complete();
+            scrollCommandId.current++;
+            const release = () => {
+              if (activeScrollRequest.current === request) {
+                activeScrollRequest.current = null;
+                pauseOffsetCorrection.current = false;
+                recyclerViewManager.setOffsetProjectionEnabled(true);
               }
-              return finalOffset + recyclerViewManager.firstItemOffset;
             };
-            const lastAbsoluteScrollOffset =
-              recyclerViewManager.getAbsoluteLastScrollOffset();
-            const bufferForScroll = horizontal
-              ? recyclerViewManager.getWindowSize().width
-              : recyclerViewManager.getWindowSize().height;
-
-            const bufferForCompute = bufferForScroll * 2;
-
-            const getStartScrollOffset = () => {
-              let lastScrollOffset = lastAbsoluteScrollOffset;
-              const finalOffset = getFinalOffset();
-
-              if (finalOffset > lastScrollOffset) {
-                lastScrollOffset = Math.max(
-                  finalOffset - bufferForCompute,
-                  lastScrollOffset
-                );
-                recyclerViewManager.setScrollDirection("forward");
-              } else {
-                lastScrollOffset = Math.min(
-                  finalOffset + bufferForCompute,
-                  lastScrollOffset
-                );
-                recyclerViewManager.setScrollDirection("backward");
-              }
-              return lastScrollOffset;
-            };
-            let initialTargetOffset = getFinalOffset();
-            let initialStartScrollOffset = getStartScrollOffset();
-            let finalOffset = initialTargetOffset;
-            let startScrollOffset = initialStartScrollOffset;
-
-            const steps = 5;
-
-            /**
-             * Recursively performs the scroll animation steps.
-             * This function replaces the async/await loop with callback-based execution.
-             *
-             * @param currentStep - The current step in the animation (0 to steps-1)
-             */
-            const performScrollStep = (currentStep: number) => {
-              // Check if component is unmounted or we've completed all steps
-              if (isUnmounted.current) {
+            const request = {
+              complete: () => {
+                release();
                 resolve();
-                return;
-              } else if (currentStep >= steps) {
-                // All steps completed, perform final scroll
-                finishScrollToIndex();
+              },
+            };
+            activeScrollRequest.current = request;
+            const runSafely = (callback: () => void) => {
+              if (activeScrollRequest.current !== request) return;
+              if (isUnmounted.current) {
+                request.complete();
                 return;
               }
+              try {
+                callback();
+              } catch (error) {
+                release();
+                reject(error);
+              }
+            };
+            runSafely(() => {
+              // Pause the scroll offset adjustments
+              pauseOffsetCorrection.current = true;
+              recyclerViewManager.setOffsetProjectionEnabled(false);
 
-              // Calculate the offset for this step
-              // For animated scrolls: interpolate from finalOffset to startScrollOffset
-              // For non-animated: interpolate from startScrollOffset to finalOffset
-              const nextOffset = animated
-                ? finalOffset +
-                  (startScrollOffset - finalOffset) *
-                    (currentStep / (steps - 1))
-                : startScrollOffset +
-                  (finalOffset - startScrollOffset) *
-                    (currentStep / (steps - 1));
+              const getFinalOffset = () => {
+                const layout = recyclerViewManager.getLayout(index);
+                const offset = horizontal ? layout.x : layout.y;
+                let finalOffset = offset;
+                // take viewPosition etc into account
+                if (viewPosition !== undefined || viewOffset !== undefined) {
+                  const containerSize = horizontal
+                    ? recyclerViewManager.getWindowSize().width
+                    : recyclerViewManager.getWindowSize().height;
 
-              // Update scroll offset with a callback to continue to the next step
-              updateScrollOffsetWithCallback(nextOffset, () => {
-                // Check if the index is still valid after the update
-                if (index >= recyclerViewManager.getDataLength()) {
-                  // Index out of bounds, scroll to end instead
-                  handlerMethods.scrollToEnd({ animated });
-                  resolve(); // Resolve the promise as we're done
+                  const itemSize = horizontal ? layout.width : layout.height;
+
+                  if (viewPosition !== undefined) {
+                    // viewPosition: 0 = top, 0.5 = center, 1 = bottom
+                    finalOffset =
+                      offset - (containerSize - itemSize) * viewPosition;
+                  }
+
+                  if (viewOffset !== undefined) {
+                    finalOffset += viewOffset;
+                  }
+                }
+                return finalOffset + recyclerViewManager.firstItemOffset;
+              };
+              const lastAbsoluteScrollOffset =
+                recyclerViewManager.getAbsoluteLastScrollOffset();
+              const bufferForScroll = horizontal
+                ? recyclerViewManager.getWindowSize().width
+                : recyclerViewManager.getWindowSize().height;
+
+              const bufferForCompute = bufferForScroll * 2;
+
+              const getStartScrollOffset = () => {
+                let lastScrollOffset = lastAbsoluteScrollOffset;
+                const finalOffset = getFinalOffset();
+
+                if (finalOffset > lastScrollOffset) {
+                  lastScrollOffset = Math.max(
+                    finalOffset - bufferForCompute,
+                    lastScrollOffset
+                  );
+                  recyclerViewManager.setScrollDirection("forward");
+                } else {
+                  lastScrollOffset = Math.min(
+                    finalOffset + bufferForCompute,
+                    lastScrollOffset
+                  );
+                  recyclerViewManager.setScrollDirection("backward");
+                }
+                return lastScrollOffset;
+              };
+              let initialTargetOffset = getFinalOffset();
+              let initialStartScrollOffset = getStartScrollOffset();
+              let finalOffset = initialTargetOffset;
+              let startScrollOffset = initialStartScrollOffset;
+
+              const steps = 5;
+
+              /**
+               * Recursively performs the scroll animation steps.
+               * This function replaces the async/await loop with callback-based execution.
+               *
+               * @param currentStep - The current step in the animation (0 to steps-1)
+               */
+              const performScrollStep = (currentStep: number) => {
+                // Check if component is unmounted or we've completed all steps
+                if (isUnmounted.current) {
+                  request.complete();
+                  return;
+                } else if (currentStep >= steps) {
+                  // All steps completed, perform final scroll
+                  finishScrollToIndex();
                   return;
                 }
 
-                // Check if the target position has changed significantly
-                const newFinalOffset = getFinalOffset();
-                if (
-                  (newFinalOffset < initialTargetOffset &&
-                    newFinalOffset < initialStartScrollOffset) ||
-                  (newFinalOffset > initialTargetOffset &&
-                    newFinalOffset > initialStartScrollOffset)
-                ) {
-                  // Target has moved, recalculate and restart from beginning
-                  finalOffset = newFinalOffset;
-                  startScrollOffset = getStartScrollOffset();
-                  initialTargetOffset = newFinalOffset;
-                  initialStartScrollOffset = startScrollOffset;
-                  performScrollStep(0); // Restart from step 0
-                } else {
-                  // Continue to next step
-                  performScrollStep(currentStep + 1);
+                // Calculate the offset for this step
+                // For animated scrolls: interpolate from finalOffset to startScrollOffset
+                // For non-animated: interpolate from startScrollOffset to finalOffset
+                const nextOffset = animated
+                  ? finalOffset +
+                    (startScrollOffset - finalOffset) *
+                      (currentStep / (steps - 1))
+                  : startScrollOffset +
+                    (finalOffset - startScrollOffset) *
+                      (currentStep / (steps - 1));
+
+                // Update scroll offset with a callback to continue to the next step
+                updateScrollOffsetWithCallback(nextOffset, () =>
+                  runSafely(() => {
+                    // Check if the index is still valid after the update
+                    if (index >= recyclerViewManager.getDataLength()) {
+                      // Index out of bounds, scroll to end instead
+                      release();
+                      return Promise.resolve(
+                        handlerMethods.scrollToEnd({ animated })
+                      ).then(resolve, reject);
+                    }
+
+                    // Check if the target position has changed significantly
+                    const newFinalOffset = getFinalOffset();
+                    if (
+                      (newFinalOffset < initialTargetOffset &&
+                        newFinalOffset < initialStartScrollOffset) ||
+                      (newFinalOffset > initialTargetOffset &&
+                        newFinalOffset > initialStartScrollOffset)
+                    ) {
+                      // Target has moved, recalculate and restart from beginning
+                      finalOffset = newFinalOffset;
+                      startScrollOffset = getStartScrollOffset();
+                      initialTargetOffset = newFinalOffset;
+                      initialStartScrollOffset = startScrollOffset;
+                      performScrollStep(0); // Restart from step 0
+                    } else {
+                      // Continue to next step
+                      performScrollStep(currentStep + 1);
+                    }
+                  })
+                );
+              };
+
+              /**
+               * Completes the scroll to index operation by performing the final scroll
+               * and re-enabling offset correction after a delay.
+               */
+              const finishScrollToIndex = () => {
+                finalOffset = getFinalOffset();
+                const maxOffset = recyclerViewManager.getMaxScrollOffset();
+
+                if (finalOffset > maxOffset) {
+                  finalOffset = maxOffset;
                 }
-              });
-            };
 
-            /**
-             * Completes the scroll to index operation by performing the final scroll
-             * and re-enabling offset correction after a delay.
-             */
-            const finishScrollToIndex = () => {
-              finalOffset = getFinalOffset();
-              const maxOffset = recyclerViewManager.getMaxScrollOffset();
+                if (animated) {
+                  // For animated scrolls, first jump to the start position
+                  // We don't need to add firstItemOffset here as it's already added
+                  handlerMethods.scrollToOffset({
+                    offset: startScrollOffset,
+                    animated: false,
+                    skipFirstItemOffset: true,
+                  });
+                }
 
-              if (finalOffset > maxOffset) {
-                finalOffset = maxOffset;
-              }
-
-              if (animated) {
-                // For animated scrolls, first jump to the start position
-                // We don't need to add firstItemOffset here as it's already added
+                // Perform the final scroll to the target position
                 handlerMethods.scrollToOffset({
-                  offset: startScrollOffset,
-                  animated: false,
+                  offset: finalOffset,
+                  animated,
                   skipFirstItemOffset: true,
                 });
-              }
 
-              // Perform the final scroll to the target position
-              handlerMethods.scrollToOffset({
-                offset: finalOffset,
-                animated,
-                skipFirstItemOffset: true,
-              });
+                // Re-enable offset correction after a delay
+                // Longer delay for animated scrolls to allow animation to complete
+                setTimeout(request.complete, animated ? 300 : 200);
+              };
 
-              // Re-enable offset correction after a delay
-              // Longer delay for animated scrolls to allow animation to complete
-              setTimeout(
-                () => {
-                  pauseOffsetCorrection.current = false;
-                  recyclerViewManager.setOffsetProjectionEnabled(true);
-                  resolve(); // Resolve the promise after re-enabling corrections
-                },
-                animated ? 300 : 200
-              );
-            };
-
-            // Start the scroll animation process
-            performScrollStep(0);
+              // Start the scroll animation process
+              performScrollStep(0);
+            });
           } else {
             // Invalid parameters, resolve immediately
             resolve();
@@ -505,7 +569,7 @@ export function useRecyclerViewController<T>(
        * Scrolls to a specific item in the list.
        * Finds the item's index and uses scrollToIndex internally.
        */
-      scrollToItem: ({
+      scrollToItem: async ({
         item,
         animated,
         viewPosition,
@@ -516,7 +580,7 @@ export function useRecyclerViewController<T>(
           // Find the index of the item in the data array
           const index = data.findIndex((dataItem) => dataItem === item);
           if (index >= 0) {
-            handlerMethods.scrollToIndex({
+            return handlerMethods.scrollToIndex({
               index,
               animated,
               viewPosition,
