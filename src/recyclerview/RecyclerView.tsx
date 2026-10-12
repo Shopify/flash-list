@@ -121,6 +121,10 @@ const RecyclerViewComponent = <T,>(
   // Refs for sticky headers and scroll anchoring
   const stickyHeaderRef = useRef<StickyHeaderRef>(null);
   const scrollAnchorRef = useRef<ScrollAnchorRef>(null);
+  // Last sticky index reported to `onChangeStickyIndex`. Tracked separately
+  // from `currentStickyIndex` because that state is only updated when
+  // `stickyHeaderConfig.hideRelatedCell` is enabled.
+  const lastReportedStickyIndexRef = useRef(-1);
 
   // State for managing layout and render updates
   const [_, setLayoutTreeId] = useLayoutState(0);
@@ -447,7 +451,11 @@ const RecyclerViewComponent = <T,>(
             if (stickyHeaderHideRelatedCell) {
               setCurrentStickyIndex(newStickyHeaderIndex);
             }
-            onChangeStickyIndex?.(newStickyHeaderIndex, currentStickyIndex);
+            onChangeStickyIndex?.(
+              newStickyHeaderIndex,
+              lastReportedStickyIndexRef.current
+            );
+            lastReportedStickyIndexRef.current = newStickyHeaderIndex;
           }}
         />
       );
@@ -462,7 +470,6 @@ const RecyclerViewComponent = <T,>(
     horizontal,
     recyclerViewManager,
     extraData,
-    currentStickyIndex,
     onChangeStickyIndex,
     stickyHeaderHideRelatedCell,
     stickyHeaderZIndex,

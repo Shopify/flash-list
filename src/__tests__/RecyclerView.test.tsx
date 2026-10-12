@@ -4,7 +4,7 @@ import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
 import { FlashListRef } from "../FlashListRef";
-import { FlashList } from "..";
+import { FlashList, FlashListProps } from "..";
 
 // Mock measureLayout to return fixed dimensions
 jest.mock("../recyclerview/utils/measureLayout", () => {
@@ -395,6 +395,70 @@ describe("RecyclerView", () => {
         renderFlashListWithStickyHeaders(100);
       scrollTo(result, 400);
       expect(onChangeStickyIndex).toHaveBeenLastCalledWith(0, -1);
+    });
+  });
+
+  describe("onChangeStickyIndex previous index", () => {
+    const scrollTo = (root: ReturnType<typeof render>, y: number) => {
+      const scrollable = root.findWhere((node: any) => node.props.onScroll);
+      if (!scrollable) throw new Error("Could not find scrollable component");
+
+      const onScroll: any = scrollable.prop("onScroll" as never);
+      root.act(() => {
+        onScroll({
+          nativeEvent: {
+            contentOffset: { x: 0, y },
+            contentSize: { width: 399, height: 2000 },
+            layoutMeasurement: { width: 399, height: 899 },
+          },
+        });
+      });
+    };
+
+    // Each item is 100px tall, so with stickyHeaderIndices=[0, 5, 10, 15]
+    // header 5 sits at y=500 and header 10 at y=1000.
+    const renderWithStickyHeaders = (
+      stickyHeaderConfig?: FlashListProps<number>["stickyHeaderConfig"]
+    ) => {
+      const onChangeStickyIndex = jest.fn();
+      const result = render(
+        <FlashList
+          data={[
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19,
+          ]}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          stickyHeaderIndices={[0, 5, 10, 15]}
+          stickyHeaderConfig={stickyHeaderConfig}
+          onChangeStickyIndex={onChangeStickyIndex}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+        />
+      );
+
+      return { result, onChangeStickyIndex };
+    };
+
+    it("reports the previously stuck index with the default config", () => {
+      const { result, onChangeStickyIndex } = renderWithStickyHeaders();
+
+      scrollTo(result, 550);
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(5, 0);
+
+      scrollTo(result, 1050);
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(10, 5);
+    });
+
+    it("reports the previously stuck index when hideRelatedCell is enabled", () => {
+      const { result, onChangeStickyIndex } = renderWithStickyHeaders({
+        hideRelatedCell: true,
+      });
+
+      scrollTo(result, 550);
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(5, 0);
+
+      scrollTo(result, 1050);
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(10, 5);
     });
   });
 
