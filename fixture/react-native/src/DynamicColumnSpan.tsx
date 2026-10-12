@@ -1,5 +1,12 @@
 import React, { useMemo, useState, useCallback } from "react";
-import { Text, View, StyleSheet, Platform, Pressable } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Platform,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
 import { FlashList, useRecyclingState } from "@shopify/flash-list";
 
 interface DynamicItem {
@@ -53,6 +60,7 @@ const arraysEqual = (arr1: number[], arr2: number[]): boolean => {
 };
 
 export function DynamicColumnSpan() {
+  const { height } = useWindowDimensions();
   const [numItems] = useState(500);
   const [isMasonry, setIsMasonry] = useState(false);
   const [numColumns, setNumColumns] = useState(3);
@@ -101,10 +109,6 @@ export function DynamicColumnSpan() {
     []
   );
 
-  const toggleLayout = () => {
-    setIsMasonry(!isMasonry);
-  };
-
   const changeColumns = (cols: number) => {
     setNumColumns(cols);
   };
@@ -115,14 +119,14 @@ export function DynamicColumnSpan() {
 
   return (
     <React.StrictMode>
-      <View style={styles.container}>
+      <View style={[styles.container, Platform.OS === "web" && { height }]}>
         {/* Control Panel */}
         <View style={styles.controlPanel}>
           <View style={styles.controlRow}>
             <Text style={styles.controlLabel}>Layout:</Text>
             <Pressable
               style={[styles.controlButton, !isMasonry && styles.activeButton]}
-              onPress={toggleLayout}
+              onPress={() => setIsMasonry(false)}
             >
               <Text
                 style={[
@@ -135,7 +139,7 @@ export function DynamicColumnSpan() {
             </Pressable>
             <Pressable
               style={[styles.controlButton, isMasonry && styles.activeButton]}
-              onPress={toggleLayout}
+              onPress={() => setIsMasonry(true)}
             >
               <Text
                 style={[
@@ -275,7 +279,6 @@ const DynamicGridItem = ({
 const styles = StyleSheet.create({
   container: {
     flex: Platform.OS === "web" ? undefined : 1,
-    height: Platform.OS === "web" ? window.innerHeight : undefined,
     backgroundColor: "#f5f5f5",
   },
   controlPanel: {

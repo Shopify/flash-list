@@ -7,6 +7,7 @@ import {
   Pressable,
   Switch,
   ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import { FlashList, useRecyclingState } from "@shopify/flash-list";
 
@@ -38,6 +39,7 @@ const colors = [
 ];
 
 export function LayoutOptions() {
+  const { height } = useWindowDimensions();
   // Configuration states
   const [numColumns, setNumColumns] = useState(1);
   const [isHorizontal, setIsHorizontal] = useState(false);
@@ -88,10 +90,11 @@ export function LayoutOptions() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, Platform.OS === "web" && { height }]}>
       {renderControls()}
 
       <FlashList
+        key={isHorizontal ? "horizontal" : "vertical"}
         data={data}
         numColumns={isHorizontal ? 1 : numColumns}
         horizontal={isHorizontal}
@@ -151,7 +154,6 @@ const ListItemComponent = ({ item }: { item: ListItem }) => {
 const styles = StyleSheet.create({
   container: {
     flex: Platform.OS === "web" ? undefined : 1,
-    height: Platform.OS === "web" ? window.innerHeight : undefined,
     backgroundColor: "#f5f5f5",
   },
   controls: {

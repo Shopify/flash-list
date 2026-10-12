@@ -1,4 +1,11 @@
-import React, { forwardRef, ForwardedRef, useState, useCallback } from "react";
+import React, {
+  forwardRef,
+  ForwardedRef,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import {
   Text,
   View,
@@ -6,6 +13,7 @@ import {
   Platform,
   TouchableOpacity,
   ActivityIndicator,
+  useWindowDimensions,
 } from "react-native";
 import { FlashListRef, FlashList } from "@shopify/flash-list";
 import FastImage from "@d11/react-native-fast-image";
@@ -132,9 +140,21 @@ const MasonryCard = ({
 
 // Create our masonry component
 const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
+  const { height } = useWindowDimensions();
   const columnCount = 3;
   const [items, setItems] = useState(() => generateMasonryData(50));
   const [isLoading, setIsLoading] = useState(false);
+  const loadTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (loadTimeout.current !== null) {
+        clearTimeout(loadTimeout.current);
+        loadTimeout.current = null;
+      }
+    },
+    []
+  );
 
   // Handle toggling the expanded state of an item
   const handleToggleExpand = useCallback((id: string) => {
@@ -147,19 +167,20 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
 
   // Handle loading more items when reaching the end of the list
   const handleEndReached = useCallback(() => {
-    if (isLoading) return;
+    if (loadTimeout.current !== null) return;
 
     setIsLoading(true);
 
     // Simulate network delay
-    setTimeout(() => {
+    loadTimeout.current = setTimeout(() => {
+      loadTimeout.current = null;
       setItems((currentItems) => [
         ...currentItems,
         ...generateMasonryData(20, currentItems.length),
       ]);
       setIsLoading(false);
     }, 500);
-  }, [isLoading]);
+  }, []);
 
   // Footer component with loading indicator
   const renderFooter = useCallback(() => {
@@ -180,7 +201,7 @@ const ComplexMasonryComponent = (_: unknown, ref: ForwardedRef<unknown>) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, Platform.OS === "web" && { height }]}>
       <FlashList
         ref={ref as React.RefObject<FlashListRef<MasonryItem>>}
         testID="ComplexMasonryList"
@@ -218,7 +239,6 @@ export const ComplexMasonry = forwardRef(ComplexMasonryComponent);
 const styles = StyleSheet.create({
   container: {
     flex: Platform.OS === "web" ? undefined : 1,
-    height: Platform.OS === "web" ? window.innerHeight : undefined,
     backgroundColor: "#f5f5f5",
   },
   listContent: {
