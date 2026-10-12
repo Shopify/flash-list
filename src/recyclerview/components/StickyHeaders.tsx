@@ -85,20 +85,18 @@ export const StickyHeaders = <TItem,>({
 
   const { currentStickyIndex, pushStartsAt } = stickyHeaderState;
 
-  // sort indices and memoize compute
-  const sortedIndices = useMemo(() => {
-    return [...stickyHeaderIndices].sort((first, second) => first - second);
-  }, [stickyHeaderIndices]);
+  const dataLength = recyclerViewManager.getDataLength();
 
-  const lengthInvalid =
-    sortedIndices.length === 0 ||
-    recyclerViewManager.getDataLength() <=
-      sortedIndices[sortedIndices.length - 1];
+  // Ignore stale indices after data shrinks and invalid index values.
+  const sortedIndices = useMemo(() => {
+    return [...new Set(stickyHeaderIndices)]
+      .filter(
+        (index) => Number.isInteger(index) && index >= 0 && index < dataLength
+      )
+      .sort((first, second) => first - second);
+  }, [stickyHeaderIndices, dataLength]);
 
   const compute = useCallback(() => {
-    if (lengthInvalid) {
-      return;
-    }
     const adjustedScrollOffset = recyclerViewManager.getLastScrollOffset();
 
     // Binary search for current sticky index
@@ -126,7 +124,8 @@ export const StickyHeaders = <TItem,>({
       recyclerViewManager.tryGetLayout(newStickyIndex)?.height ?? 0;
 
     // Push should start when the next header reaches the bottom of the current sticky header
-    const newPushStartsAt = newNextStickyY - newCurrentStickyHeight;
+    const newPushStartsAt =
+      newNextStickyY - newCurrentStickyHeight - stickyHeaderOffset;
 
     if (
       newStickyIndex !== currentStickyIndex ||
@@ -134,7 +133,7 @@ export const StickyHeaders = <TItem,>({
     ) {
       setStickyHeaderState({
         currentStickyIndex: newStickyIndex,
-        pushStartsAt: newPushStartsAt - stickyHeaderOffset,
+        pushStartsAt: newPushStartsAt,
       });
     }
 
@@ -142,7 +141,6 @@ export const StickyHeaders = <TItem,>({
       onChangeStickyIndex?.(newStickyIndex);
     }
   }, [
-    lengthInvalid,
     recyclerViewManager,
     sortedIndices,
     currentStickyIndex,
