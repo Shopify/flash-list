@@ -138,6 +138,7 @@ const RecyclerViewComponent = <T,>(
     useRecyclerViewManager(props);
   const {
     applyOffsetCorrection,
+    applyAnchorShift,
     computeFirstVisibleIndexForOffsetCorrection,
     applyInitialScrollIndex,
     handlerMethods,
@@ -238,6 +239,9 @@ const RecyclerViewComponent = <T,>(
       recyclerViewManager.modifyChildrenLayout(layoutInfo, data?.length ?? 0) &&
       !hasExceededMaxRendersWithoutCommit
     ) {
+      // Items and anchor in one commit: the anchor shifts here, before the re-render that moves
+      // the items, so native maintainVisibleContentPosition compensates in the same frame.
+      applyAnchorShift();
       // Trigger re-render if layout modifications were made
       setRenderId((prev) => prev + 1);
     } else {
