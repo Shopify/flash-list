@@ -95,7 +95,9 @@ export class RecyclerViewManager<T> {
   }
 
   updateProps(props: RecyclerViewProps<T>) {
+    const previousProps = this.propsRef;
     this.propsRef = props;
+    this.carryLayoutsByKey(previousProps, props);
     this.engagedIndicesTracker.drawDistance =
       props.drawDistance ?? this.engagedIndicesTracker.drawDistance;
     this.initialDrawBatchSize =
@@ -349,6 +351,61 @@ export class RecyclerViewManager<T> {
 
   hasStableDataKeys() {
     return Boolean(this.propsRef.keyExtractor);
+  }
+
+  /**
+   * Keeps each measured size with its item when items are inserted above it.
+   *
+   * The layout cache is per index. Prepending items (loading older messages in a chat, for
+   * example) otherwise hands every existing item the size of whichever item used to sit at its
+   * index, already marked as measured, so no estimate replaces it: each item snaps to its real
+   * size only when it is drawn, and every snap moves the content the user is looking at. With
+   * stable keys the sizes can follow their items; new items fall back to estimates.
+   *
+   * Skipped when the first key is unchanged (appending keeps indices valid) and for grid and
+   * masonry layouts.
+   */
+  private carryLayoutsByKey(
+    previousProps: RecyclerViewProps<T> | undefined,
+    props: RecyclerViewProps<T>
+  ) {
+    const layoutManager = this.layoutManager;
+    const keyExtractor = props.keyExtractor;
+    const previousData = previousProps?.data;
+    const data = props.data;
+    if (
+      !layoutManager ||
+      !keyExtractor ||
+      !previousData ||
+      !data ||
+      previousData === data ||
+      previousData.length === 0 ||
+      data.length === 0 ||
+      props.masonry ||
+      (props.numColumns ?? 1) > 1
+    ) {
+      return;
+    }
+    const previousKeyExtractor = previousProps?.keyExtractor ?? keyExtractor;
+    if (keyExtractor(data[0], 0) === previousKeyExtractor(previousData[0], 0)) {
+      return;
+    }
+    const previousIndexByKey = new Map<string, number>();
+    const count = Math.min(previousData.length, layoutManager.getLayoutCount());
+    for (let index = 0; index < count; index++) {
+      previousIndexByKey.set(
+        previousKeyExtractor(previousData[index], index),
+        index
+      );
+    }
+    const previousIndices = data.map((item, index) => {
+      const key = keyExtractor(item, index);
+      const previousIndex = previousIndexByKey.get(key);
+      // One layout per item: a repeated key must not leave two indices sharing an object.
+      previousIndexByKey.delete(key);
+      return previousIndex ?? -1;
+    });
+    layoutManager.remapLayouts(previousIndices);
   }
 
   getDataKey(index: number): string {

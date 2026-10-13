@@ -265,6 +265,29 @@ export abstract class RVLayoutManager {
   }
 
   /**
+   * Moves cached layouts to new indices after the data changed order, e.g. when items were
+   * inserted at the start. `previousIndices[index]` is the index the item now at `index` had
+   * before, or -1 for an item that is new. New items get estimates; positions are recomputed.
+   * @param previousIndices Previous index of each item, in the new order
+   */
+  remapLayouts(previousIndices: number[]): void {
+    const layouts: RVLayout[] = new Array(previousIndices.length);
+    const spans: (number | undefined)[] = new Array(previousIndices.length);
+    previousIndices.forEach((previousIndex, index) => {
+      if (previousIndex >= 0 && this.layouts[previousIndex]) {
+        layouts[index] = this.layouts[previousIndex];
+        spans[index] = this.spanTracker[previousIndex];
+      }
+    });
+    this.layouts = layouts;
+    this.spanTracker = spans;
+    this.lastSkippedLayoutIndex = Number.MAX_VALUE;
+    if (layouts.length > 0) {
+      this.recomputeLayouts(0, layouts.length - 1);
+    }
+  }
+
+  /**
    * Returns whether the item at the given index is in the last row of the layout.
    * Used to suppress separators for all items in the last row, preventing
    * height mismatch when the last data item has no separator.
