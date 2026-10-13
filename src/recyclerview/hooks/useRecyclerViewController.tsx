@@ -146,6 +146,23 @@ export function useRecyclerViewController<T>(
         //    engaged window. ignoreScrollEvents stays true for 100ms
         //    after each correction, giving subsequent layout passes a
         //    chance to refine the scroll position.
+        // 3. The user has not moved away from the anchor, but items above it
+        //    were estimates and have just been measured smaller (or the
+        //    running estimate dropped), so the layout moved the anchor out of
+        //    the engaged window under them. Without the search no correction
+        //    is applied at all and the content jumps by the full difference.
+        //    Only an anchor that still overlaps the viewport qualifies: one
+        //    the user scrolled away from is not theirs to hold.
+        const anchorLayout = firstVisibleItemLayout.current!;
+        const viewportStart = recyclerViewManager.getLastScrollOffset();
+        const viewportSize = horizontal
+          ? recyclerViewManager.getWindowSize().width
+          : recyclerViewManager.getWindowSize().height;
+        const anchorStart = horizontal ? anchorLayout.x : anchorLayout.y;
+        const anchorSize = horizontal ? anchorLayout.width : anchorLayout.height;
+        const anchorStillInView =
+          anchorStart < viewportStart + viewportSize &&
+          anchorStart + anchorSize > viewportStart;
         const currentIndexOfFirstVisibleItem =
           recyclerViewManager
             .getEngagedIndices()
@@ -154,7 +171,9 @@ export function useRecyclerViewController<T>(
                 recyclerViewManager.getDataKey(index) ===
                 firstVisibleItemKey.current
             ) ??
-          (hasDataChanged || recyclerViewManager.ignoreScrollEvents
+          (hasDataChanged ||
+          recyclerViewManager.ignoreScrollEvents ||
+          anchorStillInView
             ? data?.findIndex(
                 (item, index) =>
                   recyclerViewManager.getDataKey(index) ===
