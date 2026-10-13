@@ -71,4 +71,53 @@ describe("RecyclerViewManager", () => {
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
   });
+
+  describe("measured sizes when items are inserted", () => {
+    const windowSize = { width: 400, height: 900 };
+    const createProps = (ids: number[]) =>
+      ({
+        data: ids.map((id) => ({ id })),
+        renderItem: jest.fn(),
+        keyExtractor: (item: { id: number }) => String(item.id),
+      } as FlashListProps<{ id: number }>);
+    const measure = <T>(manager: RecyclerViewManager<T>, heights: number[]) =>
+      manager.modifyChildrenLayout(
+        heights.map((height, index) => ({
+          index,
+          dimensions: { width: 400, height },
+        })),
+        heights.length
+      );
+
+    it("keeps each measured size with its item when items are prepended", () => {
+      const manager = new RecyclerViewManager(createProps([1, 2, 3]));
+      manager.updateLayoutParams(windowSize, 0);
+      measure(manager, [100, 300, 50]);
+
+      manager.updateProps(createProps([-1, 0, 1, 2, 3]));
+
+      expect(manager.getLayout(2).height).toBe(100);
+      expect(manager.getLayout(3).height).toBe(300);
+      expect(manager.getLayout(4).height).toBe(50);
+      // The new items are estimated, not handed an old item's size.
+      expect(manager.getLayout(0).isHeightMeasured).toBeFalsy();
+      expect(manager.getLayout(1).isHeightMeasured).toBeFalsy();
+      // Positions follow the new order.
+      expect(manager.getLayout(3).y).toBe(
+        manager.getLayout(2).y + manager.getLayout(2).height
+      );
+    });
+
+    it("leaves sizes in place when items are appended", () => {
+      const manager = new RecyclerViewManager(createProps([1, 2, 3]));
+      manager.updateLayoutParams(windowSize, 0);
+      measure(manager, [100, 300, 50]);
+
+      manager.updateProps(createProps([1, 2, 3, 4]));
+
+      expect(manager.getLayout(0).height).toBe(100);
+      expect(manager.getLayout(1).height).toBe(300);
+      expect(manager.getLayout(2).height).toBe(50);
+    });
+  });
 });
