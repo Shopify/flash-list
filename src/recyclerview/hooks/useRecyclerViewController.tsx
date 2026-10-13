@@ -27,6 +27,21 @@ import { useUnmountFlag } from "./useUnmountFlag";
 import { useUnmountAwareTimeout } from "./useUnmountAwareCallbacks";
 
 /**
+ * Whether the list keeps its first visible item in place while content above it changes: only
+ * once the first layout is measured, with stable keys and data to anchor to.
+ */
+function maintainsVisibleContentPosition<T>(
+  recyclerViewManager: RecyclerViewManager<T>
+) {
+  return (
+    recyclerViewManager.getIsFirstLayoutComplete() &&
+    recyclerViewManager.hasStableDataKeys() &&
+    recyclerViewManager.getDataLength() > 0 &&
+    recyclerViewManager.shouldMaintainVisibleContentPosition()
+  );
+}
+
+/**
  * Comprehensive hook that manages RecyclerView scrolling behavior and provides
  * imperative methods for controlling the RecyclerView.
  *
@@ -57,6 +72,12 @@ export function useRecyclerViewController<T>(
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
   const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
+  // Where the first visible item was when it was recorded. firstVisibleItemLayout follows every
+  // shift applied since; this does not, so it stays comparable with the JS scroll offset, which
+  // only catches up with a shift when the native scroll event arrives.
+  const firstVisibleItemRecordedLayout = useRef<RVLayout | undefined>(
+    undefined
+  );
 
   // Queue to store callbacks that should be executed after scroll offset updates
   const pendingScrollCallbacks = useRef<(() => void)[]>([]);
@@ -107,9 +128,130 @@ export function useRecyclerViewController<T>(
         firstVisibleItemLayout.current = {
           ...recyclerViewManager.getLayout(firstVisibleIndex),
         };
+        firstVisibleItemRecordedLayout.current = firstVisibleItemLayout.current;
       }
     }
   }, [recyclerViewManager]);
+
+  /**
+   * Moves the scroll anchor by however far the tracked first visible item has moved in the layout
+   * since it was recorded, and records where that item is now. Returns the shift applied: 0 when
+   * the item is not found, has not moved, or corrections are paused.
+   */
+  const shiftAnchor = useCallback(
+    (hasDataChanged: boolean): number => {
+      const { horizontal, data } = recyclerViewManager.props;
+      // Try engaged indices first (fast O(n) over rendered items), then
+      // fall back to a full data search. The fallback is needed when:
+      // 1. Data just changed (hasDataChanged) — prepended items shift
+      //    the anchor to a new index not yet in the engaged window.
+      // 2. A previous correction is still settling (ignoreScrollEvents
+      //    is true) — after the first correction pass, unmeasured item
+      //    heights may converge and push the anchor item outside the
+      //    engaged window. ignoreScrollEvents stays true for 100ms
+      //    after each correction, giving subsequent layout passes a
+      //    chance to refine the scroll position.
+      // 3. The user has not moved away from the anchor, but items above it
+      //    were estimates and have just been measured smaller (or the
+      //    running estimate dropped), so the layout moved the anchor out of
+      //    the engaged window under them. Without the search no correction
+      //    is applied at all and the content jumps by the full difference.
+      //    Only an anchor that still overlaps the viewport qualifies: one
+      //    the user scrolled away from is not theirs to hold. The test uses
+      //    the anchor as recorded: a shift already applied in this pass has
+      //    moved the anchor's stored layout but not yet the JS offset, and
+      //    comparing the two would turn away an anchor still on screen.
+      const anchorLayout = firstVisibleItemRecordedLayout.current!;
+      const viewportStart = recyclerViewManager.getLastScrollOffset();
+      const viewportSize = horizontal
+        ? recyclerViewManager.getWindowSize().width
+        : recyclerViewManager.getWindowSize().height;
+      const anchorStart = horizontal ? anchorLayout.x : anchorLayout.y;
+      const anchorSize = horizontal ? anchorLayout.width : anchorLayout.height;
+      const anchorStillInView =
+        anchorStart < viewportStart + viewportSize &&
+        anchorStart + anchorSize > viewportStart;
+      const currentIndexOfFirstVisibleItem =
+        recyclerViewManager
+          .getEngagedIndices()
+          .findValue(
+            (index) =>
+              recyclerViewManager.getDataKey(index) ===
+              firstVisibleItemKey.current
+          ) ??
+        (hasDataChanged ||
+        recyclerViewManager.ignoreScrollEvents ||
+        anchorStillInView
+          ? data?.findIndex(
+              (item, index) =>
+                recyclerViewManager.getDataKey(index) ===
+                firstVisibleItemKey.current
+            )
+          : undefined);
+
+      if (
+        currentIndexOfFirstVisibleItem === undefined ||
+        currentIndexOfFirstVisibleItem < 0
+      ) {
+        return 0;
+      }
+
+      // Calculate the difference in position and apply the offset
+      const diff = horizontal
+        ? recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).x -
+          firstVisibleItemLayout.current!.x
+        : recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y -
+          firstVisibleItemLayout.current!.y;
+      firstVisibleItemLayout.current = {
+        ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
+      };
+      if (
+        diff === 0 ||
+        pauseOffsetCorrection.current ||
+        recyclerViewManager.animationOptimizationsEnabled
+      ) {
+        return 0;
+      }
+      if (PlatformConfig.supportsOffsetCorrection) {
+        scrollAnchorRef.current?.scrollBy(diff);
+      } else {
+        const scrollToParams = horizontal
+          ? {
+              x: recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
+              animated: false,
+            }
+          : {
+              y: recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
+              animated: false,
+            };
+        scrollViewRef.current?.scrollTo(scrollToParams);
+      }
+      return diff;
+    },
+    [recyclerViewManager, scrollAnchorRef, scrollViewRef]
+  );
+
+  /**
+   * The anchor part of the offset correction alone, for the layout pass that is about to
+   * re-render the items after a measurement. Shifted there, the anchor moves in the same commit
+   * as the items and native maintainVisibleContentPosition compensates in the same frame. Shifted
+   * after that commit, a frame drawn in between shows the content displaced by the correction,
+   * then snapping back: a visible hitch on every measurement on a slow device.
+   *
+   * Measurements only. A change in data length keeps the correction after the commit, which also
+   * syncs the JS offset and ignores scroll events while the native side settles; pending scroll
+   * callbacks are left for the render they wait on. Returns the shift applied.
+   */
+  const applyAnchorShift = useCallback((): number => {
+    if (
+      !maintainsVisibleContentPosition(recyclerViewManager) ||
+      !firstVisibleItemKey.current ||
+      recyclerViewManager.getDataLength() !== lastDataLengthRef.current
+    ) {
+      return 0;
+    }
+    return shiftAnchor(false);
+  }, [recyclerViewManager, shiftAnchor]);
 
   /**
    * Maintains the visible content position when the list updates.
@@ -117,8 +259,6 @@ export function useRecyclerViewController<T>(
    * the user's current view position when new messages are added.
    */
   const applyOffsetCorrection = useCallback(() => {
-    const { horizontal, data } = recyclerViewManager.props;
-
     // Execute all pending callbacks from previous scroll offset updates
     // This ensures any scroll operations that were waiting for render are completed
     const callbacks = pendingScrollCallbacks.current;
@@ -127,86 +267,20 @@ export function useRecyclerViewController<T>(
 
     const currentDataLength = recyclerViewManager.getDataLength();
 
-    if (
-      recyclerViewManager.getIsFirstLayoutComplete() &&
-      recyclerViewManager.hasStableDataKeys() &&
-      currentDataLength > 0 &&
-      recyclerViewManager.shouldMaintainVisibleContentPosition()
-    ) {
+    if (maintainsVisibleContentPosition(recyclerViewManager)) {
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
       // If we have a tracked first visible item, maintain its position
       if (firstVisibleItemKey.current) {
-        // Try engaged indices first (fast O(n) over rendered items), then
-        // fall back to a full data search. The fallback is needed when:
-        // 1. Data just changed (hasDataChanged) — prepended items shift
-        //    the anchor to a new index not yet in the engaged window.
-        // 2. A previous correction is still settling (ignoreScrollEvents
-        //    is true) — after the first correction pass, unmeasured item
-        //    heights may converge and push the anchor item outside the
-        //    engaged window. ignoreScrollEvents stays true for 100ms
-        //    after each correction, giving subsequent layout passes a
-        //    chance to refine the scroll position.
-        const currentIndexOfFirstVisibleItem =
-          recyclerViewManager
-            .getEngagedIndices()
-            .findValue(
-              (index) =>
-                recyclerViewManager.getDataKey(index) ===
-                firstVisibleItemKey.current
-            ) ??
-          (hasDataChanged || recyclerViewManager.ignoreScrollEvents
-            ? data?.findIndex(
-                (item, index) =>
-                  recyclerViewManager.getDataKey(index) ===
-                  firstVisibleItemKey.current
-              )
-            : undefined);
-
-        if (
-          currentIndexOfFirstVisibleItem !== undefined &&
-          currentIndexOfFirstVisibleItem >= 0
-        ) {
-          // Calculate the difference in position and apply the offset
-          const diff = horizontal
-            ? recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).x -
-              firstVisibleItemLayout.current!.x
-            : recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem).y -
-              firstVisibleItemLayout.current!.y;
-          firstVisibleItemLayout.current = {
-            ...recyclerViewManager.getLayout(currentIndexOfFirstVisibleItem),
-          };
-          if (
-            diff !== 0 &&
-            !pauseOffsetCorrection.current &&
-            !recyclerViewManager.animationOptimizationsEnabled
-          ) {
-            // console.log("diff", diff, firstVisibleItemKey.current);
-            if (PlatformConfig.supportsOffsetCorrection) {
-              // console.log("scrollBy", diff);
-              scrollAnchorRef.current?.scrollBy(diff);
-            } else {
-              const scrollToParams = horizontal
-                ? {
-                    x: recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
-                    animated: false,
-                  }
-                : {
-                    y: recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
-                    animated: false,
-                  };
-              scrollViewRef.current?.scrollTo(scrollToParams);
-            }
-            if (hasDataChanged) {
-              updateScrollOffsetWithCallback(
-                recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
-                () => {}
-              );
-              recyclerViewManager.ignoreScrollEvents = true;
-              setTimeout(() => {
-                recyclerViewManager.ignoreScrollEvents = false;
-              }, 100);
-            }
-          }
+        const diff = shiftAnchor(hasDataChanged);
+        if (diff !== 0 && hasDataChanged) {
+          updateScrollOffsetWithCallback(
+            recyclerViewManager.getAbsoluteLastScrollOffset() + diff,
+            () => {}
+          );
+          recyclerViewManager.ignoreScrollEvents = true;
+          setTimeout(() => {
+            recyclerViewManager.ignoreScrollEvents = false;
+          }, 100);
         }
       }
 
@@ -215,9 +289,8 @@ export function useRecyclerViewController<T>(
     lastDataLengthRef.current = recyclerViewManager.getDataLength();
   }, [
     recyclerViewManager,
-    scrollAnchorRef,
-    scrollViewRef,
     setTimeout,
+    shiftAnchor,
     updateScrollOffsetWithCallback,
     computeFirstVisibleIndexForOffsetCorrection,
   ]);
@@ -635,6 +708,7 @@ export function useRecyclerViewController<T>(
 
   return {
     applyOffsetCorrection,
+    applyAnchorShift,
     computeFirstVisibleIndexForOffsetCorrection,
     applyInitialScrollIndex,
     handlerMethods,
