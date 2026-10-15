@@ -120,6 +120,38 @@ describe("RecyclerView", () => {
         children: 19,
       });
     });
+
+    it("reports initially visible items to onViewableItemsChanged", () => {
+      const onViewableItemsChanged = jest.fn();
+      const result = render(
+        <FlashList
+          data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+          masonry
+          numColumns={2}
+          viewabilityConfig={{
+            itemVisiblePercentThreshold: 50,
+            minimumViewTime: 250,
+            waitForInteraction: false,
+          }}
+          onViewableItemsChanged={onViewableItemsChanged}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+
+      result.act(() => {
+        jest.advanceTimersByTime(300);
+      });
+
+      expect(onViewableItemsChanged).toHaveBeenCalledWith(
+        expect.objectContaining({
+          viewableItems: expect.arrayContaining([
+            expect.objectContaining({ index: 0, isViewable: true }),
+          ]),
+        })
+      );
+    });
   });
 
   describe("Grid Layout", () => {
