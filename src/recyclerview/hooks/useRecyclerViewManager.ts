@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { RecyclerViewProps } from "../RecyclerViewProps";
 import { RecyclerViewManager } from "../RecyclerViewManager";
@@ -11,21 +11,23 @@ export const useRecyclerViewManager = <T>(props: RecyclerViewProps<T>) => {
   const [velocityTracker] = useState(() => new VelocityTracker());
 
   const { data } = props;
+  const lastSyncedProps = useRef<RecyclerViewProps<T>>();
+  const lastSyncedData = useRef<RecyclerViewProps<T>["data"]>();
 
-  useMemo(() => {
+  // A render that React discards can still mutate the manager. Track what the
+  // manager actually saw so a later render can restore the committed props.
+  if (lastSyncedProps.current !== props) {
     recyclerViewManager.updateProps(props);
-    // used to update props so rule can be disabled
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props]);
+    lastSyncedProps.current = props;
+  }
 
   /**
    * When data changes, we need to process the data update before the render happens
    */
-  useMemo(() => {
+  if (lastSyncedData.current !== data) {
     recyclerViewManager.processDataUpdate();
-    // used to process data update so rule can be disabled
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+    lastSyncedData.current = data;
+  }
 
   useEffect(() => {
     recyclerViewManager.restoreIfNeeded();
