@@ -1,9 +1,8 @@
-import { ViewabilityConfig } from "react-native";
-
 import { RecyclerViewManager } from "../RecyclerViewManager";
 
 import ViewabilityHelper from "./ViewabilityHelper";
 import ViewToken from "./ViewToken";
+import type { ViewabilityConfig } from "./ViewabilityConfig";
 
 /**
  * Manager for viewability tracking. It holds multiple viewability callback pairs and keeps them updated.

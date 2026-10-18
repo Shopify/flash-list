@@ -1,7 +1,7 @@
-import { ViewabilityConfig } from "react-native";
-
 import { RVDimension, RVLayout } from "../layout-managers/LayoutManager";
 import { ErrorMessages } from "../../errors/ErrorMessages";
+
+import type { ViewabilityConfig } from "./ViewabilityConfig";
 
 /**
  * Helper class for computing viewable items based on the passed `viewabilityConfig`.
