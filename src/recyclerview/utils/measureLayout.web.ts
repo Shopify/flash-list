@@ -73,8 +73,8 @@ export function measureFirstChildLayout(
   return {
     x: childRect.left - parentRect.left + scrollOffsets.scrollX,
     y: childRect.top - parentRect.top + scrollOffsets.scrollY,
-    width: roundOffPixel(childRect.width),
-    height: roundOffPixel(childRect.height),
+    width: childContainerView.clientWidth,
+    height: childContainerView.clientHeight,
   };
 }
 
