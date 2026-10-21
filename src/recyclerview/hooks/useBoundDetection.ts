@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 
 import { RecyclerViewManager } from "../RecyclerViewManager";
 import { CompatScroller } from "../components/CompatScroller";
@@ -18,7 +24,8 @@ import { useUnmountAwareAnimationFrame } from "./useUnmountAwareCallbacks";
  */
 export function useBoundDetection<T>(
   recyclerViewManager: RecyclerViewManager<T>,
-  scrollViewRef: React.RefObject<CompatScroller>
+  scrollViewRef: React.RefObject<CompatScroller>,
+  getAdjustmentMargin: () => number
 ) {
   // Track whether we've already triggered the end reached callback to prevent duplicate calls
   const pendingEndReached = useRef(false);
@@ -31,6 +38,23 @@ export function useBoundDetection<T>(
 
   const { data } = recyclerViewManager.props;
   const { requestAnimationFrame } = useUnmountAwareAnimationFrame();
+
+  const previousAdjustmentMargin = useRef(getAdjustmentMargin());
+  const adjustmentMargin = getAdjustmentMargin();
+  const shouldAnimateAdjustmentMargin =
+    pendingAutoscrollToBottom.current &&
+    recyclerViewManager.isOffsetProjectionEnabled &&
+    !recyclerViewManager.ignoreScrollEvents &&
+    recyclerViewManager.props.maintainVisibleContentPosition
+      ?.animateAutoScrollToBottom !== false &&
+    previousAdjustmentMargin.current > adjustmentMargin;
+  const adjustmentMarginAnimationOffset = shouldAnimateAdjustmentMargin
+    ? previousAdjustmentMargin.current - adjustmentMargin
+    : 0;
+
+  useLayoutEffect(() => {
+    previousAdjustmentMargin.current = adjustmentMargin;
+  }, [adjustmentMargin]);
 
   const windowHeight = recyclerViewManager.hasLayout()
     ? recyclerViewManager.getWindowSize().height
@@ -188,5 +212,6 @@ export function useBoundDetection<T>(
 
   return {
     checkBounds,
+    adjustmentMarginAnimationOffset,
   };
 }

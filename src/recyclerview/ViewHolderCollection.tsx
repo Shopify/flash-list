@@ -5,12 +5,13 @@
  */
 
 import React, { useEffect, useImperativeHandle, useLayoutEffect } from "react";
+import { Animated } from "react-native";
 
 import { FlashListProps } from "../FlashListProps";
 
 import { ViewHolder, ViewHolderProps } from "./ViewHolder";
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
-import { CompatView } from "./components/CompatView";
+import { CompatAnimatedView, CompatView } from "./components/CompatView";
 import { useRecyclerViewContext } from "./RecyclerViewContextProvider";
 
 /**
@@ -50,6 +51,10 @@ export interface ViewHolderCollectionProps<TItem> {
    * For startRenderingFromBottom, we need to adjust the height of the container
    */
   getAdjustmentMargin: () => number;
+  /** Whether the collection is anchored to the bottom of the list */
+  shouldRenderFromBottom: boolean;
+  /** Distance to animate the collection back after the adjustment margin shrinks */
+  adjustmentMarginAnimationOffset: number;
   /** Current sticky index */
   currentStickyIndex: number;
   /** Whether the cell associated with an active sticky header is hidden */
@@ -92,6 +97,8 @@ export const ViewHolderCollection = <TItem,>(
     onCommitEffect,
     horizontal,
     getAdjustmentMargin,
+    shouldRenderFromBottom,
+    adjustmentMarginAnimationOffset,
     currentStickyIndex,
     hideStickyHeaderRelatedCell,
     isInLastRow,
@@ -149,12 +156,50 @@ export const ViewHolderCollection = <TItem,>(
   );
 
   const hasData = data && data.length > 0;
+  const adjustmentMargin = getAdjustmentMargin();
+  const animatedAdjustmentMargin = React.useRef(new Animated.Value(0)).current;
+  const previousAdjustmentMargin = React.useRef(adjustmentMargin);
+
+  useLayoutEffect(() => {
+    if (adjustmentMarginAnimationOffset > 0) {
+      animatedAdjustmentMargin.stopAnimation((currentOffset) => {
+        animatedAdjustmentMargin.setValue(
+          currentOffset + adjustmentMarginAnimationOffset
+        );
+        Animated.timing(animatedAdjustmentMargin, {
+          duration: 250,
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+      });
+    } else if (previousAdjustmentMargin.current !== adjustmentMargin) {
+      animatedAdjustmentMargin.stopAnimation();
+      animatedAdjustmentMargin.setValue(0);
+    }
+
+    previousAdjustmentMargin.current = adjustmentMargin;
+  }, [
+    adjustmentMargin,
+    animatedAdjustmentMargin,
+    adjustmentMarginAnimationOffset,
+  ]);
+
+  useEffect(() => {
+    return () => animatedAdjustmentMargin.stopAnimation();
+  }, [animatedAdjustmentMargin]);
 
   const containerStyle = {
     width: horizontal ? containerLayout?.width : undefined,
     height: containerLayout?.height,
-    marginTop: horizontal ? undefined : getAdjustmentMargin(),
-    marginLeft: horizontal ? getAdjustmentMargin() : undefined,
+    marginTop: horizontal ? undefined : adjustmentMargin,
+    marginLeft: horizontal ? adjustmentMargin : undefined,
+    transform: shouldRenderFromBottom
+      ? [
+          horizontal
+            ? { translateX: animatedAdjustmentMargin }
+            : { translateY: animatedAdjustmentMargin },
+        ]
+      : undefined,
     // TODO: Temp workaround, useLayoutEffect doesn't block paint in some cases
     // We need to investigate why this is happening
     opacity: renderId > 0 ? 1 : 0,
@@ -171,8 +216,10 @@ export const ViewHolderCollection = <TItem,>(
   //   })
   // );
 
+  const Container = shouldRenderFromBottom ? CompatAnimatedView : CompatView;
+
   return (
-    <CompatView style={hasData && containerStyle}>
+    <Container style={hasData && containerStyle}>
       {containerLayout &&
         hasData &&
         Array.from(renderStack.entries(), ([reactKey, { index }]) => {
@@ -209,6 +256,6 @@ export const ViewHolderCollection = <TItem,>(
             />
           );
         })}
-    </CompatView>
+    </Container>
   );
 };
