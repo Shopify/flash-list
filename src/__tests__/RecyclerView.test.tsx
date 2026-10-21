@@ -514,4 +514,146 @@ describe("RecyclerView", () => {
       expect(scrollToEndSpy).toHaveBeenCalled();
     });
   });
+
+  describe("autoscrolling to top when items are prepended", () => {
+    const scrollTo = (root: ReturnType<typeof render>, y: number) => {
+      const scrollable = root.findWhere((node: any) => node.props.onScroll);
+      if (!scrollable) throw new Error("Could not find scrollable component");
+
+      const onScroll: any = scrollable.prop("onScroll" as never);
+      root.act(() => {
+        onScroll({
+          nativeEvent: {
+            contentOffset: { x: 0, y },
+            contentSize: { width: 399, height: 2000 },
+            layoutMeasurement: { width: 399, height: 899 },
+          },
+        });
+      });
+    };
+
+    const renderList = (data: number[]) => {
+      const ref = createRef<FlashListRef<number>>();
+      const result = render(
+        <FlashList
+          ref={ref}
+          data={data}
+          keyExtractor={(item) => item.toString()}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          maintainVisibleContentPosition={{ autoscrollToTopThreshold: 10 }}
+        />
+      );
+      return { result, ref };
+    };
+
+    it("keeps a prepended item visible when already within the top threshold", () => {
+      const data = Array.from({ length: 20 }, (_, i) => i);
+      const { result, ref } = renderList(data);
+      result.act(() => jest.runAllTimers());
+
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      const scrollToSpy = jest.fn();
+      nativeScrollRef.scrollTo = scrollToSpy;
+
+      // The threshold is inclusive, matching the native list behaviour.
+      scrollTo(result, 10);
+      scrollToSpy.mockClear();
+      result.act(() => {
+        result.setProps({ data: [-1, ...data] });
+        jest.runAllTimers();
+      });
+
+      expect(scrollToSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ y: 0, animated: false })
+      );
+      expect(ref.current?.getAbsoluteLastScrollOffset()).toBe(0);
+    });
+
+    it("preserves the visible item when outside the top threshold", () => {
+      const data = Array.from({ length: 20 }, (_, i) => i);
+      const { result, ref } = renderList(data);
+      result.act(() => jest.runAllTimers());
+
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      const scrollToSpy = jest.fn();
+      nativeScrollRef.scrollTo = scrollToSpy;
+
+      scrollTo(result, 20);
+      scrollToSpy.mockClear();
+      result.act(() => {
+        result.setProps({ data: [-1, ...data] });
+        jest.runAllTimers();
+      });
+
+      expect(scrollToSpy).toHaveBeenCalled();
+      expect(scrollToSpy).not.toHaveBeenCalledWith(
+        expect.objectContaining({ y: 0, animated: false })
+      );
+    });
+
+    it("does not autoscroll to the top when items are appended", () => {
+      const data = Array.from({ length: 20 }, (_, i) => i);
+      const { result, ref } = renderList(data);
+      result.act(() => jest.runAllTimers());
+
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      const scrollToSpy = jest.fn();
+      nativeScrollRef.scrollTo = scrollToSpy;
+
+      scrollTo(result, 0);
+      scrollToSpy.mockClear();
+      result.act(() => {
+        result.setProps({ data: [...data, 20] });
+        jest.runAllTimers();
+      });
+
+      expect(scrollToSpy).not.toHaveBeenCalledWith(
+        expect.objectContaining({ y: 0, animated: false })
+      );
+    });
+
+    it("detects a prepend when the list length stays the same", () => {
+      const data = Array.from({ length: 20 }, (_, i) => i);
+      const { result, ref } = renderList(data);
+      result.act(() => jest.runAllTimers());
+
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      const scrollToSpy = jest.fn();
+      nativeScrollRef.scrollTo = scrollToSpy;
+
+      scrollTo(result, 0);
+      scrollToSpy.mockClear();
+      result.act(() => {
+        result.setProps({ data: [-1, ...data.slice(0, -1)] });
+        jest.runAllTimers();
+      });
+
+      expect(scrollToSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ y: 0, animated: false })
+      );
+    });
+
+    it("does not autoscroll when existing items are reordered", () => {
+      const data = Array.from({ length: 20 }, (_, i) => i);
+      const { result, ref } = renderList(data);
+      result.act(() => jest.runAllTimers());
+
+      const nativeScrollRef = ref.current?.getNativeScrollRef() as any;
+      const scrollToSpy = jest.fn();
+      nativeScrollRef.scrollTo = scrollToSpy;
+
+      scrollTo(result, 0);
+      scrollToSpy.mockClear();
+      result.act(() => {
+        result.setProps({ data: [data[19], ...data.slice(0, -1)] });
+        jest.runAllTimers();
+      });
+
+      expect(scrollToSpy).not.toHaveBeenCalledWith(
+        expect.objectContaining({ y: 0, animated: false })
+      );
+    });
+  });
 });
