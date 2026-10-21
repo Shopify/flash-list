@@ -154,8 +154,34 @@ const RecyclerViewComponent = <T,>(
   // Hook to handle list loading
   useOnListLoad(recyclerViewManager, onLoad);
 
+  const shouldRenderFromBottom =
+    recyclerViewManager.getDataLength() > 0 &&
+    (maintainVisibleContentPosition?.startRenderingFromBottom ?? false);
+
+  const getAdjustmentMargin = useCallback(() => {
+    if (!shouldRenderFromBottom || !recyclerViewManager.hasLayout()) {
+      return 0;
+    }
+
+    const windowSize = horizontal
+      ? recyclerViewManager.getWindowSize().width
+      : recyclerViewManager.getWindowSize().height;
+    const childContainerSize = horizontal
+      ? recyclerViewManager.getChildContainerDimensions().width
+      : recyclerViewManager.getChildContainerDimensions().height;
+
+    return Math.max(
+      0,
+      windowSize - childContainerSize - recyclerViewManager.firstItemOffset
+    );
+  }, [horizontal, recyclerViewManager, shouldRenderFromBottom]);
+
   // Hook to detect when scrolling reaches list bounds
-  const { checkBounds } = useBoundDetection(recyclerViewManager, scrollViewRef);
+  const { checkBounds, adjustmentMarginAnimationOffset } = useBoundDetection(
+    recyclerViewManager,
+    scrollViewRef,
+    getAdjustmentMargin
+  );
 
   const isHorizontalRTL = I18nManager.isRTL && horizontal;
 
@@ -496,10 +522,6 @@ const RecyclerViewComponent = <T,>(
     return undefined;
   }, [maintainVisibleContentPosition, shouldMaintainVisibleContentPosition]);
 
-  const shouldRenderFromBottom =
-    recyclerViewManager.getDataLength() > 0 &&
-    (maintainVisibleContentPosition?.startRenderingFromBottom ?? false);
-
   // Create view for measuring bounded size
   const viewToMeasureBoundedSize = useMemo(() => {
     return (
@@ -587,25 +609,9 @@ const RecyclerViewComponent = <T,>(
             horizontal={horizontal}
             renderStack={recyclerViewManager.getRenderStack()}
             getLayout={(index) => recyclerViewManager.getLayout(index)}
-            getAdjustmentMargin={() => {
-              if (!shouldRenderFromBottom || !recyclerViewManager.hasLayout()) {
-                return 0;
-              }
-
-              const windowSize = horizontal
-                ? recyclerViewManager.getWindowSize().width
-                : recyclerViewManager.getWindowSize().height;
-              const childContainerSize = horizontal
-                ? recyclerViewManager.getChildContainerDimensions().width
-                : recyclerViewManager.getChildContainerDimensions().height;
-
-              return Math.max(
-                0,
-                windowSize -
-                  childContainerSize -
-                  recyclerViewManager.firstItemOffset
-              );
-            }}
+            getAdjustmentMargin={getAdjustmentMargin}
+            shouldRenderFromBottom={shouldRenderFromBottom}
+            adjustmentMarginAnimationOffset={adjustmentMarginAnimationOffset}
             refHolder={refHolder}
             onSizeChanged={validateItemSize}
             renderItem={renderItem}
