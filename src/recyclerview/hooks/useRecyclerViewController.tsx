@@ -49,7 +49,7 @@ export function useRecyclerViewController<T>(
   scrollAnchorRef: React.RefObject<ScrollAnchorRef>
 ) {
   const isUnmounted = useUnmountFlag();
-  const [_, setRenderId] = useState(0);
+  const [, setRenderId] = useState(0);
   const pauseOffsetCorrection = useRef(false);
   const lastDataLengthRef = useRef(recyclerViewManager.getDataLength());
   const { setTimeout } = useUnmountAwareTimeout();
@@ -57,6 +57,13 @@ export function useRecyclerViewController<T>(
   // Track the first visible item for maintaining scroll position
   const firstVisibleItemKey = useRef<string | undefined>(undefined);
   const firstVisibleItemLayout = useRef<RVLayout | undefined>(undefined);
+  const firstDataItemKey = useRef<string | undefined>(
+    recyclerViewManager.getDataLength() > 0
+      ? recyclerViewManager.getDataKey(0)
+      : undefined
+  );
+  // Distinguish new items at the top from a reorder of existing items.
+  const previousDataRef = useRef(recyclerViewManager.props.data);
 
   // Queue to store callbacks that should be executed after scroll offset updates
   const pendingScrollCallbacks = useRef<(() => void)[]>([]);
@@ -134,8 +141,49 @@ export function useRecyclerViewController<T>(
       recyclerViewManager.shouldMaintainVisibleContentPosition()
     ) {
       const hasDataChanged = currentDataLength !== lastDataLengthRef.current;
+      const currentFirstDataItemKey =
+        currentDataLength > 0 ? recyclerViewManager.getDataKey(0) : undefined;
+      const isFirstDataItemChanged =
+        currentFirstDataItemKey !== firstDataItemKey.current;
+      const previousFirstDataItemIndex =
+        isFirstDataItemChanged && firstDataItemKey.current
+          ? data?.findIndex(
+              (_, index) =>
+                recyclerViewManager.getDataKey(index) ===
+                firstDataItemKey.current
+            ) ?? -1
+          : -1;
+      const currentFirstItemWasAlreadyPresent =
+        isFirstDataItemChanged &&
+        currentFirstDataItemKey !== undefined &&
+        Boolean(
+          previousDataRef.current?.some(
+            (item, index) =>
+              recyclerViewManager.props.keyExtractor?.(item, index) ===
+              currentFirstDataItemKey
+          )
+        );
+      const hasPrependedItems =
+        isFirstDataItemChanged &&
+        !currentFirstItemWasAlreadyPresent &&
+        previousFirstDataItemIndex > 0;
+      const autoscrollToTopThreshold =
+        recyclerViewManager.props.maintainVisibleContentPosition
+          ?.autoscrollToTopThreshold;
+      const shouldAutoscrollToTop =
+        !PlatformConfig.supportsOffsetCorrection &&
+        !horizontal &&
+        hasPrependedItems &&
+        autoscrollToTopThreshold !== undefined &&
+        autoscrollToTopThreshold >= 0 &&
+        recyclerViewManager.getAbsoluteLastScrollOffset() <=
+          autoscrollToTopThreshold;
+
       // If we have a tracked first visible item, maintain its position
-      if (firstVisibleItemKey.current) {
+      if (shouldAutoscrollToTop) {
+        scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+        updateScrollOffsetWithCallback(0, () => {});
+      } else if (firstVisibleItemKey.current) {
         // Try engaged indices first (fast O(n) over rendered items), then
         // fall back to a full data search. The fallback is needed when:
         // 1. Data just changed (hasDataChanged) — prepended items shift
@@ -213,6 +261,11 @@ export function useRecyclerViewController<T>(
       computeFirstVisibleIndexForOffsetCorrection();
     }
     lastDataLengthRef.current = recyclerViewManager.getDataLength();
+    firstDataItemKey.current =
+      recyclerViewManager.getDataLength() > 0
+        ? recyclerViewManager.getDataKey(0)
+        : undefined;
+    previousDataRef.current = recyclerViewManager.props.data;
   }, [
     recyclerViewManager,
     scrollAnchorRef,
