@@ -586,7 +586,7 @@ const RecyclerViewComponent = <T,>(
             data={data}
             horizontal={horizontal}
             renderStack={recyclerViewManager.getRenderStack()}
-            getLayout={(index) => recyclerViewManager.getLayout(index)}
+            getLayout={(index) => recyclerViewManager.tryGetLayout(index)}
             getAdjustmentMargin={() => {
               if (!shouldRenderFromBottom || !recyclerViewManager.hasLayout()) {
                 return 0;
