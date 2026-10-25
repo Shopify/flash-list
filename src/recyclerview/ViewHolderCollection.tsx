@@ -54,6 +54,10 @@ export interface ViewHolderCollectionProps<TItem> {
   currentStickyIndex: number;
   /** Whether the cell associated with an active sticky header is hidden */
   hideStickyHeaderRelatedCell: boolean;
+  /** Current sticky footer index */
+  currentStickyFooterIndex: number;
+  /** Whether the cell associated with an active sticky footer is hidden */
+  hideStickyFooterRelatedCell: boolean;
   /** Returns whether the item at the given index is in the last row of the layout */
   isInLastRow: (index: number) => boolean;
   /** Whether the list is inverted */
@@ -94,6 +98,8 @@ export const ViewHolderCollection = <TItem,>(
     getAdjustmentMargin,
     currentStickyIndex,
     hideStickyHeaderRelatedCell,
+    currentStickyFooterIndex,
+    hideStickyFooterRelatedCell,
     isInLastRow,
     inverted,
   } = props;
@@ -203,7 +209,9 @@ export const ViewHolderCollection = <TItem,>(
               ItemSeparatorComponent={ItemSeparatorComponent}
               horizontal={horizontal}
               hidden={
-                hideStickyHeaderRelatedCell && currentStickyIndex === index
+                (hideStickyHeaderRelatedCell && currentStickyIndex === index) ||
+                (hideStickyFooterRelatedCell &&
+                  currentStickyFooterIndex === index)
               }
               inverted={inverted}
             />

@@ -23,4 +23,6 @@ export const ErrorMessages = {
   dataEmptyCannotRunBenchmark: "Data is empty, cannot run benchmark",
   stickyHeadersNotSupportedForHorizontal:
     "Sticky headers are not supported when list is horizontal",
+  stickyFootersNotSupportedForHorizontal:
+    "Sticky footers are not supported when list is horizontal",
 };

@@ -406,6 +406,7 @@ Callback invoked when the currently displayed sticky header changes as you scrol
 Receives the current sticky header index and the previous sticky header index.
 This is useful for tracking which header is currently stuck at the top while scrolling.
 The index refers to the position of the item in your data array that's being used as a sticky header.
+This callback only reports sticky headers. Use [`onChangeStickyFooterIndex`](#onchangestickyfooterindex) for sticky footers.
 
 ```tsx
 onChangeStickyIndex?: (current: number, previous: number) => void;
@@ -419,6 +420,136 @@ Example:
   stickyHeaderIndices={[0, 10, 20]}
   onChangeStickyIndex={(current, previous) => {
     console.log(`Sticky header changed from ${previous} to ${current}`);
+  }}
+  renderItem={({ item }) => <ListItem item={item} />}
+/>
+```
+
+### `stickyFooterIndices`
+
+An array of item indices that stick to the bottom of the list while they are below the visible area.
+The first sticky footer that hasn't fully scrolled into view stays docked at the bottom. When you scroll back up, the previous sticky footer pushes it out of the way.
+This is useful for section footers such as section totals or "load more" rows.
+Not supported with `horizontal={true}`.
+
+When the list is `inverted`, sticky footers stick to the top of the screen instead, which makes them a good fit for date separators in chat lists.
+
+Your `renderItem` receives `target: "StickyFooter"` when rendering the sticky copy of an item, so you can change its appearance.
+
+```tsx
+stickyFooterIndices?: number[];
+```
+
+Example:
+
+```jsx
+<FlashList
+  data={sectionData}
+  stickyFooterIndices={[9, 19, 29]}
+  renderItem={({ item, target }) => (
+    <ListItem item={item} isSticky={target === "StickyFooter"} />
+  )}
+/>
+```
+
+### `stickyFooterConfig`
+
+Configuration object for sticky footer behavior and appearance. All properties are optional.
+
+```tsx
+stickyFooterConfig?: {
+  useNativeDriver?: boolean;
+  offset?: number;
+  backdropComponent?: React.ComponentType<any> | React.ReactElement | null;
+  zIndex?: number;
+  hideRelatedCell?: boolean;
+};
+```
+
+#### `useNativeDriver`
+
+If true, the sticky footers will use native driver for animations. Default is `true`.
+Sticky headers and sticky footers share the same scroll animation, so the native driver is only used when it is enabled for both.
+
+```tsx
+useNativeDriver?: boolean;
+```
+
+#### `offset`
+
+Offset from the bottom of the list where sticky footers should stick.
+This is useful when you have a fixed tab bar or toolbar at the bottom of your screen
+and want sticky footers to appear above it instead of at the very bottom.
+The same amount of space is added after the list content so the last items can scroll above it.
+Default is `0`.
+
+```tsx
+offset?: number;
+```
+
+#### `backdropComponent`
+
+Component to render behind sticky footers (e.g., a backdrop or blur effect).
+Renders in front of the scroll view content but behind the sticky footer itself, aligned to the bottom of the list.
+
+```tsx
+backdropComponent?: React.ComponentType<any> | React.ReactElement | null;
+```
+
+#### `zIndex`
+
+zIndex applied to the sticky footer container. Default is `2`.
+
+```tsx
+zIndex?: number;
+```
+
+#### `hideRelatedCell`
+
+When a sticky footer is displayed, the cell associated with it is hidden.
+Default is `false`.
+
+```tsx
+hideRelatedCell?: boolean;
+```
+
+**Example:**
+
+```jsx
+<FlashList
+  data={sectionData}
+  stickyFooterIndices={[9, 19, 29]}
+  stickyFooterConfig={{
+    offset: 50, // Footers stick 50px above the bottom
+    backdropComponent: (
+      <View style={{ height: 50, backgroundColor: "#0002" }} />
+    ),
+    zIndex: 3,
+    hideRelatedCell: true,
+  }}
+  renderItem={({ item }) => <ListItem item={item} />}
+/>
+```
+
+### `onChangeStickyFooterIndex`
+
+Callback invoked when the currently displayed sticky footer changes as you scroll.
+Receives the current sticky footer index and the previous sticky footer index.
+The index refers to the position of the item in your data array that's being used as a sticky footer.
+`-1` means no sticky footer is displayed.
+
+```tsx
+onChangeStickyFooterIndex?: (current: number, previous: number) => void;
+```
+
+Example:
+
+```jsx
+<FlashList
+  data={sectionData}
+  stickyFooterIndices={[9, 19, 29]}
+  onChangeStickyFooterIndex={(current, previous) => {
+    console.log(`Sticky footer changed from ${previous} to ${current}`);
   }}
   renderItem={({ item }) => <ListItem item={item} />}
 />

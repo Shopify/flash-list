@@ -22,6 +22,7 @@ import { getInvertedTransformStyle } from "../utils/getInvertedTransformStyle";
  *   - renderFooter: The footer component renderer
  *   - renderEmpty: The empty state component renderer
  *   - renderStickyHeaderBackdrop: The sticky header backdrop component renderer
+ *   - renderStickyFooterBackdrop: The sticky footer backdrop component renderer
  *   - CompatScrollView: The animated scroll component
  */
 export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
@@ -39,6 +40,7 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     data,
     refreshControl: customRefreshControl,
     stickyHeaderConfig,
+    stickyFooterConfig,
     inverted,
     horizontal,
   } = props;
@@ -141,6 +143,32 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
   }, [stickyHeaderConfig?.backdropComponent, invertedTransformStyle]);
 
   /**
+   * Creates the sticky footer backdrop component.
+   * Sticky footers stick to the bottom of the list, or the top when the list is inverted,
+   * so the backdrop is aligned to the same edge.
+   */
+  const renderStickyFooterBackdrop = useMemo(() => {
+    if (!stickyFooterConfig?.backdropComponent) {
+      return null;
+    }
+    return (
+      <CompatView
+        style={[
+          {
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+            justifyContent: inverted ? "flex-start" : "flex-end",
+          },
+          invertedTransformStyle,
+        ]}
+      >
+        {getValidComponent(stickyFooterConfig?.backdropComponent)}
+      </CompatView>
+    );
+  }, [stickyFooterConfig?.backdropComponent, invertedTransformStyle, inverted]);
+
+  /**
    * Creates an animated scroll component based on the provided renderScrollComponent.
    * If no custom component is provided, uses the default CompatAnimatedScroller.
    */
@@ -173,5 +201,6 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
     renderEmpty,
     CompatScrollView,
     renderStickyHeaderBackdrop,
+    renderStickyFooterBackdrop,
   };
 }

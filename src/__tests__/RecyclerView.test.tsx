@@ -100,6 +100,158 @@ describe("RecyclerView", () => {
     });
   });
 
+  describe("Sticky footer config", () => {
+    // Each item is 100px tall (from measureItemLayout mock) and the window is 899px tall,
+    // so footer 9 (bottom at 1000) starts below the visible area.
+    const data = Array.from({ length: 20 }, (_, index) => index);
+
+    const scrollTo = (root: ReturnType<typeof render>, y: number) => {
+      const scrollable = root.findWhere((node: any) => node.props.onScroll);
+      if (!scrollable) throw new Error("Could not find scrollable component");
+
+      const onScroll: any = scrollable.prop("onScroll" as never);
+      root.act(() => {
+        onScroll({
+          nativeEvent: {
+            contentOffset: { x: 0, y },
+            contentSize: { width: 399, height: 2000 },
+            layoutMeasurement: { width: 399, height: 899 },
+          },
+        });
+      });
+    };
+
+    const renderWithStickyFooters = (
+      props: Partial<React.ComponentProps<typeof FlashList<number>>> = {}
+    ) =>
+      render(
+        <FlashList
+          data={data}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          stickyFooterIndices={[9, 19]}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          {...props}
+        />
+      );
+
+    it("applies configured sticky footer zIndex and offset", () => {
+      const result = renderWithStickyFooters({
+        stickyFooterConfig: { zIndex: 5, offset: 44 },
+      });
+
+      expect(result.find(Animated.View)).toHaveReactProps({
+        style: expect.objectContaining({ zIndex: 5, bottom: 44 }),
+      });
+    });
+
+    it("adds space after the content for the sticky footer offset", () => {
+      const result = renderWithStickyFooters({
+        stickyFooterConfig: { offset: 44 },
+      });
+
+      expect(result).toContainReactComponent(View, {
+        style: { height: 44 },
+      });
+    });
+
+    it("calls onChangeStickyFooterIndex but not onChangeStickyIndex", () => {
+      const onChangeStickyFooterIndex = jest.fn();
+      const onChangeStickyIndex = jest.fn();
+      const result = renderWithStickyFooters({
+        onChangeStickyFooterIndex,
+        onChangeStickyIndex,
+      });
+
+      scrollTo(result, 50);
+      expect(onChangeStickyFooterIndex).toHaveBeenLastCalledWith(9, -1);
+
+      // Footer 9 is fully visible past y=101, so footer 19 takes over
+      scrollTo(result, 150);
+      expect(onChangeStickyFooterIndex).toHaveBeenLastCalledWith(19, 9);
+      expect(onChangeStickyIndex).not.toHaveBeenCalled();
+    });
+
+    it("hides the related cell when hideRelatedCell is enabled", () => {
+      const result = renderWithStickyFooters({
+        stickyFooterConfig: { hideRelatedCell: true },
+      });
+
+      // Cell 9 is rendered but still below the visible area, so its sticky copy is shown
+      scrollTo(result, 50);
+
+      const cell = result.findWhere(
+        (node: any) => node.props.target === "Cell" && node.props.index === 9
+      );
+      expect(cell).toHaveReactProps({ hidden: true });
+    });
+
+    it("renders the sticky footer backdrop", () => {
+      const Backdrop = () => <View testID="footer-backdrop" />;
+      const result = renderWithStickyFooters({
+        stickyFooterConfig: { backdropComponent: Backdrop },
+      });
+
+      expect(result).toContainReactComponent(Backdrop);
+    });
+
+    it("pins the same index to the bottom before it and to the top after it", () => {
+      const onChangeStickyIndex = jest.fn();
+      const onChangeStickyFooterIndex = jest.fn();
+      const result = renderWithStickyFooters({
+        stickyHeaderIndices: [9],
+        stickyFooterIndices: [9],
+        onChangeStickyIndex,
+        onChangeStickyFooterIndex,
+      });
+      const findStickyCopy = (target: string) =>
+        result.findWhere(
+          (node: any) => node.props.target === target && node.props.index === 9
+        );
+
+      // Item 9 (y=900-1000) is below the visible area: pinned to the bottom
+      scrollTo(result, 50);
+      expect(onChangeStickyFooterIndex).toHaveBeenLastCalledWith(9, -1);
+      expect(findStickyCopy("StickyFooter")).not.toBeNull();
+      expect(findStickyCopy("StickyHeader")).toBeNull();
+
+      // Item 9 is fully visible: not pinned anywhere
+      scrollTo(result, 500);
+      expect(onChangeStickyFooterIndex).toHaveBeenLastCalledWith(-1, 9);
+      expect(onChangeStickyIndex).not.toHaveBeenCalled();
+      expect(findStickyCopy("StickyFooter")).toBeNull();
+      expect(findStickyCopy("StickyHeader")).toBeNull();
+
+      // Item 9 has scrolled past the top: pinned to the top
+      scrollTo(result, 950);
+      expect(onChangeStickyIndex).toHaveBeenLastCalledWith(9, -1);
+      expect(onChangeStickyFooterIndex).toHaveBeenCalledTimes(2);
+      expect(findStickyCopy("StickyHeader")).not.toBeNull();
+      expect(findStickyCopy("StickyFooter")).toBeNull();
+    });
+
+    it("uses the native driver only when headers and footers both allow it", () => {
+      const eventSpy = jest.spyOn(Animated, "event");
+
+      renderWithStickyFooters({
+        stickyHeaderIndices: [0],
+        stickyFooterConfig: { useNativeDriver: false },
+      });
+      expect(eventSpy).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ useNativeDriver: false })
+      );
+
+      renderWithStickyFooters({ stickyHeaderIndices: [0] });
+      expect(eventSpy).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ useNativeDriver: true })
+      );
+
+      eventSpy.mockRestore();
+    });
+  });
+
   describe("Masonry Layout", () => {
     it("renders items with masonry", () => {
       const result = renderRecyclerView({ masonry: true });

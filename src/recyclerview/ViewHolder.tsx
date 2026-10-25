@@ -32,7 +32,7 @@ export interface ViewHolderProps<TItem> {
   refHolder: Map<number, RefObject<CompatView | null>>;
   /** Additional data passed to renderItem that can trigger re-renders */
   extraData: any;
-  /** Specifies the rendering target (e.g., "Cell", "StickyHeader") */
+  /** Specifies the rendering target (e.g., "Cell", "StickyHeader", "StickyFooter") */
   target: RenderTarget;
   /** The actual item data to be rendered */
   item: TItem;
@@ -115,7 +115,10 @@ const ViewHolderInternal = <TItem,>(props: ViewHolderProps<TItem>) => {
 
   const style = {
     flexDirection: horizontal ? "row" : "column",
-    position: target === "StickyHeader" ? "relative" : "absolute",
+    position:
+      target === "StickyHeader" || target === "StickyFooter"
+        ? "relative"
+        : "absolute",
     width: layout.enforcedWidth ? layout.width : undefined,
     height: layout.enforcedHeight ? layout.height : undefined,
     minHeight: layout.minHeight,

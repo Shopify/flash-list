@@ -35,6 +35,8 @@ import LotOfItems from "./lot-of-items/LotOfItems";
 import ManualBenchmarkExample from "./ManualBenchmarkExample";
 import ManualFlatListBenchmarkExample from "./ManualFlatListBenchmarkExample";
 import { StickyHeaderExample } from "./StickyHeaderExample";
+import { StickyFooterExample } from "./StickyFooterExample";
+import { LeaderboardExample } from "./LeaderboardExample";
 import { GridWithSeparator } from "./GridWithSeparator";
 import { HorizontalMVCP } from "./HorizontalMVCP";
 
@@ -131,6 +133,16 @@ const NavigationTree = () => {
             name="StickyHeaderExample"
             component={StickyHeaderExample}
             options={{ title: "Sticky Headers" }}
+          />
+          <Stack.Screen
+            name="StickyFooterExample"
+            component={StickyFooterExample}
+            options={{ title: "Sticky Footers" }}
+          />
+          <Stack.Screen
+            name="LeaderboardExample"
+            component={LeaderboardExample}
+            options={{ title: "Leaderboard" }}
           />
           <Stack.Screen
             name="GridWithSeparator"
