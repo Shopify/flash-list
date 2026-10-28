@@ -1,12 +1,8 @@
 import type React from "react";
-import {
-  StyleProp,
-  ScrollViewProps,
-  ViewabilityConfig,
-  ViewStyle,
-} from "react-native";
+import type { StyleProp, ScrollViewProps, ViewStyle } from "react-native";
 
 import ViewToken from "./recyclerview/viewability/ViewToken";
+import type { ViewabilityConfig } from "./recyclerview/viewability/ViewabilityConfig";
 
 export interface ListRenderItemInfo<TItem> {
   item: TItem;
@@ -53,7 +49,10 @@ export type ViewabilityConfigCallbackPairs<TItem> =
   ViewabilityConfigCallbackPair<TItem>[];
 
 export interface FlashListProps<TItem>
-  extends Omit<ScrollViewProps, "maintainVisibleContentPosition"> {
+  extends Omit<
+    ScrollViewProps,
+    "maintainVisibleContentPosition" | "horizontal"
+  > {
   /**
    * Takes an item from `data` and renders it into the list. Typical usage:
    * ```ts
