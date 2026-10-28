@@ -5,6 +5,7 @@ import { render } from "@quilted/react-testing";
 
 import { FlashListRef } from "../FlashListRef";
 import { FlashList } from "..";
+import { VelocityTracker } from "../recyclerview/helpers/VelocityTracker";
 
 // Mock measureLayout to return fixed dimensions
 jest.mock("../recyclerview/utils/measureLayout", () => {
@@ -76,6 +77,37 @@ describe("RecyclerView", () => {
       expect(result).toContainReactComponent(Text, { children: 0 });
       expect(result).not.toContainReactComponent(Text, { children: 11 });
     });
+  });
+
+  it("passes the scroll event timestamp to velocity tracking", () => {
+    const computeVelocity = jest.spyOn(
+      VelocityTracker.prototype,
+      "computeVelocity"
+    );
+    const result = renderRecyclerView({});
+    const scrollable = result.findWhere((node: any) => node.props.onScroll);
+    if (!scrollable) throw new Error("Could not find scrollable component");
+    const onScroll = scrollable.prop("onScroll" as never) as (
+      event: any
+    ) => void;
+
+    try {
+      result.act(() => {
+        onScroll({
+          timeStamp: 123,
+          nativeEvent: {
+            contentOffset: { x: 0, y: 10 },
+            contentSize: { width: 399, height: 2000 },
+            layoutMeasurement: { width: 399, height: 899 },
+          },
+        });
+      });
+
+      expect(computeVelocity.mock.calls[0]?.[4]).toBe(123);
+    } finally {
+      result.unmount();
+      computeVelocity.mockRestore();
+    }
   });
 
   describe("Sticky header config", () => {

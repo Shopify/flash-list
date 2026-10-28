@@ -269,6 +269,7 @@ const RecyclerViewComponent = <T,>(
       let scrollOffset = horizontal
         ? event.nativeEvent.contentOffset.x
         : event.nativeEvent.contentOffset.y;
+      const eventTimestamp = event.timeStamp;
 
       // Handle RTL (Right-to-Left) layout adjustments
       if (isHorizontalRTL) {
@@ -299,7 +300,8 @@ const RecyclerViewComponent = <T,>(
           if (recyclerViewManager.updateScrollOffset(scrollOffset, velocity)) {
             setRenderId((prev) => prev + 1);
           }
-        }
+        },
+        eventTimestamp
       );
 
       // Update sticky headers and check bounds
