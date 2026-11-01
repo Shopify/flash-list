@@ -162,9 +162,10 @@ export function useBoundDetection<T>(
     }
   }, [requestAnimationFrame, scrollViewRef, recyclerViewManager]);
 
-  // Reset end reached state when data changes
+  // Reset reached state when data changes
   useMemo(() => {
     pendingEndReached.current = false;
+    pendingStartReached.current = false;
     // needs to run only when data changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
