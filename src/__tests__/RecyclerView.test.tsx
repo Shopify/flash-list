@@ -76,6 +76,27 @@ describe("RecyclerView", () => {
       expect(result).toContainReactComponent(Text, { children: 0 });
       expect(result).not.toContainReactComponent(Text, { children: 11 });
     });
+
+    it("fires onStartReached again when data changes while still near the start", () => {
+      const onStartReached = jest.fn();
+      const data = Array.from({ length: 20 }, (_, index) => index);
+      const result = render(
+        <FlashList
+          data={data}
+          keyExtractor={(item) => `${item}`}
+          onStartReached={onStartReached}
+          overrideProps={{ initialDrawBatchSize: 1 }}
+          drawDistance={0}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+
+      expect(onStartReached).toHaveBeenCalledTimes(1);
+
+      result.setProps({ data: [-1, ...data] });
+
+      expect(onStartReached).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe("Sticky header config", () => {
