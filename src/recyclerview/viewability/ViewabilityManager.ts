@@ -71,8 +71,11 @@ export default class ViewabilityManager<T> {
   };
 
   public updateViewableItems = (newViewableIndices?: number[]) => {
+    if (!this.shouldListenToVisibleIndices || !this.rvManager.hasLayout()) {
+      return;
+    }
     const listSize = this.rvManager.getWindowSize();
-    if (listSize === undefined || !this.shouldListenToVisibleIndices) {
+    if (listSize === undefined) {
       return;
     }
     const scrollOffset =

@@ -281,13 +281,18 @@ export class RecyclerViewManager<T> {
   }
 
   computeItemViewability() {
+    if (
+      !this.hasLayout() ||
+      !this.itemViewabilityManager.shouldListenToVisibleIndices
+    ) {
+      return;
+    }
     // Using higher buffer for masonry to avoid missing items
-    this.itemViewabilityManager.shouldListenToVisibleIndices &&
-      this.itemViewabilityManager.updateViewableItems(
-        this.propsRef.masonry
-          ? this.engagedIndicesTracker.getEngagedIndices().toArray()
-          : this.computeVisibleIndices().toArray()
-      );
+    this.itemViewabilityManager.updateViewableItems(
+      this.propsRef.masonry
+        ? this.engagedIndicesTracker.getEngagedIndices().toArray()
+        : this.computeVisibleIndices().toArray()
+    );
   }
 
   recordInteraction() {
