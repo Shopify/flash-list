@@ -71,4 +71,35 @@ describe("RecyclerViewManager", () => {
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
   });
+
+  describe("viewability before the first layout", () => {
+    const createManager = (overrides = {}) =>
+      new RecyclerViewManager({
+        data: [1, 2, 3],
+        renderItem: jest.fn(),
+        ...overrides,
+      } as FlashListProps<number>);
+
+    it("does not read the window size when recording an interaction without callbacks", () => {
+      const manager = createManager();
+
+      expect(() => manager.recordInteraction()).not.toThrow();
+    });
+
+    it("does not read the window size when recording an interaction with callbacks", () => {
+      const manager = createManager({
+        onViewableItemsChanged: jest.fn(),
+      });
+
+      expect(() => manager.recordInteraction()).not.toThrow();
+    });
+
+    it("does not compute visible indices before layout when callbacks are configured", () => {
+      const manager = createManager({
+        onViewableItemsChanged: jest.fn(),
+      });
+
+      expect(() => manager.computeItemViewability()).not.toThrow();
+    });
+  });
 });
