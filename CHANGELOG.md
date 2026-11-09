@@ -7,6 +7,8 @@ and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Fix `AnimatedFlashList` types: `ref` accepts `FlashListRef<T>` and the item type is no longer `any`
+  - https://github.com/Shopify/flash-list/pull/2553
 - Fix render window missing visible rows during flings when drawDistance is small (blank band at the top when scrolling forward, at the bottom when scrolling backward)
   - https://github.com/Shopify/flash-list/pull/2510
 
