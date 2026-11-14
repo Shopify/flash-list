@@ -249,7 +249,8 @@ export interface FlashListProps<TItem>
 
   /**
    * If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality.
-   * Make sure to also set the refreshing prop correctly.
+   * Make sure to also set the refreshing prop correctly. On horizontal lists, the native
+   * refresh control still responds to vertical pull gestures, not horizontal overscroll.
    */
   onRefresh?: (() => void) | null | undefined;
 
