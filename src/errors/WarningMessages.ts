@@ -6,4 +6,6 @@ export const WarningMessages = {
   exceededMaxRendersWithoutCommit:
     "Exceeded max renders without commit. This might mean that you have duplicate keys in your keyExtractor output or your list is nested in a ScrollView causing a lot of items to render at once. " +
     "If it's none of those and is causing a real issue or error, consider reporing this on FlashList Github",
+  onRefreshForHorizontalList:
+    "onRefresh on a horizontal FlashList uses the native vertical pull-to-refresh gesture and will not respond to horizontal overscroll.",
 };

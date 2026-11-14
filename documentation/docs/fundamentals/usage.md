@@ -490,6 +490,8 @@ onRefresh?: () => void;
 
 If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the `refreshing` prop correctly.
 
+On horizontal lists, the native refresh control responds to vertical pull gestures rather than horizontal overscroll.
+
 ### `getItemType`
 
 ```tsx

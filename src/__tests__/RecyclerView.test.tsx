@@ -1,9 +1,10 @@
 import React, { createRef } from "react";
-import { Animated, Text, View } from "react-native";
+import { Animated, RefreshControl, Text, View } from "react-native";
 import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
 import { FlashListRef } from "../FlashListRef";
+import { WarningMessages } from "../errors/WarningMessages";
 import { FlashList } from "..";
 
 // Mock measureLayout to return fixed dimensions
@@ -68,6 +69,9 @@ describe("RecyclerView", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
   describe("Linear Layout", () => {
     it("renders items ", () => {
@@ -150,6 +154,64 @@ describe("RecyclerView", () => {
 
       expect(result).toContainReactComponent(Text, { children: 0 });
       expect(result).not.toContainReactComponent(Text, { children: 4 });
+    });
+
+    it("warns when onRefresh uses the native vertical gesture on a horizontal list", () => {
+      const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation();
+
+      render(
+        <FlashList
+          data={[0, 1, 2]}
+          horizontal
+          onRefresh={jest.fn()}
+          refreshing={false}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        WarningMessages.onRefreshForHorizontalList
+      );
+    });
+
+    it("does not warn for vertical lists or a custom refresh control", () => {
+      const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation();
+      const onRefresh = jest.fn();
+
+      const vertical = render(
+        <FlashList
+          data={[0, 1, 2]}
+          onRefresh={onRefresh}
+          refreshing={false}
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+      vertical.unmount();
+
+      render(
+        <FlashList
+          data={[0, 1, 2]}
+          horizontal
+          onRefresh={onRefresh}
+          refreshing={false}
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={onRefresh} />
+          }
+          renderItem={({ item }) => <Text>{item}</Text>}
+        />
+      );
+
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it("warns only once when onRefresh changes", () => {
+      const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation();
+      const result = renderRecyclerView({ horizontal: true });
+
+      result.setProps({ onRefresh: jest.fn(), refreshing: false });
+      result.setProps({ onRefresh: jest.fn(), refreshing: false });
+
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
     });
   });
 

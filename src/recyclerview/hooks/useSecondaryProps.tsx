@@ -1,7 +1,8 @@
 import { Animated, RefreshControl } from "react-native";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 import { RecyclerViewProps } from "../RecyclerViewProps";
+import { WarningMessages } from "../../errors/WarningMessages";
 import { getValidComponent, isComponentClass } from "../utils/componentUtils";
 import { CompatView } from "../components/CompatView";
 import { CompatAnimatedScroller } from "../components/CompatScroller";
@@ -46,6 +47,21 @@ export function useSecondaryProps<T>(props: RecyclerViewProps<T>) {
   const invertedTransformStyle = inverted
     ? getInvertedTransformStyle(horizontal)
     : undefined;
+
+  const hasWarnedAboutHorizontalRefresh = useRef(false);
+
+  useEffect(() => {
+    if (
+      __DEV__ &&
+      horizontal &&
+      onRefresh &&
+      !customRefreshControl &&
+      !hasWarnedAboutHorizontalRefresh.current
+    ) {
+      console.warn(WarningMessages.onRefreshForHorizontalList);
+      hasWarnedAboutHorizontalRefresh.current = true;
+    }
+  }, [horizontal, onRefresh, customRefreshControl]);
 
   /**
    * Creates the refresh control component if onRefresh is provided.
