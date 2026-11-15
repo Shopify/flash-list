@@ -71,4 +71,20 @@ describe("RecyclerViewManager", () => {
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
   });
+
+  describe("viewability updates before the first layout", () => {
+    it("ignores recordInteraction and computeItemViewability until layout exists", () => {
+      const manager = new RecyclerViewManager({
+        data: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        renderItem: jest.fn(),
+        onViewableItemsChanged: jest.fn(),
+      } as FlashListProps<unknown>);
+
+      expect(manager.hasLayout()).toBe(false);
+      expect(() => {
+        manager.recordInteraction();
+        manager.computeItemViewability();
+      }).not.toThrow();
+    });
+  });
 });
