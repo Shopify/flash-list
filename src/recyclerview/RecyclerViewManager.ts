@@ -281,6 +281,11 @@ export class RecyclerViewManager<T> {
   }
 
   computeItemViewability() {
+    if (!this.hasLayout()) {
+      // Scroll events can arrive before the first layout. The first layout
+      // already triggers a viewability update, so these can be ignored.
+      return;
+    }
     // Using higher buffer for masonry to avoid missing items
     this.itemViewabilityManager.shouldListenToVisibleIndices &&
       this.itemViewabilityManager.updateViewableItems(
@@ -291,6 +296,10 @@ export class RecyclerViewManager<T> {
   }
 
   recordInteraction() {
+    if (!this.hasLayout()) {
+      // See computeItemViewability.
+      return;
+    }
     this.itemViewabilityManager.recordInteraction();
   }
 
