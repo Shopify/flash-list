@@ -1,0 +1,20 @@
+name: Shell Injection PoC
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Harmless test input"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test unsafe interpolation
+        run: |
+          echo "TAG_NAME=${{ inputs.tag }}" >> "$GITHUB_ENV"
