@@ -181,22 +181,10 @@ ListHeaderComponentStyle?: StyleProp<ViewStyle>;
 ### `contentContainerStyle`
 
 ```tsx
-contentContainerStyle?: ContentStyle;
-
-export type ContentStyle = Pick<
-  ViewStyle,
-  | "backgroundColor"
-  | "paddingTop"
-  | "paddingLeft"
-  | "paddingRight"
-  | "paddingBottom"
-  | "padding"
-  | "paddingVertical"
-  | "paddingHorizontal"
->;
+contentContainerStyle?: StyleProp<ViewStyle>;
 ```
 
-You can use `contentContainerStyle` to apply padding that will be applied to the whole content itself. For example, you can apply this padding, so that all of your items have leading and trailing space.
+This is the same `contentContainerStyle` prop as on `ScrollView` (`FlashListProps` extends `ScrollViewProps`), so it is not limited to padding and background color. For example, you can apply padding to the whole content, so that all of your items have leading and trailing space.
 
 ### `drawDistance`
 
